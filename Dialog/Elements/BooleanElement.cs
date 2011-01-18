@@ -1,0 +1,86 @@
+//
+// BooleanElement.cs
+//
+// Author:
+//   Miguel de Icaza (miguel@gnome.org)
+//
+// Copyright 2010, Novell, Inc.
+//
+// Code licensed under the MIT X11 license
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+namespace MonoTouch.Dialog
+{
+	using MonoTouch.UIKit;
+
+	/// <summary>
+	/// Used to display switch on the screen.
+	/// </summary>
+	public class BooleanElement : BoolElement
+	{
+		private UISwitch Switch;
+
+		public BooleanElement(string caption) : base(caption)
+		{
+		}
+
+		public BooleanElement(string caption, bool value) : base(caption, value)
+		{
+		}
+
+		public BooleanElement(string caption, bool value, string key) : base(caption, value)
+		{
+		}
+
+		public override void InitializeCell(UITableView tableView)
+		{
+			RemoveTag(1);
+			if (Switch == null)
+			{
+				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1, On = Value };
+				Switch.AddTarget(delegate
+				{
+					Value = Switch.On;
+				}, UIControlEvent.ValueChanged);
+			}
+
+			Cell.TextLabel.Text = Caption;
+			Cell.AccessoryView = Switch;
+		}
+
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Switch.Dispose();
+				Switch = null;
+			}
+		}
+
+		protected override void OnValueChanged()
+		{
+			base.OnValueChanged();
+			if (Switch != null && Switch.On != Value)
+				Switch.On = Value;
+		}
+	}
+}
