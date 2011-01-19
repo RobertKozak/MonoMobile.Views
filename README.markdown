@@ -10,7 +10,7 @@ whats going on.
 1. Because MonoTouch has a very aggressive linker if you bind to 
 something like "Entry.TextAlignment" it can fail if TextAlignment 
 is not used directly. I plan on exposing the most common properties
-to link to in each element in a Region called BinableProperties.
+to link to in each element in a Region called BindableProperties.
 
 2. Because of the way I am doing Generics in Root<T> (and possibly 
 Element<T>) I need to investigate another way of doing this. One of 
