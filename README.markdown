@@ -1,3 +1,25 @@
+IMPORTANT NOTE:
+===============
+
+This version works fine in the Simulator but there are issues with 
+the linker that gives subtle errors when deployed to the iPhone.
+
+I'll have a solution within the next few days now that I kinda see 
+whats going on.
+
+1. Because MonoTouch has a very aggressive linker if you bind to 
+something like "Entry.TextAlignment" it can fail if TextAlignment 
+is not used directly. I plan on exposing the most common properties
+to link to in each element in a Region called BinableProperties.
+
+2. Because of the way I am doing Generics in Root<T> (and possibly 
+Element<T>) I need to investigate another way of doing this. One of 
+the Errors I am seeing is after a RootElement is created it can fail 
+with an "Argument is out of range. Parameter name: index". This one
+is particularly interesting since I dont have an index property.
+
+But don't worry. I'm sure I'll have an answer in a few days :-)
+
 MonoTouch.MVVM
 ================
 
