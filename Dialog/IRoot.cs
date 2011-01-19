@@ -48,7 +48,7 @@ namespace MonoTouch.Dialog
 		UITableView TableView { get; set; }
 		int Count { get; }
 		int ItemIndex { get; set; }
-		NSIndexPath PathForRadio(int idx);
+		NSIndexPath PathForRadio();
 
 		void Prepare();
 		void Add(IEnumerable<ISection> sections);

@@ -144,7 +144,7 @@ namespace MonoTouch.Dialog
 
 		public List<ISection> Sections { get; set; }
 
-		public NSIndexPath PathForRadio(int idx)
+		public NSIndexPath PathForRadio()
 		{
 			RadioGroup radio = Group as RadioGroup;
 			if (radio == null)
@@ -160,7 +160,7 @@ namespace MonoTouch.Dialog
 					if (!(e is RadioElement))
 						continue;
 					
-					if (current == idx)
+					if (current == ItemIndex)
 					{
 						return NSIndexPath.Create(section, row);
 					}

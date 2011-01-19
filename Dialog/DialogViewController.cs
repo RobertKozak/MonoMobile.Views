@@ -555,16 +555,24 @@ namespace MonoTouch.Dialog
 				dirty = false;
 			}
 			
-			var rootElement = root as IRoot;
-			if (rootElement != null)
+			if (root != null)
 			{
-				if(rootElement.ItemIndex >-1)
+				var index = root.ItemIndex;
+			
+				if(index >-1)
 				{
-					var path = rootElement.PathForRadio(rootElement.ItemIndex);
+					// for some stupid reason this is not being called when running on phone.. it calls root.ToString() instead
+					// Seems to be a linker problem so redirectiing thru another method. 
+					var path = GetPath(root);
 					if (path != null)
 						tableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
 			}
+		}
+
+		public NSIndexPath GetPath(IRoot root)
+		{
+			return root.PathForRadio();
 		}
 
 		public virtual Source CreateSizingSource (bool unevenRows)

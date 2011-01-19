@@ -1,8 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Views/MovieListView.cs">
     <Files>
-      <File FileName="Dialog/Reflection API/BindingContext.cs" Line="238" Column="73" />
+      <File FileName="Dialog/Reflection API/BindingContext.cs" Line="238" Column="42" />
       <File FileName="Samples/Views/MovieListView.cs" Line="28" Column="83" />
       <File FileName="Samples/Views/MovieView.cs" Line="78" Column="34" />
       <File FileName="Dialog/Elements/Element.cs" Line="162" Column="1" />
@@ -12,7 +12,7 @@
       <File FileName="Binding/BindingExpression.cs" Line="127" Column="58" />
       <File FileName="Binding/Binding.cs" Line="50" Column="1" />
       <File FileName="Dialog/Elements/EntryElement.cs" Line="226" Column="43" />
-      <File FileName="Samples/ViewModels/InterestingViewModel.cs" Line="10" Column="44" />
+      <File FileName="Samples/ViewModels/InterestingViewModel.cs" Line="10" Column="41" />
       <File FileName="Samples/Views/AddressView.cs" Line="7" Column="40" />
       <File FileName="Samples/ViewModels/AddressViewModel.cs" Line="5" Column="2" />
     </Files>
