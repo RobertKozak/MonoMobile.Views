@@ -190,6 +190,7 @@
     <Compile Include="Application\TinyMessenger.cs" />
     <Compile Include="Dialog\Reflection API\ToolbarButton.cs" />
     <Compile Include="Dialog\Reflection API\EditButtonAttribute.cs" />
+    <Compile Include="Converters\UriConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

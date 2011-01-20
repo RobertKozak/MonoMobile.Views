@@ -42,7 +42,7 @@ namespace MonoTouch.Dialog
 
 	public class BindingContext : DisposableObject
 	{
-		private Dictionary<Type, Func<MemberInfo, string, object, Element>> _ElementPropertyMap;
+		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, Element>> _ElementPropertyMap;
 
 		public IRoot Root { get; set; }
 
@@ -192,7 +192,7 @@ namespace MonoTouch.Dialog
 			}
 
 			if(_ElementPropertyMap.ContainsKey(memberType))
-				element = _ElementPropertyMap[memberType](member, caption, dataContext);
+				element = _ElementPropertyMap[memberType](member, caption, dataContext, bindings);
 			else if (memberType.IsEnum)
 			{
 				SetDefaultConverter(member, "Value", new EnumConverter() { PropertyType = memberType }, bindings);
@@ -405,8 +405,8 @@ namespace MonoTouch.Dialog
 
 		private void BuildElementPropertyMap()
 		{
-			_ElementPropertyMap = new Dictionary<Type, Func<MemberInfo, string, object, Element>>();
-			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, dataContext)=>
+			_ElementPropertyMap = new Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, Element>>();
+			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 	
@@ -424,7 +424,7 @@ namespace MonoTouch.Dialog
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 		
@@ -436,7 +436,7 @@ namespace MonoTouch.Dialog
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(string), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(string), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 	
@@ -453,7 +453,10 @@ namespace MonoTouch.Dialog
 				else if (multilineAttribute != null)
 					element = new MultilineElement(caption);
 				else if (htmlAttribute != null)
+				{
+					SetDefaultConverter(member, "Value", new UriConverter(), bindings);
 					element = new HtmlElement(caption);
+				}
 				else
 				{
 					var selement = new StringElement(caption, (string)GetValue(member, dataContext));
@@ -471,7 +474,7 @@ namespace MonoTouch.Dialog
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(float), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(float), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 				var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
@@ -503,8 +506,13 @@ namespace MonoTouch.Dialog
 
 				return element;
 			});
+			
+			_ElementPropertyMap.Add(typeof(Uri), (member, caption, dataContext, bindings)=>
+			{
+				return new HtmlElement(caption, (Uri)GetValue(member, dataContext));  
+			});
 
-			_ElementPropertyMap.Add(typeof(bool), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(bool), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 
@@ -517,7 +525,7 @@ namespace MonoTouch.Dialog
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, dataContext, bindings)=>
 			{
 				Element element = null;
 
@@ -534,12 +542,12 @@ namespace MonoTouch.Dialog
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, dataContext, bindings)=>
 			{
 				return new ImageElement();
 			});
 
-			_ElementPropertyMap.Add(typeof(int), (member, caption, dataContext)=>
+			_ElementPropertyMap.Add(typeof(int), (member, caption, dataContext, bindings)=>
 			{
 				return new StringElement(caption) { Value = GetValue(member, dataContext).ToString() };
 			});

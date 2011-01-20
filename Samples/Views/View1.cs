@@ -26,7 +26,7 @@ namespace Samples
 		public View2()
 		{
 			Company = "Nowcom Corporation";
-			AddressView = new AddressView() {Number = "4751", Street ="S Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
+			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
 		}
 	}
 }

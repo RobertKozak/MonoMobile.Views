@@ -94,6 +94,7 @@
     <Compile Include="Views\MovieElement.cs" />
     <Compile Include="Views\View1.cs" />
     <Compile Include="Converters\CurrentMovieConverter.cs" />
+    <Compile Include="Views\WebSamples.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindowIPhone.xib" />

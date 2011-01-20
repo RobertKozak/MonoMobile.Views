@@ -36,6 +36,13 @@ namespace Samples
 			set { Set(()=>DynamicView, value); }
 		}
 		
+		[Section]
+		public View WebSamples
+		{
+			get { return Get(()=>WebSamples, new WebSamples()); }
+			set { Set(()=>WebSamples, value); }
+		}
+
 		[Button]
 		[Section(Order = 11)]
 		public void ChangeDynamicView()

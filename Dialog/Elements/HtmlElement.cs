@@ -36,29 +36,17 @@ namespace MonoTouch.Dialog
 	/// <summary>
 	///  Used to display a cell that will launch a web browser when selected.
 	/// </summary>
-	public class HtmlElement : Element<string>
+	public class HtmlElement : Element<Uri>
 	{
-		private NSUrl nsUrl;
 		private UIWebView web;
 
 		public HtmlElement(string caption) : base(caption)
 		{
 		}
 
-		public HtmlElement(string caption, string url) : base(caption)
+		public HtmlElement(string caption, Uri url) : base(caption)
 		{
-			Url = url;
-		}
-
-		public HtmlElement(string caption, NSUrl url) : base(caption)
-		{
-			nsUrl = url;
-		}
-
-		public string Url
-		{
-			get { return nsUrl.ToString(); }
-			set { nsUrl = new NSUrl(value); }
+			Value = url;
 		}
 
 		public override void InitializeCell(UITableView tableView)
@@ -126,14 +114,14 @@ namespace MonoTouch.Dialog
 			vc.View.AddSubview(web);
 			
 			dvc.ActivateController(vc, dvc);
-			web.LoadRequest(NSUrlRequest.FromUrl(nsUrl));
+
+			var url = new NSUrl(Value.AbsoluteUri);
+			web.LoadRequest(NSUrlRequest.FromUrl(url));
 		}
 
 		protected override void OnValueChanged()
 		{
 			base.OnValueChanged();
-			if (Value != null)
-				Url = FormatValue(Value);
 		}
 	}
 }
