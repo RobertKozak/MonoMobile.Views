@@ -1,9 +1,17 @@
 using System;
 using MonoTouch.MVVM;
+using MonoTouch.Foundation;
+
 namespace Samples
 {
 	public class AddressViewModel : ViewModel
 	{
+		[Preserve]
+		public AddressViewModel()
+		{
+
+		}
+
 		public string Number 
 		{
 			get { return Get(()=>Number); }

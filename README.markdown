@@ -1,10 +1,25 @@
-IMPORTANT NOTE:
+WHAT'S NEW
+==========
+
+1. 	Fixed some bugs
+2. 	Added ToolbarButton attribute and a simple implementation for creating Toolbar Buttons. 
+	More to come with this in the next update.
+3.	Fixed some outstanding Linking issues and Added Important note about Link Behavior. (See Below)
+
+ 
+IMPORTANT NOTE: 
 ===============
 
-Found out the issue with it failing on the phone was a problem with a bug in
-the linker. In calling PathForRadio() is was actually calling ToString() for 
-some weird unknown reason. I quick fix was to redirect the call to PathForRadio 
-through another Method. Seems to be fine now on the iPhone.  
+** Link Behavior ** 
+
+When you compile make sure Linker Behavior is set to "Don't Link" or "Link SDK Assemblies Only". 
+Binding might not be able to see certain properties because they might be removed by the linker.
+
+If you want to set it to "Link all assemblies", because you are trying to shrink your app to
+the smallest you can get, you will need to place [Preserve(AllMembers=true)] attribute on
+all of your Views and ViewModels otherwise properties you want to bind most likely will have
+been removed by the linker.
+
 
 MonoTouch.MVVM
 ================

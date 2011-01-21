@@ -61,6 +61,7 @@ namespace MonoTouch.Dialog
 					root.Dispose ();
 				
 				root = value;
+				root.Controller = this;
 				root.TableView = tableView;		
 				ReloadData ();
 			}
@@ -441,14 +442,15 @@ namespace MonoTouch.Dialog
 		{
 			dirty = true;
 			
-			if (typeof(DialogViewController) == controller.GetType()){
+			var parent = ParentViewController;
+			var nav = parent as UINavigationController;
+
+			if (typeof(DialogViewController) == controller.GetType())
+			{
 				var dialog= (DialogViewController)controller;
 				dialog.TableView.BackgroundColor = oldController.TableView.BackgroundColor;
 			}
-			
-			var parent = ParentViewController;
-			var nav = parent as UINavigationController;
-			
+
 			// We can not push a nav controller into a nav controller
 			if (nav != null && !(controller is UINavigationController))
 				nav.PushViewController (controller, true);
@@ -509,12 +511,20 @@ namespace MonoTouch.Dialog
 			View = tableView;
 			SetupSearch ();
 			ConfigureTableView ();
+			ConfigureToolbarItems();
 			
 			if (root == null)
 				return;
 			root.TableView = tableView;
 		}
-		
+		private void ConfigureToolbarItems()
+		{		
+			if (Root != null && Root.ToolbarButtons != null)
+			{
+				SetToolbarItems(Root.ToolbarButtons.ToArray(), true);
+			}
+		}
+
 		void ConfigureTableView ()
 		{
 			if (refreshRequested != null){
@@ -542,9 +552,15 @@ namespace MonoTouch.Dialog
 						TableView.ContentOffset = new PointF (0, 44);
 				}
 			}
+	
 			if (root == null)
-				return;
+				return;		
 			
+			var parent = ParentViewController;
+			var nav = parent as UINavigationController;
+			if (nav != null)
+				nav.ToolbarHidden = ToolbarItems == null;
+
 			root.Prepare ();
 			
 			NavigationItem.HidesBackButton = !pushing;

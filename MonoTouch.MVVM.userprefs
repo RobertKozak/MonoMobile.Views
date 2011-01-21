@@ -1,20 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Views/MovieListView.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="README.markdown">
     <Files>
-      <File FileName="Dialog/Reflection API/BindingContext.cs" Line="238" Column="42" />
-      <File FileName="Samples/Views/MovieListView.cs" Line="28" Column="83" />
-      <File FileName="Samples/Views/MovieView.cs" Line="78" Column="34" />
-      <File FileName="Dialog/Elements/Element.cs" Line="162" Column="1" />
-      <File FileName="Samples/Views/InterestingView.cs" Line="12" Column="9" />
-      <File FileName="Samples/Views/View1.cs" Line="16" Column="32" />
-      <File FileName="Dialog/Elements/RootElement.cs" Line="521" Column="98" />
-      <File FileName="Binding/BindingExpression.cs" Line="127" Column="58" />
-      <File FileName="Binding/Binding.cs" Line="50" Column="1" />
-      <File FileName="Dialog/Elements/EntryElement.cs" Line="226" Column="43" />
-      <File FileName="Samples/ViewModels/InterestingViewModel.cs" Line="10" Column="41" />
-      <File FileName="Samples/Views/AddressView.cs" Line="7" Column="40" />
-      <File FileName="Samples/ViewModels/AddressViewModel.cs" Line="5" Column="2" />
+      <File FileName="Dialog/Reflection API/BindingContext.cs" Line="305" Column="1" />
+      <File FileName="Samples/Views/MovieView.cs" Line="77" Column="1" />
+      <File FileName="Dialog/DialogViewController.cs" Line="490" Column="3" />
+      <File FileName="Dialog/Elements/RootElement.cs" Line="416" Column="1" />
+      <File FileName="Samples/Views/InterestingView.cs" Line="10" Column="10" />
+      <File FileName="Dialog/Elements/Element.cs" Line="271" Column="1" />
+      <File FileName="Dialog/Reflection API/OrderAttribute.cs" Line="32" Column="15" />
+      <File FileName="Dialog/Elements/ElementBadge.cs" Line="1" Column="1" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="11" Column="9" />
+      <File FileName="Dialog/Elements/ListBoxElement.cs" Line="7" Column="31" />
+      <File FileName="Dialog/Elements/Section.cs" Line="79" Column="1" />
+      <File FileName="View/View.cs" Line="130" Column="1" />
+      <File FileName="Samples/Views/View1.cs" Line="6" Column="24" />
+      <File FileName="Samples/ViewModels/AddressViewModel.cs" Line="4" Column="1" />
+      <File FileName="ViewModel/ViewModel.cs" Line="35" Column="2" />
+      <File FileName="Samples/Views/MovieElement.cs" Line="1" Column="1" />
+      <File FileName="README.markdown" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -22,22 +26,16 @@
           <Node name="MonoTouch.MVVM" expanded="True">
             <Option id="ShowVersionControlOverlays" value="True" />
             <Option id="ShowAllFiles" value="False" />
-            <Node name="Application" expanded="True" />
-            <Node name="Binding" expanded="True" />
-            <Node name="Collections" expanded="True">
-              <Node name="System.Collections.ObjectModel" expanded="True" />
-            </Node>
-            <Node name="Converters" expanded="True" />
             <Node name="Dialog" expanded="True">
               <Node name="Elements" expanded="True" />
               <Node name="Reflection API" expanded="True" />
             </Node>
+            <Node name="View" expanded="True" />
+            <Node name="ViewModel" expanded="True" />
           </Node>
-          <Node name="Samples" expanded="True">
+          <Node name="Samples" expanded="True" selected="True">
             <Node name="ViewModels" expanded="True" />
-            <Node name="Views" expanded="True">
-              <Node name="MovieListView.cs" selected="True" />
-            </Node>
+            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -46,7 +44,7 @@
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>this</Value>
+          <Value>member</Value>
         </State>
       </Pad>
       <Pad Id="ConnectionManagerPad">
@@ -55,7 +53,9 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/rkozak/Projects/MonoTouch.MVVM/Dialog/DialogViewController.cs" line="467" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <AuthorInfo Name="Robert Kozak" Email="rkozak@gmailcom" Copyright="2011 Nowcom Corporation" />

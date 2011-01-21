@@ -38,6 +38,7 @@ namespace MonoTouch.Dialog
 	{
 		UITableViewCellStyle CellStyle { get; set; }
 		Type ElementType {get; set;}
+		DialogViewController Controller { get; set; }
 		
 		List<UIBarButtonItem> ToolbarButtons { get; set; }
 

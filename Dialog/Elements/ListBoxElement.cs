@@ -1,7 +1,10 @@
 using System;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+
 namespace MonoTouch.Dialog
 {
+	[Preserve(AllMembers = true)]
 	public class ListBoxElement : Section
 	{
 		public ListBoxElement() : base("")

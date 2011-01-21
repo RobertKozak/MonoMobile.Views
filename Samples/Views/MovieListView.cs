@@ -1,3 +1,4 @@
+using MonoTouch.Foundation;
 namespace Samples
 {
 	using System;
@@ -6,7 +7,8 @@ namespace Samples
 	using MonoTouch.Dialog;
 	using MonoTouch.UIKit;
 	using System.Linq;
-
+	
+	[Preserve(AllMembers=true)]
 	public class MovieListView: View<MovieViewModel>
 	{
 		private View1 _View1 = new View1();

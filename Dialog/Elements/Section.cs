@@ -76,6 +76,7 @@ namespace MonoTouch.Dialog
 	/// <summary>
 	/// Generic base version of Section
 	/// </summary>
+	[Preserve(AllMembers=true)]
 	public class Section : Element, ISection, IEnumerable
 	{
 		private object header, footer;

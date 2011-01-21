@@ -34,12 +34,12 @@ namespace MonoTouch.Dialog
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class OrderAttribute : Attribute
 	{
-		public OrderAttribute(int order)
+		public OrderAttribute (int order)
 		{
 			Order = order;
 		}
 
-		internal int Order;
+		public int Order;
 	}
 }
 

@@ -65,8 +65,9 @@ namespace MonoTouch.Dialog
 	public class RootElement<T> : Element<T>, IEnumerable, IRoot
 	{		
 		public Type ElementType { get; set; }
-		public List<UIBarButtonItem> ToolbarButtons { get; set; }
-		public UIBarButtonItem EditButton { get; set; }
+		public DialogViewController Controller {get; set;}
+
+		public List<UIBarButtonItem> ToolbarButtons { get; set; } 
 
 		private int summarySection, summaryElement;
 		private Func<IRoot, UIViewController> createOnSelected;
@@ -77,7 +78,8 @@ namespace MonoTouch.Dialog
 		public Group Group { get; set; }
 		public bool UnevenRows { get; set; }
 		public UITableView TableView { get; set; }
-
+		
+		[Preserve]
 		public RootElement(): this("")
 		{
 		}
@@ -541,11 +543,7 @@ namespace MonoTouch.Dialog
 				return createOnSelected(this);
 
 			var dvc = new DialogViewController(this, true) { Autorotate = true };
-			
-			if(ToolbarButtons != null)
-				dvc.SetToolbarItems(ToolbarButtons.ToArray(), true);
-			
-	//		dvc.EditButtonItem = EditButton;
+;
 			return dvc;
 		}
 

@@ -32,6 +32,7 @@ namespace MonoTouch.Dialog
 	using System;
 	using System.Drawing;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 
 	/// <summary>
 	/// An element that can be used to enter text.
@@ -43,6 +44,11 @@ namespace MonoTouch.Dialog
 	/// </remarks>
 	public class EntryElement : Element<string>
 	{
+		private static  UITextField __UITextField = new UITextField();
+		private  UITextAlignment __textAlignment = __UITextField.TextAlignment;
+		private  UIKeyboardType __keyboard = __UITextField.KeyboardType; 
+		private  UIFont _font = __UITextField.Font;
+
 		/// <summary>
 		/// The type of keyboard used for input, you can change
 		/// this to use this for numeric input, email addressed,
@@ -179,10 +185,11 @@ namespace MonoTouch.Dialog
 			{
 				SizeF size = ComputeEntryPosition(tableView, Cell);
 				var _entry = new UITextField(new RectangleF(size.Width, (Cell.ContentView.Bounds.Height - size.Height) / 2 - 1, 290 - size.Width, size.Height)) { Tag = 1, Placeholder = _Placeholder ?? "", SecureTextEntry = _IsPassword };
+				_entry.Font = UIFont.SystemFontOfSize(17);
 				_entry.AddTarget(delegate { Value = _entry.Text; }, UIControlEvent.ValueChanged);
 
 				Entry = _entry;
-				
+
 				Entry.Ended += delegate
 				{
 					Value = Entry.Text;

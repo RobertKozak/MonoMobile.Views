@@ -84,23 +84,6 @@ namespace MonoTouch.Dialog
 				var inline = member.GetCustomAttribute<InlineAttribute>() != null;
 				var isList = member.GetCustomAttribute<ListAttribute>() != null;
 				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
-				var editButtonAttribute = member.GetCustomAttribute<EditButtonAttribute>();
-
-				if (toolbarButtonAttribute != null)
-				{
-					var button = new UIBarButtonItem(toolbarButtonAttribute.ButtonType, delegate { (member as MethodInfo).Invoke(dataContext, new object[] {}); });
-					if(root.ToolbarButtons == null)
-						root.ToolbarButtons = new List<UIBarButtonItem>();
-
-					root.ToolbarButtons.Add(button);
-				}
-
-				if (editButtonAttribute != null)
-				{
-					var button = new UIBarButtonItem(toolbarButtonAttribute.ButtonType, delegate { (member as MethodInfo).Invoke(dataContext, new object[] {}); });
-					//root.EditButton = button;
-				}
 
 				if (sectionAttribute != null)
 				{
@@ -108,19 +91,22 @@ namespace MonoTouch.Dialog
 					lastSection.Parent = root as Element;
 					sectionList.Add(lastSection);
 				}
-
+				
 				newElement = GetElementForMember(dataContext, member);
 
-				if ((inline || isList) && newElement is IRoot)
+				if(newElement != null)
 				{
-					foreach(var element in ((IRoot)newElement).Sections[0].Elements)
-						lastSection.Add(element);
-
-					root.Group = ((IRoot)newElement).Group;
-				}
-				else
-				{
-					lastSection.Add(newElement);
+					if ((inline || isList) && newElement is IRoot)
+					{
+						foreach(var element in ((IRoot)newElement).Sections[0].Elements)
+							lastSection.Add(element);
+	
+						root.Group = ((IRoot)newElement).Group;
+					}
+					else
+					{
+						lastSection.Add(newElement);
+					}
 				}
 			}
 
@@ -138,7 +124,6 @@ namespace MonoTouch.Dialog
 		{
 			string caption = null;
 			Element element = null;
-			//MemberInfo last_radio_index = null;
 			var bindings = new List<Binding>();
 
 			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
@@ -247,7 +232,7 @@ namespace MonoTouch.Dialog
 			else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(memberType))
 			{
 				SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
-				var listBox = new ListBoxElement();
+				ListBoxElement listBox = new ListBoxElement();
 				int index = 0;
 
 				Type viewType = memberType.GetGenericArguments()[0];
@@ -262,9 +247,9 @@ namespace MonoTouch.Dialog
 					newElement = CreateGenericRoot(viewType, null, e);
 					if (rootAttribute != null)
 						((IRoot)newElement).ElementType = rootAttribute.DataTemplateType; 
+			
+					((IRoot)newElement).ToolbarButtons = CheckForToolbarItems(e);
 
-					//Populate(e, (IRoot)newElement);
-										
 					listBox.Add(newElement);
 					index++;
 				}
@@ -278,23 +263,21 @@ namespace MonoTouch.Dialog
 				var nested = GetValue(member, memberDataContext);
 				if (nested != null)
 				{
-			//		if(nested is IView)
-			//			SetDefaultConverter(member, "Value", new ViewConverter(), bindings);
-					
 					var newRoot = CreateGenericRoot(memberType, null, nested);
 					newRoot.Caption = caption;
 					((IRoot)newRoot).CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 
-				//	Populate(nested, (IRoot)newRoot);
+					((IRoot)newRoot).ToolbarButtons = CheckForToolbarItems(nested);
+
 					element = newRoot;
 				}
 			}
-
-			if (orderAttribute != null)
+			
+			if (orderAttribute != null && element != null)
 				element.Order = orderAttribute.Order;
 
 			var bindable = element as IBindable;
-			if (bindable != null && bindings.Count != 0) //&& !(bindable is IRoot)
+			if (bindable != null && bindings.Count != 0)
 			{
 				foreach (Binding binding in bindings)
 				{
@@ -359,6 +342,40 @@ namespace MonoTouch.Dialog
 			var pi = mi as PropertyInfo;
 			var setMethod = pi.GetSetMethod();
 			setMethod.Invoke(o, new object[] { val });
+		}
+
+		private List<UIBarButtonItem> CheckForToolbarItems(object dataContext)
+		{
+			var buttonList = new List<UIBarButtonItem>();
+			var members = GetMembers(dataContext);
+			foreach(var member in members)
+			{
+				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
+				var editButtonAttribute = member.GetCustomAttribute<EditButtonAttribute>();
+
+				if (toolbarButtonAttribute != null)
+				{
+					var command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
+					var button = new UIBarButtonItem(toolbarButtonAttribute.ButtonType, delegate {command.Execute(null); });
+					button.Style = toolbarButtonAttribute.Style;
+				
+					var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
+					if (orderAttribute != null)
+						button.Tag = orderAttribute.Order;
+					else 
+						button.Tag = 0;
+					
+					buttonList.Add(button);
+				}
+			}
+			
+			if (buttonList.Count > 0)
+			{
+				var sortedList = buttonList.OrderBy(button=>button.Tag).ToList();
+				return sortedList;
+			}	
+
+			return null;
 		}
 
 		private static string MakeCaption(string name)
@@ -569,12 +586,14 @@ namespace MonoTouch.Dialog
 			Type[] generic = { type };
 			
 			var genericType = rootType.MakeGenericType(generic);
+			object genericRoot = Activator.CreateInstance(genericType);
 
-			var root = Activator.CreateInstance(genericType);
-			root.GetType().GetProperty("Value").SetValue(root, value, null);
-			((IRoot)root).Add(section);
+			PropertyInfo propertyInfo = genericType.GetProperty("Value");
+			propertyInfo.SetValue(genericRoot, value, null);
+
+			((IRoot)genericRoot).Add(section);
 			
-			var element = root as Element;
+			var element = genericRoot as Element;
 			return element;
 		}
 

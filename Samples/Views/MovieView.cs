@@ -68,11 +68,11 @@ namespace Samples
 		{
 			ShownIn3D = !ShownIn3D;
 		}
-
+		
 		[ToolbarButton(UIBarButtonSystemItem.Add)]
 		public void Add()
 		{
-			ShownIn3D = !ShownIn3D;
+
 		}
 
 		public override string ToString()

@@ -2,9 +2,12 @@ using System;
 using MonoTouch.MVVM;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using System.ComponentModel;
+using MonoTouch.Foundation;
 
 namespace Samples
 {
+	[Preserve(AllMembers=true)]
 	public class InterestingView: View<InterestingViewModel>
 	{
 		[Bind("CaptionSize", "Entry.Font", ValueConverterType = typeof(FontConverter))]
@@ -28,7 +31,7 @@ namespace Samples
 		[Entry]
 		public string Number 
 		{
-			get { return Get (() => Number); }
+			get { return Get (() => Number, "Testing number"); }
 			set { Set (() => Number, value); }
 		}
 
@@ -54,6 +57,22 @@ namespace Samples
 		{
 			get { return Get (() => KeyboardType, UIKeyboardType.Default); }
 			set { Set (() => KeyboardType, value); }
+		}
+
+		[ToolbarButton(UIBarButtonSystemItem.Edit, Style = UIBarButtonItemStyle.Plain)]
+		//[DisplayOrder(1)]
+		[Order(1)]
+		[Caption("Test")]
+		[Description("")]
+		public void TestEditButton()
+		{
+			var x = 10;
+		}
+
+		[ToolbarButton(UIBarButtonSystemItem.Done, Style = UIBarButtonItemStyle.Plain)]
+		public void TestAddButton()
+		{
+			
 		}
 	}	
 }

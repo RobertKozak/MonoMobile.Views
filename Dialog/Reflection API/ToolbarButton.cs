@@ -6,12 +6,18 @@ namespace MonoTouch.MVVM
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public class ToolbarButtonAttribute: Attribute
 	{
-		public ToolbarButtonAttribute(UIBarButtonSystemItem buttonType)
+		public ToolbarButtonAttribute()
+		{
+			Style = UIBarButtonItemStyle.Bordered;
+		}
+		
+		public ToolbarButtonAttribute(UIBarButtonSystemItem buttonType): this()
 		{
 			ButtonType = buttonType;
 		}
 
 		public UIBarButtonSystemItem ButtonType { get; set; }
+		public UIBarButtonItemStyle Style { get; set; }
 	}
 }
 
