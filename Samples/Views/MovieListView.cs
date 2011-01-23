@@ -21,6 +21,23 @@ namespace Samples
 			get;
 			set;
 		}
+		
+		[Button("AddMovie")]
+		public string MyCommand { get; set;}
+		
+		[Section]
+		[Root(DataTemplateType = typeof(MovieElement))]
+		[NavbarButton(UIBarButtonSystemItem.Add)]
+		public ObservableCollection<MovieView> Movies2 
+		{
+		get; set;
+		}
+		
+
+public void AddMovie()
+{
+var s = 43;
+}
 
 		[Section]
 		[Root(CellStyle = UITableViewCellStyle.Subtitle)]
@@ -80,6 +97,8 @@ namespace Samples
 			{
 				Movies.Add(new MovieView() { DataContext = movie });
 			}
+
+Movies2 = Movies;
 		}
 	}
 }

@@ -67,7 +67,8 @@ namespace MonoTouch.Dialog
 		public Type ElementType { get; set; }
 		public DialogViewController Controller {get; set;}
 
-		public List<UIBarButtonItem> ToolbarButtons { get; set; } 
+		public List<CommandBarButtonItem> ToolbarButtons { get; set; } 
+		public List<CommandBarButtonItem> NavbarButtons { get; set; }
 
 		private int summarySection, summaryElement;
 		private Func<IRoot, UIViewController> createOnSelected;

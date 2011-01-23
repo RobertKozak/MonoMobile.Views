@@ -249,6 +249,7 @@ namespace MonoTouch.Dialog
 						((IRoot)newElement).ElementType = rootAttribute.DataTemplateType; 
 			
 					((IRoot)newElement).ToolbarButtons = CheckForToolbarItems(e);
+					((IRoot)newElement).NavbarButtons = CheckForNavbarItems(e);
 
 					listBox.Add(newElement);
 					index++;
@@ -257,6 +258,9 @@ namespace MonoTouch.Dialog
 				element = CreateGenericRoot(memberType, listBox, null);
 				element.Caption = caption;
 				((IRoot)element).CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
+				((IRoot)element).ToolbarButtons = CheckForToolbarItems(dataContext);
+				((IRoot)element).NavbarButtons = CheckForNavbarItems(dataContext);
+
 			}
 			else
 			{
@@ -268,6 +272,7 @@ namespace MonoTouch.Dialog
 					((IRoot)newRoot).CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 
 					((IRoot)newRoot).ToolbarButtons = CheckForToolbarItems(nested);
+					((IRoot)newRoot).NavbarButtons = CheckForNavbarItems(nested);
 
 					element = newRoot;
 				}
@@ -344,26 +349,99 @@ namespace MonoTouch.Dialog
 			setMethod.Invoke(o, new object[] { val });
 		}
 
-		private List<UIBarButtonItem> CheckForToolbarItems(object dataContext)
+		private List<CommandBarButtonItem> CheckForToolbarItems(object dataContext)
 		{
-			var buttonList = new List<UIBarButtonItem>();
+			var buttonList = new List<CommandBarButtonItem>();
 			var members = GetMembers(dataContext);
 			foreach(var member in members)
 			{
-				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
-				var editButtonAttribute = member.GetCustomAttribute<EditButtonAttribute>();
-
+				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>(false);
+				var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
+				var caption = captionAttribute != null ? captionAttribute.Caption : string.Empty;
+				
 				if (toolbarButtonAttribute != null)
 				{
-					var command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
-					var button = new UIBarButtonItem(toolbarButtonAttribute.ButtonType, delegate {command.Execute(null); });
-					button.Style = toolbarButtonAttribute.Style;
+					var title = caption ?? toolbarButtonAttribute.Title;
+
+					ICommand command = null;
+					var methodInfo = member as MethodInfo;
+
+					if(methodInfo != null)
+						command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
+
+					CommandBarButtonItem button = null;
+
+					if(!string.IsNullOrEmpty(title))
+					{
+						button = new CommandBarButtonItem(title, toolbarButtonAttribute.Style, delegate {command.Execute(null); });
+					}
+					else
+					{
+						button = new CommandBarButtonItem(toolbarButtonAttribute.ButtonType,  delegate {command.Execute(null); });
+						button.Style = toolbarButtonAttribute.Style;
+					}
 				
+					button.Enabled = true;
+					button.Location = toolbarButtonAttribute.Location;
+
 					var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 					if (orderAttribute != null)
-						button.Tag = orderAttribute.Order;
+						button.Order = orderAttribute.Order;
 					else 
-						button.Tag = 0;
+						button.Order = 0;
+					
+					buttonList.Add(button);
+				}
+			}
+			
+			if (buttonList.Count > 0)
+			{
+				var sortedList = buttonList.OrderBy(button=>button.Tag).ToList();
+				return sortedList;
+			}	
+
+			return null;
+		}
+
+		private List<CommandBarButtonItem> CheckForNavbarItems(object dataContext)
+		{
+			var buttonList = new List<CommandBarButtonItem>();
+			var members = GetMembers(dataContext);
+			foreach(var member in members)
+			{
+				var navbarButtonAttribute = member.GetCustomAttribute<NavbarButtonAttribute>(false);
+				var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
+				var caption = captionAttribute != null ? captionAttribute.Caption : string.Empty;
+
+				if (navbarButtonAttribute != null)
+				{
+					var title = caption ?? navbarButtonAttribute.Title;
+
+					ICommand command = null;
+					var methodInfo = member as MethodInfo;
+
+					if(methodInfo != null)
+						command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
+					
+					CommandBarButtonItem button = null;
+					if(!string.IsNullOrEmpty(title))
+					{
+						button = new CommandBarButtonItem(title, navbarButtonAttribute.Style, delegate {command.Execute(null); });
+					}
+					else
+					{
+						button = new CommandBarButtonItem(navbarButtonAttribute.ButtonType, delegate {command.Execute(null); });
+						button.Style = navbarButtonAttribute.Style;
+					}
+				
+					button.Enabled = true;
+					button.Location = navbarButtonAttribute.Location;
+
+					var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
+					if (orderAttribute != null)
+						button.Order = orderAttribute.Order;
+					else 
+						button.Order = 0;
 					
 					buttonList.Add(button);
 				}

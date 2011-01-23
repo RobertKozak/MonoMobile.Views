@@ -33,6 +33,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch.Foundation;
+using MonoTouch.MVVM;
 
 namespace MonoTouch.Dialog
 {
@@ -450,7 +451,7 @@ namespace MonoTouch.Dialog
 				var dialog= (DialogViewController)controller;
 				dialog.TableView.BackgroundColor = oldController.TableView.BackgroundColor;
 			}
-
+	
 			// We can not push a nav controller into a nav controller
 			if (nav != null && !(controller is UINavigationController))
 				nav.PushViewController (controller, true);
@@ -559,10 +560,22 @@ namespace MonoTouch.Dialog
 			var parent = ParentViewController;
 			var nav = parent as UINavigationController;
 			if (nav != null)
+			{
 				nav.ToolbarHidden = ToolbarItems == null;
-
-			root.Prepare ();
+				if (Root.NavbarButtons != null)
+				{
+					foreach(var button in Root.NavbarButtons)
+					{		
+						if (button.Location == BarButtonLocation.Right)
+							NavigationItem.RightBarButtonItem = button;
+						else
+							NavigationItem.LeftBarButtonItem = button;
+					}
+				}
+			}
 			
+			root.Prepare ();
+
 			NavigationItem.HidesBackButton = !pushing;
 			if (root.Caption != null)
 				NavigationItem.Title = root.Caption;

@@ -190,9 +190,10 @@
     <Compile Include="Application\TinyIoC.cs" />
     <Compile Include="Application\TinyMessenger.cs" />
     <Compile Include="Dialog\Reflection API\ToolbarButton.cs" />
-    <Compile Include="Dialog\Reflection API\EditButtonAttribute.cs" />
     <Compile Include="Converters\UriConverter.cs" />
-    <Compile Include="Binding\RegisteredProperties.cs" />
+    <Compile Include="Dialog\Reflection API\NavbarButtonAttribute.cs" />
+    <Compile Include="Dialog\Reflection API\BarButtonLocation.cs" />
+    <Compile Include="Dialog\Controls\CommandBarButtonItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -210,6 +211,7 @@
     <Folder Include="Dialog\Reflection API\" />
     <Folder Include="Converters\" />
     <Folder Include="Model\" />
+    <Folder Include="Dialog\Controls\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">

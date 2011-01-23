@@ -59,7 +59,7 @@ namespace Samples
 			set { Set (() => KeyboardType, value); }
 		}
 
-		[ToolbarButton(UIBarButtonSystemItem.Edit, Style = UIBarButtonItemStyle.Plain)]
+		[ToolbarButton(Style = UIBarButtonItemStyle.Plain)]
 		//[DisplayOrder(1)]
 		[Order(1)]
 		[Caption("Test")]
@@ -69,10 +69,11 @@ namespace Samples
 			var x = 10;
 		}
 
-		[ToolbarButton(UIBarButtonSystemItem.Done, Style = UIBarButtonItemStyle.Plain)]
+		[NavbarButton("View", Style = UIBarButtonItemStyle.Plain)]
+		[Caption("Test1")]
 		public void TestAddButton()
 		{
-			
+			var x = 4;
 		}
 	}	
 }

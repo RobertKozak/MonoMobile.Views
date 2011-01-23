@@ -1,10 +1,10 @@
 //
-// IRoot.cs
+// BarButtonLocation
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com)
 //
-// Copyright 2011, Nowcom Corporation
+// Copyright 2011, Nowcom Corportation
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,36 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoTouch.MVVM
 {
-	using System;
-	using System.Collections.Generic;
-	using MonoTouch.UIKit;
-	using MonoTouch.Foundation;
-	using MonoTouch.MVVM;
-
-	public interface IRoot: IDisposable
+	public enum BarButtonLocation
 	{
-		UITableViewCellStyle CellStyle { get; set; }
-		Type ElementType {get; set;}
-		DialogViewController Controller { get; set; }
-		
-		List<CommandBarButtonItem> ToolbarButtons { get; set; }
-		List<CommandBarButtonItem> NavbarButtons { get; set; }
-
-		List<ISection> Sections { get; set; }
-		bool UnevenRows { get; set;}
-		string Caption { get; set; }
-		Group Group { get; set; }
-		UITableView TableView { get; set; }
-		int Count { get; }
-		int ItemIndex { get; set; }
-		NSIndexPath PathForRadio();
-
-		void Prepare();
-		void Add(IEnumerable<ISection> sections);
-		void Add(ISection section);
-		void Clear();
-		int IndexOf(ISection section);
+		Left = 1,
+		Right = 2
 	}
 }

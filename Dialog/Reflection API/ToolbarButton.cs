@@ -16,8 +16,15 @@ namespace MonoTouch.MVVM
 			ButtonType = buttonType;
 		}
 
+		public ToolbarButtonAttribute(string title) : this()
+		{
+			Title = title;
+		}
+
 		public UIBarButtonSystemItem ButtonType { get; set; }
 		public UIBarButtonItemStyle Style { get; set; }
+		public string Title { get; set; }
+		public BarButtonLocation Location { get; set; }
 	}
 }
 
