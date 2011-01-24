@@ -22,18 +22,15 @@ namespace Samples
 			set;
 		}
 		
-		[Button("AddMovie")]
-		public string MyCommand { get; set;}
-		
 		[Section]
-		[Root(DataTemplateType = typeof(MovieElement))]
 		[NavbarButton(UIBarButtonSystemItem.Add)]
 		public ObservableCollection<MovieView> Movies2 
 		{
 		get; set;
 		}
 		
-
+		
+[NavbarButton("Add")]
 public void AddMovie()
 {
 var s = 43;

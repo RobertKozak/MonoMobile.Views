@@ -258,9 +258,6 @@ namespace MonoTouch.Dialog
 				element = CreateGenericRoot(memberType, listBox, null);
 				element.Caption = caption;
 				((IRoot)element).CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
-				((IRoot)element).ToolbarButtons = CheckForToolbarItems(dataContext);
-				((IRoot)element).NavbarButtons = CheckForNavbarItems(dataContext);
-
 			}
 			else
 			{

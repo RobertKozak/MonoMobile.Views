@@ -42,10 +42,10 @@ namespace Samples
 			set { Set (() => Zip, value); }
 		}
 
-//		public override string ToString()
-//		{
-//			return string.Format ("{0} {1}, {2}, {3}, {4}", Number, Street, City, State, Zip);
-//		}
+		public override string ToString()
+		{
+			return string.Format ("{0} {1}, {2}, {3}, {4}", Number, Street, City, State, Zip);
+		}
 	}
 }
 
