@@ -178,7 +178,15 @@ namespace MonoTouch.Dialog
 			s.EntryAlignment = new SizeF(25 + Math.Min(max.Width, 160), max.Height);
 			return s.EntryAlignment;
 		}
-
+		
+		public override void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+			base.Selected (dvc, tableView, path);
+			Entry.InvokeOnMainThread(()=>{
+				Entry.BecomeFirstResponder();
+			});
+		}
+		
 		public override void InitializeControls(UITableView tableView)
 		{
 			if (Entry == null)
