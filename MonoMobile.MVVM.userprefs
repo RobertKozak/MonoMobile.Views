@@ -1,0 +1,50 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Themes/DarkHeaderTheme.cs">
+    <Files>
+      <File FileName="Dialog/DialogViewController.cs" Line="422" Column="1" />
+      <File FileName="Dialog/BindingContext.cs" Line="98" Column="1" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="279" Column="43" />
+      <File FileName="Samples/Themes/FrostedTheme.cs" Line="45" Column="18" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="63" Column="63" />
+      <File FileName="Dialog/Element.cs" Line="391" Column="1" />
+      <File FileName="Samples/Themes/DarkHeaderTheme.cs" Line="12" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True" selected="True">
+          <Option id="ShowVersionControlOverlays" value="True" />
+          <Option id="ShowAllFiles" value="False" />
+          <Node name="MonoMobile.MVVM" expanded="True">
+            <Node name="Collections" expanded="True" />
+            <Node name="Dialog" expanded="True" />
+            <Node name="Images">
+              <Option id="ShowAllFiles" value="True" />
+            </Node>
+          </Node>
+          <Node name="Samples" expanded="True">
+            <Node name="Themes" expanded="True" />
+            <Node name="Views" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>theme.Name</Value>
+          <Value>newElement.Theme.Name</Value>
+        </State>
+      </Pad>
+      <Pad Id="ConnectionManagerPad">
+        <State selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <AuthorInfo Name="Robert Kozak" Email="rkozak@gmailcom" Copyright="2011 Nowcom Corporation" />
+</Properties>

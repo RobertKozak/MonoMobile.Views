@@ -1,8 +1,8 @@
-﻿//
+//
 // EnumExtensions.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -46,7 +46,7 @@ namespace System
                 throw new ArgumentException("is not an enum", "enumType");
             }
 
-            string value = String.Empty;
+            string value = string.Empty;
 
             var enumFields = from field in enumType.GetFields()
                              where field.IsLiteral && field.Name == name
@@ -62,5 +62,31 @@ namespace System
 
             return value;
         }
+
+		public static int GetValueFromString(Type enumType, string descriptionValue)
+		{
+			int? result = null;
+			
+			var index = 0;
+			foreach (var enumField in enumType.GetFields())
+			{
+				if (enumField.IsSpecialName)
+					continue;
+				
+				var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(enumField, typeof(DescriptionAttribute));
+				if (attribute != null && attribute.Description == descriptionValue)
+				{
+					result = index;
+					break;
+				}
+				
+				index++;
+			}
+			
+			if (result == null)
+				result = (int)Enum.Parse(enumType, descriptionValue);
+			
+			return result.Value;
+		}
     }
 }

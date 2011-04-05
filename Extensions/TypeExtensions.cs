@@ -1,4 +1,5 @@
-namespace MonoTouch.MVVM
+using System.Linq;
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Reflection;
@@ -19,44 +20,91 @@ namespace MonoTouch.MVVM
 			return default(T);
 		}
 
-		public static PropertyInfo GetNestedProperty(this Type sourceType, ref object obj, string path, bool allowPrivateProperties)
+		public static MemberInfo GetNestedMember(this Type sourceType, ref object obj, string path, bool allowPrivateMembers)
 		{
-			BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+			BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 			
-			if (allowPrivateProperties)
-				bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+			if (allowPrivateMembers)
+				bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 			
 			Type type = sourceType;
 			
-			if (path.Contains(".")) 
+			if (path.Contains("."))
 			{
-				PropertyInfo info = null;
-				var properties = path.Split('.');
-				for (int index = 0; index < properties.Length; index++) 
+				MemberInfo info = null;
+				var members = path.Split('.');
+				for (int index = 0; index < members.Length; index++)
 				{
-					var property = properties[index];
-					info = type.GetProperty(property, bindingFlags);
-					if (info != null) 
+					var member = members[index];
+					info = type.GetMember(member, bindingFlags).FirstOrDefault();
+					if (info != null)
 					{
-						type = info.PropertyType;
-						
-						if (obj != null && index < properties.Length - 1) 
+						if (obj != null && index < members.Length - 1)
 						{
-							try 
+							try
 							{
-								obj = info.GetValue(obj, null);
-							} 
+								if (info.MemberType == MemberTypes.Field)
+									obj = ((FieldInfo)info).GetValue(obj);
+
+								if (info.MemberType == MemberTypes.Property)
+									obj = ((PropertyInfo)info).GetValue(obj, null);
+								
+								if (obj != null)
+									type = obj.GetType();
+							}
 							catch (TargetInvocationException)
 							{
 							}
 						}
 					}
-				}
-				
+				}	
 				return info;
-			} 
+			}
 			else
-				return type.GetProperty (path, bindingFlags);
+				return type.GetMember(path, bindingFlags).FirstOrDefault();
+		}
+
+		public static Type GetMemberType(this MemberInfo member)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				return ((FieldInfo)member).FieldType;
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).PropertyType;
+			}
+			
+			return null;
+		}
+
+		public static void SetValue(this MemberInfo member, object obj, object value)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				((FieldInfo)member).SetValue(obj, value);
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				((PropertyInfo)member).SetValue(obj, value, null);
+			}
+		}
+
+		public static object GetValue(this MemberInfo member, object obj)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				return ((FieldInfo)member).GetValue(obj);
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).GetValue(obj, null);
+			}
+			
+			return null;
 		}
 	}
 }
