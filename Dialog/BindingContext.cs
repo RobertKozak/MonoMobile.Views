@@ -944,7 +944,6 @@ namespace MonoTouch.Dialog
 		
 		private void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
 		{
-			var oldTheme = element.Theme;
 			var newTheme = Theme.CreateTheme(theme);
 			newTheme.MergeTheme(element.Theme);
 
