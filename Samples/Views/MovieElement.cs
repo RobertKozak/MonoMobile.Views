@@ -1,3 +1,4 @@
+using MonoTouch.MVVM;
 namespace Samples
 {
 	using System;
@@ -11,6 +12,7 @@ namespace Samples
 	/// This is an example of implementing the OwnerDrawnElement abstract class.
 	/// It makes it very simple to create an element that you draw using CoreGraphics
 	/// </summary>
+	[EnableSearch(false)]
 	public class MovieElement : OwnerDrawnElement
 	{
 		CGGradient gradient;

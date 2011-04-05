@@ -2,7 +2,7 @@
 // RootAttribute.cs
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -41,7 +41,7 @@ namespace MonoTouch.Dialog
 		}
 
 		public UITableViewCellStyle CellStyle { get; set; }
-		public Type DataTemplateType { get; set; }
+		public Type ViewType { get; set; }
 	}
 }
 

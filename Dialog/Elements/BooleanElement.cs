@@ -1,10 +1,14 @@
+using System;
+using System.IO;
 //
 // BooleanElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+//
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,60 +31,54 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
+	using System.Drawing;
+	using MonoTouch.Foundation;
+	using MonoTouch.Dialog;
 
-	/// <summary>
-	/// Used to display switch on the screen.
-	/// </summary>
 	public class BooleanElement : BoolElement
 	{
-		private UISwitch Switch;
+		private UISwitch Switch { get; set; }
 
 		public BooleanElement(string caption) : base(caption)
-		{
+		{			
 		}
 
-		public BooleanElement(string caption, bool value) : base(caption, value)
+		public BooleanElement(RectangleF frame) : this("")
 		{
+			Frame = frame;
 		}
-
-		public BooleanElement(string caption, bool value, string key) : base(caption, value)
+		
+		public override void InitializeContent()
 		{
-		}
-
-		public override void InitializeCell(UITableView tableView)
-		{
-			RemoveTag(1);
 			if (Switch == null)
 			{
-				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1, On = Value };
-				Switch.AddTarget(delegate
-				{
-					Value = Switch.On;
-				}, UIControlEvent.ValueChanged);
+				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1 };
+				
+				Switch.AddTarget(delegate { ValueProperty.Update(); }, UIControlEvent.ValueChanged);
 			}
-
-			Cell.TextLabel.Text = Caption;
+			
 			Cell.AccessoryView = Switch;
 		}
 
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			ValueProperty.BindTo(this, "Switch.On");
+		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (disposing && Switch != null)
 			{
 				Switch.Dispose();
 				Switch = null;
 			}
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
-			if (Switch != null && Switch.On != Value)
-				Switch.On = Value;
+			
+			base.Dispose(disposing);
 		}
 	}
 }

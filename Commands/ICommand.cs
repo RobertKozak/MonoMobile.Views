@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 
@@ -36,7 +36,7 @@ namespace MonoTouch.MVVM
 		event EventHandler CanExecuteChanged;
 
 		bool CanExecute(object parameter);
-		void Execute(object parameter);
+		object Execute(object parameter);
 	}
 }
 

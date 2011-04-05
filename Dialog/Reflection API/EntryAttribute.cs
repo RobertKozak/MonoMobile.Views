@@ -45,6 +45,9 @@ namespace MonoTouch.Dialog
 		}
 
 		public string Placeholder;
-		public UIKeyboardType KeyboardType;
+		public UIKeyboardType KeyboardType = UIKeyboardType.Default;
+		public bool Editable = true;
+		public UITextAutocorrectionType AutoCorrectionType = UITextAutocorrectionType.Default;
+		public UITextAutocapitalizationType AutoCapitalizationType = UITextAutocapitalizationType.None;
 	}
 }

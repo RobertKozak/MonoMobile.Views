@@ -2,7 +2,7 @@
 // BarButtonLocation
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corportation
 //
@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	public enum BarButtonLocation
 	{

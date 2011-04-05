@@ -43,7 +43,7 @@ namespace MonoTouch.Dialog
 
 		protected override UIImage GetImage()
 		{
-			if (Value)
+			if ((bool)Value)
 				return onImage;
 			else
 				return offImage;

@@ -2,7 +2,7 @@
 // BindingOperations.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.Generic;
@@ -126,10 +126,22 @@ namespace MonoTouch.MVVM
 			IBindingExpression bindingExpression = null;
 
 			object nestedTarget = target;
-			var element = target as Element;
-
-			PropertyInfo propertyInfo = target.GetType().GetNestedProperty(ref nestedTarget, targetProperty, false);
-			var targetReady = propertyInfo != null && nestedTarget != null;
+			var element = target as IElement;
+			
+			var name = string.Concat(targetProperty, "Property.Value");
+			MemberInfo memberInfo = target.GetType().GetNestedMember(ref nestedTarget, name, false);
+			if (memberInfo != null)
+			{
+				binding.TargetPath = name;
+				binding.Target = nestedTarget;
+			}
+			else
+			{
+				nestedTarget = target;
+				memberInfo = target.GetType().GetNestedMember(ref nestedTarget, targetProperty, false);
+			}
+	
+			var targetReady = memberInfo != null && nestedTarget != null;
 
 			if (targetReady)
 			{
@@ -140,7 +152,7 @@ namespace MonoTouch.MVVM
 
 				if (bindingExpression == null)
 				{
-					bindingExpression = new BindingExpression(binding, propertyInfo, nestedTarget) { Element = element };
+					bindingExpression = new BindingExpression(binding, memberInfo, nestedTarget) { Element = element };
 
 					_BindingExpressions.Add(bindingExpression);
 					

@@ -34,6 +34,7 @@ namespace MonoTouch.Dialog
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoTouch.MVVM;
 
 	/// <summary>
 	///    This element can be used to show an image with some text
@@ -49,11 +50,11 @@ namespace MonoTouch.Dialog
 	///    render a calendar badge like the iPhone OS.   It will compose
 	///    the text on top of the image which is expected to be 57x57
 	/// </remarks>
-	public class BadgeElement : Element, IElementSizing
+	public class BadgeElement : Element, ISizeable, ISelectable
 	{
 		public event NSAction Tapped;
 		public UILineBreakMode LineBreakMode = UILineBreakMode.TailTruncation;
-		public UIViewContentMode ContentMode = UIViewContentMode.Left;
+	//	public UIViewContentMode ContentMode = UIViewContentMode.Left;
 		public int Lines = 1;
 		public UITableViewCellAccessory Accessory = UITableViewCellAccessory.None;
 		private UIImage image;
@@ -90,10 +91,8 @@ namespace MonoTouch.Dialog
 			}
 		}
 
-		public override void InitializeCell(UITableView tableView)
+		protected override void CreateContentView()
 		{
-			Cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
-
 			Cell.Accessory = Accessory;
 
 			var textLabel = Cell.TextLabel;
@@ -120,11 +119,10 @@ namespace MonoTouch.Dialog
 			return Math.Max (height, 63);
 		}
 
-		public override void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			if (Tapped != null)
 				Tapped ();
-			tableView.DeselectRow (path, true);
 		}
 		
 		public static UIImage MakeCalendarBadge (UIImage template, string smallText, string bigText)

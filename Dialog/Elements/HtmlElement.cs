@@ -1,3 +1,4 @@
+using System.IO;
 //
 // HtmlElement.cs
 //
@@ -32,12 +33,16 @@ namespace MonoTouch.Dialog
 	using System;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
 
 	/// <summary>
 	///  Used to display a cell that will launch a web browser when selected.
 	/// </summary>
-	public class HtmlElement : Element<Uri>
+	public class HtmlElement : Element, ISelectable
 	{
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public Uri Value { get; set; }
+
 		private UIWebView web;
 
 		public HtmlElement(string caption) : base(caption)
@@ -48,13 +53,19 @@ namespace MonoTouch.Dialog
 		{
 			Value = url;
 		}
-
+		
 		public override void InitializeCell(UITableView tableView)
 		{
-			Cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
-
 			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			Cell.TextLabel.Text = Caption;
+
+			base.InitializeCell(tableView);
+		}
+		
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			ValueProperty.BindTo(this, "Value");
 		}
 
 		static bool NetworkActivity
@@ -86,11 +97,7 @@ namespace MonoTouch.Dialog
 				container.web = null;
 			}
 
-			public bool Autorotate
-			{
-				get;
-				set;
-			}
+			public bool Autorotate { get; set; }
 
 			public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
 			{
@@ -98,10 +105,12 @@ namespace MonoTouch.Dialog
 			}
 		}
 
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			var vc = new WebViewController(this) { Autorotate = dvc.Autorotate };
-			web = new UIWebView(UIScreen.MainScreen.ApplicationFrame) { BackgroundColor = UIColor.White, ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight };
+			var frame = UIScreen.MainScreen.Bounds;
+
+			web = new UIWebView(frame) { BackgroundColor = UIColor.White, ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight };
 			web.LoadStarted += delegate { NetworkActivity = true; };
 			web.LoadFinished += delegate { NetworkActivity = false; };
 			web.LoadError += (webview, args) =>
@@ -117,11 +126,6 @@ namespace MonoTouch.Dialog
 
 			var url = new NSUrl(Value.AbsoluteUri);
 			web.LoadRequest(NSUrlRequest.FromUrl(url));
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
 		}
 	}
 }

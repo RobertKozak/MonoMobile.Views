@@ -1,7 +1,7 @@
 namespace Samples
 {
 	using System;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 	using MonoTouch.Dialog;
 	using System.Collections.Generic;
 	using System.Linq;
@@ -18,11 +18,11 @@ namespace Samples
 		
 		private IRoot CreateRoot()
 		{
-			return new RootElement<int>("Demos")
+			return new RootElement("Demos")
 			{
 				new Section()
 				{
-					new ButtonElement("Movie List Sample"){ Command = new UICommand<object>((o)=>Push(new MovieListView()), null) }
+					new ButtonElement("Movie List Sample"){ Command = new UICommand<object>((o)=> { Push(new MovieListView()); return null; }, null) }
 				},
 			};
 		}

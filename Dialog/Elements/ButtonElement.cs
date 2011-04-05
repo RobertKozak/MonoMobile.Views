@@ -2,7 +2,7 @@
 // ButtonElement.cs
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -30,48 +30,30 @@
 namespace MonoTouch.Dialog
 {
 	using MonoTouch.Foundation;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
 	/// <summary>
 	///   The button element can be used to render a cell as a button that responds to Tap events
 	/// </summary>
-	public class ButtonElement : Element, ITappable
+	public class ButtonElement : StringElement, ITappable, ISelectable
 	{
-		public UIFont Font;
-		public UIColor TextColor;
-		public UIColor BackgroundColor;
-
-		public ICommand Command
-		{
-			get;
-			set;
-		}
-		public object CommandParameter
-		{
-			get;
-			set;
-		}
+		public ICommand Command { get; set; }
+		public object CommandParameter { get; set; }
 
 		public ButtonElement(string caption) : base(caption)
 		{
 		}
-
+		
 		public override void InitializeCell(UITableView tableView)
 		{
-			Cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
-			Cell.TextLabel.TextAlignment = UITextAlignment.Center;
+			base.InitializeCell(tableView);
 
+			TextAlignment = UITextAlignment.Center;
+			
 			Cell.Accessory = UITableViewCellAccessory.None;
-
-			Cell.BackgroundColor = BackgroundColor == null ? UIColor.White : BackgroundColor;
-
-		
-			var textLabel = Cell.TextLabel;
-			textLabel.Text = Caption;
-			textLabel.TextColor = TextColor == null ? UIColor.Black : TextColor;
-			textLabel.Font = Font == null ? UIFont.BoldSystemFontOfSize(17) : Font;
-			textLabel.Lines = 0;
+			
+			Cell.ImageView.Image = null;
 		}
 
 		public override string ToString()
@@ -79,12 +61,10 @@ namespace MonoTouch.Dialog
 			return Caption;
 		}
 
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
 		{
 			if (Command != null && Command.CanExecute(CommandParameter))
 				Command.Execute(CommandParameter);
-			
-			tableView.DeselectRow(indexPath, true);
 		}
 	}
 }

@@ -34,11 +34,33 @@ namespace MonoTouch.Dialog
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
 
-	public class ImageElement : Element<UIImage>
+	public class ImageElement : Element, ISelectable
 	{
+		public UIImage _Value;
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public UIImage Value
+		{
+			get { return _Value; }
+			set { SetValue(value); }
+		}
+
+		protected void SetValue(UIImage value)
+		{
+			if (Value != value)
+			{				
+				_Scaled = Scale((UIImage)Value);
+			}
+			else
+			{
+				Value = MakeEmpty();
+				_Scaled = Value;
+			}
+		}
+
 		private static RectangleF rect = new RectangleF(0, 0, dimx, dimy);
-		private UIImage scaled;
+		private UIImage _Scaled;
 		private UIPopoverController popover;
 
 		// Apple leaks this one, so share across all.
@@ -93,30 +115,9 @@ namespace MonoTouch.Dialog
 			Value = image;
 		}
 
-		public override UIImage Value
-		{
-			get
-			{
-				return base.Value;
-			}
-			set
-			{
-				if (value == null)
-				{
-					base.Value = MakeEmpty();
-					scaled = Value;
-				}
-				else
-				{
-					base.Value = value;
-					scaled = Scale(Value);
-				}
-			}
-		}
-
 		public override void InitializeCell(UITableView tableView)
 		{
-			if (scaled != null)
+			if (_Scaled != null)
 			{
 				ISection psection = Parent as ISection;
 				bool roundTop = psection.Elements[0] == this;
@@ -151,7 +152,7 @@ namespace MonoTouch.Dialog
 							bit.AddLineToPoint(0, dimy);
 						}
 						bit.Clip();
-						bit.DrawImage(rect, scaled.CGImage);
+						bit.DrawImage(rect, _Scaled.CGImage);
 	
 						Cell.ImageView.Image = UIImage.FromImage(bit.ToImage());
 					}
@@ -163,7 +164,7 @@ namespace MonoTouch.Dialog
 		{
 			if (disposing)
 			{
-				scaled.Dispose();
+				_Scaled.Dispose();
 				Value.Dispose();
 			}
 			base.Dispose(disposing);
@@ -192,13 +193,13 @@ namespace MonoTouch.Dialog
 		void Picked(UIImage image)
 		{
 			Value = image;
-			scaled = Scale(image);
+			_Scaled = Scale(image);
 			currentController.DismissModalViewControllerAnimated(true);
 			
 		}
 
 		UIViewController currentController;
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			if (picker == null)
 				picker = new UIImagePickerController();

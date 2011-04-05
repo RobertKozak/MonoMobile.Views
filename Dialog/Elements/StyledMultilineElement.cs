@@ -33,12 +33,15 @@ namespace MonoTouch.Dialog
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class StyledMultilineElement : StyledStringElement, IElementSizing
-	{
-		public StyledMultilineElement(string caption) : base(caption)
+	public class MultilineStringElement : StringElement, ISizeable
+	{	
+		public UILineBreakMode LineBreakMode { get; set; }
+		public int Lines { get;  set; }
+
+		public MultilineStringElement(string caption) : base(caption)
 		{
 		}
-		public StyledMultilineElement(string caption, string value) : base(caption, value)
+		public MultilineStringElement(string caption, string value) : base(caption, value)
 		{
 		}
 

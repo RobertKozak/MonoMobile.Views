@@ -31,6 +31,7 @@ namespace MonoTouch.Dialog
 {
 	using System.Drawing;
 	using MonoTouch.Foundation;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
 	/// <summary>
@@ -41,7 +42,7 @@ namespace MonoTouch.Dialog
 	///   in this case from the UIViewElement to the cell that
 	///   holds our view.
 	/// </remarks>
-	public class UIViewElement : Element<UIView>, IElementSizing
+	public class UIViewElement : StringElement, ISizeable, ISelectable
 	{
 		public CellFlags Flags;
 
@@ -66,7 +67,8 @@ namespace MonoTouch.Dialog
 		/// </param>
 		public UIViewElement(string caption, UIView view, bool transparent) : base(caption)
 		{
-			Value = view;
+			Value = view.ToString();
+			ContentView = view;
 			Flags = transparent ? CellFlags.Transparent : 0;
 		}
 
@@ -75,24 +77,30 @@ namespace MonoTouch.Dialog
 			if ((Flags & CellFlags.Transparent) != 0)
 			{
 				Cell.BackgroundColor = UIColor.Clear;
+				Cell.Opaque = false;
 
 				//
 				// This trick is necessary to keep the background clear, otherwise
 				// it gets painted as black
 				//
-				Cell.BackgroundView = new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
+				//Cell.BackgroundView = new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
 			}
 			if ((Flags & CellFlags.DisableSelection) != 0)
 				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 
-			if (Value != null)
-				Cell.ContentView.AddSubview(Value);
+			if (ContentView != null)
+				Cell.ContentView.AddSubview(ContentView);
+		}
+		
+		public virtual void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+
 		}
 
 		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
-			if (Value != null)
-				return Value.Bounds.Height;
+			if (ContentView != null)
+				return ContentView.Bounds.Height;
 			
 			return 0;
 		}
@@ -102,8 +110,8 @@ namespace MonoTouch.Dialog
 			base.Dispose(disposing);
 			if (disposing)
 			{
-				Value.Dispose();
-				Value = null;
+				ContentView.Dispose();
+				ContentView = null;
 			}
 		}
 	}

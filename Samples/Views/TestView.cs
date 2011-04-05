@@ -1,3 +1,4 @@
+using MonoMobile.MVVM;
 
 namespace Samples
 {
@@ -6,9 +7,9 @@ namespace Samples
 	using System.Drawing;
 	using MonoTouch.CoreAnimation;
 	using MonoTouch.CoreGraphics;
-	using MonoTouch.MVVM.Controls;
+	using MonoMobile.MVVM.Controls;
 
-	public class TestView : UIView
+	public class TestView : View
 	{
 		private UILabel label;
 
@@ -23,15 +24,12 @@ namespace Samples
 			AddSubview (label);
 
 		var color = UIColor.FromRGB(88, 170, 34);
-//		//	UIButton btn = UIButton.FromType (UIButtonType.RoundedRect);
 		UIButton btn = new UIGlassyButton(new RectangleF(0, 0, 250, 42)) { Color = UIColor.Red, Title ="Red Button" };
 			UIButton btn2 = new UIGlassyButton (new RectangleF (0, 50, 250, 42)) { Color = UIColor.Gray, Title = "Gray Button" };
 			var btn3 = new UIGlassyButton (new RectangleF (0, 100, 250, 42)) { Color = UIColor.Black, Title = "Black Button", HighlightColor = UIColor.Blue };
 			UIButton btn4 = new UIGlassyButton (new RectangleF (0, 150, 250, 42)) { Color = color, Title = "Green Button" };
 
-//
-//
-//
+
 			AddSubview (btn);
 			AddSubview (btn2);
 			AddSubview (btn3);
@@ -41,7 +39,7 @@ namespace Samples
 			btn2.TouchDown += HandleBtnTouchDown;
 			btn3.TouchDown += HandleBtnTouchDown;
 			btn4.TouchDown += HandleBtnTouchDown;
-	}
+		}
 
 		void HandleBtnTouchDown (object sender, EventArgs e)
 		{

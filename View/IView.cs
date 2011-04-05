@@ -2,7 +2,7 @@
 // IView.cs: Interface for MVVM Views
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -27,19 +27,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
-	using MonoTouch.Dialog;
-
 	public interface IView
 	{
-		object DataContext { get; set; }
-		IRoot Root { get; set; } 
+		string Caption { get; set; }
 	}
 
-	public interface IView<TDataContext> : IView where TDataContext : IViewModel, new()
-	{
-		new TDataContext DataContext { get; set; }
-	}
+//	public interface IView<TDataContext> : IView where TDataContext : IViewModel, new()
+//	{
+//		new TDataContext DataContext { get; set; }
+//	}
 }
 

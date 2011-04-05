@@ -34,28 +34,29 @@ namespace MonoTouch.Dialog
 	using MonoTouch.Foundation;
 	using MonoTouch.MapKit;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
 
-	public class MapElement : StringElement
+	public class MapElement : Element, ISelectable
 	{
-		public virtual CLLocationCoordinate2D Location
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public CLLocationCoordinate2D Value { get; set; }
+
+		public MapElement(string caption, CLLocationCoordinate2D value) : base(caption)
 		{
-			get;
-			set;
+			Value = value;
 		}
 
-		public MapElement(string caption, string value, CLLocationCoordinate2D location) : base(caption, value)
-		{
-			Location = location;
-		}
-
-		public override void InitializeCell (UITableView tableView)
+		public override void InitializeCell(UITableView tableView)
 		{
 			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			TextLabel.Text = Caption;
+		
+			base.InitializeCell(tableView);
 		}
 
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			var mapViewController = new MapViewController(Location) { Title = Caption };
+			var mapViewController = new MapViewController(Value) { Title = Caption };
 			dvc.ActivateController(mapViewController, dvc);
 		}
 
@@ -63,61 +64,46 @@ namespace MonoTouch.Dialog
 		{
 			private MKMapView _MapView;
 			private CLLocationCoordinate2D _CurrLocation;
-	
+
 			public MKAnnotation GeocodeAnnotation;
-	
+
 			public MapViewController(CLLocationCoordinate2D newLocation)
 			{
 				_MapView = CreateMapView();
 				_CurrLocation = newLocation;
 			}
-	
+
 			public override void ViewDidLoad()
 			{
 				base.ViewDidLoad();
 				View = _MapView;
 			}
-	
+
 			public override void ViewWillAppear(bool animated)
 			{
 				base.ViewWillAppear(animated);
 				UpdateLocation(_CurrLocation, false);
 			}
-	
+
 			public void UpdateLocation(CLLocationCoordinate2D newLocation, bool animated)
 			{
 				var span = new MKCoordinateSpan(0.1, 0.1);
 				var region = new MKCoordinateRegion(newLocation, span);
-	
+				
 				_MapView.SetRegion(region, animated);
-	
+				
 				if (GeocodeAnnotation != null)
 					_MapView.RemoveAnnotation(GeocodeAnnotation);
-	
+				
 				GeocodeAnnotation = new MapViewAnnotation(newLocation);
-	
+				
 				_MapView.AddAnnotationObject(GeocodeAnnotation);
 			}
-	
+
 			private MKMapView CreateMapView()
 			{
-		        var map = new MKMapView()
-		        {
-		            Delegate = new MapViewDelegate(),
-		            ZoomEnabled = true,
-		            ScrollEnabled = true,
-		            ShowsUserLocation = true,
-	
-		            MapType = MonoTouch.MapKit.MKMapType.Standard,
-	
-		            UserInteractionEnabled = true,
-		            MultipleTouchEnabled = true,
-	
-		            ClearsContextBeforeDrawing = true,
-		            ClipsToBounds = true,
-		            AutosizesSubviews = true,
-		        };	
-
+				var map = new MKMapView { Delegate = new MapViewDelegate(), ZoomEnabled = true, ScrollEnabled = true, ShowsUserLocation = true, MapType = MonoTouch.MapKit.MKMapType.Standard, UserInteractionEnabled = true, MultipleTouchEnabled = true, ClearsContextBeforeDrawing = true, ClipsToBounds = true, AutosizesSubviews = true };
+				
 				return map;
 			}
 		}
@@ -145,11 +131,7 @@ namespace MonoTouch.Dialog
 
 		private class MapViewAnnotation : MKAnnotation
 		{
-			public override CLLocationCoordinate2D Coordinate
-			{
-				get;
-				set;
-			}
+			public override CLLocationCoordinate2D Coordinate { get;set; }
 
 			public MapViewAnnotation(CLLocationCoordinate2D coord) : base()
 			{

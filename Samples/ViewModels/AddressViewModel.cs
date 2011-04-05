@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.MVVM;
+using MonoMobile.MVVM;
 using MonoTouch.Foundation;
 
 namespace Samples

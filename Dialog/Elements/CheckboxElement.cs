@@ -1,10 +1,12 @@
 //
-// CheckboxElement.cs
+// CheckboxView.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+//
+// Based on code from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,47 +29,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoTouch.Dialog;
 
-	public class CheckboxElement : BooleanElement
+	public class CheckboxElement : BoolElement
 	{
-		public string Group;
+		public string Group { get; set; }
 
-		public CheckboxElement(string caption) : base(caption, false)
+		public CheckboxElement(string caption) : base(caption)
 		{
 		}
-		public CheckboxElement(string caption, bool value) : base(caption, value)
-		{
-		}
-
-		public CheckboxElement(string caption, bool value, string @group) : this(caption, value)
-		{
-			Group = @group;
-		}
-
-		public override void InitializeCell(UITableView tableView)
+		
+		public override void UpdateSelected()
 		{
 			Cell.AccessoryView = null;
-			Cell.Accessory = Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+			Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
-		}
-
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-			Value = !Value;
-			InitializeCell(tableView);
-
-			base.Selected(dvc, tableView, path);
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
-			if (Cell != null)
-				Cell.Accessory = Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 		}
 
 		public override string ToString()

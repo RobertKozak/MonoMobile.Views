@@ -10,7 +10,7 @@
 // MIT X11 license
 //
 // Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
+// a copy of this software and associated documentation files(the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
@@ -31,169 +31,192 @@
 namespace MonoTouch.Dialog
 {
 	using System;
+	using MonoTouch.UIKit;
 	using System.Drawing;
+	using MonoTouch.Foundation;
 	using MonoTouch.CoreAnimation;
 	using MonoTouch.CoreGraphics;
-	using MonoTouch.UIKit;
-
-	public enum RefreshViewStatus
-	{
-		ReleaseToReload,
-		PullToReload,
-		Loading
-	}
 	
+	public enum RefreshStatus
+	{
+		ReleaseToReload = 0,
+		PullToReload = 1,
+		Loading = 2
+	}
+
 	public class RefreshTableHeaderView : UIView
 	{
-		static UIImage arrow = UIImage.FromResource(null, "arrow.png");
-		UIActivityIndicatorView activity;
-		UILabel lastUpdateLabel, statusLabel;
-		UIImageView arrowView;		
-			
+		private static UIImage _ArrowImage = UIImage.FromResource(null, "arrow.png");
+		private UIActivityIndicatorView _Activity;
+		private UILabel _LastUpdateLabel, _StatusLabel;
+		private UIImageView _ArrowView;		
+		private DateTime _LastUpdateTime;
+		private string _DefaultSettingsKey = "RefreshTableHeaderView.LastUpdateTime";
+		
+		public bool IsFlipped { get; set; }
+		
+		public RefreshTableHeaderView(RectangleF rect, string settingsKey) : base(rect)
+		{
+			if(!string.IsNullOrEmpty(settingsKey))
+			{
+				_DefaultSettingsKey = settingsKey;
+			}
+			Initialize(rect); 
+		}
+
 		public RefreshTableHeaderView(RectangleF rect) : base(rect)
 		{
-			AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-			
-			BackgroundColor = new UIColor (0.88f, 0.9f, 0.92f, 1);
-			lastUpdateLabel = new UILabel ()
-			{
-				Font = UIFont.SystemFontOfSize (13f),
-				TextColor = new UIColor (0.47f, 0.50f, 0.57f, 1),
-				ShadowColor = UIColor.White, 
-				ShadowOffset = new SizeF (0, 1),
-				BackgroundColor = this.BackgroundColor,
-				Opaque = true,
-				TextAlignment = UITextAlignment.Center,
-				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
-			};
-			AddSubview (lastUpdateLabel);
-			
-			statusLabel = new UILabel()
-			{
-				Font = UIFont.BoldSystemFontOfSize (14),
-				TextColor = new UIColor (0.47f, 0.50f, 0.57f, 1),
-				ShadowColor = lastUpdateLabel.ShadowColor,
-				ShadowOffset = new SizeF (0, 1),
-				BackgroundColor = this.BackgroundColor,
-				Opaque = true,
-				TextAlignment = UITextAlignment.Center,
-				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
-			};
-			AddSubview (statusLabel);
-			SetStatus (RefreshViewStatus.PullToReload);
-			
-			arrowView = new UIImageView()
-			{
-				ContentMode = UIViewContentMode.ScaleAspectFill,
-				Image = arrow,
-				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
-			};
-			arrowView.Layer.Transform = CATransform3D.MakeRotation ((float) Math.PI, 0, 0, 1);
-			AddSubview (arrowView);
-			
-			activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray)
-			{
-				HidesWhenStopped = true,
-				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
-			};
-			AddSubview (activity);
+			Initialize(rect);
 		}
 		
 		public override void LayoutSubviews()
 		{
-			base.LayoutSubviews ();
+			base.LayoutSubviews();
 			var bounds = Bounds;
 			
-			lastUpdateLabel.Frame = new RectangleF (0, bounds.Height - 30, bounds.Width, 20);
-			statusLabel.Frame = new RectangleF (0, bounds.Height-48, bounds.Width, 20);
-			arrowView.Frame = new RectangleF (20, bounds.Height - 65, 30, 55);
-			activity.Frame = new RectangleF (25, bounds.Height-38, 20, 20);
+			_LastUpdateLabel.Frame = new RectangleF(0, bounds.Height - 30, bounds.Width, 20);
+			_StatusLabel.Frame = new RectangleF(0, bounds.Height - 48, bounds.Width, 20);
+			_ArrowView.Frame = new RectangleF(20, bounds.Height - 65, 30, 55);
+			_Activity.Frame = new RectangleF(25, bounds.Height - 38, 20, 20);
 		}
 		
-		private RefreshViewStatus status = (RefreshViewStatus)(-1);
+		RefreshStatus status = (RefreshStatus)(-1);
 		
-		public virtual void SetStatus(RefreshViewStatus status)
+		public virtual void SetStatus(RefreshStatus status)
 		{
 			if (this.status == status)
 				return;
 			
 			string s = "Release to refresh";
 	
-			switch (status){
-			case RefreshViewStatus.Loading:
-				s = "Loading..."; 
-				break;
-				
-			case RefreshViewStatus.PullToReload:
-				s = "Pull down to refresh...";
-				break;
+			switch (status)
+			{
+				case RefreshStatus.Loading:
+					s = "Loading..."; 
+					break;
+					
+				case RefreshStatus.PullToReload:
+					s = "Pull down to refresh...";
+					break;
 			}
-			statusLabel.Text = s;
+			_StatusLabel.Text = s;
 		}
 		
-		public override void Draw (RectangleF rect)
+		public override void Draw(RectangleF rect)
 		{
-			var context = UIGraphics.GetCurrentContext ();
-			context.DrawPath (CGPathDrawingMode.FillStroke);
-			statusLabel.TextColor.SetStroke ();
-			context.BeginPath ();
-			context.MoveTo (0, Bounds.Height-1);
-			context.AddLineToPoint (Bounds.Width, Bounds.Height-1);
-			context.StrokePath ();
+			var context = UIGraphics.GetCurrentContext();
+			context.DrawPath(CGPathDrawingMode.FillStroke);
+			_StatusLabel.TextColor.SetStroke();
+			context.BeginPath();
+			context.MoveTo(0, Bounds.Height-1);
+			context.AddLineToPoint(Bounds.Width, Bounds.Height-1);
+			context.StrokePath();
 		}		
 		
-		public bool IsFlipped;
-		
-		public void Flip (bool animate)
+		public void Flip(bool animate)
 		{
-			UIView.BeginAnimations (null);
-			UIView.SetAnimationDuration (animate ? .18f : 0);
-			arrowView.Layer.Transform = IsFlipped 
-				? CATransform3D.MakeRotation ((float)Math.PI, 0, 0, 1) 
-				: CATransform3D.MakeRotation ((float)Math.PI * 2, 0, 0, 1);
+			UIView.BeginAnimations(null);
+			UIView.SetAnimationDuration(animate ? .18f : 0);
+			_ArrowView.Layer.Transform = IsFlipped 
+				? CATransform3D.MakeRotation((float)Math.PI, 0, 0, 1) 
+				: CATransform3D.MakeRotation((float)Math.PI * 2, 0, 0, 1);
 				
-			UIView.CommitAnimations ();
+			UIView.CommitAnimations();
 			IsFlipped = !IsFlipped;
 		}
 		
-		private DateTime lastUpdateTime;
-		public DateTime LastUpdate
+		public DateTime LastUpdate 
 		{
-			get {
-				return lastUpdateTime;
+			get
+			{
+				return _LastUpdateTime;
 			}
-			set {
-				if (value == lastUpdateTime)
-					return;
-				
-				lastUpdateTime = value;
-				if (value == DateTime.MinValue){
-					lastUpdateLabel.Text = "Last Updated: never";
-				} else 
-					lastUpdateLabel.Text = String.Format ("Last Updated: {0:g}", value);
+			set
+			{
+				_LastUpdateTime = value;
+				if (value == DateTime.MinValue)
+				{
+					_LastUpdateLabel.Text = "Last Updated: never";
+				} 
+				else 
+				{
+					NSUserDefaults.StandardUserDefaults[_DefaultSettingsKey] = new NSString(value.ToString("G"));
+					NSUserDefaults.StandardUserDefaults.Synchronize();
+					_LastUpdateLabel.Text = String.Format("Last Updated: {0:g}", value);
+				}
 			}
 		}
 		
-		public void SetActivity (bool active)
+		public void SetActivity(bool active)
 		{
-			if (active){
-				activity.StartAnimating ();
-				arrowView.Hidden = true;
-				SetStatus (RefreshViewStatus.Loading);
-			} else {
-				activity.StopAnimating ();
-				arrowView.Hidden = false;
+			if (active)
+			{
+				_Activity.StartAnimating();
+				_ArrowView.Hidden = true;
+				SetStatus(RefreshStatus.Loading);
+			} 
+			else 
+			{
+				_Activity.StopAnimating();
+				_ArrowView.Hidden = false;
 			}
-		}	
-	}
-	
-	public class SearchChangedEventArgs : EventArgs
-	{
-		public string Text { get; set; }
+		}
 
-		public SearchChangedEventArgs (string text) 
+		private void Initialize(RectangleF rect)
 		{
-			Text = text;
+			this.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+			
+			BackgroundColor = new UIColor(0.88f, 0.9f, 0.92f, 1);
+
+			_LastUpdateLabel = new UILabel()
+			{
+				Font = UIFont.SystemFontOfSize(13f),
+				TextColor = new UIColor(0.47f, 0.50f, 0.57f, 1),
+				ShadowColor = UIColor.White, 
+				ShadowOffset = new SizeF(0, 1),
+				BackgroundColor = this.BackgroundColor,
+				Opaque = true,
+				TextAlignment = UITextAlignment.Center,
+				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
+			};
+			AddSubview(_LastUpdateLabel);
+			
+			_StatusLabel = new UILabel()
+			{
+				Font = UIFont.BoldSystemFontOfSize(14),
+				TextColor = new UIColor(0.47f, 0.50f, 0.57f, 1),
+				ShadowColor = _LastUpdateLabel.ShadowColor,
+				ShadowOffset = new SizeF(0, 1),
+				BackgroundColor = this.BackgroundColor,
+				Opaque = true,
+				TextAlignment = UITextAlignment.Center,
+				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
+			};
+			AddSubview(_StatusLabel);
+			SetStatus(RefreshStatus.PullToReload);
+			
+			_ArrowView = new UIImageView()
+			{
+				ContentMode = UIViewContentMode.ScaleAspectFill,
+				Image = _ArrowImage,
+				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
+			};
+			_ArrowView.Layer.Transform = CATransform3D.MakeRotation((float) Math.PI, 0, 0, 1);
+			AddSubview(_ArrowView);
+			
+			_Activity = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray) 
+			{
+				HidesWhenStopped = true,
+				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
+			};
+			AddSubview(_Activity);
+
+			if (NSUserDefaults.StandardUserDefaults[_DefaultSettingsKey] != null) 
+			{
+				LastUpdate = Convert.ToDateTime(NSUserDefaults.StandardUserDefaults[_DefaultSettingsKey].ToString());
+			}
+			else
+				LastUpdate = DateTime.MinValue;
 		}
 	}
 }

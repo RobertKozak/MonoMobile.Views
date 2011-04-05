@@ -59,14 +59,14 @@ namespace MonoTouch.Dialog
 			const int ImageSpace = 32;
 			const int Padding = 8;
 
-			public TextWithImageCellView(BaseBooleanImageElement parent, NSString Id) : base(UITableViewCellStyle.Value1, Id)
+			public TextWithImageCellView(BaseBooleanImageElement parent, NSString Id) : base(UITableViewCellStyle.Value1, Id, parent)
 			{
 				this.parent = parent;
 				label = new UILabel { TextAlignment = UITextAlignment.Left, Text = parent.Caption, Font = font };
 				button = UIButton.FromType(UIButtonType.Custom);
 				button.TouchDown += delegate
 				{
-					parent.Value = !parent.Value;
+					parent.Value = !(bool)parent.Value;
 					UpdateImage();
 					if (parent.Tapped != null)
 						parent.Tapped();

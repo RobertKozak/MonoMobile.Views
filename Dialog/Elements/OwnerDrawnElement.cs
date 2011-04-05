@@ -7,7 +7,7 @@ using MonoTouch.Foundation;
 
 namespace MonoTouch.Dialog
 {
-	public abstract class OwnerDrawnElement : Element, IElementSizing
+	public abstract class OwnerDrawnElement : Element, ISizeable
 	{
 		public UITableViewCellStyle Style
 		{
@@ -40,7 +40,7 @@ namespace MonoTouch.Dialog
 		{
 			private OwnerDrawnCellView _View;
 
-			public OwnerDrawnCell(OwnerDrawnElement element, UITableViewCellStyle style, string cellReuseIdentifier) : base(style, cellReuseIdentifier)
+			public OwnerDrawnCell(OwnerDrawnElement element, UITableViewCellStyle style, string cellReuseIdentifier) : base(style, cellReuseIdentifier, element)
 			{
 				Element = element;
 			}

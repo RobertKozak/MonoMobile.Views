@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Globalization;
@@ -35,7 +35,7 @@ namespace MonoTouch.MVVM
 
 	public class MoneyConverter : IValueConverter
 	{
-		public object Convert (object value, Type targetType, object parameter, CultureInfo culture)
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == null)
 				return value;
@@ -43,8 +43,11 @@ namespace MonoTouch.MVVM
 			return string.Format("{0:C}", value);
 		}
 
-		public object ConvertBack (object value, Type targetType, object parameter, CultureInfo culture)
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (value == null)
+				return "0.00";
+
 			return ((string)value).Replace("$", "");
 		}
 	}

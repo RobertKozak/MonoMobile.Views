@@ -1,7 +1,8 @@
+using MonoTouch.UIKit;
 namespace Samples
 {
 	using System;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 	using System.ComponentModel;
 	
 	public enum Rating
@@ -46,6 +47,12 @@ namespace Samples
 			get { return Get(() => Name); }
 			set { Set(() => Name, value); }
 		}
+		
+		public UIColor TextColor
+		{
+			get { return Get(()=>TextColor); }
+			set { Set(()=>TextColor, value); }
+		}
 
 		public Rating Rating 
 		{
@@ -67,8 +74,8 @@ namespace Samples
 
 		public float CriticsRating 
 		{
-			get { return Get (() => CriticsRating); }
-			set { Set (() => CriticsRating, value); }
+			get { return Get(() => CriticsRating); }
+			set { Set(() => CriticsRating, value); }
 		}
 
 		public bool ShownIn3D
@@ -79,14 +86,26 @@ namespace Samples
 
 		public EnumCollection<Location> Location
 		{
-			get { return Get (() => Location); }
-			set { Set (() => Location, value); }
+			get { return Get(() => Location); }
+			set { Set(() => Location, value); }
 		}
 
 		public override string ToString()
 		{
-			return string.Format ("{0}", Name);
+			return string.Format("{0}", Name);
 		}
-	}
+	
+
+		public override void BeginInit()
+		{
+			TextColor = UIColor.Red;
+		}
+
+		public override void EndInit()
+		{
+
+		}
+
+}
 }
 

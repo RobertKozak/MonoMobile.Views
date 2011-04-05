@@ -2,7 +2,7 @@
 // BindingExpression.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Reflection;
@@ -44,14 +44,16 @@ namespace MonoTouch.MVVM
 			public PropertyInfo TargetProperty;
 			public object Target;
 		}
+		
+		private MemberInfo _ViewProperty { get; set; }
 
-		public PropertyInfo SourceProperty;
-		public PropertyInfo TargetProperty;
-		public Element Element { get; set; }
+		public MemberInfo SourceProperty { get; set; }
+		public MemberInfo TargetProperty { get; set; }
+		public IElement Element { get; set; }
 
 		public Binding Binding { get; private set; }
 
-		public BindingExpression(Binding binding, PropertyInfo targetProperty, object target)
+		public BindingExpression(Binding binding, MemberInfo targetProperty, object target)
 		{
 			if (binding == null)
 				throw new ArgumentNullException("binding");
@@ -70,9 +72,18 @@ namespace MonoTouch.MVVM
 				binding.TargetPath = targetProperty.Name;
 			}
 
-			object source = Binding.Source;
-			SourceProperty = source.GetType().GetNestedProperty(ref source, Binding.SourcePath, true);
-			Binding.Source = source;
+			object viewSource = Binding.Source;
+			_ViewProperty = viewSource.GetType().GetNestedMember(ref viewSource, Binding.SourcePath, true);
+			Binding.ViewSource = viewSource;
+
+			var dataContext = viewSource as IDataContext;
+			if (dataContext != null && dataContext.DataContext != null)
+			{
+				var source = dataContext.DataContext;
+				
+				SourceProperty = source.GetType().GetNestedMember(ref source, Binding.SourcePath, true);
+				Binding.Source = source;
+			}
 		}
 
 		public void UpdateSource()
@@ -82,15 +93,24 @@ namespace MonoTouch.MVVM
 
 		public void UpdateSource(object targetValue)
 		{
-			if (SourceProperty != null && SourceProperty.CanWrite && Binding.Mode != BindingMode.OneTime)
+			bool canWrite = true;
+			if (SourceProperty is PropertyInfo) canWrite = ((PropertyInfo)SourceProperty).CanWrite;
+
+			if (SourceProperty != null && canWrite && Binding.Mode != BindingMode.OneTime)
 			{
 				try
 				{
-					var convertedTargetValue = ConvertbackValue(targetValue);
-					if (Convert.GetTypeCode(convertedTargetValue) != TypeCode.Object)
-						convertedTargetValue = Convert.ChangeType(convertedTargetValue, SourceProperty.PropertyType);
+					object convertedTargetValue = ConvertbackValue(targetValue);
+					var typeCode = Convert.GetTypeCode(convertedTargetValue);
+					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
+						convertedTargetValue = Convert.ChangeType(convertedTargetValue, GetMemberType(SourceProperty));
 
-					SourceProperty.SetValue(Binding.Source, convertedTargetValue, null);
+				
+					if (_ViewProperty != null)
+						SetValue(_ViewProperty, Binding.ViewSource, convertedTargetValue);	
+					
+					if (SourceProperty != null)
+						SetValue(SourceProperty, Binding.Source, convertedTargetValue);
 				}
 				catch (NotImplementedException)
 				{
@@ -105,28 +125,31 @@ namespace MonoTouch.MVVM
 
 		public void UpdateTarget(object sourceValue)
 		{
-			if (TargetProperty != null && TargetProperty.CanWrite && Binding.Mode == BindingMode.TwoWay)
+			bool canWrite = true;
+			if (TargetProperty is PropertyInfo) canWrite = ((PropertyInfo)TargetProperty).CanWrite;
+			if (TargetProperty != null && canWrite && Binding.Mode == BindingMode.TwoWay)
 			{
 				if (sourceValue == null)
 					sourceValue = Binding.TargetNullValue;
 				try
 				{
-					var convertedSourceValue = ConvertValue(sourceValue);
-			
-					if (Convert.GetTypeCode(convertedSourceValue) != TypeCode.Object)
-						convertedSourceValue = Convert.ChangeType(convertedSourceValue, TargetProperty.PropertyType);
+					object convertedSourceValue = ConvertValue(sourceValue);
+					var typeCode = Convert.GetTypeCode(convertedSourceValue); 
+					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+					{
+						convertedSourceValue = Convert.ChangeType(convertedSourceValue, GetMemberType(TargetProperty));
+					}
 
 					if (Element != null && Element.Cell != null && Element.Cell.Element == Element)
 					{
-						TargetProperty.SetValue(Binding.Target, convertedSourceValue, null);
+						SetValue(TargetProperty, Binding.Target, convertedSourceValue);
 					}
-					
+				
 				}
-				catch (InvalidCastException ex)
+				catch (InvalidCastException)
 				{
-					Console.WriteLine(ex.Message + " : "+ex.StackTrace);
 				}
-				catch (NotImplementedException ex)
+				catch (NotImplementedException)
 				{
 				}
 			}
@@ -142,7 +165,7 @@ namespace MonoTouch.MVVM
 				if (Binding.ConverterParameter != null)
 					parameter = Binding.ConverterParameter;
 
-				convertedValue = Binding.Converter.Convert(value, TargetProperty.PropertyType, parameter, CultureInfo.CurrentUICulture);
+				convertedValue = Binding.Converter.Convert(value, GetMemberType(TargetProperty), parameter, CultureInfo.CurrentUICulture);
 			}
 
 			return convertedValue;
@@ -158,28 +181,77 @@ namespace MonoTouch.MVVM
 				if (Binding.ConverterParameter != null)
 					parameter = Binding.ConverterParameter;
 
-				convertedValue = Binding.Converter.ConvertBack(value, SourceProperty.PropertyType, parameter, CultureInfo.CurrentUICulture);
+				convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(SourceProperty), parameter, CultureInfo.CurrentUICulture);
 			}
 			
 			return convertedValue;
 		}
 
-		protected virtual object GetSourceValue()
+		public virtual object GetSourceValue()
 		{
-			if (Binding.Source != null)
-			{
-				var property = Binding.Source.GetType().GetProperty(Binding.SourcePath, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+			object value = null;
 
-				if (property != null)
-					return property.GetValue(Binding.Source, null);
+			if (SourceProperty != null)
+			{
+				value = GetValue(SourceProperty, Binding.Source);
 			}
+			
+			if (value == null && _ViewProperty != null)
+			{
+				value = GetValue(_ViewProperty, Binding.ViewSource);
+			}
+			
+			if (value != null) return value;
 
 			return Binding.FallbackValue;
 		}
 
-		protected virtual object GetTargetValue()
+		public virtual object GetTargetValue()
 		{
-			return TargetProperty.GetValue(Binding.Target, null);
+			return GetValue(TargetProperty, Binding.Target);
+		}
+
+		private Type GetMemberType(MemberInfo member)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				return ((FieldInfo)member).FieldType;
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).PropertyType;
+			}
+			
+			return null;
+		}
+
+		private void SetValue(MemberInfo member, object obj, object value)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				((FieldInfo)member).SetValue(obj, value);
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				((PropertyInfo)member).SetValue(obj, value, null);
+			}
+		}
+
+		private object GetValue(MemberInfo member, object obj)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				return ((FieldInfo)member).GetValue(obj);
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).GetValue(obj, null);
+			}
+			
+			return null;
 		}
 	}
 }

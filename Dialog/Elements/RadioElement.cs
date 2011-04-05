@@ -1,10 +1,13 @@
+using MonoTouch.Dialog;
 //
-// RadioElement.cs
+// RadioView.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+//
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,81 +30,75 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class RadioElement : BooleanElement
+	public class RadioElement : BoolElement, ISelectable
 	{
-		internal bool PopOnSelect;
-
-		public RadioElement(string caption, bool popOnSelect) : base(caption)
-		{
-			PopOnSelect = popOnSelect;
-		}
-
-		public RadioElement(string caption) : base(caption)
+		public bool PopOnSelect { get; set; }
+		
+		public RadioElement() : this("")
 		{
 		}
 
-		public override void InitializeCell(UITableView tableView)
+		public RadioElement(string caption): base(caption)
 		{
-			var root = (IRoot)Parent.Parent;
-			bool selected = false;
-			var radioGroup = root.Group as RadioGroup;
-
-			if (radioGroup == null)
-				throw new Exception ("The IRoot's Group is null or is not a RadioGroup");
-			else
-				selected = Index == radioGroup.Selected;
-
-			Cell.Accessory = selected ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-			Cell.TextLabel.Text = Caption;
+		}
+		
+		public override void InitializeContent()
+		{
+			UpdateSelected();
 		}
 
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
 		{
 			if (Parent != null)
 			{
 				var root = (IRoot)Parent.Parent;
 				if (root != null)
 				{
+					var radioGroup = root.Group as RadioGroup;
+
 					var section = root.Sections[indexPath.Section];
+					var index = 0;
 					foreach (var e in section.Elements)
-						if (e is RadioElement)
-							((RadioElement)e).Value = false;
+					{
+						var radioView = e as RadioElement;
+						UpdateSelected(radioView, this == radioView);
+
+						if (this == radioView)
+						{
+							radioGroup.Selected = index;
+						}
+
+						index++;
+					}
+					
+					root.Value = this.Caption;
+					var property = BindableProperty.GetBindableProperty(root, "ValueProperty");
+					property.Update();
+
+					root.ItemIndex = radioGroup.Selected;
 				}
 			}
-
+			
 			Value = true;
-
-			base.Selected(dvc, tableView, indexPath);
+			UpdateSelected();
 			
 			if (PopOnSelect)
 				dvc.NavigationController.PopViewControllerAnimated(true);
 		}
 
-		protected override void OnValueChanged()
+		public void UpdateSelected(RadioElement element, bool selected)
 		{
-			if (Cell != null)
-				Cell.Accessory = Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-
-			if (Parent != null)
+			if (element != null)
 			{
-				var root = (IRoot)Parent.Parent;
-				if(root != null)
-				{
-					var radioGroup = root.Group as RadioGroup;
-					if (radioGroup != null && Value)
-					{
-						radioGroup.Selected = Index;
-					}
-				}
+				element.Value = selected;
+				element.UpdateSelected();
 			}
-
-			base.OnValueChanged();
 		}
 
 		public override string ToString()

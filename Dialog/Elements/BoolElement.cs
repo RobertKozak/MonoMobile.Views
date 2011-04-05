@@ -29,8 +29,14 @@
 //
 namespace MonoTouch.Dialog
 {
-	public abstract class BoolElement : Element<bool>
+	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
+
+	public abstract class BoolElement : Element
 	{
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public bool Value { get; set; }
+		
 		public BoolElement(string caption, bool value) : base(caption)
 		{
 			Value = value;
@@ -39,10 +45,19 @@ namespace MonoTouch.Dialog
 		public BoolElement(string caption) : this(caption, false)
 		{
 		}
+		
+		public virtual void UpdateSelected()
+		{
+			if (Cell != null)
+			{
+				Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+				Cell.TextLabel.Text = Caption;
+			}
+		}
 
 		public override string ToString()
 		{
-			return Value ? "On" : "Off";
+			return (bool)Value ? "On" : "Off";
 		}
 	}
 }

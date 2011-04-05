@@ -28,7 +28,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Reflection;
@@ -71,15 +71,19 @@ namespace MonoTouch.MVVM
 			return true;
 		}
 
-		public void Execute(object parameter)
+		public object Execute(object parameter)
 		{
+			object result = null;
+			
 			if (CanExecute(parameter))
 			{
 				if (_Execute.GetParameters().Any())
-					_Execute.Invoke(_ViewModel, new object[] { parameter });
+					result = _Execute.Invoke(_ViewModel, new object[] { parameter });
 				else
-					_Execute.Invoke(_ViewModel, null);
+					result = _Execute.Invoke(_ViewModel, null);
 			}
+
+			return result;
 		}
 	}
 }

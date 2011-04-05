@@ -1,10 +1,12 @@
 //
-// FloatElement.cs
+// FloatView.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+//
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,70 +29,67 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System.Drawing;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
+	using MonoTouch.Dialog;
 
-	/// <summary>
-	///  Used to display a slider on the screen.
-	/// </summary>
-	public class FloatElement : Element<float>
+	public class FloatElement : Element
 	{
-		public bool ShowCaption;
-		public float MinValue, MaxValue;
-		private UISlider slider;
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public float Value { get; set; }
 
-		public FloatElement(float value) : base(null)
-		{
-			MinValue = 0;
-			MaxValue = 1;
-			Value = value;
-		}
+		public UISlider Slider { get; set; }
+	
+		public float MinValue { get; set; }
+		public float MaxValue { get; set; }
 
-		public FloatElement() : base(null)
+		public FloatElement(string caption) : base(caption)
 		{
 			MinValue = 0;
 			MaxValue = 1;
 		}
-		public override void InitializeCell(UITableView tableView)
+
+		public FloatElement(RectangleF frame) : this("")
 		{
-			RemoveTag(1);
+			Frame = frame;
+		}
 
-			SizeF captionSize = new SizeF(0, 0);
-			if (Caption != null && ShowCaption)
+		public override void InitializeContent()
+		{	
+			Slider = new UISlider() { BackgroundColor = UIColor.Clear, Continuous = true, Tag = 1 };
+			Slider.Frame = RectangleF.Empty;
+			Slider.ValueChanged += delegate 
 			{
-				Cell.TextLabel.Text = Caption;
-				captionSize = Cell.TextLabel.StringSize(Caption, UIFont.FromName(Cell.TextLabel.Font.Name, UIFont.LabelFontSize));
-				captionSize.Width += 10;
-				// Spacing
-			}
+				Value = Slider.Value; 
+			};
 
-			if (slider == null)
+			Slider.MaxValue = MaxValue;
+			Slider.MinValue = MinValue;
+			
+			ContentView = Slider;
+		}
+		
+		public override void BindProperties()
+		{
+			if (Slider != null)
 			{
-				slider = new UISlider(new RectangleF(10f + captionSize.Width, 12f, 280f - captionSize.Width, 7f)) { BackgroundColor = UIColor.Clear, MinValue = this.MinValue, MaxValue = this.MaxValue, Continuous = true, Value = this.Value, Tag = 1 };
-				slider.ValueChanged += delegate { Value = slider.Value; };
+				ValueProperty.BindTo(this, "Slider.Value");
 			}
-
-			Cell.ContentView.AddSubview(slider);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (disposing && Slider != null)
 			{
-				slider.Dispose();
-				slider = null;
+				Slider.Dispose();
+				Slider = null;
 			}
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
-			if (slider != null)
-				slider.Value = Value;
+			
+			base.Dispose(disposing);
 		}
 	}
-
 }
 

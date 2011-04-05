@@ -27,16 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM.Controls
+namespace MonoMobile.MVVM.Controls
 {
 	using System;
-	using MonoTouch.UIKit;
-	using MonoTouch.CoreAnimation;
 	using System.Drawing;
-	
+	using MonoTouch.CoreAnimation;
+	using MonoTouch.CoreGraphics;
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
+
 	public class UIGlassyButton : UIButton
 	{
 		private bool _Initialized;
+		private NSTimer _Timer;
 
 		public UIColor Color { get; set; }		
 		public UIColor HighlightColor { get; set; }
@@ -89,9 +92,9 @@ namespace MonoTouch.MVVM.Controls
 			Layer.AddSublayer(shineLayer);
 		
 			VerticalAlignment = UIControlContentVerticalAlignment.Center;
-			Font = UIFont.BoldSystemFontOfSize (17);
-			SetTitle (Title, UIControlState.Normal);
-			SetTitleColor (UIColor.White, UIControlState.Normal);
+			Font = UIFont.BoldSystemFontOfSize(17);
+			SetTitle(Title, UIControlState.Normal);
+			SetTitleColor(UIColor.White, UIControlState.Normal);
 			
 			_Initialized = true;
 		}
@@ -117,7 +120,7 @@ namespace MonoTouch.MVVM.Controls
 				}
 				
 			}
-			
+
 			highlightLayer.Hidden = !Highlighted;
 		}
 		
@@ -128,50 +131,28 @@ namespace MonoTouch.MVVM.Controls
 				SetNeedsDisplay();
 			}
 
-			return base.BeginTracking(uitouch, uievent); 
+			base.BeginTracking(uitouch, uievent);
+			return true;
 		}
-		
+
 		public override void EndTracking(UITouch uitouch, UIEvent uievent)
 		{
 			if (uievent.Type == UIEventType.Touches)
 			{
+				_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(500), ButtonTimer);
 				SetNeedsDisplay();
 			}
 
 			base.EndTracking(uitouch, uievent);
 		}
+		
+		[Export("ButtonTimer")]
+		private void ButtonTimer()
+		{
+			_Timer.Invalidate();
+			_Timer = null;
+			Highlighted = false;
+			SetNeedsDisplay();
+		}
 	}
 }
-
-//		private void CreateRoundedTopCorners (MonoTouch.CoreGraphics.CGContext context, float radius, RectangleF rect)
-//		{
-//			// Drawing with a white stroke color
-//			context.SetRGBStrokeColor(1.0f, 1.0f, 1.0f, 0.75f);
-//			
-//			context.SetRGBFillColor(1.0f, 0f, 0f, 0.75f);
-//			// Draw them with a 2.0 stroke width so they are a bit more visible.
-//			context.SetLineWidth (2.0f);
-//			
-//			// In order to create the 4 arcs correctly, we need to know the min, mid and max positions
-//			// on the x and y lengths of the given rectangle.
-//			var minx = rect.GetMinX ();
-//			var midx = rect.GetMidX ();
-//			var maxx = rect.GetMaxX ();
-//			
-//			var miny = rect.GetMinY ();
-//			var midy = rect.GetMidY ();
-//			var maxy = rect.GetMaxY ();
-//			
-//			// Start at 1
-//			
-//			context.MoveTo (minx, midy);
-//			// Add an arc through 2 to 3
-//			context.AddArcToPoint (minx, miny, midx, miny, radius);
-//			context.AddArcToPoint (maxx, miny, maxx, midy, radius);
-//			context.AddLineToPoint (maxx, maxy);
-//			context.AddLineToPoint (minx, maxy);
-//			context.ClosePath ();
-//			// Fill & stroke the path
-//			context.DrawPath (CGPathDrawingMode.FillStroke);
-//			
-//		}

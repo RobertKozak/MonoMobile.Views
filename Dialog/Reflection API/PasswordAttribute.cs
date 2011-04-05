@@ -1,3 +1,4 @@
+using MonoTouch.UIKit;
 //
 // PasswordAttribute.cs
 //
@@ -36,6 +37,8 @@ namespace MonoTouch.Dialog
 	{
 		public PasswordAttribute(string placeholder) : base(placeholder)
 		{
+			AutoCorrectionType = UITextAutocorrectionType.No;
+			AutoCapitalizationType = UITextAutocapitalizationType.None;
 		}
 	}
 }

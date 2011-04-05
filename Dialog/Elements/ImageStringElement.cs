@@ -34,8 +34,6 @@ namespace MonoTouch.Dialog
 	public class ImageStringElement : StringElement
 	{
 		private UIImage image;
-
-		public UITableViewCellAccessory Accessory { get; set; }
 		
 		public ImageStringElement() : this("")
 		{
@@ -61,11 +59,10 @@ namespace MonoTouch.Dialog
 		public override UITableViewElementCell NewCell()
 		{
 			return new UITableViewElementCell(Value == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Subtitle, Id);
-
 		}
-		public override void InitializeCell(UITableView tableView)
+
+		protected override void CreateContentView()
 		{
-			Cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 			Cell.Accessory = Accessory;
 			Cell.TextLabel.Text = Caption;
 			Cell.TextLabel.TextAlignment = Alignment;

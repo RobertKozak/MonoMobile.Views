@@ -1,8 +1,8 @@
-﻿//
+//
 // EnumCollection.cs: Generic Collection of Enum Values
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
     using System;
     using System.Collections.Generic;
@@ -87,7 +87,7 @@ namespace MonoTouch.MVVM
                 Add(new EnumBinder()
                 {
                     GroupName = EnumType.FullName,
-                    Index = (int)Enum.Parse(EnumType, item, true),
+                    Index = EnumExtensions.GetValueFromString(EnumType, item),
                     FieldName = item,
                     Description = EnumExtensions.GetDescriptionValue(item, EnumType)
                 });

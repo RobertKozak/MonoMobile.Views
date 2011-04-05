@@ -27,16 +27,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 
 	public class UICommand<T>: ICommand
 	{
-		private Action<T> _ExecuteMethod { get ; set; }
+		private Func<T, object> _ExecuteMethod { get ; set; }
 		private Func<T, bool> _CanExecuteMethod { get; set;}
 
-		public UICommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
+		public UICommand(Func<T, object> executeMethod, Func<T, bool> canExecuteMethod)
 		{
 			if (executeMethod == null)
 				throw new ArgumentNullException("Execute method cannot be null");
@@ -55,9 +55,9 @@ namespace MonoTouch.MVVM
 			return _CanExecuteMethod(parameter);
 		}
 
-		public void Execute(T parameter)
+		public object Execute(T parameter)
 		{
-			_ExecuteMethod(parameter);
+			return _ExecuteMethod(parameter);
 		}
 
 		bool ICommand.CanExecute(object parameter)
@@ -65,9 +65,9 @@ namespace MonoTouch.MVVM
 			return CanExecute((T)parameter);
 		}
 
-		void ICommand.Execute(object parameter)
+		object ICommand.Execute(object parameter)
 		{
-			Execute((T)parameter);
+			return Execute((T)parameter);
 		}
 	}
 }

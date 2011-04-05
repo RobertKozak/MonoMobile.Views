@@ -2,7 +2,7 @@
 // ListAttribute.cs
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -35,5 +35,10 @@ namespace MonoTouch.Dialog
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public class ListAttribute : SectionAttribute
 	{
+		public ListAttribute()
+		{
+		}
+
+		public Type ViewType { get; set; }
 	}
 }

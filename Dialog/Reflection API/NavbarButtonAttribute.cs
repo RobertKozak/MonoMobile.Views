@@ -1,4 +1,4 @@
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.UIKit;

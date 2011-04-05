@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Globalization;
@@ -46,6 +46,9 @@ namespace MonoTouch.MVVM
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (value == null)
+				return "0";
+
 			var result = ((string)value).Replace("%", "");
 			return result;
 		}

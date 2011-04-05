@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.MVVM;
+using MonoMobile.MVVM;
 
 namespace Samples
 {
@@ -15,6 +15,11 @@ namespace Samples
 		{
 			get { return Get (() => SampleText, "Test"); }
 			set { Set (() => SampleText, value); }
+		}
+		public float CaptionSize 
+		{
+			get { return Get(() => CaptionSize); }
+			set { Set(() => CaptionSize, value); }	
 		}
 
 		public InterestingViewModel()

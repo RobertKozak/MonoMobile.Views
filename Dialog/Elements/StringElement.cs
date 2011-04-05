@@ -2,9 +2,12 @@
 // StringElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+// 
+// This code is based on StyledStringElement and StringElement by
+// Miguel de Icaza (miguel@gnome.org) Copyright 2010, Novell, Inc.
 //
 // Code licensed under the MIT X11 license
 //
@@ -30,72 +33,67 @@
 namespace MonoTouch.Dialog
 {
 	using System;
+	using System.Drawing;
+	using System.IO;
+	using MonoTouch.Dialog.Utilities;
 	using MonoTouch.Foundation;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-
-	/// <summary>
-	///   The string element can be used to render some text in a cell 
-	///   that can optionally respond to tap events.
-	/// </summary>
-	public class StringElement : Element<string>, ITappable
+	 
+	public class StringElement : Element
 	{
-		public UITextAlignment Alignment = UITextAlignment.Left;
-		private UILabel Label { get; set; }
-
-		public ICommand Command { get; set; }
-		public object CommandParameter { get; set; }
+		private string _Value;
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public string Value 
+		{ 
+			get { return _Value; }  
+			set { SetValue(value); } 
+		}
 
 		public StringElement(string caption) : base(caption)
 		{
 		}
 
-		public StringElement(string caption, string value) : base(caption)
+		public StringElement(string caption, string value) : this(caption)
 		{
+			Theme.CellStyle = UITableViewCellStyle.Value1;
 			Value = value;
+		}
+
+		public StringElement(string caption, string value, UITableViewCellStyle style) : this(caption, value)
+		{
+			Theme.CellStyle = style;
+		}
+
+		public virtual void SetValue(string value)
+		{
+			if(_Value != value)
+			{
+				_Value = value;
+				OnValueChanged();
+			}
 		}
 
 		public override UITableViewElementCell NewCell()
 		{
-			return new UITableViewElementCell(Value == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1, Id);
-		}
-
-		public override void InitializeCell(UITableView tableView)
-		{
-			Cell.SelectionStyle = (Command != null) ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
-
-			Cell.Accessory = UITableViewCellAccessory.None;
+			if (Theme.CellStyle == UITableViewCellStyle.Default)
+				Theme.CellStyle = Value == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
 			
-			TextLabel = Cell.TextLabel;
-			TextLabel.Text = Caption;
-			TextLabel.TextAlignment = Alignment;
+			Accessory = UITableViewCellAccessory.None;
 
-			// The check is needed because the cell might have been recycled.
-			if (Cell.DetailTextLabel != null)
-			{
-				Label = Cell.DetailTextLabel;
-				Label.Text = Value == null ? "" : Value;
-			}
+			return base.NewCell(); 
 		}
-
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+		
+		public override void BindProperties()
 		{
-			if (Command != null && Command.CanExecute(CommandParameter))
-				Command.Execute(CommandParameter);
+			base.BindProperties();
 			
-			tableView.DeselectRow(indexPath, true);
+			if (DetailTextLabel != null)
+				ValueProperty.BindTo(this, "DetailTextLabel.Text");
 		}
 
-		public override bool Matches(string text)
+		protected virtual void OnValueChanged()
 		{
-			return (Value != null ? Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 : false) || base.Matches(text);
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
-			if (Label != null)
-				Label.Text = Value;
 		}
 	}
 }

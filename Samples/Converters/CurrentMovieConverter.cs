@@ -3,7 +3,7 @@ namespace Samples
 	using System;
 	using MonoTouch.Dialog;
 	using System.Globalization;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	using System.Collections.Generic;
 	

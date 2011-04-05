@@ -32,13 +32,16 @@ namespace MonoTouch.Dialog
 	using System;
 	using System.Drawing;
 	using MonoTouch.Foundation;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public class DateTimeElement : Element<DateTime>
+	public class DateTimeElement : Element, ISelectable
 	{
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public DateTime Value { get; set; }  
+
 		public UIDatePicker DatePicker;
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
-		private UILabel Label;
 
 		public DateTimeElement(string caption) : base(caption)
 		{
@@ -48,22 +51,19 @@ namespace MonoTouch.Dialog
 			Value = date;
 		}
 
-		public override UITableViewElementCell NewCell ()
+		public override UITableViewElementCell NewCell()
 		{
-			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id);
+			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id, this);
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
+			base.InitializeCell(tableView);
+
 			Cell.Accessory = UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
-
-			// The check is needed because the cell might have been recycled.
-			if (Cell.DetailTextLabel != null)
-			{
-				Label = Cell.DetailTextLabel;
-				Label.Text = FormatDate(Value).ToString();
-			}
+			
+			DetailTextLabel.Text = FormatDate(Value);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -88,7 +88,7 @@ namespace MonoTouch.Dialog
 
 		public virtual UIDatePicker CreatePicker()
 		{
-			var picker = new UIDatePicker(RectangleF.Empty) { AutoresizingMask = UIViewAutoresizing.FlexibleWidth, Mode = UIDatePickerMode.Date, Date = Value };
+			var picker = new UIDatePicker(RectangleF.Empty) { AutoresizingMask = UIViewAutoresizing.FlexibleWidth, Mode = UIDatePickerMode.Date, Date = (DateTime)Value };
 			return picker;
 		}
 
@@ -148,7 +148,7 @@ namespace MonoTouch.Dialog
 			}
 		}
 
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			var vc = new MyViewController(this) { Autorotate = dvc.Autorotate };
 			DatePicker = CreatePicker();
@@ -158,14 +158,13 @@ namespace MonoTouch.Dialog
 			dvc.ActivateController(vc, dvc);
 		}
 
-		protected override void OnValueChanged()
+		protected virtual void OnValueChanged()
 		{
-			base.OnValueChanged();
 			if (DatePicker != null)
 				DatePicker.Date = Value;
 			
-			if (Label != null)
-				Label.Text = FormatDate(Value);
+			if (DetailTextLabel != null)
+				DetailTextLabel.Text = FormatDate(Value);
 		}
 	}
 }

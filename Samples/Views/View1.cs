@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.MVVM;
+using MonoMobile.MVVM;
 using MonoTouch.Dialog;
 namespace Samples
 {
@@ -7,13 +7,20 @@ namespace Samples
 	{
 		public string Person 
 		{ 
-			get { return Get(()=>Person, "Robert"); } 
-			set { Set(()=>Person, value); }
+			get;// { return Get(()=>Person, "Robert"); } 
+			set;// { Set(()=>Person, value); }
 		} 
 		public int Age 
 		{
-			get { return Get(()=>Age, 43); } 
-			set { Set(()=>Age, value); }
+			get;// { return Get(()=>Age, 43); } 
+			set;// { Set(()=>Age, value); }
+		}
+		
+		[Button]
+		public void ChangeAge()
+		{
+			Age = 44;
+			Person = "Robert";
 		}
 	}
 

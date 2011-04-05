@@ -2,7 +2,7 @@
 // PropertyNotifier.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -27,21 +27,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
     using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Linq.Expressions;
 	using MonoTouch.Dialog;
-
-    public class PropertyNotifier : DisposableObject, INotifyPropertyChanged
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
+    public class PropertyNotifier : DisposableObject, IPropertyNotifier
     {
+		private bool _SuspendNotifications { get; set; }
+		private List<string> _BatchedNotifications { get; set; }
+
         private IDictionary<string, object> _PropertyMap = new Dictionary<string, object>();
 
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
-        protected IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
+        public IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
 
         public PropertyNotifier()
         {
@@ -49,13 +54,26 @@ namespace MonoTouch.MVVM
 
         public void NotifyPropertyChanged(string propertyName)
         {
-			PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			if(!_SuspendNotifications)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			else
+			{
+				_BatchedNotifications.Add(propertyName);
+			}
         }
 
         public void NotifyPropertyChanged<T>(Expression<Func<T>> property)
         {
             NotifyPropertyChanged(property.PropertyName());
         }
+
+		public object Get(string propertyName)
+		{
+			if (_PropertyMap.ContainsKey(propertyName))
+				return (object)_PropertyMap[propertyName];
+
+			return null;
+		}
 
         public T Get<T>(Expression<Func<T>> property)
         {
@@ -81,9 +99,10 @@ namespace MonoTouch.MVVM
             if (isFunction)
             {
 				object source = this;
-				var propertyInfo = this.GetType ().GetNestedProperty (ref source, name, false);
-				if (source != this) {
-					return (T)propertyInfo.GetValue (source, new object[] {  });
+				var propertyInfo = this.GetType().GetNestedMember(ref source, name, false);
+				if (source != this) 
+				{
+					return (T)propertyInfo.GetValue(source);
 				}
             }
 
@@ -105,6 +124,44 @@ namespace MonoTouch.MVVM
             return default(T);
         }
 
+		public void Set<T>(string propertyName, T value)
+		{
+			if (propertyName.Contains("."))
+			{
+				object source = this;
+				var propertyInfo = this.GetType().GetNestedMember(ref source, propertyName, false);
+				if (source != this)
+				{
+					propertyInfo.SetValue(source, value);
+					propertyName = propertyInfo.Name;
+				}
+			} 
+			else
+			{
+				object tryValue = null;
+				
+				if (_PropertyMap.TryGetValue(propertyName, out tryValue))
+				{
+					T oldValue = (T)tryValue;
+					
+					if (oldValue == null && value == null)
+						return;
+					
+					if (oldValue != null && oldValue.Equals(value))
+						return;
+					
+					_PropertyMap[propertyName] = value;
+				} 
+				else
+				{
+					_PropertyMap.Add(propertyName, value);
+				}
+			}
+			
+			NotifyPropertyChanged(propertyName);
+
+		}
+		
         public void Set<T>(Expression<Func<T>> property, T value)
         {
             if (property == null)
@@ -112,43 +169,30 @@ namespace MonoTouch.MVVM
                 throw new ArgumentException("cannot be null", "property");
             }
 
-            var name = property.PropertyName();
-            
-            T oldValue = default(T);
-			if(name.Contains("."))
-			{
-				object source = this;
-				var propertyInfo = this.GetType().GetNestedProperty(ref source, name, false);
-				if (source != this) 
-				{
-					propertyInfo.SetValue(source, value, new object[] {  });
-					name = propertyInfo.Name;
-				}
-			}
-            else
-            {
-                object tryValue = null;
+            var propertyName = property.PropertyName();
 
-                if (_PropertyMap.TryGetValue(name, out tryValue))
-                {
-                    oldValue = (T)tryValue;
-
-                    if (oldValue == null && value == null)
-                        return;
-
-                    if (oldValue != null && oldValue.Equals(value))
-                        return;
-
-                    _PropertyMap[name] = value;
-                }
-                else
-                {
-                    _PropertyMap.Add(name, value);
-                }
-            }
-            
-            NotifyPropertyChanged(name);
+			Set(propertyName, value);
         }
+	
+		public virtual void BeginInit()
+		{
+			_SuspendNotifications = true;
+
+			_BatchedNotifications = new List<string>();
+		}
+
+		public virtual void EndInit()
+		{
+			_SuspendNotifications = false;
+
+			foreach(string propertyName in _BatchedNotifications)
+			{
+				NotifyPropertyChanged(propertyName);
+			}
+
+			_BatchedNotifications = null;
+		}
+
 	}
 }
 

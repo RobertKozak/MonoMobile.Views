@@ -1,12 +1,22 @@
 WHAT'S NEW
 ==========
 
+0. 	Changed the name of the project from MonoTouch.MVVM to MonoMobile.MVVM 
 1. 	Fixed some bugs
-2. 	Added ToolbarButton attribute and a simple implementation for creating Toolbar Buttons. 
+2. 	Added Support for Themes
+3.  More refactoring of interfaces, classes
+4. 	Added more Attributes
+5. 	Added ToolbarButton attribute and a simple implementation for creating Toolbar Buttons. 
 	More to come with this in the next update.
-3.	Fixed some outstanding Linking issues and Added Important note about Link Behavior. (See Below)
 
- 
+
+This is a big release and there are bugs. I wanted to get this out because a number of people 
+want to get a look at it and help out on the project. So don't use it yet in a production 
+environment but do play with it and give me feedback.
+
+There is a lot more documentation coming. 
+
+
 IMPORTANT NOTE: 
 ===============
 
@@ -21,18 +31,17 @@ all of your Views and ViewModels otherwise properties you want to bind most like
 been removed by the linker.
 
 
-MonoTouch.MVVM
+MonoMobile.MVVM
 ================
 
-MonoTouch.MVVM started as adding WPF/Silverlight style binding 
+MonoMobile.MVVM started as adding WPF/Silverlight style binding 
 to MonoTouch.Dialog but in doing so it required more changes than 
 expected and so it became this project rather than just a branch 
 from MonoTouch.Dialog.
 
-Most of the concepts of MonoTouch.Dialog are still there (in fact, 
-at this point, the changes aren't that major but will be in the 
-future) such as Cells, Elements, Roots, Sections. Refer to 
-MonoTouch.Dialog for more information.
+Most of the concepts of MonoTouch.Dialog are still there such as 
+Cells, Elements, Roots, Sections. Refer to MonoTouch.Dialog for 
+more information.
 
 MVVM, or the Model-View-ViewModel pattern is a pattern that promotes
 the separation between Data, Business Logic and User Interface. The 
@@ -49,7 +58,7 @@ Robert Kozak (rkozak@gmail.com)
 Project Status
 ==============
 
-MonoTouch.MVVM is being released as Alpha 0.1. I would like feedback and I have 
+MonoMobile.MVVM is being released as Beta 0.1. I would like feedback and I have 
 plans to take this to MonoDroid and possibly WM7. If this works we can have a common 
 platform for all 3 major phone/tablet OSs
 
@@ -167,7 +176,7 @@ is typically implemented like this:
 
 and in the setter of your properties you call NotifyPropertyChanged().
 
-ViewModels and Views in MonoTouch.MVVM all derive from PropertyNotifier which
+ViewModels and Views in MonoMobile.MVVM all derive from PropertyNotifier which
 has two methods to help with this: Set() and Get().
 
 	public string FirstName 

@@ -2,7 +2,7 @@
 // ButtonAttribute.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corportation
 //
@@ -35,12 +35,6 @@ namespace MonoTouch.Dialog
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class ButtonAttribute : Attribute
 	{
-		public ButtonAttribute(Color backgroundColor, Color textColor)
-		{
-			BackgroundColor = backgroundColor.ToUIColor();
-			TextColor = textColor.ToUIColor();
-		}
-
 		public ButtonAttribute()
 		{
 		}
@@ -51,8 +45,6 @@ namespace MonoTouch.Dialog
 		}
 
 		internal string MethodName;
-		public UIColor BackgroundColor;
-		public UIColor TextColor;
 	}
 }
 

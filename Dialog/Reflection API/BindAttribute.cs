@@ -2,7 +2,7 @@
 // BindAttribute.cs: Bind Attribute for creating a data Binding to Elements
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -31,7 +31,7 @@ namespace MonoTouch.Dialog
 {
 	using System;
 	using System.Globalization;
-	using MonoTouch.MVVM;
+	using MonoMobile.MVVM;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
 	public class BindAttribute : Attribute
@@ -40,12 +40,12 @@ namespace MonoTouch.Dialog
 
 		public BindAttribute()
 		{
-			Binding = new Binding();
+			Binding = new Binding(null, "Value");
 		}
 
-		public BindAttribute(string targetPath)
+		public BindAttribute(string sourcePath)
 		{
-			Binding = new Binding(null, targetPath);
+			Binding = new Binding(sourcePath, "Value");
 		}
 
 		public BindAttribute(string sourcePath, string targetPath)
@@ -94,6 +94,7 @@ namespace MonoTouch.Dialog
 			get { return Binding.ConverterParameter; }
 			set { Binding.ConverterParameter = value; }
 		}
+
 		public CultureInfo ConverterCulture
 		{
 			get { return Binding.ConverterCulture; }

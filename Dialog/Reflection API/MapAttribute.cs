@@ -1,17 +1,15 @@
 using System;
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
 	public class MapAttribute : Attribute
 	{
-		public MapAttribute(string caption, string value)
+		public MapAttribute(string caption)
 		{
 			Caption = caption;
-			Value = value;
 		}
 
-		public string Caption {get;set;}
-		public string Value {get;set;}
+		public string Caption { get;set; }
 	}
 }
 

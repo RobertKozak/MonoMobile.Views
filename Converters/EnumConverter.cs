@@ -1,4 +1,4 @@
-﻿//
+//
 // EnumConverter.cs: 
 //
 // Author:
@@ -27,9 +27,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.MVVM
+namespace MonoMobile.MVVM
 {
     using System;
+	using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
 
@@ -42,23 +43,30 @@ namespace MonoTouch.MVVM
             if (value == null)
                 return value;
 
-			if (targetType == typeof(string))
+			if (targetType == typeof(int))
 			{
-				return ((Enum)value).GetDescription();
+				return (int)value;
 			}
 
-			return (int)value;
+			if (value.GetType() == typeof(string))
+			{
+				var enumValue = EnumExtensions.GetValueFromString(PropertyType, (string)value);
+				var enumString = Enum.GetName(PropertyType, enumValue);
+				return enumString;
+			}
+
+			return ((Enum)value).GetDescription();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-			if (value.GetType() == typeof(string))
+			if (value.GetType() == typeof(int))
 			{
-				return Enum.Parse(PropertyType, (string)value, true);
+				var values = Enum.GetValues(PropertyType);
+				return values.GetValue((int)value);
 			}
 
-			var values = Enum.GetValues(PropertyType);
-			return values.GetValue((int)value);
+			return EnumExtensions.GetValueFromString(targetType, (string)value);
         }
     }
 }

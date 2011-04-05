@@ -18,18 +18,19 @@ namespace Samples
 			startupThread.Start();
 			
 			window.MakeKeyAndVisible();
+			
 			return true;
 		}
 
 		[Export("Startup")]
-		private void Startup ()
+		private void Startup()
 		{
 			using (var pool = new NSAutoreleasePool()) 
 			{
 				InvokeOnMainThread(delegate 
 				{
-					var binding = new BindingContext(new MovieListView(), "MVVM Samples");
-					navigation.ViewControllers = new UIViewController[] { new DialogViewController(binding, true) };
+					var binding = new BindingContext(new MovieListView(), "DealerCenter");
+					navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) };//{Autorotate = true } };
 				});
 			}
 		}

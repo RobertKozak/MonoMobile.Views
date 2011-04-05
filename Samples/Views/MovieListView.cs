@@ -1,62 +1,130 @@
-using MonoTouch.Foundation;
+using MonoTouch.CoreAnimation;
 namespace Samples
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using MonoTouch.MVVM;
+	using System.ComponentModel;
+	using System.Drawing;
+	using System.IO;
+	using System.Threading;
+	using MonoTouch.CoreGraphics;
+	using MonoTouch.CoreLocation;
 	using MonoTouch.Dialog;
+	using MonoTouch.Foundation;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-	using System.Linq;
 	
 	[Preserve(AllMembers=true)]
-	public class MovieListView: View<MovieViewModel>
+	[Theme(typeof(NavbarTheme))]
+	[Theme(typeof(FrostedTheme))]
+	[BackgroundImage("Images/bluesky.jpg")]
+	public class MovieListView: View
 	{
+		[Section]
+		public LoginView LoginView;
+		
+		[Section(Order = 2)]
+		[EnableSearch(true, IncrementalSearch = false)]
+		public List<ISection> Search(ISection[] sections, string searchText)
+		{
+			var result = new List<ISection>() { sections[1] };
+			return result;
+		}
+
 		private View1 _View1 = new View1();
 		private View2 _View2 = new View2();
+		
+		[DefaultValue(true)]
+		public bool TestBool { get; set; }
 
-		[Section]
-		[Root(DataTemplateType = typeof(MovieElement))]
-		public ObservableCollection<MovieView> Movies 
+		[Date]
+		[Theme(typeof(MarbledTheme))]
+		public DateTime Date {get; set;}
+		
+		[Time]
+	//	[Theme(typeof(GraniteStyle))]
+		public DateTime Time {get; set;}
+
+		[Entry]
+	//	[Theme(typeof(CorkStyle))]
+		public string TestEntry2 = "Test Entry";
+
+		[Password("Enter passsword")]
+		[DefaultValue("Test String")]
+		public string MyString
+		{
+			get;//{ return Get (() => MyString, "test"); }
+			set;// { Set (() => MyString, value); }
+		}
+
+	//	[Section]
+//		[Root(ViewType = typeof(MovieView))]
+		[List(ViewType = typeof(MovieView), ThemeType = typeof(FrostedTheme))]
+		public ObservableCollection<MovieViewModel> Movies 
 		{
 			get;
 			set;
 		}
 		
-		[Section]
+		[LoadMore]
+		public void Activity()
+		{
+			Thread.Sleep(1500);
+		}
+
+		[Section("Using a DataTemplate", "This is a footer")]
+		[Root(ViewType = typeof(MovieView))]
 		[NavbarButton(UIBarButtonSystemItem.Add)]
-		public ObservableCollection<MovieView> Movies2 
+		[BackgroundImage("background.png")]
+		public ObservableCollection<MovieViewModel> Movies2 
 		{
 		get; set;
 		}
-		
-		
-[NavbarButton("Add")]
-public void AddMovie()
-{
-var s = 43;
-}
+//				
+		[NavbarButton("Add")]
+		public void AddMovie()
+		{
+			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
+		}
+
+		[Map("A Map")]
+		public CLLocationCoordinate2D Location {get; set;}
+
+			
+		[Entry]
+		[Bind("TestEntry", "Value")]
+		[DefaultValue("Rocket")]
+		public string TestEntry 
+		{
+			get;// { return Get(()=>TestEntry, "Testing"); }
+			set;// { Set(()=>TestEntry, value); }
+		} 
 
 		[Section]
 		[Root(CellStyle = UITableViewCellStyle.Subtitle)]
 		[Caption("Root Address")]
 		public AddressView AddressView
 		{
-			get { return Get(()=>AddressView, new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" }); } 
-			set { Set(()=>AddressView, value); } 
+			get;// { return Get(()=>AddressView, new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" }); } 
+			set;// { Set(()=>AddressView, value); } 
 		}
 		
 		[Section(Order = 10)]
+		[Root]
 		public IView DynamicView
 		{
-			get { return Get(()=>DynamicView, new View1()); }
-			set { Set(()=>DynamicView, value); }
+			get;// { return Get(()=>DynamicView, new View1()); }
+			set;// { Set(()=>DynamicView, value); }
 		}
 		
 		[Section]
+	//	[CellStyle(typeof(ClearStyle))]
+	//[CellStyle(typeof(ButtonCellStyle))]
 		public View WebSamples
 		{
-			get { return Get(()=>WebSamples, new WebSamples()); }
-			set { Set(()=>WebSamples, value); }
+			get;// { return Get(()=>WebSamples, new WebSamples()); }
+			set;// { Set(()=>WebSamples, value); }
 		}
 
 		[Button]
@@ -69,34 +137,72 @@ var s = 43;
 				DynamicView = _View1;
 		}
 		
-		[Inline]
-		[Section("", "This Address is the same as Root Address above")]
-		public AddressView InlineAddress 
+		[Button]
+		public void ChangeStyle()
 		{
-			get { return Get(()=>AddressView); } 
-			set { Set(()=>AddressView, value); } 
+			
 		}
+//		[Inline]
+//		[Section("", "This Address is the same as Root Address above")]
+//		public AddressView InlineAddress 
+//		{
+//			get { return Get(()=>AddressView); } 
+//			set { Set(()=>AddressView, value); } 
+//		}
 		
 		[Section]
+		[Root]
 		public InterestingView InterestingStuff
 		{
-			get { return Get(()=>InterestingStuff, new InterestingView()); }
-			set { Set(()=>InterestingStuff, value); }
+			get;// { return Get(()=>InterestingStuff, new InterestingView()); }
+			set;// { Set(()=>InterestingStuff, value); }
+		}
+		
+		[PullToRefresh]
+		public void RefreshData()
+		{
+			for(var index = 0; index < 100; index++)
+				System.Threading.Thread.Sleep(50);
 		}
 
+		[Root]
+		public ElementAPIView ElementAPIView 
+		{
+			get; set;
+		}
+	
 		public MovieListView()
 		{
-			Movies = new ObservableCollection<MovieView>();
+			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
+			
+LoginView = new LoginView();
+
+			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
 			dataModel.Load();
+			Movies =dataModel.Movies;
+			MyString = "Test string";
 
-			foreach(var movie in dataModel.Movies)
-			{
-				Movies.Add(new MovieView() { DataContext = movie });
-			}
+InterestingStuff = new InterestingView();
+			
+			Location = new CLLocationCoordinate2D(-33.867139,151.207114);
 
+DynamicView = new View1();
+			ElementAPIView = new ElementAPIView();
+			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
+			WebSamples = new WebSamples();
+
+////			foreach(var movie in dataModel.Movies)
+////			{
+////				Movies.Add(new MovieView() { DataContext = movie });
+////			}
+//
 Movies2 = Movies;
+		
+			Time = DateTime.Now;
+			Date = DateTime.Now;
 		}
 	}
+
 }
 

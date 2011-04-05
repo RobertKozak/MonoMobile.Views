@@ -1,3 +1,4 @@
+using System.Reflection;
 //
 // EntryElement.cs
 //
@@ -31,259 +32,189 @@ namespace MonoTouch.Dialog
 {
 	using System;
 	using System.Drawing;
-	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
-
-	/// <summary>
-	/// An element that can be used to enter text.
-	/// </summary>
-	/// <remarks>
-	/// This element can be used to enter text both regular and password protected entries. 
-	///     
-	/// The Text fields in a given section are aligned with each other.
-	/// </remarks>
-	public class EntryElement : Element<string>
-	{
-		private static  UITextField __UITextField = new UITextField();
-		private  UITextAlignment __textAlignment = __UITextField.TextAlignment;
-		private  UIKeyboardType __keyboard = __UITextField.KeyboardType; 
-		private  UIFont _font = __UITextField.Font;
-
-		/// <summary>
-		/// The type of keyboard used for input, you can change
-		/// this to use this for numeric input, email addressed,
-		/// urls, phones.
-		/// </summary>
-		public UIKeyboardType KeyboardType = UIKeyboardType.Default;
-
-		private string _Placeholder;
-		private static UIFont _Font = UIFont.BoldSystemFontOfSize(17);
+	using MonoMobile.MVVM;
+	using MonoTouch.UIKit;
 	
-		private bool _IsPassword;
-		public bool IsPassword
-		{
-			get
-			{
-				return _IsPassword;
-			}
-			set
-			{
-				_IsPassword = value;
-				if (Entry != null && Entry.SecureTextEntry != _IsPassword)
-				{
-					Entry.SecureTextEntry = _IsPassword;
-				}
-			}
-		}
-
-		public bool JustifyText { get; set; }
+	public class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
+	{
 		public UITextField Entry { get; set; }
+		
+		public string Placeholder { get; set; }
+		public bool IsPassword { get; set; }
+		public string Text { get; set; }
+		public UIReturnKeyType ReturnKeyType { get; set; }
+		public UIKeyboardType KeyboardType { get; set; }
+		public bool Editable { get; set; }
+		public UITextAutocorrectionType AutoCorrectionType { get; set; }
+		public UITextAutocapitalizationType AutoCapitalizationType { get; set; }
+		
+		public BindableProperty PlaceholderProperty = BindableProperty.Register("Placeholder");
+		public BindableProperty IsPasswordProperty = BindableProperty.Register("IsPassword");
+		public BindableProperty TextProperty = BindableProperty.Register("Text");
+		public BindableProperty ReturnKeyTypeProperty = BindableProperty.Register("ReturnKeyboardType");
+		public BindableProperty KeyboardTypeProperty = BindableProperty.Register("KeyboardType");
+		public BindableProperty EditableProperty = BindableProperty.Register("Editable");
 
-		/// <summary>
-		/// Constructs an EntryElement with the given caption, placeholder and initial value.
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to use
-		/// </param>
-		/// <param name="placeholder">
-		/// Placeholder to display.
-		public EntryElement(string caption, string placeholder) : base(caption)
+		public EntryElement(string caption) : base(caption)
 		{
-			_Placeholder = placeholder;
+			KeyboardType = UIKeyboardType.Default;
+			Placeholder = "Type here";
+			Editable = true;
 		}
 
-		/// <summary>
-		/// Constructs an EntryElement with the given caption, placeholder and initial value.
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to use
-		/// </param>
-		/// <param name="placeholder">
-		/// Placeholder to display.
-		/// </param>
-		/// <param name="value">
-		/// Initial value.
-		/// </param>
-		public EntryElement(string caption, string placeholder, string value) : base(caption)
+		public EntryElement() : this("")
 		{
-			Value = value;
-			_Placeholder = placeholder;
 		}
 
-		/// <summary>
-		/// Constructs  an EntryElement for password entry with the given caption, placeholder and initial value.
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to use
-		/// </param>
-		/// <param name="placeholder">
-		/// Placeholder to display.
-		/// <param name="isPassword">
-		/// True if this should be used to enter a password.
-		/// </param>
-		public EntryElement(string caption, string placeholder, bool isPassword) : base(caption)
+		public EntryElement(RectangleF frame) : this()
 		{
-			_IsPassword = isPassword;
-			_Placeholder = placeholder;
+			Frame = frame;
 		}
 
-		/// <summary>
-		/// Constructs  an EntryElement for password entry with the given caption, placeholder and initial value.
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to use
-		/// </param>
-		/// <param name="placeholder">
-		/// Placeholder to display.
-		/// </param>
-		/// <param name="value">
-		/// Initial value.
-		/// </param>
-		/// <param name="isPassword">
-		/// True if this should be used to enter a password.
-		/// </param>
-		public EntryElement(string caption, string placeholder, string value, bool isPassword) : base(caption)
+		public override UITableViewElementCell NewCell()
 		{
-			Value = value;
-			_IsPassword = isPassword;
-			_Placeholder = placeholder;
-		}
-
-		// 
-		// Computes the X position for the entry by aligning all the entries in the Section
-		//
-		private SizeF ComputeEntryPosition(UITableView tv, UITableViewCell cell)
-		{	
-			SizeF max = new SizeF(-1, -1);
-			var element = this as Element;
-			ISection s = Parent as ISection;
-
-			if (JustifyText)
-			{
-				if (s.EntryAlignment.Width != 0)
-					return s.EntryAlignment;
-
-				foreach (var e in s.Elements)
-				{
-					element = e as EntryElement;
-					if (element != null)
-						break;
-				}
-			}
-				
-			var size = tv.StringSize(element.Caption, _Font);
-			if (size.Width > max.Width)
-				max = size;
-
-			s.EntryAlignment = new SizeF(25 + Math.Min(max.Width, 160), max.Height);
-			return s.EntryAlignment;
-		}
-
-		public override void InitializeControls(UITableView tableView)
-		{
-			if (Entry == null)
-			{
-				SizeF size = ComputeEntryPosition(tableView, Cell);
-				var _entry = new UITextField(new RectangleF(size.Width, (Cell.ContentView.Bounds.Height - size.Height) / 2 - 1, 290 - size.Width, size.Height)) { Tag = 1, Placeholder = _Placeholder ?? "", SecureTextEntry = _IsPassword };
-				_entry.Font = UIFont.SystemFontOfSize(17);
-				_entry.AddTarget(delegate { Value = _entry.Text; }, UIControlEvent.ValueChanged);
-
-				Entry = _entry;
-
-				Entry.Ended += delegate
-				{
-					Value = Entry.Text;
-				};
-				
-				Entry.ShouldReturn += delegate
-				{
-					EntryElement focus = null;
-					foreach (var e in (Parent as ISection).Elements)
-					{
-						if (e == this)
-							focus = this; 
-						else if (focus != null && e is EntryElement)
-							focus = e as EntryElement;
-					}
-					
-					if (focus != this)
-					{
-						tableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Middle, true);
-						focus.Entry.BecomeFirstResponder();
-						
-					} 
-					else
-						focus.Entry.ResignFirstResponder();
-					
-					return true;
-				};
-				
-				Entry.Started += delegate
-				{
-					var bindingExpression = GetBindingExpression("Value");
-					
-					if (bindingExpression != null) 
-					{
-						Entry.Text = (string)bindingExpression.ConvertbackValue(Value);
-					}
-					else
-						Entry.Text = Value;
-
-					EntryElement self = null;
-					var returnType = UIReturnKeyType.Done;
-					
-					foreach (var e in (Parent as ISection).Elements)
-					{
-						if (e == this)
-							self = this; else if (self != null && e is EntryElement)
-							returnType = UIReturnKeyType.Next;
-					}
-					
-					Entry.ReturnKeyType = returnType;
-				};
-			}
-
-			Entry.KeyboardType = KeyboardType;
-			Entry.TextAlignment = UITextAlignment.Right;
+			Theme.CellStyle = Editable ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
 			
-			Entry.Text = Value;
-
-			Cell.TextLabel.Text = Caption;
-			
-			Cell.ContentView.AddSubview(Entry);
+			return base.NewCell();
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			RemoveTag(1);
-
-			Cell.TextLabel.Font = _Font;
-
 			base.InitializeCell(tableView);
+			
+			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+		}
+
+		public override void InitializeContent()
+		{
+			if (Editable)
+			{
+				Entry = new UICustomTextField() 
+				{ 
+					BackgroundColor = UIColor.Clear, 
+					PlaceholderColor = Theme.PlaceholderColor, 
+					PlaceholderAlignment = Theme.PlaceholderAlignment,
+					VerticalAlignment = UIControlContentVerticalAlignment.Center,
+					AutocorrectionType = AutoCorrectionType,
+					AutocapitalizationType = AutoCapitalizationType,
+					Tag = 1 
+				};
+			
+				Entry.Placeholder = Placeholder;
+				Entry.SecureTextEntry = IsPassword;
+				Entry.Font = DetailTextFont;
+				Entry.KeyboardType = KeyboardType;
+				Entry.TextAlignment = DetailTextAlignment;
+				Entry.ReturnKeyType = ReturnKeyType;
+
+				if (DetailTextColor != null)
+					Entry.TextColor = DetailTextColor;
+
+				Entry.Started += (s, e) =>
+				{
+					ValueProperty.ConvertBack<string>();
+
+					IFocusable self = null;
+					var returnType = UIReturnKeyType.Done;
+					
+					foreach (IElement element in (Parent as ISection).Elements) 
+					{
+						if (element == null)
+							continue;
+	
+						if (element == this)
+							self = this; 
+						else if (self != null && element is IFocusable)
+						{
+							returnType = UIReturnKeyType.Next;
+							break;
+						}
+					}
+					
+					Entry.ReturnKeyType = returnType;
+				};
+			
+				Entry.ShouldReturn = delegate
+				{
+					IFocusable focus = null;
+					foreach (IElement element in (Parent as ISection).Elements) 
+					{
+						if (element == null) 
+							continue;
+	
+						if (element == this)
+							focus = this; 
+						else if (focus != null && element is IFocusable)
+						{
+							focus = (IFocusable)element;
+							if (focus.Entry != null) break;
+							focus = this;
+						}
+					}
+					
+					if (focus != this) 
+					{
+						TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
+						focus.Entry.BecomeFirstResponder();
+						
+					}
+					else
+					{
+						focus.Entry.ResignFirstResponder();
+					}
+
+					
+					return true;
+				};
+
+				Entry.EditingDidEnd += delegate 
+				{
+					ValueProperty.Update();
+				};
+
+				ContentView = Entry;
+			}
+			else
+			{
+				//if (DetailTextLabel != null)
+				//	DetailTextLabel.Text = Value;
+			}
+		}
+		
+		public override void BindProperties()
+		{
+			EditableProperty.BindTo(this, "Editable");
+
+			if (Entry != null)
+			{
+				PlaceholderProperty.BindTo(this, "Entry.Placeholder");
+				IsPasswordProperty.BindTo(this, "Entry.SecureTextEntry");
+				TextProperty.BindTo(this, "Entry.Text");
+				ValueProperty.BindTo(this, "Entry.Text");
+				DetailTextAlignmentProperty.BindTo(this, "Entry.TextAlignment");
+				ReturnKeyTypeProperty.BindTo(this, "Entry.ReturnKeyType");
+				KeyboardTypeProperty.BindTo(this, "Entry.KeyboardType");
+				DetailTextFontProperty.BindTo(this, "Entry.Font");
+			}
+		}
+
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+			Entry.InvokeOnMainThread(()=>{
+				Entry.BecomeFirstResponder();
+			});
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (disposing && Entry != null)
 			{
 				Entry.Dispose();
 				Entry = null;
 			}
-		}
-
-		protected override void OnValueChanged()
-		{
-			base.OnValueChanged();
 			
-			if (Entry != null)
-			{
-				Entry.Text = Value;
-			}
-		}
-
-		public override bool Matches(string text)
-		{
-			return (Value != null ? Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 : false) || base.Matches(text);
+			base.Dispose(disposing);
 		}
 	}
 }

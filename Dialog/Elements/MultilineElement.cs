@@ -33,7 +33,7 @@ namespace MonoTouch.Dialog
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class MultilineElement : StringElement, IElementSizing
+	public class MultilineElement : StringElement, ISizeable
 	{
 		public MultilineElement(string caption) : base(caption)
 		{
@@ -45,9 +45,8 @@ namespace MonoTouch.Dialog
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			var textLabel = Cell.TextLabel;
-			textLabel.LineBreakMode = UILineBreakMode.WordWrap;
-			textLabel.Lines = 0;
+			Cell.TextLabel.LineBreakMode = UILineBreakMode.WordWrap;
+			Cell.TextLabel.Lines = 0;
 		}
 
 		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
