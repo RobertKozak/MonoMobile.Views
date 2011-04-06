@@ -29,7 +29,7 @@ namespace Samples
 			{
 				InvokeOnMainThread(delegate 
 				{
-					var binding = new BindingContext(new MovieListView(), "DealerCenter");
+					var binding = new BindingContext(new MovieListView(), "MVVM Sample");
 					navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) };//{Autorotate = true } };
 				});
 			}
