@@ -737,43 +737,39 @@ namespace MonoTouch.Dialog
 
 		private void ConfigureBackgroundImage()
 		{
+			UIColor color = null;
 			if (BackgroundImage == null)
 			{
-				BackgroundImageAttribute attribute = null;
-				if (Root != null && Root.ViewBinding.MemberInfo != null)
+				if (Root != null)
 				{
-					attribute = Root.ViewBinding.MemberInfo.GetCustomAttribute<BackgroundImageAttribute>();
-				}
-				
-				if (attribute == null)
-				{
-					var dataTemplate = Root.ViewBinding.DataContext as IDataTemplate;
-					if (dataTemplate != null)
-						attribute = dataTemplate.CustomAttributes.FirstOrDefault((a)=>
-							a.GetType() == typeof(BackgroundImageAttribute)
-							) as BackgroundImageAttribute;
+					if (Root.Theme.BackgroundUri != null)
+					{
+						var imageUri = Root.Theme.BackgroundUri;
+						BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
+					}
 					
-					if (attribute == null)
-						attribute = Root.ViewBinding.DataContext.GetType().GetCustomAttribute<BackgroundImageAttribute>();
-				}
-	
-				if (attribute != null && !string.IsNullOrEmpty(attribute.ImageName))
-				{
-					var imageUri = new Uri("file://" + Path.GetFullPath(attribute.ImageName));
-					BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
-					if (BackgroundImage == null)
-						BackgroundImage = UIImage.FromFile(attribute.ImageName);
-				}
+					if (Root.Theme.BackgroundColor != null)
+					{
+						color = Root.Theme.BackgroundColor;
+					}
 
+					if (Root.Theme.BackgroundImage != null)
+					{
+						BackgroundImage = Root.Theme.BackgroundImage;
+					}
+				}
 			}
 
 			if (BackgroundImage != null)
 			{
-				var color = UIColor.FromPatternImage(BackgroundImage);
+				color = UIColor.FromPatternImage(BackgroundImage);
+			}
 				
+			if (color != null)
+			{
 				if (TableView.RespondsToSelector(new Selector("backgroundView")))
 					TableView.BackgroundView = new UIView() { Opaque = false };
-				
+
 				if (ParentViewController != null)
 				{
 					TableView.BackgroundColor = UIColor.Clear;

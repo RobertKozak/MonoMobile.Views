@@ -48,6 +48,10 @@ namespace MonoMobile.MVVM
 		private UIColor _TextColor;
 		private UIColor _DetailTextColor;
 		
+		private UIImage _BackgroundImage;
+		private Uri _BackgroundUri;
+		private UIColor _BackgroundColor;
+
 		public string Name { get; set; }
 		public bool DrawWhenHighlighted { get; set; }
 
@@ -182,6 +186,58 @@ namespace MonoMobile.MVVM
 		public SizeF FooterTextShadowOffset { get; set; }
 		public UIColor FooterTextShadowColor { get; set; }
 		
+		public UIImage BackgroundImage
+		{
+			get 
+			{ 
+				return _BackgroundImage; 
+			}
+			set 
+			{
+				_BackgroundImage = value;
+				_BackgroundUri = null;
+				_BackgroundColor = null;
+			}
+		}
+
+		public Uri BackgroundUri
+		{
+			get 
+			{ 
+				return _BackgroundUri;
+			}
+			set 
+			{
+				_BackgroundUri = value;
+				_BackgroundColor = null;
+				
+				if (_BackgroundImage != null)
+				{
+					_BackgroundImage.Dispose();
+					_BackgroundImage = null;
+				}
+			}
+		}
+
+		public UIColor BackgroundColor
+		{
+			get 
+			{ 
+				return _BackgroundColor; 
+			}
+			set
+			{
+				_BackgroundColor = value;
+				_BackgroundUri = null;
+				
+				if (_BackgroundImage != null)
+				{
+					_BackgroundImage.Dispose();
+					_BackgroundImage = null;
+				}
+			}
+		}
+
 		public Action<RectangleF, CGContext, UITableViewElementCell> DrawContentViewAction { get; set; }
 
 		public Theme()
@@ -332,6 +388,16 @@ namespace MonoMobile.MVVM
 				{
 					DrawContentViewAction = theme.DrawContentViewAction;
 				}
+
+			
+				if (theme.BackgroundColor != null)
+					BackgroundColor = theme.BackgroundColor;
+				
+				if (theme.BackgroundUri != null)
+					BackgroundUri = theme.BackgroundUri;
+				
+				if (theme.BackgroundImage != null)
+					BackgroundImage = theme.BackgroundImage;
 			}
 		}
 

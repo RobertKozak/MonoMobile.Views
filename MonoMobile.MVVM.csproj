@@ -233,7 +233,6 @@
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Application\SuspendNotificationContext.cs" />
     <Compile Include="Dialog\ViewBinding.cs" />
-    <Compile Include="Dialog\Reflection API\BackgroundImageAttribute.cs" />
     <Compile Include="Binding\IDataContext.cs" />
     <Compile Include="Binding\BindableProperty.cs" />
     <Compile Include="Converters\IntConverter.cs" />

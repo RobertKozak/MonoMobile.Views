@@ -5,7 +5,6 @@ namespace Samples
 	using MonoTouch.UIKit;
 	
 	[Theme(typeof(FrostedTheme))]
-	[BackgroundImage("Images/marble.png")]
 	public class MovieView: View
 	{
 		[Section()]

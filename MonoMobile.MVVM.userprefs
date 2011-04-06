@@ -1,6 +1,6 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/BindingContext.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/AppDelegateIPhone.cs">
     <Files>
       <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Reflection API/BindingContext.cs" Line="452" Column="107" />
       <File FileName="../../Dropbox/MonoTouch.MVVM/Samples/Views/MovieElement.cs" Line="31" Column="3" />
@@ -23,6 +23,7 @@
       <File FileName="Dialog/Interfaces/IDataTemplate.cs" Line="1" Column="1" />
       <File FileName="Dialog/Interfaces/IRoot.cs" Line="38" Column="38" />
       <File FileName="README.markdown" Line="17" Column="43" />
+      <File FileName="Samples/AppDelegateIPhone.cs" Line="32" Column="72" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -35,16 +36,13 @@
             <Node name="Dialog" expanded="True">
               <Node name="Cell" expanded="True" />
               <Node name="Interfaces" expanded="True" />
-              <Node name="BindingContext.cs" selected="True" />
             </Node>
             <Node name="Images">
               <Option id="ShowAllFiles" value="True" />
             </Node>
           </Node>
-          <Node name="Samples" expanded="True">
+          <Node name="Samples" expanded="True" selected="True">
             <Node name="Images" expanded="True" />
-            <Node name="Themes" expanded="True" />
-            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>

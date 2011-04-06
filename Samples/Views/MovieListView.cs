@@ -18,7 +18,7 @@ namespace Samples
 	[Preserve(AllMembers=true)]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
-	[BackgroundImage("Images/bluesky.jpg")]
+	[Theme(typeof(BackgroundImageTheme))]
 	public class MovieListView: View
 	{
 		[Section]
@@ -76,7 +76,6 @@ namespace Samples
 		[Section("Using a DataTemplate", "This is a footer")]
 		[Root(ViewType = typeof(MovieView))]
 		[NavbarButton(UIBarButtonSystemItem.Add)]
-		[BackgroundImage("background.png")]
 		public ObservableCollection<MovieViewModel> Movies2 
 		{
 		get; set;
@@ -203,6 +202,14 @@ Movies2 = Movies;
 			Date = DateTime.Now;
 		}
 	}
+	
 
+	public class BackgroundImageTheme: Theme
+	{
+		public BackgroundImageTheme()
+		{
+			BackgroundUri = new Uri("file://" + Path.GetFullPath("Images/bluesky.jpg"));
+		}
+	}
 }
 

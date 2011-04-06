@@ -18,8 +18,8 @@
     <BundleIdentifier>DCMobile</BundleIdentifier>
     <BundleVersion>0.1</BundleVersion>
     <BundleDisplayName>MVVM Sample</BundleDisplayName>
-    <BundleIconHigh>DCAppiPhone4.png</BundleIconHigh>
-    <BundleIcon>DCAppiPhone.png</BundleIcon>
+    <BundleIconHigh>DCApp114.png</BundleIconHigh>
+    <BundleIcon>DCApp57.png</BundleIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
