@@ -35,17 +35,24 @@ namespace MonoTouch.Dialog
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
+
+	public enum EditMode
+	{
+		ReadOnly,
+		NoCaption,
+		WithCaption
+	}
 	
 	public class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
 		public UITextField Entry { get; set; }
 		
+		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
 		public string Text { get; set; }
 		public UIReturnKeyType ReturnKeyType { get; set; }
 		public UIKeyboardType KeyboardType { get; set; }
-		public bool Editable { get; set; }
 		public UITextAutocorrectionType AutoCorrectionType { get; set; }
 		public UITextAutocapitalizationType AutoCapitalizationType { get; set; }
 		
@@ -54,13 +61,12 @@ namespace MonoTouch.Dialog
 		public BindableProperty TextProperty = BindableProperty.Register("Text");
 		public BindableProperty ReturnKeyTypeProperty = BindableProperty.Register("ReturnKeyboardType");
 		public BindableProperty KeyboardTypeProperty = BindableProperty.Register("KeyboardType");
-		public BindableProperty EditableProperty = BindableProperty.Register("Editable");
+		public BindableProperty EditModeProperty = BindableProperty.Register("EditMode");
 
 		public EntryElement(string caption) : base(caption)
 		{
 			KeyboardType = UIKeyboardType.Default;
-			Placeholder = "Type here";
-			Editable = true;
+			EditMode = EditMode.WithCaption;
 		}
 
 		public EntryElement() : this("")
@@ -74,13 +80,19 @@ namespace MonoTouch.Dialog
 
 		public override UITableViewElementCell NewCell()
 		{
-			Theme.CellStyle = Editable ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
+			Theme.CellStyle = EditMode == EditMode.ReadOnly ? UITableViewCellStyle.Value1 : UITableViewCellStyle.Default;
 			
 			return base.NewCell();
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
+			ShowCaption = EditMode != EditMode.NoCaption;
+			if (!ShowCaption)
+			{
+				DetailTextAlignment = UITextAlignment.Left;
+			}
+
 			base.InitializeCell(tableView);
 			
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
@@ -88,7 +100,7 @@ namespace MonoTouch.Dialog
 
 		public override void InitializeContent()
 		{
-			if (Editable)
+			if (EditMode != EditMode.ReadOnly)
 			{
 				Entry = new UICustomTextField() 
 				{ 
@@ -101,7 +113,11 @@ namespace MonoTouch.Dialog
 					Tag = 1 
 				};
 			
-				Entry.Placeholder = Placeholder;
+				if (EditMode == EditMode.NoCaption)
+					Entry.Placeholder = Caption;
+				else
+					Entry.Placeholder = Placeholder;
+
 				Entry.SecureTextEntry = IsPassword;
 				Entry.Font = DetailTextFont;
 				Entry.KeyboardType = KeyboardType;
@@ -177,14 +193,16 @@ namespace MonoTouch.Dialog
 			}
 			else
 			{
-				//if (DetailTextLabel != null)
-				//	DetailTextLabel.Text = Value;
+				if (DetailTextLabel != null)
+					DetailTextLabel.Text = Value;
 			}
 		}
 		
 		public override void BindProperties()
 		{
-			EditableProperty.BindTo(this, "Editable");
+			base.BindProperties();
+
+			EditModeProperty.BindTo(this, "EditMode");
 
 			if (Entry != null)
 			{
@@ -201,9 +219,12 @@ namespace MonoTouch.Dialog
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			Entry.InvokeOnMainThread(()=>{
-				Entry.BecomeFirstResponder();
-			});
+			if (Entry != null)
+			{
+				Entry.InvokeOnMainThread(()=>{
+					Entry.BecomeFirstResponder();
+				});
+			}
 		}
 
 		protected override void Dispose(bool disposing)

@@ -28,7 +28,8 @@ namespace Samples
 		}
 
 		//[Bind("CaptionSize")]
-		[Entry(Editable = false)]
+		[Entry(EditMode = EditMode.ReadOnly)]
+		[DefaultValue("55")]
 		public string Number 
 		{
 			get;// { return Get (() => Number, "Testing number"); }

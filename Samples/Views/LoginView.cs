@@ -11,11 +11,10 @@ namespace Samples
 	public class LoginView : View
 	{
 		[Section("Login to DealerCenter")]
-		[Entry("User Name", AutoCorrectionType = UITextAutocorrectionType.No)]
-		[Caption("")]
+		[Entry(AutoCorrectionType = UITextAutocorrectionType.No, EditMode = EditMode.NoCaption)]
 		public string UserName { get; set;}
-		[Password("Password")]
-		[Caption("")]
+
+		[Password(EditMode = EditMode.NoCaption)]
 		public string Password { get; set;}
 		
 		[Section("", "", Order=2)]
@@ -49,16 +48,11 @@ namespace Samples
 
 		[Html]
 		public string Nowcom = "http://www.nowcom.com/support.aspx";
-		
-//		[Section]
-//		[Html]
-//		public string Twitter = "http://twitter.com/DealerCenter";
-
 
 		[Section]
 		[Caption("")]
 		[Theme(typeof(CopyrightTheme))]
-		public string Copyright = "Copyright © 2011 Nowcom Corporation."; 
+		public string Copyright = "Copyright © 2011 Nowcom Corporation"; 
 	}
 
 	public class CopyrightTheme: Theme

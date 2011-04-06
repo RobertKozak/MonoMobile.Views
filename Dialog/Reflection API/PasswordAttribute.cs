@@ -35,10 +35,15 @@ namespace MonoTouch.Dialog
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public class PasswordAttribute : EntryAttribute
 	{
-		public PasswordAttribute(string placeholder) : base(placeholder)
+		public PasswordAttribute() : base()
 		{
 			AutoCorrectionType = UITextAutocorrectionType.No;
 			AutoCapitalizationType = UITextAutocapitalizationType.None;
+		}
+
+		public PasswordAttribute(string placeholder) : this()
+		{
+			Placeholder = placeholder;
 		}
 	}
 }
