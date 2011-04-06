@@ -1,18 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/AppDelegateIPhone.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Views/MovieListView.cs">
     <Files>
       <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Reflection API/BindingContext.cs" Line="452" Column="107" />
       <File FileName="../../Dropbox/MonoTouch.MVVM/Samples/Views/MovieElement.cs" Line="31" Column="3" />
       <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Elements/Section.cs" Line="397" Column="1" />
       <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Elements/Element.cs" Line="280" Column="1" />
       <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/IRoot.cs" Line="57" Column="33" />
-      <File FileName="Samples/Views/MovieListView.cs" Line="20" Column="20" />
-      <File FileName="Dialog/DialogViewController.cs" Line="436" Column="33" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="78" Column="44" />
+      <File FileName="Dialog/DialogViewController.cs" Line="748" Column="73" />
       <File FileName="Dialog/BindingContext.cs" Line="946" Column="4" />
       <File FileName="Binding/BindingExpression.cs" Line="238" Column="1" />
       <File FileName="Samples/Themes/FrostedTheme.cs" Line="38" Column="30" />
-      <File FileName="Dialog/Cell/Theme.cs" Line="207" Column="22" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="400" Column="30" />
       <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="208" Column="6" />
       <File FileName="Samples/Views/LoginView.cs" Line="75" Column="38" />
       <File FileName="Dialog/Interfaces/IThemeable.cs" Line="38" Column="26" />
@@ -21,9 +21,11 @@
       <File FileName="Dialog/Section.cs" Line="31" Column="2" />
       <File FileName="Dialog/Interfaces/ISection.cs" Line="35" Column="24" />
       <File FileName="Dialog/Interfaces/IDataTemplate.cs" Line="1" Column="1" />
-      <File FileName="Dialog/Interfaces/IRoot.cs" Line="38" Column="38" />
+      <File FileName="Dialog/Interfaces/IRoot.cs" Line="44" Column="11" />
       <File FileName="README.markdown" Line="17" Column="43" />
       <File FileName="Samples/AppDelegateIPhone.cs" Line="32" Column="72" />
+      <File FileName="Dialog/ViewBinding.cs" Line="7" Column="2" />
+      <File FileName="Samples/Views/MovieView.cs" Line="7" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -36,6 +38,7 @@
             <Node name="Dialog" expanded="True">
               <Node name="Cell" expanded="True" />
               <Node name="Interfaces" expanded="True" />
+              <Node name="Reflection API" expanded="True" />
             </Node>
             <Node name="Images">
               <Option id="ShowAllFiles" value="True" />
@@ -43,6 +46,7 @@
           </Node>
           <Node name="Samples" expanded="True" selected="True">
             <Node name="Images" expanded="True" />
+            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>
