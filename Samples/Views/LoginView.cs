@@ -10,7 +10,7 @@ namespace Samples
 //	[BackgroundImage("Images/bluesky.jpg")]
 	public class LoginView : View
 	{
-		[Section("Login")]
+		[Section("Login to DealerCenter")]
 		[Entry("User Name", AutoCorrectionType = UITextAutocorrectionType.No)]
 		[Caption("")]
 		public string UserName { get; set;}
@@ -43,6 +43,22 @@ namespace Samples
 	{
 		public string Version = "1.0";
  
+		[Section("Find us on the web")]
+		[Html]
+		public string DealerCenter = "http://www.dealercenter.net/en/Pages/contact-us.aspx";
+
+		[Html]
+		public string Nowcom = "http://www.nowcom.com/support.aspx";
+		
+//		[Section]
+//		[Html]
+//		public string Twitter = "http://twitter.com/DealerCenter";
+
+
+		[Section]
+		[Caption("")]
+		[Theme(typeof(CopyrightTheme))]
+		public string Copyright = "Copyright © 2011 Nowcom Corporation."; 
 	}
 
 	public class CopyrightTheme: Theme
