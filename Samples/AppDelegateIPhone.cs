@@ -1,6 +1,6 @@
 namespace Samples
 {
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using System.Threading;

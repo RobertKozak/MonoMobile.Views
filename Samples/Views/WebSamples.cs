@@ -1,6 +1,6 @@
 using System;
 using MonoMobile.MVVM;
-using MonoTouch.Dialog;
+using MonoMobile.MVVM;
 
 namespace Samples
 {

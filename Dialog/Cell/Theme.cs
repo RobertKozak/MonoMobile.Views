@@ -31,7 +31,7 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Drawing;
 	using MonoTouch.CoreGraphics;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
 	public class Theme

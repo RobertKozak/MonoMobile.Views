@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public class CheckboxElement : BoolElement
 	{

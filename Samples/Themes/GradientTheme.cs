@@ -1,4 +1,4 @@
-using MonoTouch.Dialog;
+using MonoMobile.MVVM;
 //
 // GradientStyle.cs:
 //

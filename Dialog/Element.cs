@@ -27,11 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
-	using MonoTouch.Dialog.Utilities;
+	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
@@ -514,80 +514,4 @@ namespace MonoTouch.Dialog
 			root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
 		}
 	}
-	
-
-//	public class Element<V> : Element, ISearchable
-//	{
-//		private V _Value;
-//
-//		public event EventHandler ValueChanged;
-//
-//		public BindableProperty ValueProperty = BindableProperty.Register("Value");
-//
-//		public V Value 
-//		{
-//			get { return GetValue(); }
-//			set { SetValue(value); }
-//		}
-//		
-//		protected V GetValue()
-//		{
-//			return _Value;
-//		}
-//
-//		protected void SetValue(V value)
-//		{
-//			if (!EqualityComparer<V>.Default.Equals(_Value, value)) 
-//			{
-//				_Value = value;
-//				
-//				if (string.IsNullOrEmpty(Caption) && value != null)
-//				{
-//					Caption = value.ToString();
-//				}				
-//
-//				UpdateSources();
-//				OnValueChanged();
-//			}
-//		}
-//		
-//		public Element(string caption): base(caption) 
-//		{
-//			Value = default(V);
-//		}
-//
-//		public Element(string caption, V value) : base(caption)
-//		{
-//			Value = value;
-//		}
-//		
-//		public override void InitializeCell(UITableView tableView)
-//		{			
-//			base.InitializeCell(tableView);
-//			
-//			if (DetailTextLabel != null && Value != null)
-//			{
-//				DetailTextLabel.Text = Value.ToString();
-//			}
-//		}
-//
-//		public override string ToString()
-//		{
-//			if (!EqualityComparer<V>.Default.Equals(Value, default(V)))
-//				return Caption;
-//			
-//			return Value.ToString();
-//		}
-//
-//		public override bool Matches(string text)
-//		{
-//			return (!EqualityComparer<V>.Default.Equals(Value, default(V)) ? string.Equals(Value.ToString(), text, StringComparison.CurrentCultureIgnoreCase) : false) || base.Matches(text);
-//		}
-//		
-//		protected virtual void OnValueChanged()
-//		{
-//			if (ValueChanged != null)
-//				ValueChanged(this, EventArgs.Empty);
-//		}
-//	}
 }

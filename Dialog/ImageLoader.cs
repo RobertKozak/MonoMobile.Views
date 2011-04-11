@@ -31,10 +31,10 @@ using System.Threading;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
-using MonoTouch.Dialog.Utilities;
+using MonoMobile.MVVM.Utilities;
 using System.Security.Cryptography;
 
-namespace MonoTouch.Dialog.Utilities
+namespace MonoMobile.MVVM.Utilities
 {
 	/// <summary>
 	///    This interface needs to be implemented to be notified when an image
@@ -99,7 +99,7 @@ namespace MonoTouch.Dialog.Utilities
 
 		static ImageLoader()
 		{
-			PicDir = Path.Combine(BaseDir, "Library/Caches/Pictures.MonoTouch.Dialog/");
+			PicDir = Path.Combine(BaseDir, "Library/Caches/Pictures.MonoMobile.MVVM/");
 			
 			if (!Directory.Exists(PicDir))
 				Directory.CreateDirectory(PicDir);

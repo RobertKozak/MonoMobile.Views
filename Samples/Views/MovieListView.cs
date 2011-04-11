@@ -10,7 +10,7 @@ namespace Samples
 	using System.Threading;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.CoreLocation;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
@@ -20,10 +20,7 @@ namespace Samples
 	[Theme(typeof(FrostedTheme))]
 	[Theme(typeof(BackgroundImageTheme))]
 	public class MovieListView: View
-	{
-		[Section]
-		public LoginView LoginView;
-		
+	{	
 		[Section(Order = 2)]
 		[EnableSearch(true, IncrementalSearch = false)]
 		public List<ISection> Search(ISection[] sections, string searchText)
@@ -173,8 +170,7 @@ namespace Samples
 		public MovieListView()
 		{
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
-			
-LoginView = new LoginView();
+		
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();

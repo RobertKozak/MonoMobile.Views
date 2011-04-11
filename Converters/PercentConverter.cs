@@ -32,7 +32,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Globalization;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public class PercentConverter : IValueConverter
 	{

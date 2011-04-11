@@ -5,7 +5,7 @@ using MonoTouch.CoreFoundation;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Foundation;
 
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	public abstract class OwnerDrawnElement : Element, ISizeable
 	{

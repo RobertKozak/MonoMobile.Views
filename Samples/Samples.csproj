@@ -90,6 +90,7 @@
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchI18n />
+    <MtouchExtraArgs>-aot "nimt-trampolines=2048"</MtouchExtraArgs>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -125,7 +126,6 @@
     <Compile Include="Views\ElementAPIView.cs" />
     <Compile Include="ViewModels\MovieListViewModel.cs" />
     <Compile Include="Themes\AutumnTheme.cs" />
-    <Compile Include="Views\LoginView.cs" />
     <Compile Include="Themes\BrickedTheme.cs" />
     <Compile Include="Themes\ClearTheme.cs" />
     <Compile Include="Themes\CorkTheme.cs" />

@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections;
@@ -174,6 +174,7 @@ namespace MonoTouch.Dialog
 							foreach (var e in datacontext)
 							{
 								IElement element = null;
+
 								if (e is IViewModel)
 								{
 									element = new RootElement(e.ToString());
@@ -188,7 +189,7 @@ namespace MonoTouch.Dialog
 									var bindingContext = new BindingContext(e, newElement.Caption, newElement.Theme);
 									element = bindingContext.Root.Sections[0] as IElement;
 								}
-
+		
 								lastSection.Add(element);
 							}
 
@@ -317,6 +318,7 @@ namespace MonoTouch.Dialog
 
 				element = new RootElement() { };
 				element.ViewBinding.DataContext = dataContext;
+
 				element.ViewBinding.MemberInfo = member;
 				element.ViewBinding.View = nested;
 				element.ViewBinding.ViewType = memberType;

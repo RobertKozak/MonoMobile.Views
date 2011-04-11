@@ -1,4 +1,4 @@
-using MonoTouch.Dialog;
+using MonoMobile.MVVM;
 //
 // GlassButtonStyle.cs:
 //
@@ -40,7 +40,8 @@ namespace MonoMobile.MVVM
 		
 		public GlassButtonTheme()
 		{
-			CellBackgroundColor = UIColor.FromRGB(88f, 170f, 34f);
+		//	CellBackgroundColor = UIColor.FromRGB(88f, 170f, 34f);
+CellBackgroundColor = UIColor.FromWhiteAlpha(1f, 0.6f);
 			HighlightColor = UIColor.FromRGB(5, 115, 245);
 			DrawWhenHighlighted = true;
 
@@ -75,7 +76,7 @@ namespace MonoMobile.MVVM
 							  1f, 1f, 1f, 0.10f},
 				new float[] { 0, 1 } );
 			
-			if (Cell.Highlighted)
+			if (Cell != null && Cell.Highlighted)
 			{
 				context.SetFillColorWithColor(HighlightColor.CGColor);
 			}

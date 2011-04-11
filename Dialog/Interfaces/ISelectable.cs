@@ -1,6 +1,6 @@
 namespace MonoMobile.MVVM
 {
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 

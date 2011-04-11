@@ -1,52 +1,31 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Views/MovieListView.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="DealerCenter/Views/LoginView.cs">
     <Files>
-      <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Reflection API/BindingContext.cs" Line="452" Column="107" />
-      <File FileName="../../Dropbox/MonoTouch.MVVM/Samples/Views/MovieElement.cs" Line="31" Column="3" />
-      <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Elements/Section.cs" Line="397" Column="1" />
-      <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/Elements/Element.cs" Line="280" Column="1" />
-      <File FileName="../../Dropbox/MonoTouch.MVVM/Dialog/IRoot.cs" Line="57" Column="33" />
-      <File FileName="Samples/Views/MovieListView.cs" Line="78" Column="44" />
-      <File FileName="Dialog/DialogViewController.cs" Line="748" Column="73" />
-      <File FileName="Dialog/BindingContext.cs" Line="946" Column="4" />
-      <File FileName="Binding/BindingExpression.cs" Line="238" Column="1" />
-      <File FileName="Samples/Themes/FrostedTheme.cs" Line="38" Column="30" />
-      <File FileName="Dialog/Cell/Theme.cs" Line="400" Column="30" />
-      <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="208" Column="6" />
-      <File FileName="Samples/Views/LoginView.cs" Line="75" Column="38" />
-      <File FileName="Dialog/Interfaces/IThemeable.cs" Line="38" Column="26" />
-      <File FileName="Dialog/Element.cs" Line="390" Column="22" />
-      <File FileName="Dialog/Interfaces/IElement.cs" Line="48" Column="33" />
-      <File FileName="Dialog/Section.cs" Line="31" Column="2" />
-      <File FileName="Dialog/Interfaces/ISection.cs" Line="35" Column="24" />
-      <File FileName="Dialog/Interfaces/IDataTemplate.cs" Line="1" Column="1" />
-      <File FileName="Dialog/Interfaces/IRoot.cs" Line="44" Column="11" />
-      <File FileName="README.markdown" Line="17" Column="43" />
-      <File FileName="Samples/AppDelegateIPhone.cs" Line="32" Column="72" />
-      <File FileName="Dialog/ViewBinding.cs" Line="7" Column="2" />
-      <File FileName="Samples/Views/MovieView.cs" Line="7" Column="31" />
+      <File FileName="DealerCenter/Views/LoginView.cs" Line="14" Column="22" />
+      <File FileName="DealerCenter/Main.cs" Line="1" Column="11" />
+      <File FileName="Application/UrlConnection.cs" Line="9" Column="92" />
+      <File FileName="Dialog/Elements/LoadMoreElement.cs" Line="9" Column="23" />
+      <File FileName="Dialog/Elements/RadioElement.cs" Line="10" Column="39" />
+      <File FileName="Dialog/Elements/ActivityElement.cs" Line="1" Column="1" />
+      <File FileName="DealerCenter/AppDelegate.cs" Line="27" Column="32" />
+      <File FileName="DealerCenter/Views/AboutView.cs" Line="3" Column="24" />
+      <File FileName="Dialog/DialogViewController.cs" Line="204" Column="11" />
+      <File FileName="Dialog/Element.cs" Line="281" Column="72" />
+      <File FileName="DealerCenter/ViewModels/AboutViewModel.cs" Line="17" Column="20" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
-          <Node name="MonoMobile.MVVM" expanded="True">
-            <Node name="Binding" expanded="True" />
-            <Node name="Collections" expanded="True" />
-            <Node name="Dialog" expanded="True">
-              <Node name="Cell" expanded="True" />
-              <Node name="Interfaces" expanded="True" />
-              <Node name="Reflection API" expanded="True" />
-            </Node>
+          <Node name="DealerCenter" selected="True">
+            <Option id="ShowAllFiles" value="True" />
+          </Node>
+          <Node name="MonoMobile.MVVM">
             <Node name="Images">
               <Option id="ShowAllFiles" value="True" />
             </Node>
-          </Node>
-          <Node name="Samples" expanded="True" selected="True">
-            <Node name="Images" expanded="True" />
-            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -55,8 +34,7 @@
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>theme.Name</Value>
-          <Value>element.Theme.Name</Value>
+          <Value>x</Value>
         </State>
       </Pad>
       <Pad Id="ConnectionManagerPad">

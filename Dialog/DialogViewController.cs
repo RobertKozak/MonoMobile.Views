@@ -1,5 +1,5 @@
 //
-// DialogViewController.cs: drives MonoTouch.Dialog
+// DialogViewController.cs: drives MonoMobile.MVVM
 //
 // Author:
 //   Miguel de Icaza
@@ -29,7 +29,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace MonoTouch.Dialog
 	using System.IO;
 	using System.Linq;
 	using System.Threading;
-	using MonoTouch.Dialog.Utilities;
+	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.ObjCRuntime;
@@ -854,8 +854,10 @@ namespace MonoTouch.Dialog
 			_Root.Prepare();
 			
 			NavigationItem.HidesBackButton = !_Pushing;
+
 			if (_Root.Caption != null)
 				NavigationItem.Title = _Root.Caption;
+
 			if (_Dirty)
 			{
 				TableView.ReloadData();

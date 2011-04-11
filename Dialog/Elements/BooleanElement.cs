@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using System.Drawing;
 	using MonoTouch.Foundation;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public class BooleanElement : BoolElement
 	{

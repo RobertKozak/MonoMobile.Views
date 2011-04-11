@@ -31,7 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System.Collections;
 	using System.Collections.Generic;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	
 	public class StandardListView : View, IDataTemplate
 	{

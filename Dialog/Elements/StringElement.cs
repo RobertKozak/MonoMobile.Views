@@ -30,12 +30,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoTouch.Dialog
+namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
 	using System.IO;
-	using MonoTouch.Dialog.Utilities;
+	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;

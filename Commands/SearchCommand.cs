@@ -4,7 +4,7 @@ namespace MonoMobile.MVVM
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public class SearchCommand
 	{

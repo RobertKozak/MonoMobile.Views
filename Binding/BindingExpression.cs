@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using System.Globalization;
 	using MonoTouch.UIKit;
 	using System.Collections.Generic;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public class BindingExpression : IBindingExpression
 	{

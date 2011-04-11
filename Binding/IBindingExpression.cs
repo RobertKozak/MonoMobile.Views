@@ -30,7 +30,7 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public interface IBindingExpression
 	{

@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 
 	public static class BindingOperations
 	{

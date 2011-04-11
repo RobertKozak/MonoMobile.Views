@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Linq.Expressions;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
