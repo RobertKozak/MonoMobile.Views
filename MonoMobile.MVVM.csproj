@@ -249,6 +249,8 @@
     <Compile Include="Dialog\Reflection API\ViewAttribute.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
     <Compile Include="Application\UrlConnection.cs" />
+    <Compile Include="Application\TinyIoC.cs" />
+    <Compile Include="Application\TinyMessenger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
