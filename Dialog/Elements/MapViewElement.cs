@@ -34,7 +34,6 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.MapKit;
 	using MonoTouch.UIKit;
-	using MonoMobile.MVVM;
 
 	public class MapElement : Element, ISelectable
 	{

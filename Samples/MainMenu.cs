@@ -2,7 +2,6 @@ namespace Samples
 {
 	using System;
 	using MonoMobile.MVVM;
-	using MonoMobile.MVVM;
 	using System.Collections.Generic;
 	using System.Linq;
 	using MonoTouch.Foundation;

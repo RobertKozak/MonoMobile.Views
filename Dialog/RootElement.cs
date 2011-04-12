@@ -532,28 +532,31 @@ namespace MonoMobile.MVVM
 				{
 					case DataContextCode.Object:
 					{
-						UIView view = ViewBinding.CurrentView;
+						object view = ViewBinding.CurrentView;
 
 						if (view == null)
 						{
-							if (ViewBinding.DataContext != null && ViewBinding.DataContext is UIView)
+							if (ViewBinding.ViewType != null) 
+							{
+								view = Activator.CreateInstance(ViewBinding.ViewType);
+								var dataContext = view as IDataContext;
+								if (dataContext != null)
+								{
+									if (dataContext.DataContext == null)
+										dataContext.DataContext = ViewBinding.DataContext;
+	
+									var lifetime = dataContext.DataContext as ISupportInitialize;
+									if (lifetime != null)
+										lifetime.BeginInit();
+									
+									lifetime = view as ISupportInitialize;
+									if (lifetime != null)
+										lifetime.BeginInit();
+								}
+							}
+							else if (ViewBinding.DataContext != null && ViewBinding.DataContext is UIView)
 							{
 								view = ViewBinding.DataContext as UIView;
-							}
-							else if (ViewBinding.ViewType != null) 
-							{
-								view = Activator.CreateInstance(ViewBinding.ViewType) as UIView;
-								var dataContext = view as IDataContext;
-								if(dataContext != null)
-									dataContext.DataContext = ViewBinding.DataContext;
-
-								var lifetime = dataContext.DataContext as ISupportInitialize;
-								if (lifetime != null)
-									lifetime.BeginInit();
-								
-								lifetime = view as ISupportInitialize;
-								if (lifetime != null)
-									lifetime.BeginInit();
 							}
 						}
 			
@@ -562,7 +565,7 @@ namespace MonoMobile.MVVM
 						var root = (RootElement)bindingContext.Root;
 						root.Theme = Theme;
 						root.ActivateController(dvc, tableView, path);
-
+		
 						return;
 					}
 					case DataContextCode.Enum: break;

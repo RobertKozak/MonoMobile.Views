@@ -3,7 +3,6 @@ namespace Samples
 	using System;
 	using MonoMobile.MVVM;
 	using System.Globalization;
-	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	using System.Collections.Generic;
 	

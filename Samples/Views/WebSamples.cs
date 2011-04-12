@@ -1,25 +1,14 @@
 using System;
 using MonoMobile.MVVM;
-using MonoMobile.MVVM;
 
 namespace Samples
 {
 	public class WebSamples : View
 	{
-		public Uri Google 
-		{
-//			get { return Get (() => Google, new Uri ("http://www.google.com")); }
-//			set { Set (() => Google, value); }
-			get; set;
-		}
+		public Uri Google { get; set; }
 
 		[Html]
-		public string Nowcom 
-		{
-//			get { return Get (() => Nowcom, "http://www.nowcom.com"); }
-//			set { Set (() => Nowcom, value); }
-			get; set;
-		}
+		public string Nowcom { get; set; }
 
 		public WebSamples()
 		{

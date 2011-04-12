@@ -1,7 +1,6 @@
 namespace Samples
 {
 	using MonoMobile.MVVM;
-	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	
 	[Theme(typeof(FrostedTheme))]

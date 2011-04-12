@@ -1,6 +1,6 @@
 using System;
 using MonoMobile.MVVM;
-using MonoMobile.MVVM;
+
 namespace Samples
 {
 	public class View1: View

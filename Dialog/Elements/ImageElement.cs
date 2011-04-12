@@ -204,7 +204,7 @@ namespace MonoMobile.MVVM
 			if (picker == null)
 				picker = new UIImagePickerController();
 			picker.Delegate = new MyDelegate(this, tableView, path);
-			
+
 			switch (UIDevice.CurrentDevice.UserInterfaceIdiom)
 			{
 				case UIUserInterfaceIdiom.Pad:

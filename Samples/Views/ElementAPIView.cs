@@ -1,7 +1,6 @@
 using System;
 using MonoMobile.MVVM;
 using System.Collections.Generic;
-using MonoMobile.MVVM;
 using MonoTouch.Foundation;
 namespace Samples
 {

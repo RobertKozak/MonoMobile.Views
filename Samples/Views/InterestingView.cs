@@ -1,6 +1,5 @@
 using System;
 using MonoMobile.MVVM;
-using MonoMobile.MVVM;
 using MonoTouch.UIKit;
 using System.ComponentModel;
 using MonoTouch.Foundation;

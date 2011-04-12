@@ -34,7 +34,6 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
-	using MonoMobile.MVVM;
 
 	public class FloatElement : Element
 	{

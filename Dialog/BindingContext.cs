@@ -314,14 +314,21 @@ namespace MonoMobile.MVVM
 			}
 			else
 			{
-				var nested = GetValue(member, dataContext) as UIView;
-
 				element = new RootElement() { };
+
+				var nested = GetValue(member, dataContext) as UIView;
+				var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
+
+				if (viewAttribute != null && viewAttribute.ViewType != null)
+					element.ViewBinding.ViewType = viewAttribute.ViewType;
+				else
+					element.ViewBinding.ViewType = memberType;
+
 				element.ViewBinding.DataContext = dataContext;
 
 				element.ViewBinding.MemberInfo = member;
 				element.ViewBinding.View = nested;
-				element.ViewBinding.ViewType = memberType;
+
 				element.Caption = caption;
 
 				element.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);

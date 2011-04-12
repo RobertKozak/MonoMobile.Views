@@ -12,7 +12,6 @@ namespace Samples
 	using MonoTouch.CoreLocation;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers=true)]
