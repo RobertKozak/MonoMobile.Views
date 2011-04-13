@@ -1,10 +1,9 @@
-using MonoTouch.MVVM;
 namespace Samples
 {
 	using System;
 	using MonoTouch.UIKit;
 	using MonoTouch.CoreGraphics;
-	using MonoTouch.Dialog;
+	using MonoMobile.MVVM;
 	using System.Drawing;
 	using MonoTouch.Foundation;
 

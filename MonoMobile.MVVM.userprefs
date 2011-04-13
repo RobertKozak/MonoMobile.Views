@@ -1,31 +1,30 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="DealerCenter/Views/LoginView.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/Elements/EntryElement.cs">
     <Files>
-      <File FileName="DealerCenter/Views/LoginView.cs" Line="14" Column="22" />
-      <File FileName="DealerCenter/Main.cs" Line="1" Column="11" />
-      <File FileName="Application/UrlConnection.cs" Line="9" Column="92" />
-      <File FileName="Dialog/Elements/LoadMoreElement.cs" Line="9" Column="23" />
-      <File FileName="Dialog/Elements/RadioElement.cs" Line="10" Column="39" />
-      <File FileName="Dialog/Elements/ActivityElement.cs" Line="1" Column="1" />
-      <File FileName="DealerCenter/AppDelegate.cs" Line="27" Column="32" />
-      <File FileName="DealerCenter/Views/AboutView.cs" Line="3" Column="24" />
-      <File FileName="Dialog/DialogViewController.cs" Line="204" Column="11" />
-      <File FileName="Dialog/Element.cs" Line="281" Column="72" />
-      <File FileName="DealerCenter/ViewModels/AboutViewModel.cs" Line="17" Column="20" />
+      <File FileName="DealerCenter/Views/LoginView.cs" Line="66" Column="5" />
+      <File FileName="DealerCenter/ViewModels/LoginViewModel.cs" Line="39" Column="34" />
+      <File FileName="ViewModel/ViewModel.cs" Line="30" Column="26" />
+      <File FileName="DealerCenter/Newtonsoft.Json.Mono/Linq/JObject.cs" Line="47" Column="7" />
+      <File FileName="Dialog/Elements/EntryElement.cs" Line="48" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
-          <Node name="DealerCenter" selected="True">
-            <Option id="ShowAllFiles" value="True" />
-          </Node>
-          <Node name="MonoMobile.MVVM">
+          <Node name="DealerCenter" selected="True" />
+          <Node name="MonoMobile.MVVM" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Dialog" expanded="True">
+              <Node name="Elements" expanded="True" />
+            </Node>
             <Node name="Images">
               <Option id="ShowAllFiles" value="True" />
             </Node>
+          </Node>
+          <Node name="Samples" expanded="True">
+            <Node name="References" expanded="True" />
           </Node>
         </State>
       </Pad>

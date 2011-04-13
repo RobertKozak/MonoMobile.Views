@@ -29,10 +29,33 @@
 //
 namespace MonoMobile.MVVM
 {
+	using MonoTouch.Foundation;
+
 	public abstract class ViewModel: PropertyNotifier, IViewModel
 	{
 		public ViewModel()
 		{
+		}
+		
+		public string Load(string key)
+		{
+			return Load(key, string.Empty);
+		}
+
+		public string Load(string key, string defaultValue)
+		{
+			if (NSUserDefaults.StandardUserDefaults[key] != null)
+			{
+				return NSUserDefaults.StandardUserDefaults[key].ToString();
+			} 
+			else
+				return defaultValue;
+		}
+
+		public void Save(string key, string value)
+		{
+			NSUserDefaults.StandardUserDefaults[key] = new NSString(value);
+			NSUserDefaults.StandardUserDefaults.Synchronize();
 		}
 	}
 }

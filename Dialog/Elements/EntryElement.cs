@@ -45,6 +45,7 @@ namespace MonoMobile.MVVM
 	
 	public class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
+		[Preserve(AllMembers=true)]
 		public UITextField Entry { get; set; }
 		
 		public EditMode EditMode { get; set; }

@@ -569,19 +569,16 @@ namespace MonoMobile.MVVM
 			// Fade out
 			if (animated)
 			{
-				if (animated)
-				{
-					UIView.BeginAnimations(null);
-					UIView.SetAnimationDuration(0.40);
-					Alpha = .02f;
-					NSTimer.CreateScheduledTimer(.4, Done);
-					UIView.CommitAnimations();
-				} 
-				else
-				{
-					Alpha = 0.0f;
-					Done();
-				}
+				UIView.BeginAnimations(null);
+				UIView.SetAnimationDuration(0.40);
+				Alpha = .02f;
+				NSTimer.CreateScheduledTimer(.4, Done);
+				UIView.CommitAnimations();
+			} 
+			else
+			{
+				Alpha = 0.0f;
+				Done();
 			}
 		}
 		#endregion
