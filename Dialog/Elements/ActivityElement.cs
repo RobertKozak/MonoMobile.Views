@@ -33,10 +33,9 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public class ActivityElement : UIViewElement, ISizeable
+	public partial class ActivityElement : UIViewElement, ISizeable
 	{
 		public bool Animating { get; set; }
-		public BindableProperty ActivityProperty = BindableProperty.Register("Animating");
 
 		public ActivityElement() : base ("", new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray), false)
 		{
@@ -65,21 +64,6 @@ namespace MonoMobile.MVVM
 //					activity.StopAnimating();
 //			}
 //		}
-		
-		public override void BindProperties()
-		{
-			ActivityProperty.PropertyChangedAction = ()=>
-			{ 				
-				var activity = ContentView as UIActivityIndicatorView;
-				
-				if (Animating)
-					activity.StartAnimating();
-				else
-					activity.StopAnimating(); 
-			};
-
-			ActivityProperty.BindTo(ContentView, "IsAnimating");
-		}
 		
 		public override float GetHeight(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{

@@ -1,10 +1,10 @@
 //
-// BoolElement.cs
+// ActivityElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
-//
-// Copyright 2010, Novell, Inc.
+//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+//  Copyright 2011, Nowcom Corporation.
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,35 +27,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if DATABINDING
 namespace MonoMobile.MVVM
 {
+	using System.Diagnostics;
+	using System.Drawing;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
+	
 
-	public abstract partial class BoolElement : Element
+	public partial class ActivityElement
 	{
-		public bool Value { get; set; }
-		
-		public BoolElement(string caption, bool value) : base(caption)
-		{
-			Value = value;
-		}
+		public BindableProperty ActivityProperty = BindableProperty.Register("Animating");
 
-		public BoolElement(string caption) : this(caption, false)
+		public override void BindProperties()
 		{
-		}
-		
-		public virtual void UpdateSelected()
-		{
-			if (Cell != null)
+			ActivityProperty.PropertyChangedAction = () =>
 			{
-				Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Cell.TextLabel.Text = Caption;
-			}
+				var activity = ContentView as UIActivityIndicatorView;
+				
+				if (Animating)
+					activity.StartAnimating();
+				else
+					activity.StopAnimating();
+			};
+			
+			ActivityProperty.BindTo(ContentView, () => ((UIActivityIndicatorView)ContentView).IsAnimating);
 		}
 
-		public override string ToString()
-		{
-			return (bool)Value ? "On" : "Off";
-		}
 	}
 }
+#endif
+

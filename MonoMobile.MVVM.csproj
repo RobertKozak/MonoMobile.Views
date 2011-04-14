@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;DATABINDING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
@@ -49,7 +49,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;DATABINDING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer</CodesignKey>
@@ -246,6 +246,18 @@
     <Compile Include="Application\UrlConnection.cs" />
     <Compile Include="Application\TinyIoC.cs" />
     <Compile Include="Application\TinyMessenger.cs" />
+    <Compile Include="Dialog\DataBinding\EntryElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\ElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\StringElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\ActivityElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\HtmlElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\BooleanElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\FloatElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\BoolElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\DateTimeElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\MapViewElementBinding.cs" />
+    <Compile Include="Dialog\DataBinding\ImageElementBinding.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -265,6 +277,7 @@
     <Folder Include="Dialog\Views\" />
     <Folder Include="Dialog\Interfaces\" />
     <Folder Include="Dialog\Cell\" />
+    <Folder Include="Dialog\DataBinding\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

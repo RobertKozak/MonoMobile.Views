@@ -1,4 +1,4 @@
-using MonoTouch.UIKit;
+using System.Linq.Expressions;
 // 
 //  BindableProperty.cs
 // 
@@ -31,10 +31,9 @@ using MonoTouch.UIKit;
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Reflection;
-	using System.Diagnostics;
 	using System.Linq;
-
+	using System.Reflection;	
+	
 	public class BindableProperty
 	{
 		private bool _Updating { get; set; }
@@ -122,8 +121,13 @@ namespace MonoMobile.MVVM
 		{
 			return BindableProperty.Register(null);
 		}
-
-		public void BindTo(object obj, string propertyName)
+		
+		public void BindTo<T>(object obj, Expression<Func<T>> property)
+		{
+			BindTo(obj, property.PropertyName());
+		}
+		
+		private void BindTo(object obj, string propertyName)
 		{
 			object value = null;
 

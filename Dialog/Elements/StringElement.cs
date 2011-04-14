@@ -40,10 +40,10 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	 
-	public class StringElement : Element
+	public partial class StringElement : Element
 	{
 		private string _Value;
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+
 		public string Value 
 		{ 
 			get { return _Value; }  
@@ -82,14 +82,6 @@ namespace MonoMobile.MVVM
 			Accessory = UITableViewCellAccessory.None;
 
 			return base.NewCell(); 
-		}
-		
-		public override void BindProperties()
-		{
-			base.BindProperties();
-			
-			if (DetailTextLabel != null)
-				ValueProperty.BindTo(this, "DetailTextLabel.Text");
 		}
 
 		protected virtual void OnValueChanged()

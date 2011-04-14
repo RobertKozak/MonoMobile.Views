@@ -35,9 +35,8 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public class DateTimeElement : Element, ISelectable
+	public partial class DateTimeElement : Element, ISelectable
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 		public DateTime Value { get; set; }  
 
 		public UIDatePicker DatePicker;

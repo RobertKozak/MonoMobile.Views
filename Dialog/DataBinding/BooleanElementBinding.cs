@@ -1,10 +1,12 @@
 //
-// BoolElement.cs
+// BooleanElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+//  Copyright 2011, Nowcom Corporation.
 //
-// Copyright 2010, Novell, Inc.
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,35 +29,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if DATABINDING
 namespace MonoMobile.MVVM
 {
-	using MonoTouch.UIKit;
-
-	public abstract partial class BoolElement : Element
+	public partial class BooleanElement
 	{
-		public bool Value { get; set; }
-		
-		public BoolElement(string caption, bool value) : base(caption)
+		public override void BindProperties()
 		{
-			Value = value;
-		}
-
-		public BoolElement(string caption) : this(caption, false)
-		{
-		}
-		
-		public virtual void UpdateSelected()
-		{
-			if (Cell != null)
-			{
-				Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Cell.TextLabel.Text = Caption;
-			}
-		}
-
-		public override string ToString()
-		{
-			return (bool)Value ? "On" : "Off";
+			base.BindProperties();
+			ValueProperty.BindTo(this, () => Switch.On);
 		}
 	}
 }
+#endif

@@ -86,5 +86,15 @@ Global
 		$4.inheritsSet = Mono
 		$4.inheritsScope = text/plain
 		$4.scope = text/plain
+		$0.StandardHeader = $5
+		$5.Text = 
+		$5.inheritsSet = Apache2License
+		$0.VersionControlPolicy = $6
+		$6.inheritsSet = Mono
+		$0.ChangeLogPolicy = $7
+		$7.UpdateMode = None
+		$7.MessageStyle = $8
+		$8.LineAlign = 0
+		$7.inheritsSet = Mono
 	EndGlobalSection
 EndGlobal

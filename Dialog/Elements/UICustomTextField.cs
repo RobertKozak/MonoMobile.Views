@@ -34,7 +34,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public class UICustomTextField : UITextField
 	{
 		public UIColor PlaceholderColor { get; set; }

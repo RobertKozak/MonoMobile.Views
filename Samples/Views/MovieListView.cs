@@ -18,15 +18,16 @@ namespace Samples
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
 	[Theme(typeof(BackgroundImageTheme))]
+[EnableSearch(true, IncrementalSearch = false)]
 	public class MovieListView: View
 	{	
-		[Section(Order = 2)]
-		[EnableSearch(true, IncrementalSearch = false)]
-		public List<ISection> Search(ISection[] sections, string searchText)
-		{
-			var result = new List<ISection>() { sections[1] };
-			return result;
-		}
+//		[Section(Order = 2)]
+//		[EnableSearch(true, IncrementalSearch = false)]
+//		public List<ISection> Search(ISection[] sections, string searchText)
+//		{
+//			var result = new List<ISection>() { sections[1] };
+//			return result;
+//		}
 
 		private View1 _View1 = new View1();
 		private View2 _View2 = new View2();
@@ -50,8 +51,8 @@ namespace Samples
 		[DefaultValue("Test String")]
 		public string MyString
 		{
-			get;//{ return Get (() => MyString, "test"); }
-			set;// { Set (() => MyString, value); }
+			get;
+			set;
 		}
 
 	//	[Section]
@@ -66,7 +67,7 @@ namespace Samples
 		[LoadMore]
 		public void Activity()
 		{
-			Thread.Sleep(1500);
+			//Thread.Sleep(1500);
 		}
 
 		[Section("Using a DataTemplate", "This is a footer")]

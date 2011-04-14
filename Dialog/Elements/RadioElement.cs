@@ -1,4 +1,3 @@
-using MonoMobile.MVVM;
 //
 // RadioView.cs
 //

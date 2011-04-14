@@ -30,10 +30,11 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
-	using MonoTouch.CoreGraphics;
 	using MonoMobile.MVVM;
+	using MonoTouch.CoreGraphics;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
 	public class Theme
 	{
 		private UITableViewElementCell _Cell;

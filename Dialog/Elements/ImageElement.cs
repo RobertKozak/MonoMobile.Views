@@ -36,10 +36,10 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public class ImageElement : Element, ISelectable
+	public partial class ImageElement : Element, ISelectable
 	{
 		public UIImage _Value;
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		
 		public UIImage Value
 		{
 			get { return _Value; }

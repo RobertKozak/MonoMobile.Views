@@ -228,6 +228,7 @@ namespace MonoMobile.MVVM
 
 		private void SetValue(MemberInfo member, object obj, object value)
 		{
+			Console.WriteLine("Member : " +member.Name);
 			if (member.MemberType == MemberTypes.Field)
 			{
 				((FieldInfo)member).SetValue(obj, value);

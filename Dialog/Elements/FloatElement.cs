@@ -32,12 +32,11 @@
 namespace MonoMobile.MVVM
 {
 	using System.Drawing;
-	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
+	using MonoTouch.UIKit;
 
-	public class FloatElement : Element
+	public partial class FloatElement : Element
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 		public float Value { get; set; }
 
 		public UISlider Slider { get; set; }
@@ -69,14 +68,6 @@ namespace MonoMobile.MVVM
 			Slider.MinValue = MinValue;
 			
 			ContentView = Slider;
-		}
-		
-		public override void BindProperties()
-		{
-			if (Slider != null)
-			{
-				ValueProperty.BindTo(this, "Slider.Value");
-			}
 		}
 
 		protected override void Dispose(bool disposing)

@@ -38,9 +38,8 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	///  Used to display a cell that will launch a web browser when selected.
 	/// </summary>
-	public class HtmlElement : Element, ISelectable
+	public partial class HtmlElement : Element, ISelectable
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 		public Uri Value { get; set; }
 
 		private UIWebView web;
@@ -60,12 +59,6 @@ namespace MonoMobile.MVVM
 			Cell.TextLabel.Text = Caption;
 
 			base.InitializeCell(tableView);
-		}
-		
-		public override void BindProperties()
-		{
-			base.BindProperties();
-			ValueProperty.BindTo(this, "Value");
 		}
 
 		static bool NetworkActivity

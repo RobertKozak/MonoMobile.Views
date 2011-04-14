@@ -2,9 +2,9 @@
 // BoolElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
-//
-// Copyright 2010, Novell, Inc.
+//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+//  Copyright 2011, Nowcom Corporation.
 //
 // Code licensed under the MIT X11 license
 //
@@ -27,35 +27,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if DATABINDING
 namespace MonoMobile.MVVM
 {
-	using MonoTouch.UIKit;
-
-	public abstract partial class BoolElement : Element
+	public abstract partial class BoolElement
 	{
-		public bool Value { get; set; }
-		
-		public BoolElement(string caption, bool value) : base(caption)
-		{
-			Value = value;
-		}
-
-		public BoolElement(string caption) : this(caption, false)
-		{
-		}
-		
-		public virtual void UpdateSelected()
-		{
-			if (Cell != null)
-			{
-				Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Cell.TextLabel.Text = Caption;
-			}
-		}
-
-		public override string ToString()
-		{
-			return (bool)Value ? "On" : "Off";
-		}
+		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 	}
 }
+#endif

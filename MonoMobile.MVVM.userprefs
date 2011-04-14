@@ -1,30 +1,35 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/Elements/EntryElement.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/Element.cs">
     <Files>
-      <File FileName="DealerCenter/Views/LoginView.cs" Line="66" Column="5" />
-      <File FileName="DealerCenter/ViewModels/LoginViewModel.cs" Line="39" Column="34" />
-      <File FileName="ViewModel/ViewModel.cs" Line="30" Column="26" />
-      <File FileName="DealerCenter/Newtonsoft.Json.Mono/Linq/JObject.cs" Line="47" Column="7" />
-      <File FileName="Dialog/Elements/EntryElement.cs" Line="48" Column="11" />
+      <File FileName="Dialog/Elements/EntryElement.cs" Line="188" Column="1" />
+      <File FileName="Dialog/Element.cs" Line="378" Column="26" />
+      <File FileName="Dialog/DataBinding/EntryElementBinding.cs" Line="73" Column="7" />
+      <File FileName="Dialog/DataBinding/ElementBinding.cs" Line="73" Column="7" />
+      <File FileName="Application/TinyIoC.cs" Line="32" Column="1" />
+      <File FileName="Dialog/DataBinding/ActivityElementBinding.cs" Line="30" Column="1" />
+      <File FileName="Dialog/DataBinding/BooleanElementBinding.cs" Line="44" Column="7" />
+      <File FileName="Dialog/DataBinding/BoolElementBinding.cs" Line="38" Column="7" />
+      <File FileName="Dialog/DataBinding/DateTimeElementBinding.cs" Line="38" Column="7" />
+      <File FileName="Dialog/DataBinding/FloatElementBinding.cs" Line="48" Column="7" />
+      <File FileName="Dialog/DataBinding/HtmlElementBinding.cs" Line="44" Column="7" />
+      <File FileName="Dialog/DataBinding/ImageElementBinding.cs" Line="38" Column="7" />
+      <File FileName="Dialog/DataBinding/MapViewElementBinding.cs" Line="38" Column="7" />
+      <File FileName="Dialog/DataBinding/StringElementBinding.cs" Line="49" Column="7" />
+      <File FileName="Dialog/Elements/BooleanElement.cs" Line="62" Column="7" />
+      <File FileName="DealerCenter/AuthHelper.cs" Line="23" Column="1" />
+      <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
+      <File FileName="Application/TinyMessenger.cs" Line="40" Column="39" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
-          <Node name="DealerCenter" selected="True" />
-          <Node name="MonoMobile.MVVM" expanded="True">
-            <Node name="References" expanded="True" />
-            <Node name="Dialog" expanded="True">
-              <Node name="Elements" expanded="True" />
-            </Node>
-            <Node name="Images">
-              <Option id="ShowAllFiles" value="True" />
-            </Node>
-          </Node>
-          <Node name="Samples" expanded="True">
-            <Node name="References" expanded="True" />
+          <Node name="MonoMobile.MVVM" expanded="True" selected="True">
+            <Node name="Application" expanded="True" />
+            <Node name="Converters" expanded="True" />
+            <Node name="Dialog" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -42,7 +47,10 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Samples/Views/MovieView.cs" line="76" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Samples/Views/InterestingView.cs" line="82" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <AuthorInfo Name="Robert Kozak" Email="rkozak@gmailcom" Copyright="2011 Nowcom Corporation" />

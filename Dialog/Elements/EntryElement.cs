@@ -43,10 +43,10 @@ namespace MonoMobile.MVVM
 		WithCaption
 	}
 	
-	public class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
+	[Preserve(AllMembers = true)]
+	public partial class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
-		[Preserve(AllMembers=true)]
-		public UITextField Entry { get; set; }
+		public UICustomTextField Entry { get; set; }
 		
 		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
@@ -56,13 +56,6 @@ namespace MonoMobile.MVVM
 		public UIKeyboardType KeyboardType { get; set; }
 		public UITextAutocorrectionType AutoCorrectionType { get; set; }
 		public UITextAutocapitalizationType AutoCapitalizationType { get; set; }
-		
-		public BindableProperty PlaceholderProperty = BindableProperty.Register("Placeholder");
-		public BindableProperty IsPasswordProperty = BindableProperty.Register("IsPassword");
-		public BindableProperty TextProperty = BindableProperty.Register("Text");
-		public BindableProperty ReturnKeyTypeProperty = BindableProperty.Register("ReturnKeyboardType");
-		public BindableProperty KeyboardTypeProperty = BindableProperty.Register("KeyboardType");
-		public BindableProperty EditModeProperty = BindableProperty.Register("EditMode");
 
 		public EntryElement(string caption) : base(caption)
 		{
@@ -100,7 +93,7 @@ namespace MonoMobile.MVVM
 		}
 
 		public override void InitializeContent()
-		{
+		{ 
 			if (EditMode != EditMode.ReadOnly)
 			{
 				Entry = new UICustomTextField() 
@@ -113,7 +106,7 @@ namespace MonoMobile.MVVM
 					AutocapitalizationType = AutoCapitalizationType,
 					Tag = 1 
 				};
-			
+		
 				if (EditMode == EditMode.NoCaption)
 					Entry.Placeholder = Caption;
 				else
@@ -130,8 +123,9 @@ namespace MonoMobile.MVVM
 
 				Entry.Started += (s, e) =>
 				{
-					ValueProperty.ConvertBack<string>();
-
+#if DATABINDING
+					ValueProperty.ConvertBack<string>();				
+#endif
 					IFocusable self = null;
 					var returnType = UIReturnKeyType.Done;
 					
@@ -184,11 +178,13 @@ namespace MonoMobile.MVVM
 					
 					return true;
 				};
-
+				
+#if DATABINDING
 				Entry.EditingDidEnd += delegate 
 				{
 					ValueProperty.Update();
 				};
+#endif
 
 				ContentView = Entry;
 			}
@@ -196,25 +192,6 @@ namespace MonoMobile.MVVM
 			{
 				if (DetailTextLabel != null)
 					DetailTextLabel.Text = Value;
-			}
-		}
-		
-		public override void BindProperties()
-		{
-			base.BindProperties();
-
-			EditModeProperty.BindTo(this, "EditMode");
-
-			if (Entry != null)
-			{
-				PlaceholderProperty.BindTo(this, "Entry.Placeholder");
-				IsPasswordProperty.BindTo(this, "Entry.SecureTextEntry");
-				TextProperty.BindTo(this, "Entry.Text");
-				ValueProperty.BindTo(this, "Entry.Text");
-				DetailTextAlignmentProperty.BindTo(this, "Entry.TextAlignment");
-				ReturnKeyTypeProperty.BindTo(this, "Entry.ReturnKeyType");
-				KeyboardTypeProperty.BindTo(this, "Entry.KeyboardType");
-				DetailTextFontProperty.BindTo(this, "Entry.Font");
 			}
 		}
 

@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public abstract class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
+	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
 	{		
 		public NSString Id { get; set; }
 		public int Order { get; set; }
@@ -103,28 +103,6 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
-		
-		public BindableProperty AccessoryProperty = BindableProperty.Register("Accessory");
-		public BindableProperty ImageIconProperty = BindableProperty.Register("ImageIcon");
-		public BindableProperty ImageIconUriProperty = BindableProperty.Register("ImageIconUri");
-		public BindableProperty BackgroundImageProperty = BindableProperty.Register("BackgroundImage");
-		public BindableProperty BackgroundUriProperty = BindableProperty.Register("BackgroundImageUri");
-		public BindableProperty BackgroundColorProperty = BindableProperty.Register("BackgroundColor");
-
-
-		public BindableProperty TextLabelProperty = BindableProperty.Register("TextLabel");
-		public BindableProperty TextFontProperty = BindableProperty.Register("TextFont");
-		public BindableProperty TextColorProperty = BindableProperty.Register("TextColor");
-		public BindableProperty TextAlignmentProperty = BindableProperty.Register("TextAlignment");
-		public BindableProperty TextShadowOffsetProperty = BindableProperty.Register("TextShadowOffset");
-		public BindableProperty TextShadowColorProperty = BindableProperty.Register("TextShadowColor");
-
-		public BindableProperty DetailTextLabelProperty = BindableProperty.Register("DetailTextLabel");
-		public BindableProperty DetailTextFontProperty = BindableProperty.Register("DetailTextFont");
-		public BindableProperty DetailTextColorProperty = BindableProperty.Register("DetailTextColor");
-		public BindableProperty DetailTextAlignmentProperty = BindableProperty.Register("DetailTextAlignment");
-		public BindableProperty DetailTextShadowOffsetProperty = BindableProperty.Register("DetailTextShadowOffset");
-		public BindableProperty DetailTextShadowColorProperty = BindableProperty.Register("DetailTextShadowColor");
 
 		public UITableViewCellAccessory Accessory 
 		{
@@ -391,11 +369,12 @@ namespace MonoMobile.MVVM
 
 			InitializeCell(tableView);
 		
-			Theme.Cell = Cell;			
-
+			Theme.Cell = Cell;		
+	
+#if DATABINDING
 			BindProperties();
 			UpdateTargets();
-
+#endif
 			return Cell;
 		}
 
@@ -446,11 +425,6 @@ namespace MonoMobile.MVVM
 		{
 		}
 		
-		public virtual void BindProperties()
-		{
-
-		}
-		
 		public IRoot GetImmediateRootElement()
 		{
 			var section = Parent as Section;
@@ -459,50 +433,6 @@ namespace MonoMobile.MVVM
 
 			return section.Parent as IRoot;
 		}
-
-//		protected virtual void UpdateTarget(string propertyName)
-//		{
-//			var bindingExpression = BindingOperations.GetBindingExpression(this, propertyName);
-//			
-//			if (bindingExpression != null) 
-//			{
-//				bindingExpression.UpdateTarget();
-//			}
-//		}
-
-//		protected virtual void UpdateSource(string propertyName)
-//		{
-//			var bindingExpression = BindingOperations.GetBindingExpression(this, propertyName);
-//			
-//			if (bindingExpression != null) 
-//			{
-//				bindingExpression.UpdateSource();
-//			}
-//		}
-
-		protected virtual void UpdateTargets()
-		{
-			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
-			if (bindingExpressions != null) 
-			{
-				foreach (var bindingExpression in bindingExpressions) 
-				{
-					bindingExpression.UpdateTarget();
-				}
-			}
-		}
-
-//		protected virtual void UpdateSources()
-//		{
-//			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
-//			if (bindingExpressions != null) 
-//			{
-//				foreach (var bindingExpression in bindingExpressions) 
-//				{
-//					bindingExpression.UpdateSource();
-//				}
-//			}
-//		}
 
 		void IImageUpdated.UpdatedImage(Uri uri)
 		{

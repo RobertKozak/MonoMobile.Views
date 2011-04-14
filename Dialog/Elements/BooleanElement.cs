@@ -38,7 +38,7 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.Foundation;
 
-	public class BooleanElement : BoolElement
+	public partial class BooleanElement : BoolElement
 	{
 		private UISwitch Switch { get; set; }
 
@@ -57,16 +57,12 @@ namespace MonoMobile.MVVM
 			{
 				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1 };
 				
+#if DATABINDING
 				Switch.AddTarget(delegate { ValueProperty.Update(); }, UIControlEvent.ValueChanged);
+#endif
 			}
 			
 			Cell.AccessoryView = Switch;
-		}
-
-		public override void BindProperties()
-		{
-			base.BindProperties();
-			ValueProperty.BindTo(this, "Switch.On");
 		}
 
 		protected override void Dispose(bool disposing)

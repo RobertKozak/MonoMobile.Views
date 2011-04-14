@@ -76,8 +76,8 @@ namespace Samples
 		{
 		}
 
-		[NavbarButton("View", Style = UIBarButtonItemStyle.Plain)]
-		[Caption("Test1")]
+		[NavbarButton("View This Button", Style = UIBarButtonItemStyle.Plain)]
+		//[Caption("Test1")]
 		public void TestAddButton()
 		{
 		}
