@@ -33,6 +33,8 @@ namespace MonoMobile.MVVM
 
 	public abstract class ViewModel: PropertyNotifier, IViewModel
 	{
+		public BindingContext BindingContext { get; set; }
+
 		public ViewModel()
 		{
 		}

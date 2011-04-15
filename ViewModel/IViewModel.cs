@@ -31,8 +31,11 @@ namespace MonoMobile.MVVM
 {
 	using System.ComponentModel;
 
-	public interface IViewModel: INotifyPropertyChanged
+	public interface IViewModel: INotifyPropertyChanged, IBindingContext
 	{
+		string Load(string key);
+		string Load(string key, string defaultValue);
+		void Save(string key, string value);
 	}
 }
 

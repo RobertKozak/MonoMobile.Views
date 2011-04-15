@@ -29,14 +29,9 @@
 //
 namespace MonoMobile.MVVM
 {
-	public interface IView
+	public interface IView: IBindingContext
 	{
 		string Caption { get; set; }
 	}
-
-//	public interface IView<TDataContext> : IView where TDataContext : IViewModel, new()
-//	{
-//		new TDataContext DataContext { get; set; }
-//	}
 }
 

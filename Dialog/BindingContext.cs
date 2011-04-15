@@ -2,9 +2,11 @@
 // BindingContext.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
+//
+// Based on code from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -46,28 +48,39 @@ namespace MonoMobile.MVVM
 
 		public IRoot Root { get; set; }
 
-		public BindingContext(object dataContext, string title) : this(dataContext, title, null)
+		public BindingContext(object view, string title) : this(view, title, null)
 		{
 		}
 
-		public BindingContext(object dataContext, string title, Theme currentTheme)
+		public BindingContext(object view, string title, Theme currentTheme)
 		{
-			if (dataContext == null)
-				throw new ArgumentNullException("dataContext");
+			if (view == null)
+				throw new ArgumentNullException("view");
 
 			BuildElementPropertyMap();
 			Root = new RootElement(title);
-			Root.ViewBinding.DataContext = dataContext;
+			Root.ViewBinding.DataContext = view;
 			var themeable = Root as IThemeable;
 			if (themeable != null)
 				themeable.Theme = currentTheme;
 			
-			Populate(dataContext, Root);
+			Populate(view, Root);
+
+			var context = view as IBindingContext;
+			if (context != null)
+			{
+				context.BindingContext = this;
+				var dataContext = view as IDataContext;
+				if (dataContext != null)
+				{
+					dataContext.DataContext = this;
+				}
+			}
 		}
 	
-		private void Populate(object dataContext, IRoot root)
+		private void Populate(object view, IRoot root)
 		{
-			var enableSearchAttribute = dataContext.GetType().GetCustomAttribute<EnableSearchAttribute>();
+			var enableSearchAttribute = view.GetType().GetCustomAttribute<EnableSearchAttribute>();
 			var searchbar = root as ISearchBar;
 			if (enableSearchAttribute != null && searchbar != null)
 			{
@@ -77,13 +90,13 @@ namespace MonoMobile.MVVM
 				searchbar.EnableSearch = true;
 			}
 
-			root.Add(CreateSectionList(dataContext, root));
+			root.Add(CreateSectionList(view, root));
 			
-			root.ToolbarButtons = CheckForToolbarItems(dataContext);
-			root.NavbarButtons = CheckForNavbarItems(dataContext);
+			root.ToolbarButtons = CheckForToolbarItems(view);
+			root.NavbarButtons = CheckForNavbarItems(view);
 		}
 
-		private List<ISection> CreateSectionList(object dataContext, IRoot root)
+		private List<ISection> CreateSectionList(object view, IRoot root)
 		{
 			var memberFuncMap = new List<Func<object, MemberInfo[]>>() 
 			{
@@ -101,21 +114,21 @@ namespace MonoMobile.MVVM
 			var themeable = root as IThemeable;
 			if (themeable != null)
 			{
-				ApplyRootTheme(dataContext, themeable);
+				ApplyRootTheme(view, themeable);
 				theme = themeable.Theme;
 				ApplyElementTheme(theme, lastSection, null);
 			}
 
 			foreach(var memberFunc in memberFuncMap)
 			{
-				var members = memberFunc(dataContext);
+				var members = memberFunc(view);
 	
 				foreach (var member in members)
 				{
 					var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
 					if (pullToRefreshAttribute != null)
 					{
-						root.PullToRefreshCommand = GetCommandForMember(dataContext, member);
+						root.PullToRefreshCommand = GetCommandForMember(view, member);
 						root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
 					}
 					var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
@@ -141,15 +154,15 @@ namespace MonoMobile.MVVM
 						sectionList.Add(lastSection);
 					}
 	
-					newElement = GetElementForMember(dataContext, member);
+					newElement = GetElementForMember(view, member);
 					
 					if(newElement != null)
 					{
 						newElement.Theme = Theme.CreateTheme(root.RootTheme);
 						ApplyElementTheme(root.RootTheme, newElement, member);
 
-						var view = newElement as IView;
-						var displayInline = (inline || !isRoot) && newElement is IRoot && view != null;
+						var context = newElement as IView;
+						var displayInline = (inline || !isRoot) && newElement is IRoot && context != null;
 						
 						if (isList)
 						{
@@ -157,7 +170,7 @@ namespace MonoMobile.MVVM
 							Type viewType = newRoot.ViewBinding.ViewType ?? listAttribute.ViewType;
 
 							string caption = null;
-							if (!(dataContext is IDataTemplate))
+							if (!(view is IDataTemplate))
 								caption = newElement.Caption;
 							
 							lastSection = new Section(caption,null) {  };
@@ -166,10 +179,10 @@ namespace MonoMobile.MVVM
 							sectionList.Add(lastSection);
 			
 							IEnumerable datacontext = null;
-							if(dataContext is IDataTemplate)
-								datacontext = ((IDataTemplate)dataContext).Items;
+							if (view is IDataTemplate)
+								datacontext = ((IDataTemplate)view).Items;
 							else 
-								datacontext = (IEnumerable)GetValue(member, dataContext);
+								datacontext = (IEnumerable)GetValue(member, view);
 
 							foreach (var e in datacontext)
 							{
@@ -196,7 +209,7 @@ namespace MonoMobile.MVVM
 						}
 						else if (displayInline)
 						{							
-							lastSection = new Section(view.Caption, null) { };
+							lastSection = new Section(context.Caption, null) { };
 							lastSection.Parent = root as IElement;
 							sectionList.Add(lastSection);
 	
@@ -227,7 +240,7 @@ namespace MonoMobile.MVVM
 			return orderedSections;
 		}
 
-		private IElement GetElementForMember(object dataContext, MemberInfo member)
+		private IElement GetElementForMember(object view, MemberInfo member)
 		{
 			string caption = null;
 			IElement element = null;
@@ -237,8 +250,8 @@ namespace MonoMobile.MVVM
 			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 			var bindAttributes = member.GetCustomAttributes(typeof(BindAttribute), false);
 
-		//	var memberDataContext = GetDataContextForMember(dataContext, ref member);
-			var memberDataContext = dataContext;
+		//	var memberDataContext = GetDataContextForMember(view, ref member);
+			var memberDataContext = view;
 
 			if(captionAttribute != null)
 				caption = captionAttribute.Caption;
@@ -256,12 +269,12 @@ namespace MonoMobile.MVVM
 					var fieldInfo = member as FieldInfo;
 					if (propertyInfo != null && propertyInfo.CanWrite)
 					{
-						propertyInfo.SetValue(dataContext, defaultValue.Value, null);
+						propertyInfo.SetValue(view, defaultValue.Value, null);
 					}
 					
 					if (fieldInfo != null)
 					{
-						fieldInfo.SetValue(dataContext, defaultValue.Value);
+						fieldInfo.SetValue(view, defaultValue.Value);
 					}
 				}
 
@@ -288,7 +301,7 @@ namespace MonoMobile.MVVM
 					var sourceProperty = sourceDataContext.GetType().GetNestedMember(ref sourceDataContext, binding.SourcePath, true);
 					if (sourceProperty == null)
 					{
-						sourceDataContext = dataContext;
+						sourceDataContext = view;
 						sourceProperty = sourceDataContext.GetType().GetNestedMember(ref sourceDataContext, binding.SourcePath, true);
 					}
 
@@ -298,7 +311,7 @@ namespace MonoMobile.MVVM
 
 			if(_ElementPropertyMap.ContainsKey(memberType))
 			{
-				element = _ElementPropertyMap[memberType](member, caption, dataContext, bindings);
+				element = _ElementPropertyMap[memberType](member, caption, view, bindings);
 			}
 			else if (memberType.IsEnum)
 			{
@@ -316,7 +329,7 @@ namespace MonoMobile.MVVM
 			{
 				element = new RootElement() { };
 
-				var nested = GetValue(member, dataContext) as UIView;
+				var nested = GetValue(member, view) as UIView;
 				var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
 
 				if (viewAttribute != null && viewAttribute.ViewType != null)
@@ -324,7 +337,7 @@ namespace MonoMobile.MVVM
 				else
 					element.ViewBinding.ViewType = memberType;
 
-				element.ViewBinding.DataContext = dataContext;
+				element.ViewBinding.DataContext = view;
 
 				element.ViewBinding.MemberInfo = member;
 				element.ViewBinding.View = nested;
@@ -353,18 +366,18 @@ namespace MonoMobile.MVVM
 			return element;
 		}
 		
-		public IElement CreateEnumRoot(MemberInfo member, string caption, object dataContext, List<Binding> bindings)
+		public IElement CreateEnumRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			Type memberType = GetTypeForMember(member);
 
 			SetDefaultConverter(member, "Value", new MonoMobile.MVVM.EnumConverter() { PropertyType = memberType }, bindings);
 
 			var csection = new Section() { Opaque = false };
-			var currentValue = GetValue(member, dataContext);
+			var currentValue = GetValue(member, view);
 			int index = 0;
 			int selected = 0;
 
-			ApplyRootTheme(dataContext, csection);
+			ApplyRootTheme(view, csection);
 
 			var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 			
@@ -380,7 +393,7 @@ namespace MonoMobile.MVVM
 				radioElement.Value = selected == index;
 				radioElement.Opaque = false;
 				
-				ApplyRootTheme(dataContext, radioElement);
+				ApplyRootTheme(view, radioElement);
 
 				csection.Add(radioElement);
 				index++;
@@ -398,16 +411,16 @@ namespace MonoMobile.MVVM
 			return element;
 		}
 		
-		public IElement CreateEnumCollectionRoot(MemberInfo member, string caption, object dataContext, List<Binding> bindings)
+		public IElement CreateEnumCollectionRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			Type memberType = GetTypeForMember(member);
 
 			SetDefaultConverter(member, "Value", new EnumItemsConverter(), bindings);
 
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
-			ApplyRootTheme(dataContext, csection);
+			ApplyRootTheme(view, csection);
 
-			var collection = GetValue(member, dataContext);
+			var collection = GetValue(member, view);
 			if (collection == null)
 			{
 				var collectionType = typeof(EnumCollection<>);
@@ -415,7 +428,7 @@ namespace MonoMobile.MVVM
 				Type[] generic = { enumType };
 
 				collection = Activator.CreateInstance(collectionType.MakeGenericType(generic));
-				(member as PropertyInfo).SetValue(dataContext, collection, new object[] {});
+				(member as PropertyInfo).SetValue(view, collection, new object[] {});
 			}
 
 			var index = 0;
@@ -423,7 +436,7 @@ namespace MonoMobile.MVVM
 			foreach (var item in items.AllValues)
 			{
 				var checkboxElement = new CheckboxElement(item.Description) { Index = index, Value = item.IsChecked, Group = item.GroupName};
-				ApplyRootTheme(dataContext, checkboxElement);
+				ApplyRootTheme(view, checkboxElement);
 
 				csection.Add(checkboxElement);
 				
@@ -438,7 +451,7 @@ namespace MonoMobile.MVVM
 			return element;
 		}
 		
-		public IElement CreateEnumerableRoot(MemberInfo member, string caption, object dataContext, List<Binding> bindings)
+		public IElement CreateEnumerableRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
 			Type memberType = GetTypeForMember(member);
@@ -446,14 +459,14 @@ namespace MonoMobile.MVVM
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
 
-			var items = (IEnumerable)GetValue(member, dataContext);
+			var items = (IEnumerable)GetValue(member, view);
 			
 			var element = new RootElement(caption);
-			element.ViewBinding.DataContext = dataContext;
+			element.ViewBinding.DataContext = view;
 			element.ViewBinding.MemberInfo = member;
 			element.ViewBinding.ViewType = memberType;
 
-			var dataTemplate = dataContext as IDataTemplate;
+			var dataTemplate = view as IDataTemplate;
 			if (dataTemplate != null)
 			{
 				element.ViewBinding.DataContext = items;
@@ -510,14 +523,29 @@ namespace MonoMobile.MVVM
 			return null;
 		}
 
-		private object GetDataContextForMember(object dataContext, ref MemberInfo member)
+		public void Fetch()
 		{
-			var explicitDataContext = dataContext;
-			
-			var view = dataContext as IDataContext;
-			if (view != null && view.DataContext != null)
+			foreach(var section in Root.Sections)
 			{
-				explicitDataContext = view.DataContext;
+				foreach(var element in section)
+				{
+					var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(element); 
+					foreach(var expression in bindingExpressions)
+					{
+						expression.UpdateSource();
+					}
+				}
+			}
+		}
+
+		private object GetDataContextForMember(object view, ref MemberInfo member)
+		{
+			var explicitDataContext = view;
+			
+			var context = view as IDataContext;
+			if (context != null && context.DataContext != null)
+			{
+				explicitDataContext = context.DataContext;
 			}
 			
 			var explicitMember = explicitDataContext.GetType().GetProperty(member.Name);
@@ -528,7 +556,7 @@ namespace MonoMobile.MVVM
 			} 
 			else
 			{
-				return dataContext;
+				return view;
 			}
 		}
 
@@ -545,10 +573,10 @@ namespace MonoMobile.MVVM
 			setMethod.Invoke(o, new object[] { val });
 		}
 
-		private List<CommandBarButtonItem> CheckForToolbarItems(object dataContext)
+		private List<CommandBarButtonItem> CheckForToolbarItems(object view)
 		{
 			var buttonList = new List<CommandBarButtonItem>();
-			var members = GetMethods(dataContext);
+			var members = GetMethods(view);
 			foreach(var member in members)
 			{
 				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>(false);
@@ -563,7 +591,7 @@ namespace MonoMobile.MVVM
 					var methodInfo = member as MethodInfo;
 
 					if(methodInfo != null)
-						command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
+						command = new ReflectiveCommand(view, member as MethodInfo, null);
 
 					CommandBarButtonItem button = null;
 
@@ -599,10 +627,10 @@ namespace MonoMobile.MVVM
 			return null;
 		}
 
-		private List<CommandBarButtonItem> CheckForNavbarItems(object dataContext)
+		private List<CommandBarButtonItem> CheckForNavbarItems(object view)
 		{
 			var buttonList = new List<CommandBarButtonItem>();
-			var members = GetMethods(dataContext);
+			var members = GetMethods(view);
 			foreach(var member in members)
 			{
 				var navbarButtonAttribute = member.GetCustomAttribute<NavbarButtonAttribute>(false);
@@ -617,7 +645,7 @@ namespace MonoMobile.MVVM
 					var methodInfo = member as MethodInfo;
 
 					if(methodInfo != null)
-						command = new ReflectiveCommand(dataContext, member as MethodInfo, null);
+						command = new ReflectiveCommand(view, member as MethodInfo, null);
 					
 					CommandBarButtonItem button = null;
 					if(!string.IsNullOrEmpty(title))
@@ -697,7 +725,7 @@ namespace MonoMobile.MVVM
 		private void BuildElementPropertyMap()
 		{
 			_ElementPropertyMap = new Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>>();
-			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 	
@@ -706,7 +734,7 @@ namespace MonoMobile.MVVM
 				{	
 					element = new ButtonElement(caption)
 					{
-						Command = GetCommandForMember(dataContext, member)
+						Command = GetCommandForMember(view, member)
 					};
 				}
 				
@@ -716,7 +744,7 @@ namespace MonoMobile.MVVM
 					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption: "Load More";
 					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption: "Loading...";
 
-					element = new LoadMoreElement(normalCaption, loadingCaption, null) { Command = GetCommandForMember(dataContext, member) };
+					element = new LoadMoreElement(normalCaption, loadingCaption, null) { Command = GetCommandForMember(view, member) };
 				}
 
 				var enableSearchAttribute = member.GetCustomAttribute<EnableSearchAttribute>();
@@ -729,25 +757,25 @@ namespace MonoMobile.MVVM
 					searchbar.EnableSearch = true;
 					
 					var methodInfo = member as MethodInfo;
-					searchbar.SearchCommand = new SearchCommand(dataContext, methodInfo);
+					searchbar.SearchCommand = new SearchCommand(view, methodInfo);
 				}
 
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 		
 				var mapAttribute = member.GetCustomAttribute<MapAttribute>();
-				var location = (CLLocationCoordinate2D)GetValue(member, dataContext);
+				var location = (CLLocationCoordinate2D)GetValue(member, view);
 				if (mapAttribute != null)
 					element = new MapElement(mapAttribute.Caption, location);
 
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(string), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(string), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 	
@@ -773,7 +801,7 @@ namespace MonoMobile.MVVM
 				}
 				else
 				{
-					var selement = new StringElement(caption, (string)GetValue(member, dataContext)) { };
+					var selement = new StringElement(caption, (string)GetValue(member, view)) { };
 					
 					element = selement;
 				}
@@ -781,7 +809,7 @@ namespace MonoMobile.MVVM
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(float), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(float), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 				var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
@@ -809,12 +837,12 @@ namespace MonoMobile.MVVM
 				return element;
 			});
 			
-			_ElementPropertyMap.Add(typeof(Uri), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(Uri), (member, caption, view, bindings)=>
 			{
-				return new HtmlElement(caption, (Uri)GetValue(member, dataContext));  
+				return new HtmlElement(caption, (Uri)GetValue(member, view));  
 			});
 
-			_ElementPropertyMap.Add(typeof(bool), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(bool), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 
@@ -827,7 +855,7 @@ namespace MonoMobile.MVVM
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
 
@@ -835,24 +863,24 @@ namespace MonoMobile.MVVM
 				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();
 
 				if(dateAttribute != null)
-					element = new DateElement(caption) { Value = (DateTime)GetValue(member, dataContext)};
+					element = new DateElement(caption) { Value = (DateTime)GetValue(member, view)};
 				else if (timeAttribute != null)
-					element = new TimeElement(caption) { Value = (DateTime)GetValue(member, dataContext)};
+					element = new TimeElement(caption) { Value = (DateTime)GetValue(member, view)};
 				else
-					element = new DateTimeElement(caption) { Value = (DateTime)GetValue(member, dataContext)};
+					element = new DateTimeElement(caption) { Value = (DateTime)GetValue(member, view)};
 				
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, view, bindings)=>
 			{
 				return new ImageElement();
 			});
 
-			_ElementPropertyMap.Add(typeof(int), (member, caption, dataContext, bindings)=>
+			_ElementPropertyMap.Add(typeof(int), (member, caption, view, bindings)=>
 			{
 				SetDefaultConverter(member, "Value", new IntConverter(), bindings);
-				return new StringElement(caption) { Value = GetValue(member, dataContext).ToString() };
+				return new StringElement(caption) { Value = GetValue(member, view).ToString() };
 			});
 		}
 		
@@ -877,26 +905,26 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
-		private MemberInfo[] GetFields(object dataContext)
+		private MemberInfo[] GetFields(object view)
 		{
-			return dataContext.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			return view.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 
-		private MemberInfo[] GetProperties(object dataContext)
+		private MemberInfo[] GetProperties(object view)
 		{
-			return dataContext.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			return view.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 
-		private MemberInfo[] GetMethods(object dataContext)
+		private MemberInfo[] GetMethods(object view)
 		{
-			return dataContext.GetType().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Where(m =>
+			return view.GetType().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Where(m =>
 			{
 				var methodInfo = m as MethodBase;
 				return (methodInfo == null || !methodInfo.IsConstructor && !methodInfo.IsSpecialName);
 			}).ToArray();
 		}
 
-	    private ICommand GetCommandForMember(object dataContext, MemberInfo member)
+	    private ICommand GetCommandForMember(object view, MemberInfo member)
 		{
 			string methodName = string.Empty;
 
@@ -906,7 +934,7 @@ namespace MonoMobile.MVVM
 				methodName = buttonAttribute.MethodName;
 			}
 
-			var context = dataContext;
+			var context = view;
 			var methodInfo = member as MethodInfo;
 
 			if (methodInfo == null)
@@ -918,7 +946,7 @@ namespace MonoMobile.MVVM
 				if (methodInfo == null)
 				{
 					var memberInfo = methodInfo as MemberInfo;
-					context = dataContext;
+					context = view;
 					methodInfo = memberInfo as MethodInfo;
 				}
 			}
@@ -929,10 +957,10 @@ namespace MonoMobile.MVVM
 			return new ReflectiveCommand(context, methodInfo, null);
 		}
 		
-		private void ApplyRootTheme(object dataContext, IThemeable element)
+		private void ApplyRootTheme(object view, IThemeable element)
 		{
 			Theme theme = null;
-			var themeAttributes = dataContext.GetType().GetCustomAttributes(typeof(ThemeAttribute), true);
+			var themeAttributes = view.GetType().GetCustomAttributes(typeof(ThemeAttribute), true);
 			
 			foreach(ThemeAttribute themeAttribute in themeAttributes)
 			{
@@ -976,7 +1004,7 @@ namespace MonoMobile.MVVM
 					themeableElement.Theme = theme;
 			}
 		}
-
+		
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

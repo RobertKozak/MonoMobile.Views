@@ -34,8 +34,27 @@ namespace MonoMobile.MVVM
 
 	public class View : UIView, IView, IDataContext
 	{
+		private object _DataContext;
+		
 		public string Caption { get; set; }
-		public object DataContext { get; set; }
+		public BindingContext BindingContext { get; set; }
+
+		public object DataContext 
+		{ 
+			get { return _DataContext; }
+			set 
+			{ 
+				if (_DataContext != value)
+				{
+					_DataContext = value;
+					var viewModel = DataContext as IViewModel;
+					if (viewModel != null)
+					{
+						viewModel.BindingContext = BindingContext;
+					}
+				}
+			}
+		}
 
 		public View(): this(null)
 		{

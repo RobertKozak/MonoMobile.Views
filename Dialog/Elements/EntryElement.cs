@@ -179,12 +179,15 @@ namespace MonoMobile.MVVM
 					return true;
 				};
 				
-#if DATABINDING
 				Entry.EditingDidEnd += delegate 
 				{
+#if DATABINDING
 					ValueProperty.Update();
-				};
+#else
+					Value = Entry.Text;
 #endif
+				};
+
 
 				ContentView = Entry;
 			}

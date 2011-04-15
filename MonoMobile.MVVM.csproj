@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG;DATABINDING</DefineConstants>
+    <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
@@ -43,6 +43,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
+    <DefineConstants>DATABINDING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -211,18 +212,9 @@
     <Compile Include="Dialog\Elements\FloatElement.cs" />
     <Compile Include="Dialog\RootElement.cs" />
     <Compile Include="Dialog\Section.cs" />
-    <Compile Include="Dialog\Interfaces\IElement.cs" />
-    <Compile Include="Dialog\Interfaces\IFocusable.cs" />
-    <Compile Include="Dialog\Interfaces\ISelectable.cs" />
-    <Compile Include="Dialog\Interfaces\ITappable.cs" />
-    <Compile Include="Dialog\Interfaces\IRoot.cs" />
-    <Compile Include="Dialog\Interfaces\ISizeable.cs" />
-    <Compile Include="Dialog\Interfaces\ISearchable.cs" />
     <Compile Include="Dialog\Reflection API\PullToRefreshAttribute.cs" />
     <Compile Include="Dialog\Reflection API\EnableSearchAttribute.cs" />
-    <Compile Include="Dialog\Interfaces\ISearchBar.cs" />
     <Compile Include="Dialog\Views\StandardListView.cs" />
-    <Compile Include="Dialog\Interfaces\IDataTemplate.cs" />
     <Compile Include="Dialog\SearchChangedEventArgs.cs" />
     <Compile Include="Dialog\ImageLoader.cs" />
     <Compile Include="Dialog\LRUCache.cs" />
@@ -233,15 +225,12 @@
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Application\SuspendNotificationContext.cs" />
     <Compile Include="Dialog\ViewBinding.cs" />
-    <Compile Include="Binding\IDataContext.cs" />
     <Compile Include="Binding\BindableProperty.cs" />
     <Compile Include="Converters\IntConverter.cs" />
     <Compile Include="Converters\FloatConverter.cs" />
     <Compile Include="Dialog\Cell\Theme.cs" />
-    <Compile Include="Dialog\Interfaces\IThemeable.cs" />
     <Compile Include="Dialog\Reflection API\ThemeAttribute.cs" />
     <Compile Include="Dialog\Elements\UICustomTextField.cs" />
-    <Compile Include="Dialog\Interfaces\ISection.cs" />
     <Compile Include="Dialog\Reflection API\ViewAttribute.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
     <Compile Include="Application\UrlConnection.cs" />
@@ -259,6 +248,20 @@
     <Compile Include="Dialog\DataBinding\MapViewElementBinding.cs" />
     <Compile Include="Dialog\DataBinding\ImageElementBinding.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Interfaces\IElement.cs" />
+    <Compile Include="Interfaces\IFocusable.cs" />
+    <Compile Include="Interfaces\ISelectable.cs" />
+    <Compile Include="Interfaces\ITappable.cs" />
+    <Compile Include="Interfaces\IRoot.cs" />
+    <Compile Include="Interfaces\ISizeable.cs" />
+    <Compile Include="Interfaces\ISearchable.cs" />
+    <Compile Include="Interfaces\ISearchBar.cs" />
+    <Compile Include="Interfaces\IDataTemplate.cs" />
+    <Compile Include="Interfaces\IThemeable.cs" />
+    <Compile Include="Interfaces\ISection.cs" />
+    <Compile Include="Interfaces\IReload.cs" />
+    <Compile Include="Interfaces\IDataContext.cs" />
+    <Compile Include="Interfaces\IBindingContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -276,9 +279,9 @@
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Elements\" />
     <Folder Include="Dialog\Views\" />
-    <Folder Include="Dialog\Interfaces\" />
     <Folder Include="Dialog\Cell\" />
     <Folder Include="Dialog\DataBinding\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />
