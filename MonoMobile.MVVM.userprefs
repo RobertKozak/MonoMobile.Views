@@ -1,11 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/Element.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/DataBinding/ElementBinding.cs">
     <Files>
       <File FileName="Dialog/Elements/EntryElement.cs" Line="188" Column="1" />
-      <File FileName="Dialog/Element.cs" Line="378" Column="26" />
+      <File FileName="Dialog/Element.cs" Line="376" Column="20" />
       <File FileName="Dialog/DataBinding/EntryElementBinding.cs" Line="73" Column="7" />
-      <File FileName="Dialog/DataBinding/ElementBinding.cs" Line="73" Column="7" />
+      <File FileName="Dialog/DataBinding/ElementBinding.cs" Line="38" Column="1" />
       <File FileName="Application/TinyIoC.cs" Line="32" Column="1" />
       <File FileName="Dialog/DataBinding/ActivityElementBinding.cs" Line="30" Column="1" />
       <File FileName="Dialog/DataBinding/BooleanElementBinding.cs" Line="44" Column="7" />
@@ -27,9 +27,9 @@
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
           <Node name="MonoMobile.MVVM" expanded="True" selected="True">
-            <Node name="Application" expanded="True" />
-            <Node name="Converters" expanded="True" />
-            <Node name="Dialog" expanded="True" />
+            <Node name="Dialog" expanded="True">
+              <Node name="DataBinding" expanded="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

@@ -34,6 +34,8 @@ namespace MonoMobile.MVVM
 {
 	public partial class BooleanElement
 	{
+		private bool __On { get { return Switch.On; } set { Switch.On = value; } }
+
 		public override void BindProperties()
 		{
 			base.BindProperties();

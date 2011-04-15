@@ -30,8 +30,27 @@
 #if DATABINDING
 namespace MonoMobile.MVVM
 {
+	using MonoTouch.UIKit;
+	using System.Drawing;
+
 	public abstract partial class Element
 	{
+		private UITableViewCellAccessory __Accessory { get { return Cell.Accessory; } set { Cell.Accessory = value; } }
+		private UIImage __ImageIcon { get { return Cell.ImageView.Image; } set { Cell.ImageView.Image = value; } }
+		private UIColor __BackgroundColor { get { return Cell.BackgroundColor; } set { Cell.BackgroundColor = value; } }
+		private UIView __BackgroundView { get { return Cell.BackgroundView; } set { Cell.BackgroundView = value; } }
+		private UILabel __TextLabel { get { return Cell.TextLabel; } }
+		private UILabel __DetailTextLabel { get { return Cell.DetailTextLabel; } }
+		private UIFont __TextLabelFont { get { return Cell.TextLabel.Font; } set { Cell.TextLabel.Font = value; } }
+		private UIFont __DetailTextLabelFont { get { return Cell.DetailTextLabel.Font; } set { Cell.DetailTextLabel.Font = value; } }
+		private UITextAlignment __TextAlignment { get { return Cell.TextLabel.TextAlignment; } set { Cell.TextLabel.TextAlignment = value; } }
+		private UITextAlignment __DetailTextAlignment { get { return Cell.DetailTextLabel.TextAlignment; } set { Cell.DetailTextLabel.TextAlignment = value; } }
+		private SizeF __TextAlignmentShadowOffset { get { return Cell.TextLabel.ShadowOffset; } set { Cell.TextLabel.ShadowOffset = value; } }
+		private SizeF __DetailTextAlignmentShadowOffset { get { return Cell.DetailTextLabel.ShadowOffset; } set { Cell.DetailTextLabel.ShadowOffset = value; } }
+		private UIColor __TextAlignmentShadowColor { get { return Cell.TextLabel.ShadowColor; } set { Cell.TextLabel.ShadowColor = value; } }
+		private UIColor __DetailTextAlignmentShadowColor { get { return Cell.DetailTextLabel.ShadowColor; } set { Cell.DetailTextLabel.ShadowColor = value; } }
+
+
 		public BindableProperty AccessoryProperty = BindableProperty.Register("Accessory");
 		public BindableProperty ImageIconProperty = BindableProperty.Register("ImageIcon");
 		public BindableProperty ImageIconUriProperty = BindableProperty.Register("ImageIconUri");

@@ -34,6 +34,8 @@ namespace MonoMobile.MVVM
 {
 	public partial class FloatElement
 	{
+		private float __Value { get { return Slider.Value; } set { Slider.Value = value; } }
+
 		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 
 		public override void BindProperties()
