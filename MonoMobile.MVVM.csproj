@@ -144,7 +144,6 @@
     <Compile Include="ViewModel\ViewModel.cs" />
     <Compile Include="ViewModel\IViewModel.cs" />
     <Compile Include="Application\DisposableObject.cs" />
-    <Compile Include="Application\PropertyNotifier.cs" />
     <Compile Include="Dialog\DialogViewController.cs" />
     <Compile Include="Binding\IBindingExpression.cs" />
     <Compile Include="Dialog\Group.cs" />
@@ -185,7 +184,6 @@
     <Compile Include="Dialog\Reflection API\BarButtonLocation.cs" />
     <Compile Include="Controls\UIGlassyButton.cs" />
     <Compile Include="Controls\CommandBarButtonItem.cs" />
-    <Compile Include="Application\IPropertyNotifier.cs" />
     <Compile Include="Dialog\DataContextCode.cs" />
     <Compile Include="Dialog\BindingContext.cs" />
     <Compile Include="Extensions\UIImageExtensions.cs" />
@@ -262,6 +260,8 @@
     <Compile Include="Interfaces\IReload.cs" />
     <Compile Include="Interfaces\IDataContext.cs" />
     <Compile Include="Interfaces\IBindingContext.cs" />
+    <Compile Include="Application\ObservableObject.cs" />
+    <Compile Include="Application\IObservableObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

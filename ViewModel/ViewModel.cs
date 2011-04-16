@@ -31,7 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
 
-	public abstract class ViewModel: PropertyNotifier, IViewModel
+	public abstract class ViewModel: ObservableObject, IViewModel
 	{
 		public BindingContext BindingContext { get; set; }
 

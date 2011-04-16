@@ -17,20 +17,6 @@ environment but do play with it and give me feedback.
 There is a lot more documentation coming. 
 
 
-IMPORTANT NOTE: 
-===============
-
-** Link Behavior ** 
-
-When you compile make sure Linker Behavior is set to "Don't Link" or "Link SDK Assemblies Only". 
-Binding might not be able to see certain properties because they might be removed by the linker.
-
-If you want to set it to "Link all assemblies", because you are trying to shrink your app to
-the smallest you can get, you will need to place [Preserve(AllMembers=true)] attribute on
-all of your Views and ViewModels otherwise properties you want to bind most likely will have
-been removed by the linker.
-
-
 MonoMobile.MVVM
 ================
 
@@ -176,7 +162,7 @@ is typically implemented like this:
 
 and in the setter of your properties you call NotifyPropertyChanged().
 
-ViewModels and Views in MonoMobile.MVVM all derive from PropertyNotifier which
+ViewModels and Views in MonoMobile.MVVM all derive from ObservableObject which
 has two methods to help with this: Set() and Get().
 
 	public string FirstName 

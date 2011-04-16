@@ -1,5 +1,5 @@
 //
-// IPropertyNotifier.cs:
+// IObservableObject.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using System.ComponentModel;
 	using System.Linq.Expressions;
 
-	public interface IPropertyNotifier: INotifyPropertyChanged, ISupportInitialize
+	public interface IObservableObject: INotifyPropertyChanged, ISupportInitialize
 	{
         T Get<T>(Expression<Func<T>> property);
         T Get<T>(Expression<Func<T>> property, T defaultValue);

@@ -29,7 +29,7 @@
 //
 namespace MonoMobile.MVVM
 {
-    public class EnumBinder : PropertyNotifier
+    public class EnumBinder : ObservableObject
     {
         public string GroupName
         {

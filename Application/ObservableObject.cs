@@ -1,5 +1,5 @@
 //
-// PropertyNotifier.cs:
+// ObservableObject.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-    public class PropertyNotifier : DisposableObject, IPropertyNotifier
+    public class ObservableObject : DisposableObject, IObservableObject
     {
 		private bool _SuspendNotifications { get; set; }
 		private List<string> _BatchedNotifications { get; set; }
@@ -48,7 +48,7 @@ namespace MonoMobile.MVVM
 
         public IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
 
-        public PropertyNotifier()
+        public ObservableObject()
         {
         }
 

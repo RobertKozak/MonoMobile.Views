@@ -35,33 +35,33 @@ namespace MonoMobile.MVVM
 
 	public class SuspendNotificationContext : IDisposable
 	{
-		private IEnumerable<IPropertyNotifier> _Notifiers;
+		private IEnumerable<IObservableObject> _ObservableObjects;
 
-		public SuspendNotificationContext(IPropertyNotifier notifier)
+		public SuspendNotificationContext(IObservableObject observableObject)
 		{
-			_Notifiers = new List<IPropertyNotifier>() { notifier };
+			_ObservableObjects = new List<IObservableObject>() { observableObject };
 			
-			notifier.BeginInit();
+			observableObject.BeginInit();
 		}
 
-		public SuspendNotificationContext(IEnumerable<IPropertyNotifier> notifiers)
+		public SuspendNotificationContext(IEnumerable<IObservableObject> observableObjects)
 		{
-			_Notifiers = notifiers;
+			_ObservableObjects = observableObjects;
 
-			foreach (var notifier in _Notifiers)
+			foreach (var observableObject in _ObservableObjects)
 			{
-				notifier.BeginInit();
+				observableObject.BeginInit();
 			}
 		}
 
 		public void Dispose()
 		{
-			foreach (var notifier in _Notifiers)
+			foreach (var observableObject in _ObservableObjects)
 			{
-				notifier.EndInit();
+				observableObject.EndInit();
 			}
 
-			_Notifiers = null;
+			_ObservableObjects = null;
 		}
 	}
 }
