@@ -214,7 +214,6 @@ namespace MonoMobile.MVVM
 		
 		public virtual void InitializeTheme()
 		{
-
 		}
 		
 		public virtual void ThemeChanged()
@@ -371,10 +370,12 @@ namespace MonoMobile.MVVM
 		
 			Theme.Cell = Cell;		
 	
-#if DATABINDING
 			BindProperties();
+
+#if DATABINDING
 			UpdateTargets();
 #endif
+
 			return Cell;
 		}
 
@@ -390,8 +391,10 @@ namespace MonoMobile.MVVM
 			RemoveTag(1);
 
 			if (ShowCaption)
+			{
 				TextLabel.Text = Caption;
-	
+			}
+
 			var selectable = this as ISelectable;
 			Cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;			
 

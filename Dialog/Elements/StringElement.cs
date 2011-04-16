@@ -83,6 +83,16 @@ namespace MonoMobile.MVVM
 
 			return base.NewCell(); 
 		}
+		
+		public override void InitializeContent()
+		{
+			if (!string.IsNullOrEmpty(Value))
+			{
+				DetailTextLabel.Text = Value;
+			}
+
+			base.InitializeContent();
+		}
 
 		protected virtual void OnValueChanged()
 		{

@@ -38,8 +38,8 @@ namespace MonoMobile.MVVM
 	using System.Linq;
 	using System.Reflection;
 	using System.Text;
-	using MonoTouch.CoreLocation;
 	using MonoMobile.MVVM;
+	using MonoTouch.CoreLocation;
 	using MonoTouch.UIKit;
 
 	public class BindingContext : DisposableObject
@@ -66,14 +66,18 @@ namespace MonoMobile.MVVM
 			
 			Populate(view, Root);
 
-			var context = view as IBindingContext;
-			if (context != null)
+			var viewContext = view as IBindingContext;
+			if (viewContext != null)
 			{
-				context.BindingContext = this;
+				viewContext.BindingContext = this;
 				var dataContext = view as IDataContext;
 				if (dataContext != null)
 				{
-					dataContext.DataContext = this;
+					var vmContext = dataContext.DataContext as IBindingContext;
+					if (vmContext != null)
+					{
+						vmContext.BindingContext = this;
+					}
 				}
 			}
 		}
@@ -250,7 +254,6 @@ namespace MonoMobile.MVVM
 			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 			var bindAttributes = member.GetCustomAttributes(typeof(BindAttribute), false);
 
-		//	var memberDataContext = GetDataContextForMember(view, ref member);
 			var memberDataContext = view;
 
 			if(captionAttribute != null)
@@ -299,11 +302,6 @@ namespace MonoMobile.MVVM
 
 					var sourceDataContext = memberDataContext;
 					var sourceProperty = sourceDataContext.GetType().GetNestedMember(ref sourceDataContext, binding.SourcePath, true);
-					if (sourceProperty == null)
-					{
-						sourceDataContext = view;
-						sourceProperty = sourceDataContext.GetType().GetNestedMember(ref sourceDataContext, binding.SourcePath, true);
-					}
 
 					binding.Source = sourceDataContext;
 				}

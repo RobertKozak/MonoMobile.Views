@@ -40,9 +40,9 @@ namespace MonoMobile.MVVM
 		private string _SourcePropertyName { get; set; }
 		
 		protected PropertyInfo SourceProperty { get; private set; }
-		protected MemberInfo Property { get; private set; }
+		protected MemberInfo ControlProperty { get; private set; }
 		protected object SourceObject { get; private set; }
-		protected object Obj { get; private set; }
+		protected object Control { get; private set; }
 
 		public Action PropertyChangedAction { get; set; }
 		
@@ -61,8 +61,8 @@ namespace MonoMobile.MVVM
 		{
 			get 
 			{ 
-				if (Property != null && Obj != null)
-					return Property.GetValue(Obj); 
+				if (ControlProperty != null && Control != null)
+					return ControlProperty.GetValue(Control); 
 				
 				return null;
 			}
@@ -73,24 +73,25 @@ namespace MonoMobile.MVVM
 					_Updating = true;
 					try 
 					{		
-						if (Obj != null)
+						if (Control != null)
 						{
-							Property.SetValue(Obj, value);
+							ControlProperty.SetValue(Control, value);
 						}
 					
 						if (SourceProperty != null)
 						{							
-							if (SourceProperty != Property)
+							if (SourceProperty != ControlProperty)
 							{
 								SourceProperty.SetValue(SourceObject, value, null);
 							}
-							
+#if DATABINDING							
 							var propName = string.Concat(SourceProperty.Name, "Property.Value");
 							var bindingExpression = BindingOperations.GetBindingExpression(this, propName);
 							if (bindingExpression != null)
 							{
 								bindingExpression.UpdateSource();
 							}
+#endif
 						}
 
 						if (PropertyChangedAction != null)
@@ -139,41 +140,47 @@ namespace MonoMobile.MVVM
 				value = SourceProperty.GetValue(SourceObject, null);
 
 			object owner = obj;
-			Property = type.GetNestedMember(ref owner, propertyName, true);
-			if (Property == null)
+			ControlProperty = type.GetNestedMember(ref owner, propertyName, true);
+			if (ControlProperty == null)
 				throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, owner.GetType().Name));
 			
-			Obj = owner;
+			Control = owner;
 			
 			if (value != null && Value != value)
 			{
-				if (Obj != null)
-					Property.SetValue(Obj, value);
+				if (Control != null)
+					ControlProperty.SetValue(Control, value);
 			}
 		}
 
 		public void Update()
 		{
+			var value = Value; 
+#if DATABINDING
 			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
 			if (bindingExpression != null)
 			{
-				var value = bindingExpression.ConvertValue(Value);
+				value = bindingExpression.ConvertValue(Value);
+#endif
 				if (SourceProperty != null)
 				{
 					SourceProperty.SetValue(SourceObject, value, null);
 				}
-
+#if DATABINDING
 				bindingExpression.UpdateSource();
 			}
+#endif
 		}
 		
 		public void ConvertBack<T>()
 		{
+#if DATABINDING
 			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
 			if (bindingExpression != null)
 			{
 				Value = (T)bindingExpression.ConvertbackValue(Value);
 			}
+#endif
 		}
 		
 		public void RefreshFromSource()

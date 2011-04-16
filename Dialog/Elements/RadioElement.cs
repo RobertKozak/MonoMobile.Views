@@ -77,6 +77,7 @@ namespace MonoMobile.MVVM
 					}
 					
 					root.Value = this.Caption;
+
 					var property = BindableProperty.GetBindableProperty(root, "ValueProperty");
 					property.Update();
 

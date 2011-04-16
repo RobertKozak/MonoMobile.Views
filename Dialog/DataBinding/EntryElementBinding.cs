@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if DATABINDING
 namespace MonoMobile.MVVM
 {
 	using MonoMobile.MVVM;
@@ -37,6 +36,7 @@ namespace MonoMobile.MVVM
 	public partial class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
 		private string __Text { get {return Entry.Text; } set { Entry.Text = value; } }
+#if DATABINDING
 		private string __Placeholder { get {return Entry.Placeholder; } set { Entry.Placeholder = value; } }
 		private bool __SecureTextEntry { get {return Entry.SecureTextEntry; } set { Entry.SecureTextEntry = value; } }
 		private UIReturnKeyType __ReturnKeyboardType { get { return Entry.ReturnKeyType; } set { Entry.ReturnKeyType = value; } }
@@ -49,26 +49,29 @@ namespace MonoMobile.MVVM
 		public BindableProperty ReturnKeyTypeProperty = BindableProperty.Register("ReturnKeyType");
 		public BindableProperty KeyboardTypeProperty = BindableProperty.Register("KeyboardType");
 		public BindableProperty EditModeProperty = BindableProperty.Register("EditMode");
-
+#endif
 		public override void BindProperties()
 		{
+#if DATABINDING
 			base.BindProperties();
 			
 			EditModeProperty.BindTo(this, () => EditMode);
-			
+#endif			
 			if (Entry != null)
 			{
+				ValueProperty.BindTo(this, () => Entry.Text);
+
+#if DATABINDING
 				PlaceholderProperty.BindTo(this, () => Entry.Placeholder);
 				IsPasswordProperty.BindTo(this, () => Entry.SecureTextEntry);
 				TextProperty.BindTo(this, () => Entry.Text);
-				ValueProperty.BindTo(this, () => Entry.Text);
 				DetailTextAlignmentProperty.BindTo(this, () => Entry.TextAlignment);
 				ReturnKeyTypeProperty.BindTo(this, () => Entry.ReturnKeyType);
 				KeyboardTypeProperty.BindTo(this, () => Entry.KeyboardType);
 				DetailTextFontProperty.BindTo(this, () => Entry.Font);
+#endif
 			}
 		}
 	}
 }
-#endif
 

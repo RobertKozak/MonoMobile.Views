@@ -286,7 +286,8 @@ namespace MonoMobile.MVVM
 				if (theme.CellBackgroundImage != null)
 					CellBackgroundImage = theme.CellBackgroundImage;
 				
-				TextAlignment = theme.TextAlignment;
+				if (theme.TextLabel != null)
+					TextLabel = theme.TextLabel;
 				
 				if (theme.TextFont != null)
 					TextFont = theme.TextFont;
@@ -299,13 +300,12 @@ namespace MonoMobile.MVVM
 				
 				if (theme.TextShadowColor != null)
 					TextShadowColor = theme.TextShadowColor;
-				
-				if (theme.TextLabel != null)
-					TextLabel = theme.TextLabel;
-				
+
+				TextAlignment = theme.TextAlignment;
 		
-				DetailTextAlignment = theme.DetailTextAlignment;
-				
+				if (theme.DetailTextLabel != null)
+					DetailTextLabel = theme.DetailTextLabel;
+
 				if (theme.DetailTextFont != null)
 					DetailTextFont = theme.DetailTextFont;
 				
@@ -317,10 +317,8 @@ namespace MonoMobile.MVVM
 				
 				if (theme.DetailTextShadowColor != null)
 					TextShadowColor = theme.DetailTextShadowColor;
-				
-				if (theme.DetailTextLabel != null)
-					DetailTextLabel = theme.DetailTextLabel;
-				
+
+				DetailTextAlignment = theme.DetailTextAlignment;
 	
 				if (theme.PlaceholderColor != null)
 					PlaceholderColor = theme.PlaceholderColor;

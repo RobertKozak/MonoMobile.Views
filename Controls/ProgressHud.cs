@@ -424,12 +424,24 @@ namespace MonoMobile.MVVM
 					AddSubview(_DetailsLabel);
 				}
 			}
+			
+			if (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.LandscapeLeft)
+				Transform = CGAffineTransform.MakeRotation(ToRadians(90f));
+			else if (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.LandscapeRight)
+				Transform = CGAffineTransform.MakeRotation(ToRadians(-90f));
+			else if (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.PortraitUpsideDown)
+				Transform = CGAffineTransform.MakeRotation(ToRadians(180f));
 		}
 
 		private static IntPtr GetClassHandle(string clsName)
 		{
 			return (new Class(clsName)).Handle;
 		}
+
+		private float ToRadians(float degrees)
+        {
+            return degrees * 0.01745329f;
+        }
 
 		private static bool IsMainThread()
 		{

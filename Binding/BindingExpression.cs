@@ -109,7 +109,7 @@ namespace MonoMobile.MVVM
 					if (_ViewProperty != null)
 						SetValue(_ViewProperty, Binding.ViewSource, convertedTargetValue);	
 					
-					if (SourceProperty != null)
+					if (SourceProperty != null && _ViewProperty != SourceProperty)
 						SetValue(SourceProperty, Binding.Source, convertedTargetValue);
 				}
 				catch (NotImplementedException)

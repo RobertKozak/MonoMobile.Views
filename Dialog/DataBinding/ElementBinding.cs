@@ -27,7 +27,6 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-#if DATABINDING
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
@@ -35,6 +34,7 @@ namespace MonoMobile.MVVM
 
 	public abstract partial class Element
 	{
+#if DATABINDING
 		private UITableViewCellAccessory __Accessory { get { return Cell.Accessory; } set { Cell.Accessory = value; } }
 		private UIImage __ImageIcon { get { return Cell.ImageView.Image; } set { Cell.ImageView.Image = value; } }
 		private UIColor __BackgroundColor { get { return Cell.BackgroundColor; } set { Cell.BackgroundColor = value; } }
@@ -71,11 +71,12 @@ namespace MonoMobile.MVVM
 		public BindableProperty DetailTextAlignmentProperty = BindableProperty.Register("DetailTextAlignment");
 		public BindableProperty DetailTextShadowOffsetProperty = BindableProperty.Register("DetailTextShadowOffset");
 		public BindableProperty DetailTextShadowColorProperty = BindableProperty.Register("DetailTextShadowColor");
-
+#endif
 		public virtual void BindProperties()
 		{		
 		}
-
+	
+#if DATABINDING
 		protected virtual void UpdateTargets()
 		{
 			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
@@ -87,7 +88,6 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
+#endif
 	}
 }
-#endif
-

@@ -56,8 +56,11 @@ namespace MonoMobile.MVVM
 
 		public void Save(string key, string value)
 		{
-			NSUserDefaults.StandardUserDefaults[key] = new NSString(value);
-			NSUserDefaults.StandardUserDefaults.Synchronize();
+			if (value != null)
+			{
+				NSUserDefaults.StandardUserDefaults[key] = new NSString(value);
+				NSUserDefaults.StandardUserDefaults.Synchronize();
+			}
 		}
 	}
 }

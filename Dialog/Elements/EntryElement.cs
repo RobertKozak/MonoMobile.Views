@@ -86,7 +86,7 @@ namespace MonoMobile.MVVM
 			{
 				DetailTextAlignment = UITextAlignment.Left;
 			}
-
+			
 			base.InitializeCell(tableView);
 			
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
@@ -123,9 +123,8 @@ namespace MonoMobile.MVVM
 
 				Entry.Started += (s, e) =>
 				{
-#if DATABINDING
 					ValueProperty.ConvertBack<string>();				
-#endif
+
 					IFocusable self = null;
 					var returnType = UIReturnKeyType.Done;
 					
@@ -181,11 +180,7 @@ namespace MonoMobile.MVVM
 				
 				Entry.EditingDidEnd += delegate 
 				{
-#if DATABINDING
 					ValueProperty.Update();
-#else
-					Value = Entry.Text;
-#endif
 				};
 
 
