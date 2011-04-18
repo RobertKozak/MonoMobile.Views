@@ -34,7 +34,9 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using System.Drawing; 
 	using MonoTouch.CoreGraphics;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers=true)]
 	public class FrostedTheme: Theme
 	{		
 		public FrostedTheme()

@@ -199,9 +199,11 @@ Movies2 = Movies;
 		}
 	}
 	
+	
 
 	public class BackgroundImageTheme: Theme
 	{
+		[Preserve]
 		public BackgroundImageTheme()
 		{
 			BackgroundUri = new Uri("file://" + Path.GetFullPath("Images/bluesky.jpg"));

@@ -32,7 +32,7 @@ namespace MonoMobile.MVVM
 	using System;
 	using MonoTouch.UIKit;
 	
-	public enum DisabledCommandResult
+	public enum DisabledCommandOption
 	{
 		Disable,
 		Hide
@@ -48,11 +48,11 @@ namespace MonoMobile.MVVM
 		public ButtonAttribute(string propertyName)
 		{
 			PropertyName = propertyName;
-			DisabledCommandResult = DisabledCommandResult.Disable;
+			DisabledCommandOption = DisabledCommandOption.Disable;
 		}
 
 		internal string PropertyName;
-		internal DisabledCommandResult DisabledCommandResult;
+		internal DisabledCommandOption DisabledCommandOption;
 	}
 }
 

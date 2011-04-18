@@ -3,7 +3,9 @@ namespace Samples
 	using System;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers = true)]
 	public class NavbarTheme: Theme
 	{
 		public NavbarTheme()

@@ -4,7 +4,9 @@ namespace Samples
 	using System.IO;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers = true)]
 	public class MarbledTheme: Theme
 	{
 		public MarbledTheme()
