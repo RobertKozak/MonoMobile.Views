@@ -19,7 +19,7 @@ namespace Samples
 	[Theme(typeof(FrostedTheme))]
 	[Theme(typeof(BackgroundImageTheme))]
 [EnableSearch(true, IncrementalSearch = false)]
-	public class MovieListView: View
+	public class MovieListView: View, INotifyPropertyChanged
 	{	
 //		[Section(Order = 2)]
 //		[EnableSearch(true, IncrementalSearch = false)]
@@ -81,6 +81,7 @@ namespace Samples
 		[NavbarButton("Add")]
 		public void AddMovie()
 		{
+			CanChangeStyle = !CanChangeStyle;
 			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
 		}
 
@@ -122,6 +123,13 @@ namespace Samples
 			get;// { return Get(()=>WebSamples, new WebSamples()); }
 			set;// { Set(()=>WebSamples, value); }
 		}
+		
+		private bool _CanChangeStyle;
+		public bool CanChangeStyle 
+		{ 
+			get { return _CanChangeStyle; } 
+			set { _CanChangeStyle = value; if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); }
+		}
 
 		[Button]
 		[Section(Order = 11)]
@@ -133,7 +141,7 @@ namespace Samples
 				DynamicView = _View1;
 		}
 		
-		[Button]
+		[Button("CanChangeStyle", DisabledCommandOption = DisabledCommandOption.Hide)]
 		public void ChangeStyle()
 		{
 			
@@ -196,8 +204,15 @@ Movies2 = Movies;
 		
 			Time = DateTime.Now;
 			Date = DateTime.Now;
+			
+			CanChangeStyle = true;
 		}
-	}
+	
+
+		#region INotifyPropertyChanged implementation
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+}
 	
 	
 

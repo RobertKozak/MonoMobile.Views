@@ -301,8 +301,6 @@ namespace MonoMobile.MVVM
 					}
 
 					var sourceDataContext = memberDataContext;
-					var sourceProperty = sourceDataContext.GetType().GetNestedMember(ref sourceDataContext, binding.SourcePath, true);
-
 					binding.Source = sourceDataContext;
 				}
 			}
@@ -730,12 +728,15 @@ namespace MonoMobile.MVVM
 				var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 				if (buttonAttribute != null)
 				{	
-					element = new ButtonElement(caption)
+					var belement = new ButtonElement(caption)
 					{
 						Command = GetCommandForMember(view, member)
 					};
 					
-					((ButtonElement)element).Command.CanExecuteChanged += HandleCanExecuteChanged;
+					((ReflectiveCommand)belement.Command).Element = belement;
+
+					belement.Command.CanExecuteChanged += HandleCanExecuteChanged;
+					element = belement;
 				}
 				
 				var loadMoreAttribute = member.GetCustomAttribute<LoadMoreAttribute>();
@@ -1016,8 +1017,8 @@ namespace MonoMobile.MVVM
 			var reflectiveCommand = sender as ReflectiveCommand;
 			if (reflectiveCommand != null)
 			{
-//				if (reflectiveCommand.DisabledCommandOption = DisabledCommandOption.Disable)
-//					reflectiveCommand.ButtonElement
+				((Element)reflectiveCommand.Element).Visible = reflectiveCommand.CanExecute(null);
+				((Element)reflectiveCommand.Element).TableView.SetNeedsDisplay();
 			}
 		}
 

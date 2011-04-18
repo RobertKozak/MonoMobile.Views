@@ -95,17 +95,11 @@ namespace MonoMobile.MVVM
 			Element = element;
 			if (Element != null && Element.Theme != null)
 			{
-			//	var type = Element.Theme.GetType();
-			//	if (type.IsSubclassOf(typeof(Theme)))
-			//	{
-					//var drawMethodDefined = type.GetMethod("DrawContentView", BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) != null;
-
-					if (Element.Theme.DrawContentViewAction != null)
-					{
-						_ContentView = new UITableViewCellContentView(this);
-						InsertSubview(_ContentView, 0);
-					}
-			//	}
+				if (Element.Theme.DrawContentViewAction != null)
+				{
+					_ContentView = new UITableViewCellContentView(this);
+					InsertSubview(_ContentView, 0);
+				}
 			}
 			
 			Opaque = false;
@@ -170,7 +164,7 @@ namespace MonoMobile.MVVM
 			//Element.Dispose();
 			Element = null;
 		}
-		
+
 		public void DrawContentView()
 		{
 			if (!Highlighted || Element.Theme.DrawWhenHighlighted)

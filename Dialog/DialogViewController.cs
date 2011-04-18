@@ -45,6 +45,7 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
+		public Action<NSIndexPath, IElement> DoSomething { get; private set; }
 		private UISearchBar _Searchbar;
 		private UITableView _TableView;
 		private RefreshTableHeaderView _RefreshView;
@@ -219,22 +220,6 @@ namespace MonoMobile.MVVM
 			base.DidRotate(fromInterfaceOrientation);
 			ReloadData();
 		}
-
-
-		public override void TouchesEnded(NSSet touches, UIEvent evt)
-		{
-			foreach (var item in this) 
-			{
-				var textField = item as UITextField;
-				if (textField != null && textField.IsFirstResponder) 
-				{
-					textField.ResignFirstResponder ();
-				}
-			}
-
-			base.TouchesEnded(touches, evt);
-		}
-
 
 		/// <summary>
 		/// Allows caller to programatically activate the search bar and start the search process
@@ -577,7 +562,7 @@ namespace MonoMobile.MVVM
 				var sizable = element as ISizeable;
 				if (sizable != null)
 					return sizable.GetHeight(tableView, indexPath);
-
+		
 				return tableView.RowHeight;
 			}
 		}
@@ -678,7 +663,7 @@ namespace MonoMobile.MVVM
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
 		{
-			return new UITableView(bounds, style);
+			return new CustomTableView(bounds, style) { Controller = this };
 		}
 
 		public override void LoadView()
@@ -693,6 +678,7 @@ namespace MonoMobile.MVVM
 			}
 
 			_TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
+
 			TableView = _TableView;
 
 			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
@@ -990,4 +976,38 @@ namespace MonoMobile.MVVM
 			PrepareRoot(root);
 		}
 	}
+
+	public class CustomTableView : UITableView
+	{		
+		private ISection[] _OriginalSections;
+		private IElement[][] _OriginalElements;
+
+		public DialogViewController Controller { get; set; }
+		
+		public CustomTableView(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
+		{
+		}
+
+		public override void TouchesEnded(NSSet touches, UIEvent evt)
+		{
+			if (Controller != null)
+			{
+				foreach (var section in Controller.Root.Sections) 
+				{
+					foreach(var element in section.Elements)
+					{
+						var selected = element as EntryElement;
+						if (selected != null && selected.Entry != null && selected.Entry.IsFirstResponder) 
+						{
+							selected.Entry.ResignFirstResponder();
+							break;
+						}
+					}
+				}	
+			}
+
+			base.TouchesEnded(touches, evt);
+		}
+	}
+
 }

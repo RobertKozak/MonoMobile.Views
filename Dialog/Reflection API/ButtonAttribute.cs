@@ -52,7 +52,7 @@ namespace MonoMobile.MVVM
 		}
 
 		internal string PropertyName;
-		internal DisabledCommandOption DisabledCommandOption;
+		public DisabledCommandOption DisabledCommandOption;
 	}
 }
 

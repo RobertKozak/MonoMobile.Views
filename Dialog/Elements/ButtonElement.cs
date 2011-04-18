@@ -40,13 +40,9 @@ namespace MonoMobile.MVVM
 	{
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
-		public bool Enabled { get; set; }
-		public bool Visible { get; set; }
 
 		public ButtonElement(string caption) : base(caption)
 		{
-			Enabled = true;
-			Visible = true;
 		}
 
 		public override void InitializeCell(UITableView tableView)

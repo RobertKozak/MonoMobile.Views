@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 		private readonly MethodInfo _Execute;
 		private readonly object _ViewModel;
 		
-		public ButtonElement ButtonElement { get; set; }
+		public IElement Element { get; set; }
 		public DisabledCommandOption DisabledCommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };
@@ -70,7 +70,7 @@ namespace MonoMobile.MVVM
 		{
 			if (_CanExecute != null)
 				return (bool)_CanExecute.GetValue(_ViewModel, null);
-
+			
 			return true;
 		}
 

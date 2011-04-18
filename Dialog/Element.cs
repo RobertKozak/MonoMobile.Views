@@ -38,6 +38,8 @@ namespace MonoMobile.MVVM
 
 	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
 	{		
+		private int _OldRow;
+
 		public NSString Id { get; set; }
 		public int Order { get; set; }
 		public int Index { get; set; }
@@ -318,6 +320,7 @@ namespace MonoMobile.MVVM
 			ShowCaption = !string.IsNullOrEmpty(Caption);
 			Theme.CellStyle = UITableViewCellStyle.Default;
 			ViewBinding = new ViewBinding();
+			Visible = true;
 		}
 		
 		public RectangleF ContentFrame 
@@ -435,6 +438,32 @@ namespace MonoMobile.MVVM
 				return null;
 
 			return section.Parent as IRoot;
+		}
+		
+		private bool _Visible;
+		public bool Visible
+		{
+			get { return _Visible;}
+			set 
+			{
+				if (_Visible != value)
+				{
+					_Visible = value;
+
+					var section = Parent as Section;
+					
+					if (section != null)
+					{
+						if(_Visible && !section.Elements.Contains(this))
+							section.Insert(_OldRow, this);
+						else
+						{
+							_OldRow = IndexPath.Row;
+							section.Remove(this);
+						}
+					}
+				}
+			}
 		}
 
 		void IImageUpdated.UpdatedImage(Uri uri)
