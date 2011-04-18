@@ -41,6 +41,8 @@ namespace MonoMobile.MVVM
 		private readonly MethodInfo _Execute;
 		private readonly object _ViewModel;
 
+		public DisabledCommandResult DisabledCommandResult;
+
 		public event EventHandler CanExecuteChanged = (sender, e) => { };
 
 		public ReflectiveCommand(object viewModel, MethodInfo execute, PropertyInfo canExecute)

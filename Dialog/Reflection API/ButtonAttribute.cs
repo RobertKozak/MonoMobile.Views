@@ -31,7 +31,13 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.UIKit;
-
+	
+	public enum DisabledCommandResult
+	{
+		Disable,
+		Hide
+	}
+	
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class ButtonAttribute : Attribute
 	{
@@ -39,12 +45,14 @@ namespace MonoMobile.MVVM
 		{
 		}
 
-		public ButtonAttribute(string methodName)
+		public ButtonAttribute(string propertyName)
 		{
-			MethodName = methodName;
+			PropertyName = propertyName;
+			DisabledCommandResult = DisabledCommandResult.Disable;
 		}
 
-		internal string MethodName;
+		internal string PropertyName;
+		internal DisabledCommandResult DisabledCommandResult;
 	}
 }
 

@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMobile.MVVM", "MonoMobi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealerCenter", "DealerCenter\DealerCenter.csproj", "{0B8D62DC-C823-46AE-A369-4ECF5596A254}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -17,18 +15,6 @@ Global
 		AppStore|iPhone = AppStore|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.AdHoc|iPhone.ActiveCfg = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.AdHoc|iPhone.Build.0 = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.AppStore|iPhone.ActiveCfg = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.AppStore|iPhone.Build.0 = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Debug|iPhone.Build.0 = Debug|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Release|iPhone.ActiveCfg = Release|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Release|iPhone.Build.0 = Release|iPhone
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{0B8D62DC-C823-46AE-A369-4ECF5596A254}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.AdHoc|iPhone.ActiveCfg = Debug|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.AdHoc|iPhone.Build.0 = Debug|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.AppStore|iPhone.ActiveCfg = Debug|iPhone
@@ -55,7 +41,7 @@ Global
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = DealerCenter\DealerCenter.csproj
+		StartupItem = Samples\Samples.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

@@ -734,6 +734,8 @@ namespace MonoMobile.MVVM
 					{
 						Command = GetCommandForMember(view, member)
 					};
+					
+					((ButtonElement)element).Command.CanExecuteChanged += HandleCanExecuteChanged;
 				}
 				
 				var loadMoreAttribute = member.GetCustomAttribute<LoadMoreAttribute>();
@@ -924,37 +926,43 @@ namespace MonoMobile.MVVM
 
 	    private ICommand GetCommandForMember(object view, MemberInfo member)
 		{
-			string methodName = string.Empty;
+			string propertyName = string.Empty;
+			PropertyInfo propertyInfo = null;
+			DisabledCommandResult disabledCommandResult = DisabledCommandResult.Disable;
 
 			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 			if (buttonAttribute != null)
 			{
-				methodName = buttonAttribute.MethodName;
-			}
-
-			var context = view;
-			var methodInfo = member as MethodInfo;
-
-			if (methodInfo == null)
-			{
-				if (string.IsNullOrEmpty(methodName))
-					methodName = member.Name;
-
-				methodInfo = context.GetType().GetMethod(methodName);
+				propertyName = buttonAttribute.PropertyName;
+				disabledCommandResult = buttonAttribute.DisabledCommandResult;
+			
+				var methodInfo = member as MethodInfo;
+	
 				if (methodInfo == null)
+					throw new Exception(string.Format("Method not found"));
+				
+				if (!string.IsNullOrEmpty(propertyName))
 				{
-					var memberInfo = methodInfo as MemberInfo;
-					context = view;
-					methodInfo = memberInfo as MethodInfo;
+					var property = view.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+					if (property != null)
+					{
+						var value =  property.GetValue(view);
+						if (value != null && value.GetType() == typeof(bool))
+						{
+							propertyInfo = property;
+						}
+						else
+						{
+							throw new Exception(string.Format("Property {0} cannot be used for CanExecute property because it does not have a return type of bool", property.Name));
+						}
+					}
 				}
+	
+				return new ReflectiveCommand(view, methodInfo, propertyInfo) { DisabledCommandResult = disabledCommandResult};
 			}
 
-			if (methodInfo == null)
-				throw new Exception(string.Format("Method not found : {0}", methodName));
-
-			return new ReflectiveCommand(context, methodInfo, null);
+			return null;
 		}
-		
 		private void ApplyRootTheme(object view, IThemeable element)
 		{
 			Theme theme = null;
@@ -1003,6 +1011,11 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
+		private void HandleCanExecuteChanged(object sender, EventArgs e)
+		{
+			
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
