@@ -75,7 +75,7 @@ namespace MonoMobile.MVVM
 		}
 	
 		public UITableViewCellStyle CellStyle { get; set; }
-		public UITableViewCellAccessory Accessory { get; set; }
+		public UITableViewCellAccessory? Accessory { get; set; }
 
 		public UIImage CellImageIcon
 		{
@@ -249,7 +249,6 @@ namespace MonoMobile.MVVM
 			DetailTextAlignment = UITextAlignment.Right;
 			TextAlignment = UITextAlignment.Left;
 
-			Accessory = UITableViewCellAccessory.None;
 			DisabledColor = UIColor.FromWhiteAlpha(0.8f, 0.4f); 
 		}
 		

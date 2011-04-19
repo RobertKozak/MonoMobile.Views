@@ -1026,8 +1026,6 @@ namespace MonoMobile.MVVM
 				{
 					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
 				}
-					
-				reflectiveCommand.Element.Cell.SetNeedsDisplay();
 			}
 		}
 

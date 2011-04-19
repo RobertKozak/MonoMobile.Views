@@ -108,7 +108,7 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		public UITableViewCellAccessory Accessory 
+		public UITableViewCellAccessory? Accessory 
 		{
 			get { return Theme.Accessory; }
 			set { Theme.Accessory = value; ThemeChanged(); }
@@ -288,8 +288,8 @@ namespace MonoMobile.MVVM
 				else if (ImageIcon != null)
 					Cell.ImageView.Image = ImageIcon;
 				
-				if (Accessory != Cell.Accessory && Accessory != UITableViewCellAccessory.None)
-					Cell.Accessory = Accessory;
+				if (Accessory.HasValue)
+					Cell.Accessory = Accessory.Value;
 				
 				_CellStyleInfo.ClearBackground();
 			}
@@ -382,6 +382,9 @@ namespace MonoMobile.MVVM
 			UpdateTargets();
 #endif
 
+			if (!Enabled) 
+				SetDisabled(Cell);
+
 			return Cell;
 		}
 
@@ -464,9 +467,7 @@ namespace MonoMobile.MVVM
 					}
 					else
 					{
-						_DisabledCellView = new DisabledCellView(Cell);
-						Cell.AddSubview(_DisabledCellView);
-						Cell.SetNeedsDisplay();
+						SetDisabled(Cell);
 					}
 				
 				}
@@ -495,6 +496,16 @@ namespace MonoMobile.MVVM
 						}
 					}
 				}
+			}
+		}
+
+		protected void SetDisabled(UITableViewElementCell cell)
+		{
+			if (cell != null)
+			{
+				_DisabledCellView = new DisabledCellView(cell);
+				cell.AddSubview(_DisabledCellView);
+				cell.SetNeedsDisplay();
 			}
 		}
 

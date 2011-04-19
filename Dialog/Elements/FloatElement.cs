@@ -54,9 +54,17 @@ namespace MonoMobile.MVVM
 		{
 			Frame = frame;
 		}
+		
+		public override UITableViewElementCell NewCell()
+		{
+			var cell = base.NewCell();
+			cell.Accessory = UITableViewCellAccessory.None;
+
+			return cell;
+		}
 
 		public override void InitializeContent()
-		{	
+		{
 			Slider = new UISlider() { BackgroundColor = UIColor.Clear, Continuous = true, Tag = 1 };
 			Slider.Frame = RectangleF.Empty;
 			Slider.ValueChanged += delegate 

@@ -67,7 +67,7 @@ namespace Samples
 		[LoadMore]
 		public void Activity()
 		{
-			//Thread.Sleep(1500);
+			Thread.Sleep(1500);
 		}
 
 		[Section("Using a DataTemplate", "This is a footer")]

@@ -82,7 +82,7 @@ namespace MonoMobile.MVVM
 		public bool ShouldDrawBorder { get; set; }
 		public virtual IElement Element { get; set; }
 
-		public UITableView TableView { get { return Superview as UITableView; } }
+		public UITableView TableView { get { return Element.TableView; } }
 
 		public UITableViewElementCell() :base() {}
 		public UITableViewElementCell(NSCoder coder) : base(coder) {}
@@ -347,8 +347,7 @@ namespace MonoMobile.MVVM
 
 	public class DisabledCellView : UIView
 	{
-		UITableViewElementCell _Cell; 
-		UIColor DisabledColor;
+		private UITableViewElementCell _Cell; 
  
 		public DisabledCellView(NSCoder coder) : base(coder)
 		{
@@ -365,11 +364,14 @@ namespace MonoMobile.MVVM
 
 		public DisabledCellView(UITableViewElementCell cell) : base(cell.Bounds)
 		{		
-			_Cell = cell;
-			Bounds =_Cell.CalculateInnerRect();
-			DisabledColor = _Cell.Element.Theme.DisabledColor;
 			BackgroundColor = UIColor.Clear;
 			Opaque = false;
+
+			if(cell != null)
+			{
+				_Cell = cell;
+				Bounds = _Cell.CalculateInnerRect();
+			}
 		}
 
 		public override void Draw(RectangleF rect)
@@ -393,7 +395,7 @@ namespace MonoMobile.MVVM
 				}
 				
 				context.AddPath(path);
-				DisabledColor.SetFill();
+				_Cell.Element.Theme.DisabledColor.SetFill();
 				context.DrawPath(CGPathDrawingMode.Fill);
 			}
 		}
