@@ -38,7 +38,9 @@ namespace MonoMobile.MVVM
 
 	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
 	{		
+		private bool _Visible;
 		private int _OldRow;
+		private DisabledCellView _DisabledCellView; 
 
 		public NSString Id { get; set; }
 		public int Order { get; set; }
@@ -321,6 +323,7 @@ namespace MonoMobile.MVVM
 			Theme.CellStyle = UITableViewCellStyle.Default;
 			ViewBinding = new ViewBinding();
 			Visible = true;
+			Enabled = true;
 		}
 		
 		public RectangleF ContentFrame 
@@ -440,7 +443,36 @@ namespace MonoMobile.MVVM
 			return section.Parent as IRoot;
 		}
 		
-		private bool _Visible;
+		private bool _Enabled;
+		public bool Enabled 
+		{
+			get { return _Enabled; } 
+			set 
+			{
+				if (_Enabled != value)
+				{
+					_Enabled = value;
+
+					if (_Enabled)
+					{
+						if (_DisabledCellView != null)
+						{
+							_DisabledCellView.RemoveFromSuperview();
+							_DisabledCellView.Dispose();
+							_DisabledCellView = null;
+						}
+					}
+					else
+					{
+						_DisabledCellView = new DisabledCellView(Cell);
+						Cell.AddSubview(_DisabledCellView);
+						Cell.SetNeedsDisplay();
+					}
+				
+				}
+			}
+		}
+		
 		public bool Visible
 		{
 			get { return _Visible;}

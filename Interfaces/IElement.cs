@@ -42,6 +42,9 @@ namespace MonoMobile.MVVM
 		IElement Parent { get; set; }
 		string Caption { get; set; }
 		
+		bool Visible { get; set; }
+		bool Enabled { get; set; }
+
 		ViewBinding ViewBinding { get; set; }
 		UIView ContentView { get; set; }
 

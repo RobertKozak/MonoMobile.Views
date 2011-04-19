@@ -1017,8 +1017,16 @@ namespace MonoMobile.MVVM
 			var reflectiveCommand = sender as ReflectiveCommand;
 			if (reflectiveCommand != null)
 			{
-				((Element)reflectiveCommand.Element).Visible = reflectiveCommand.CanExecute(null);
-				((Element)reflectiveCommand.Element).TableView.SetNeedsDisplay();
+				if (reflectiveCommand.DisabledCommandOption == DisabledCommandOption.Hide)
+				{
+					reflectiveCommand.Element.Visible = reflectiveCommand.CanExecute(null);
+				}
+				else
+				{
+					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
+				}
+					
+				reflectiveCommand.Element.Cell.SetNeedsDisplay();
 			}
 		}
 

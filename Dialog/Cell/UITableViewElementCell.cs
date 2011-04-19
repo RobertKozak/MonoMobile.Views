@@ -54,25 +54,28 @@ namespace MonoMobile.MVVM
 			get
 			{
 				var indexPath = Element.IndexPath;
-				var numRows = TableView.NumberOfRowsInSection(indexPath.Section);
-
-				if ( indexPath.Row == 0 && indexPath.Row == numRows - 1)
+				
+				if(indexPath != null)
 				{
-					return CellPosition.Single;
+					var numRows = TableView.NumberOfRowsInSection(indexPath.Section);
+	
+					if ( indexPath.Row == 0 && indexPath.Row == numRows - 1)
+					{
+						return CellPosition.Single;
+					}
+					else if (indexPath.Row == numRows -1)
+					{
+						return CellPosition.Bottom;
+					}
+					else if (indexPath.Row == 0)
+					{
+						return CellPosition.Top;
+					}
+					else if (indexPath.Row != numRows - 1)
+					{
+						return CellPosition.Middle;
+					}
 				}
-				else if (indexPath.Row == numRows -1)
-				{
-					return CellPosition.Bottom;
-				}
-				else if (indexPath.Row == 0)
-				{
-					return CellPosition.Top;
-				}
-				else if (indexPath.Row != numRows - 1)
-				{
-					return CellPosition.Middle;
-				}
-
 				return CellPosition.Single;
 			}
 		}
@@ -165,7 +168,7 @@ namespace MonoMobile.MVVM
 			Element = null;
 		}
 
-		public void DrawContentView()
+		public void DrawContentView(UIColor backgroundColor)
 		{
 			if (!Highlighted || Element.Theme.DrawWhenHighlighted)
 			{
@@ -175,7 +178,7 @@ namespace MonoMobile.MVVM
 
 				CGPath path = null;
 				
-				var backgroundColor = TableView.BackgroundColor;
+			//	var backgroundColor = TableView.BackgroundColor;
 
 				CGContext context = UIGraphics.GetCurrentContext();
 				context.SaveState();
@@ -185,7 +188,6 @@ namespace MonoMobile.MVVM
 				if (TableView.Style == UITableViewStyle.Grouped)
 				{
 					borderRect = CalculateInnerRect();
-					//borderRect = new RectangleF(Bounds.X + IndentationWidth - 1, Bounds.Y - 1, (Bounds.Width - IndentationWidth * 2) + 2, Bounds.Height + 1);
 					path = GetCellBorderPath(borderRect);
 				}
 				else
@@ -198,6 +200,7 @@ namespace MonoMobile.MVVM
 				context.Clip();
 	
 				ShouldDrawBorder = false;
+
 				if (Element.Theme.DrawContentViewAction != null)
 					Element.Theme.DrawContentViewAction(innerRect, context, this);
 	
@@ -224,7 +227,7 @@ namespace MonoMobile.MVVM
 			return;
 		}
 
-		private RectangleF CalculateInnerRect()
+		public RectangleF CalculateInnerRect()
 		{
 			var indentationOffset = 0f;
 			var borderOffset = 1;
@@ -244,7 +247,7 @@ namespace MonoMobile.MVVM
 			return rect;
 		}
 		
-		private CGPath GetCellBorderPath(RectangleF rect)
+		public CGPath GetCellBorderPath(RectangleF rect)
 		{
 			var cornerRadius = 10;
 			
@@ -253,7 +256,9 @@ namespace MonoMobile.MVVM
 			
 			CGPath path = new CGPath();
 			
-			if (CellPosition == CellPosition.Top)
+			var cellPosition = CellPosition;
+
+			if (cellPosition == CellPosition.Top)
 			{
 				minx = minx + 1;
 				miny = miny + 1;
@@ -265,7 +270,7 @@ namespace MonoMobile.MVVM
 				path.AddArcToPoint(maxx, miny, maxx, maxy, cornerRadius);
 				path.AddLineToPoint(maxx, maxy);
 			}
-			else if (CellPosition == CellPosition.Bottom)
+			else if (cellPosition == CellPosition.Bottom)
 			{
 				minx = minx + 1;
 				
@@ -277,7 +282,7 @@ namespace MonoMobile.MVVM
 				path.AddArcToPoint(maxx, maxy, maxx, miny, cornerRadius);
 				path.AddLineToPoint(maxx, miny);
 			}
-			else if (CellPosition == CellPosition.Middle)
+			else if (cellPosition == CellPosition.Middle)
 			{
 				minx = minx + 1;
 				maxx = maxx - 1;
@@ -287,7 +292,7 @@ namespace MonoMobile.MVVM
 				path.AddLineToPoint(maxx, maxy);
 				path.AddLineToPoint(minx, maxy);
 			}
-			else if (CellPosition == CellPosition.Single)
+			else if (cellPosition == CellPosition.Single)
 			{
 				minx = minx + 1;
 				miny = miny + 1;
@@ -306,29 +311,101 @@ namespace MonoMobile.MVVM
 			path.CloseSubpath();
 			return path;
 		}
+	}
+	
+	public class UITableViewCellContentView : UIView
+	{
+		protected UITableViewElementCell Cell { get; set; }
 
-		class UITableViewCellContentView : UIView
+		public UITableViewCellContentView(NSCoder coder) : base(coder)
 		{
-			private UITableViewElementCell _Cell { get; set; }
+		}
+		public UITableViewCellContentView(NSObjectFlag t) : base(t)
+		{
+		}
+		public UITableViewCellContentView(IntPtr handle) : base(handle)
+		{
+		}
+		public UITableViewCellContentView(RectangleF frame) : base(frame)
+		{
+		}
 
-			public UITableViewCellContentView(NSCoder coder) : base(coder) {}
-			public UITableViewCellContentView(NSObjectFlag t) : base(t) {}
-			public UITableViewCellContentView(IntPtr handle) : base(handle) {}
-			public UITableViewCellContentView(RectangleF frame) : base(frame) {}
+		public UITableViewCellContentView(UITableViewElementCell cell) : base(cell.Bounds)
+		{
+			Cell = cell;
+			Opaque = false;
+		}
 
-			public UITableViewCellContentView(UITableViewElementCell cell) : base(RectangleF.Empty)
+		public override void Draw(RectangleF rect)
+		{
+			if (Cell != null)
 			{
-				_Cell = cell;
-				Opaque = false;
+				Cell.DrawContentView(Cell.TableView.BackgroundColor);
 			}
+		}
+	}
 
-			public override void Draw(RectangleF rect)
+	public class DisabledCellView : UIView
+	{
+		UITableViewElementCell _Cell; 
+		UIColor DisabledColor;
+ 
+		public DisabledCellView(NSCoder coder) : base(coder)
+		{
+		}
+		public DisabledCellView(NSObjectFlag t) : base(t)
+		{
+		}
+		public DisabledCellView(IntPtr handle) : base(handle)
+		{
+		}
+		public DisabledCellView(RectangleF frame) : base(frame)
+		{
+		}
+
+		public DisabledCellView(UITableViewElementCell cell) : base(cell.Bounds)
+		{		
+			_Cell = cell;
+			Bounds =_Cell.CalculateInnerRect();
+			DisabledColor = _Cell.Element.Theme.DisabledColor;
+			BackgroundColor = UIColor.Clear;
+			Opaque = false;
+		}
+
+		public override void Draw(RectangleF rect)
+		{
+			if (_Cell != null)
 			{
-				if (_Cell != null )
+				CGContext context = UIGraphics.GetCurrentContext();
+				
+				CGPath path;
+				var borderRect = rect;
+
+				if (_Cell.TableView.Style == UITableViewStyle.Grouped)
 				{
-					_Cell.DrawContentView();
+					borderRect = _Cell.CalculateInnerRect();
+					path = _Cell.GetCellBorderPath(borderRect);
+				} 
+				else
+				{
+					path = new CGPath();
+					path.AddRect(borderRect);
 				}
+				
+				context.AddPath(path);
+				DisabledColor.SetFill();
+				context.DrawPath(CGPathDrawingMode.Fill);
 			}
+		}
+
+		public override void TouchesBegan(NSSet touches, UIEvent evt)
+		{	
+		}
+		public override void TouchesMoved(NSSet touches, UIEvent evt)
+		{
+		}
+		public override void TouchesEnded(NSSet touches, UIEvent evt)
+		{
 		}
 	}
 }

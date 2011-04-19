@@ -141,7 +141,7 @@ namespace Samples
 				DynamicView = _View1;
 		}
 		
-		[Button("CanChangeStyle", DisabledCommandOption = DisabledCommandOption.Hide)]
+		[Button("CanChangeStyle", DisabledCommandOption = DisabledCommandOption.Disable)]
 		public void ChangeStyle()
 		{
 			

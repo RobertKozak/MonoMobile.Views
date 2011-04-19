@@ -73,7 +73,7 @@ namespace MonoMobile.MVVM
 			get {return _Cell; }
 			set { InitializePropertiesFromCell(value); } 
 		}
-		
+	
 		public UITableViewCellStyle CellStyle { get; set; }
 		public UITableViewCellAccessory Accessory { get; set; }
 
@@ -238,6 +238,8 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
+		
+		public UIColor DisabledColor { get; set; }
 
 		public Action<RectangleF, CGContext, UITableViewElementCell> DrawContentViewAction { get; set; }
 
@@ -248,6 +250,7 @@ namespace MonoMobile.MVVM
 			TextAlignment = UITextAlignment.Left;
 
 			Accessory = UITableViewCellAccessory.None;
+			DisabledColor = UIColor.FromWhiteAlpha(0.8f, 0.4f); 
 		}
 		
 		public static Theme CreateTheme(Theme theme)
