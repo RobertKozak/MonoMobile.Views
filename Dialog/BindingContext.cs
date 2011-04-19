@@ -936,31 +936,32 @@ namespace MonoMobile.MVVM
 			{
 				propertyName = buttonAttribute.PropertyName;
 				commandOption = buttonAttribute.CommandOption;
+			}
+
+			var methodInfo = member as MethodInfo;
+
+			if (methodInfo == null)
+				throw new Exception(string.Format("Method not found"));
 			
-				var methodInfo = member as MethodInfo;
-	
-				if (methodInfo == null)
-					throw new Exception(string.Format("Method not found"));
-				
-				if (!string.IsNullOrEmpty(propertyName))
+			if (!string.IsNullOrEmpty(propertyName))
+			{
+				var property = view.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+				if (property != null)
 				{
-					var property = view.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-					if (property != null)
+					var value =  property.GetValue(view);
+					if (value != null && value.GetType() == typeof(bool))
 					{
-						var value =  property.GetValue(view);
-						if (value != null && value.GetType() == typeof(bool))
-						{
-							propertyInfo = property;
-						}
-						else
-						{
-							throw new Exception(string.Format("Property {0} cannot be used for CanExecute property because it does not have a return type of bool", property.Name));
-						}
+						propertyInfo = property;
+					}
+					else
+					{
+						throw new Exception(string.Format("Property {0} cannot be used for CanExecute property because it does not have a return type of bool", property.Name));
 					}
 				}
-	
-				return new ReflectiveCommand(view, methodInfo, propertyInfo) { CommandOption = commandOption };
 			}
+
+			return new ReflectiveCommand(view, methodInfo, propertyInfo) { CommandOption = commandOption };
+		
 
 			return null;
 		}

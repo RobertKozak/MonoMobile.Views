@@ -109,7 +109,7 @@ namespace MonoMobile.MVVM
 				if (value && _RefreshView == null)
 				{
 					var bounds = View.Bounds;
-					_RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height),_Root.DefaultSettingsKey);
+					_RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), Root.DefaultSettingsKey);
 
 					if (_Reloading)
 						_RefreshView.SetActivity(true);
@@ -142,7 +142,7 @@ namespace MonoMobile.MVVM
 
 		private void TriggerRefresh(bool showStatus)
 		{
-			if (_Root == null && _Root.PullToRefreshCommand == null)
+			if (Root == null && Root.PullToRefreshCommand == null)
 				return;
 			
 			if (_Reloading)
@@ -174,8 +174,8 @@ namespace MonoMobile.MVVM
 			{
 				InvokeOnMainThread(delegate
 				{
-					if (_Root.PullToRefreshCommand != null)
-						_Root.PullToRefreshCommand.Execute(this);
+					if (Root.PullToRefreshCommand != null)
+						Root.PullToRefreshCommand.Execute(this);
 
 					ReloadComplete();
 				});
@@ -373,7 +373,7 @@ namespace MonoMobile.MVVM
 			public Source(DialogViewController container)
 			{
 				Container = container;
-				Root = container._Root;
+				Root = container.Root;
 			}
 
 			public override int RowsInSection(UITableView tableview, int section)
@@ -613,7 +613,7 @@ namespace MonoMobile.MVVM
 
 		private void SetupSearch()
 		{
-			var searchbar = _Root as ISearchBar;
+			var searchbar = Root as ISearchBar;
 			if (searchbar != null)
 			{
 				IncrementalSearch = searchbar.IncrementalSearch ?  IncrementalSearch || searchbar.IncrementalSearch : false;
@@ -644,7 +644,7 @@ namespace MonoMobile.MVVM
 
 		public void Selected(NSIndexPath indexPath)
 		{
-			var section = _Root.Sections[indexPath.Section];
+			var section = Root.Sections[indexPath.Section];
 			var element = section.Elements[indexPath.Row];
 			var selectable = element as ISelectable;
 
@@ -668,7 +668,7 @@ namespace MonoMobile.MVVM
 
 		public override void LoadView()
 		{
-			var themeable = _Root as IThemeable; 
+			var themeable = Root as IThemeable; 
 			if (themeable != null)
 			{
 				if (themeable.Theme.TableViewStyle.HasValue)
@@ -689,16 +689,13 @@ namespace MonoMobile.MVVM
 		
 			SetupSearch();
 
-			if (_Root == null)
+			if (Root == null)
 				return;
 			
-			EnablePullToRefresh = _Root.PullToRefreshCommand != null;
-
 			ConfigureToolbarItems();
 			ConfigureBackgroundImage();
 
-
-			_Root.TableView = TableView;
+			Root.TableView = TableView;
 			
 			if (themeable != null)
 			{
@@ -710,6 +707,8 @@ namespace MonoMobile.MVVM
 				if (separatorStyle.HasValue)
 					TableView.SeparatorStyle = separatorStyle.Value;
 			}
+
+			EnablePullToRefresh = Root.PullToRefreshCommand != null;
 		}
 
 
@@ -791,7 +790,7 @@ namespace MonoMobile.MVVM
 		{
 			base.ViewWillAppear(animated);
 
-			if (_Root == null)
+			if (Root == null)
 				return;
 			
 			HideSearch();
@@ -814,7 +813,7 @@ namespace MonoMobile.MVVM
 
 				nav.NavigationBar.Opaque = false;
 
-				var themeable = _Root as IThemeable;
+				var themeable = Root as IThemeable;
 				if (themeable != null)
 				{
 					if (themeable.Theme.BarStyle.HasValue)
@@ -837,12 +836,12 @@ namespace MonoMobile.MVVM
 				}
 			}
 
-			_Root.Prepare();
+			Root.Prepare();
 			
 			NavigationItem.HidesBackButton = !_Pushing;
 
-			if (_Root.Caption != null)
-				NavigationItem.Title = _Root.Caption;
+			if (Root.Caption != null)
+				NavigationItem.Title = Root.Caption;
 
 			if (_Dirty)
 			{
@@ -850,12 +849,12 @@ namespace MonoMobile.MVVM
 				_Dirty = false;
 			}
 
-			if (_Root != null)
+			if (Root != null)
 			{
-				var index = _Root.ItemIndex;
+				var index = Root.ItemIndex;
 				if (index > -1)
 				{
-					var path = _Root.PathForRadio();
+					var path = Root.PathForRadio();
 					TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
 			}
@@ -868,19 +867,19 @@ namespace MonoMobile.MVVM
 
 		private void UpdateSource()
 		{
-			if (_Root == null)
+			if (Root == null)
 				return;
 			
-			_TableSource = CreateSizingSource(_Root.UnevenRows);
+			_TableSource = CreateSizingSource(Root.UnevenRows);
 			TableView.Source = _TableSource;
 		}
 
 		public void ReloadData()
 		{
-			if (_Root == null)
+			if (Root == null)
 				return;
 			
-			_Root.Prepare();
+			Root.Prepare();
 			if (TableView != null)
 			{
 				UpdateSource();
@@ -901,9 +900,9 @@ namespace MonoMobile.MVVM
 
 		protected void PrepareRoot(IRoot root)
 		{
-			_Root = root;
-			if (_Root != null)
-				_Root.Prepare();
+			Root = root;
+			if (Root != null)
+				Root.Prepare();
 		}
 
 		protected DialogViewController(bool pushing) : base(UITableViewStyle.Grouped)

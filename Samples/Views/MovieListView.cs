@@ -15,10 +15,10 @@ namespace Samples
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers=true)]
+	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
-	[Theme(typeof(BackgroundImageTheme))]
-[EnableSearch(true, IncrementalSearch = false)]
+	[EnableSearch(true, IncrementalSearch = false)]
 	public class MovieListView: View, INotifyPropertyChanged
 	{	
 //		[Section(Order = 2)]
@@ -146,7 +146,7 @@ namespace Samples
 				DynamicView = _View1;
 		}
 		
-		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
+		[Button("CanChangeStyle", CommandOption = CommandOption.Disable)]
 		public void ChangeStyle()
 		{
 			

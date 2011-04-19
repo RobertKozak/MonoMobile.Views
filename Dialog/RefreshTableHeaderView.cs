@@ -54,7 +54,7 @@ namespace MonoMobile.MVVM
 		private string _DefaultSettingsKey = "RefreshTableHeaderView.LastUpdateTime";
 		
 		public bool IsFlipped { get; set; }
-		
+
 		public RefreshTableHeaderView(RectangleF rect, string settingsKey) : base(rect)
 		{
 			if(!string.IsNullOrEmpty(settingsKey))
@@ -174,7 +174,7 @@ namespace MonoMobile.MVVM
 				TextColor = new UIColor(0.47f, 0.50f, 0.57f, 1),
 				ShadowColor = UIColor.White, 
 				ShadowOffset = new SizeF(0, 1),
-				BackgroundColor = this.BackgroundColor,
+				BackgroundColor = BackgroundColor,
 				Opaque = true,
 				TextAlignment = UITextAlignment.Center,
 				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
@@ -187,7 +187,7 @@ namespace MonoMobile.MVVM
 				TextColor = new UIColor(0.47f, 0.50f, 0.57f, 1),
 				ShadowColor = _LastUpdateLabel.ShadowColor,
 				ShadowOffset = new SizeF(0, 1),
-				BackgroundColor = this.BackgroundColor,
+				BackgroundColor = BackgroundColor,
 				Opaque = true,
 				TextAlignment = UITextAlignment.Center,
 				AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
