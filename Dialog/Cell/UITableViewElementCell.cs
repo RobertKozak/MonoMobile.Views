@@ -168,7 +168,7 @@ namespace MonoMobile.MVVM
 			Element = null;
 		}
 
-		public void DrawContentView(UIColor backgroundColor)
+		public void DrawContentView()
 		{
 			if (!Highlighted || Element.Theme.DrawWhenHighlighted)
 			{
@@ -178,7 +178,7 @@ namespace MonoMobile.MVVM
 
 				CGPath path = null;
 				
-			//	var backgroundColor = TableView.BackgroundColor;
+				var backgroundColor = TableView.BackgroundColor;
 
 				CGContext context = UIGraphics.GetCurrentContext();
 				context.SaveState();
@@ -340,7 +340,7 @@ namespace MonoMobile.MVVM
 		{
 			if (Cell != null)
 			{
-				Cell.DrawContentView(Cell.TableView.BackgroundColor);
+				Cell.DrawContentView();
 			}
 		}
 	}

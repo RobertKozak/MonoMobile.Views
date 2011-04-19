@@ -929,13 +929,13 @@ namespace MonoMobile.MVVM
 		{
 			string propertyName = string.Empty;
 			PropertyInfo propertyInfo = null;
-			var disabledCommandOption = DisabledCommandOption.Disable;
+			var commandOption = CommandOption.Disable;
 
 			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 			if (buttonAttribute != null)
 			{
 				propertyName = buttonAttribute.PropertyName;
-				disabledCommandOption = buttonAttribute.DisabledCommandOption;
+				commandOption = buttonAttribute.CommandOption;
 			
 				var methodInfo = member as MethodInfo;
 	
@@ -959,7 +959,7 @@ namespace MonoMobile.MVVM
 					}
 				}
 	
-				return new ReflectiveCommand(view, methodInfo, propertyInfo) { DisabledCommandOption = disabledCommandOption };
+				return new ReflectiveCommand(view, methodInfo, propertyInfo) { CommandOption = commandOption };
 			}
 
 			return null;
@@ -1017,7 +1017,7 @@ namespace MonoMobile.MVVM
 			var reflectiveCommand = sender as ReflectiveCommand;
 			if (reflectiveCommand != null)
 			{
-				if (reflectiveCommand.DisabledCommandOption == DisabledCommandOption.Hide)
+				if (reflectiveCommand.CommandOption == CommandOption.Hide)
 				{
 					reflectiveCommand.Element.Visible = reflectiveCommand.CanExecute(null);
 				}

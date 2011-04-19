@@ -42,7 +42,7 @@ namespace MonoMobile.MVVM
 		private readonly object _ViewModel;
 		
 		public IElement Element { get; set; }
-		public DisabledCommandOption DisabledCommandOption { get; set; }
+		public CommandOption CommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };
 

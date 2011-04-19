@@ -128,7 +128,12 @@ namespace Samples
 		public bool CanChangeStyle 
 		{ 
 			get { return _CanChangeStyle; } 
-			set { _CanChangeStyle = value; if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); }
+			set 
+			{
+				_CanChangeStyle = value; 
+				if (PropertyChanged != null) 
+					PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); 
+			}
 		}
 
 		[Button]
@@ -141,7 +146,7 @@ namespace Samples
 				DynamicView = _View1;
 		}
 		
-		[Button("CanChangeStyle", DisabledCommandOption = DisabledCommandOption.Disable)]
+		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
 		public void ChangeStyle()
 		{
 			
