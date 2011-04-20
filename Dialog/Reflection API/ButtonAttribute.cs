@@ -34,8 +34,8 @@ namespace MonoMobile.MVVM
 	
 	public enum CommandOption
 	{
-		Disable,
-		Hide
+		Hide,
+		Disable
 	}
 	
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
@@ -48,7 +48,7 @@ namespace MonoMobile.MVVM
 		public ButtonAttribute(string propertyName)
 		{
 			PropertyName = propertyName;
-			CommandOption = CommandOption.Disable;
+			CommandOption = CommandOption.Hide;
 		}
 
 		internal string PropertyName;

@@ -30,7 +30,7 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoMobile.MVVM;
+	using System.Reflection;
 
 	public interface IBindingExpression
 	{

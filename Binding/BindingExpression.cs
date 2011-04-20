@@ -88,29 +88,29 @@ namespace MonoMobile.MVVM
 
 		public void UpdateSource()
 		{
-			UpdateSource(GetTargetValue());
+			var targetValue = GetTargetValue();
+
+			UpdateSource(Binding.ViewSource, _ViewProperty, targetValue);
+
+			if (SourceProperty != null && SourceProperty != _ViewProperty)
+				UpdateSource(Binding.Source, SourceProperty, targetValue);
 		}
 
-		public void UpdateSource(object targetValue)
+		private void UpdateSource(object obj, MemberInfo member, object targetValue)
 		{
 			bool canWrite = true;
-			if (SourceProperty is PropertyInfo) canWrite = ((PropertyInfo)SourceProperty).CanWrite;
+			if (member is PropertyInfo) canWrite = ((PropertyInfo)member).CanWrite;
 
-			if (SourceProperty != null && canWrite && Binding.Mode != BindingMode.OneTime)
+			if (member != null && canWrite && Binding.Mode != BindingMode.OneTime)
 			{
 				try
 				{
 					object convertedTargetValue = ConvertbackValue(targetValue);
 					var typeCode = Convert.GetTypeCode(convertedTargetValue);
 					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
-						convertedTargetValue = Convert.ChangeType(convertedTargetValue, GetMemberType(SourceProperty));
+						convertedTargetValue = Convert.ChangeType(convertedTargetValue, GetMemberType(member));
 
-				
-					if (_ViewProperty != null)
-						SetValue(_ViewProperty, Binding.ViewSource, convertedTargetValue);	
-					
-					if (SourceProperty != null && _ViewProperty != SourceProperty)
-						SetValue(SourceProperty, Binding.Source, convertedTargetValue);
+					SetValue(member, obj, convertedTargetValue);	
 				}
 				catch (NotImplementedException)
 				{
@@ -180,8 +180,12 @@ namespace MonoMobile.MVVM
 				object parameter = Element;
 				if (Binding.ConverterParameter != null)
 					parameter = Binding.ConverterParameter;
+				
+				var member = _ViewProperty;
+				if (member == null)
+					member = SourceProperty;
 
-				convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(SourceProperty), parameter, CultureInfo.CurrentUICulture);
+				convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(member), parameter, CultureInfo.CurrentUICulture);
 			}
 			
 			return convertedValue;

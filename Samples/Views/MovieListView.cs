@@ -57,7 +57,7 @@ namespace Samples
 
 	//	[Section]
 //		[Root(ViewType = typeof(MovieView))]
-		[List(ViewType = typeof(MovieView), ThemeType = typeof(FrostedTheme))]
+		[List(ViewType = typeof(MovieView), ThemeType = typeof(PaperTheme))]
 		public ObservableCollection<MovieViewModel> Movies 
 		{
 			get;
@@ -146,7 +146,7 @@ namespace Samples
 				DynamicView = _View1;
 		}
 		
-		[Button("CanChangeStyle", CommandOption = CommandOption.Disable)]
+		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
 		public void ChangeStyle()
 		{
 			

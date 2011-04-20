@@ -86,7 +86,7 @@ namespace MonoMobile.MVVM
 		
 		public override void InitializeContent()
 		{
-			if (!string.IsNullOrEmpty(Value))
+			if (!string.IsNullOrEmpty(Value) && DetailTextLabel != null)
 			{
 				DetailTextLabel.Text = Value;
 			}

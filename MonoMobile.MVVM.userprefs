@@ -1,57 +1,46 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/Views/MovieListView.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Binding/BindableProperty.cs">
     <Files>
       <File FileName="DealerCenter/Views/LoginView.cs" Line="61" Column="16" />
       <File FileName="DealerCenter/AuthHelper.cs" Line="23" Column="1" />
-      <File FileName="Dialog/Element.cs" Line="469" Column="1" />
       <File FileName="DealerCenter/Views/AboutView.cs" Line="1" Column="1" />
-      <File FileName="Dialog/BindingContext.cs" Line="1020" Column="28" />
-      <File FileName="Samples/Views/MovieListView.cs" Line="22" Column="1" />
+      <File FileName="Dialog/BindingContext.cs" Line="1010" Column="48" />
+      <File FileName="Controls/ProgressHud.cs" Line="329" Column="1" />
+      <File FileName="Dialog/Element.cs" Line="393" Column="57" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="60" Column="68" />
       <File FileName="Dialog/ViewBinding.cs" Line="1" Column="1" />
       <File FileName="Dialog/Section.cs" Line="46" Column="1" />
-      <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="343" Column="26" />
-      <File FileName="View/View.cs" Line="44" Column="1" />
-      <File FileName="Application/ObservableObject.cs" Line="172" Column="1" />
-      <File FileName="Extensions/ExpressionExtensions.cs" Line="80" Column="1" />
-      <File FileName="Dialog/DialogViewController.cs" Line="648" Column="4" />
-      <File FileName="Dialog/RefreshTableHeaderView.cs" Line="101" Column="5" />
-      <File FileName="Extensions/UIImageExtensions.cs" Line="102" Column="9" />
-      <File FileName="Interfaces/IThemeable.cs" Line="36" Column="6" />
-      <File FileName="Dialog/Cell/Theme.cs" Line="253" Column="17" />
-      <File FileName="Dialog/Reflection API/ButtonAttribute.cs" Line="51" Column="4" />
-      <File FileName="Commands/ICommand.cs" Line="1" Column="1" />
-      <File FileName="Dialog/Elements/StringElement.cs" Line="91" Column="1" />
+      <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="365" Column="10" />
+      <File FileName="Dialog/Reflection API/ButtonAttribute.cs" Line="37" Column="8" />
+      <File FileName="Dialog/Elements/StringElement.cs" Line="79" Column="18" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="77" Column="30" />
+      <File FileName="Dialog/RootElement.cs" Line="528" Column="1" />
+      <File FileName="Dialog/Views/StandardListView.cs" Line="36" Column="26" />
+      <File FileName="Interfaces/IDataTemplate.cs" Line="36" Column="19" />
+      <File FileName="Dialog/Elements/BoolElement.cs" Line="1" Column="1" />
+      <File FileName="Dialog/Elements/BooleanElement.cs" Line="60" Column="48" />
+      <File FileName="Binding/BindableProperty.cs" Line="167" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
-          <Node name="MonoMobile.MVVM" expanded="True">
-            <Node name="Application" expanded="True" />
-            <Node name="Commands" expanded="True" />
+          <Node name="MonoMobile.MVVM" expanded="True" selected="True">
             <Node name="Dialog" expanded="True">
-              <Node name="Cell" expanded="True" />
-              <Node name="DataBinding" expanded="True" />
               <Node name="Elements" expanded="True">
                 <Option id="ShowAllFiles" value="True" />
               </Node>
-              <Node name="Reflection API" expanded="True" />
             </Node>
-            <Node name="Extensions" expanded="True" />
-            <Node name="Interfaces" expanded="True">
+            <Node name="Interfaces">
               <Option id="ShowAllFiles" value="True" />
             </Node>
-            <Node name="View" expanded="True" />
           </Node>
           <Node name="Samples" expanded="True">
-            <Node name="Images" expanded="True" />
-            <Node name="Themes" expanded="True" />
+            <Node name="Converters" expanded="True" />
             <Node name="ViewModels" expanded="True" />
-            <Node name="Views" expanded="True">
-              <Node name="MovieListView.cs" selected="True" />
-            </Node>
+            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -72,7 +61,9 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/LoginView.cs" line="33" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Samples/Views/MovieListView.cs" line="134" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Elements/BoolElement.cs" line="49" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Binding/BindableProperty.cs" line="158" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

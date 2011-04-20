@@ -536,7 +536,11 @@ namespace MonoMobile.MVVM
 
 						if (view == null)
 						{
-							if (ViewBinding.ViewType != null) 
+							if (ViewBinding.DataContext != null && ViewBinding.DataContext is UIView)
+							{
+								view = ViewBinding.DataContext as UIView;
+							}
+							else if (ViewBinding.ViewType != null) 
 							{
 								view = Activator.CreateInstance(ViewBinding.ViewType);
 								var dataContext = view as IDataContext;
@@ -553,10 +557,6 @@ namespace MonoMobile.MVVM
 									if (lifetime != null)
 										lifetime.BeginInit();
 								}
-							}
-							else if (ViewBinding.DataContext != null && ViewBinding.DataContext is UIView)
-							{
-								view = ViewBinding.DataContext as UIView;
 							}
 						}
 			
