@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	{
 		Binding Binding { get; }
 		object ConvertValue(object value);
-		object ConvertbackValue(object value);
+		object ConvertbackValue(object value, MemberInfo member);
 		IElement Element { get; }
 
 		void UpdateTarget();

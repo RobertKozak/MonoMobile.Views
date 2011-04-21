@@ -73,16 +73,19 @@ namespace MonoMobile.MVVM
 					_Updating = true;
 					try 
 					{		
+						var convertedValue = value;
+
 						if (Control != null)
 						{
-							ControlProperty.SetValue(Control, value);
+							convertedValue = Convert.ChangeType(value, ControlProperty.GetMemberType());
+							ControlProperty.SetValue(Control, convertedValue);
 						}
 					
 						if (SourceProperty != null)
 						{							
 							if (SourceProperty != ControlProperty)
 							{
-								SourceProperty.SetValue(SourceObject, value, null);
+								SourceProperty.SetValue(SourceObject, convertedValue, null);
 							}
 #if DATABINDING							
 							var propName = string.Concat(SourceProperty.Name, "Property.Value");
@@ -178,11 +181,12 @@ namespace MonoMobile.MVVM
 			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
 			if (bindingExpression != null)
 			{
-				Value = (T)bindingExpression.ConvertbackValue(Value);
+				MemberInfo member = null;
+				Value = (T)bindingExpression.ConvertbackValue(Value, member);
 			}
 #endif
 		}
-		
+
 		public void RefreshFromSource()
 		{
 			if (SourceObject != null)

@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 
 	public partial class FloatElement : Element
 	{
-		public float Value { get; set; }
+	//	public float Value { get; set; }
 
 		public UISlider Slider { get; set; }
 	
@@ -69,7 +69,7 @@ namespace MonoMobile.MVVM
 			Slider.Frame = RectangleF.Empty;
 			Slider.ValueChanged += delegate 
 			{
-				Value = Slider.Value; 
+				ValueProperty.Update();
 			};
 
 			Slider.MaxValue = MaxValue;

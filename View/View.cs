@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System.Drawing;
 	using MonoTouch.UIKit;
+	using System.ComponentModel;
 
 	public class View : UIView, IView, IDataContext
 	{
@@ -50,7 +51,7 @@ namespace MonoMobile.MVVM
 					var viewModel = DataContext as IViewModel;
 					if (viewModel != null)
 					{
-						viewModel.BindingContext = BindingContext;
+						viewModel.BindingContext = BindingContext;	
 					}
 				}
 			}

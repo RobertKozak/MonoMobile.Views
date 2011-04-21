@@ -73,7 +73,10 @@ namespace MonoMobile.MVVM
 		public BindableProperty DetailTextShadowColorProperty = BindableProperty.Register("DetailTextShadowColor");
 #endif
 		public virtual void BindProperties()
-		{		
+		{
+#if DATABINDING		
+			TextFontProperty.BindTo(this, ()=>TextLabel.Font);
+#endif
 		}
 	
 #if DATABINDING

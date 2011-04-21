@@ -9,7 +9,7 @@ namespace Samples
 	[Preserve(AllMembers=true)]
 	public class InterestingView: View
 	{
-	//	[Bind("CaptionSize", "Font", ValueConverterType = typeof(FontConverter))]
+		[Bind("CaptionSize", "TextFont", ValueConverterType = typeof(FontConverter))]
 		[Bind("Alignment", "TextAlignment")]
 		[Entry]
 		[Caption("test")]
@@ -26,7 +26,7 @@ namespace Samples
 			set;// { Set(()=>CaptionSize, value); }
 		}
 
-		//[Bind("CaptionSize")]
+		[Bind("CaptionSize")]
 		[Entry(EditMode = EditMode.ReadOnly)]
 		[DefaultValue("55")]
 		public string Number 

@@ -156,11 +156,18 @@ namespace MonoMobile.MVVM
 
 					_BindingExpressions.Add(bindingExpression);
 					
-					var INPC = bindingExpression.Binding.Source as INotifyPropertyChanged;
-					if (INPC != null)
+					var vmINPC = bindingExpression.Binding.Source as INotifyPropertyChanged;
+					if (vmINPC != null)
 					{
-						INPC.PropertyChanged -= HandleDataContextPropertyChanged;
-						INPC.PropertyChanged += HandleDataContextPropertyChanged;
+						vmINPC.PropertyChanged -= HandleDataContextPropertyChanged;
+						vmINPC.PropertyChanged += HandleDataContextPropertyChanged;
+					}
+
+					var viewINPC = bindingExpression.Binding.ViewSource as INotifyPropertyChanged;
+					if (viewINPC != null)
+					{
+						viewINPC.PropertyChanged -= HandleDataContextPropertyChanged;
+						viewINPC.PropertyChanged += HandleDataContextPropertyChanged;
 					}
 				}
 			}
