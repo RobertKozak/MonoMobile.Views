@@ -11,6 +11,8 @@ namespace Samples
 		{
 			CellBackgroundImage = UIImage.FromFile("Images/cork.png");
 			SeparatorColor = UIColor.Black;
+
+			Name= "Corked";
 		}
 	}
 }

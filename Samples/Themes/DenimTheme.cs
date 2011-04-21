@@ -41,6 +41,8 @@ namespace MonoMobile.MVVM
 			TextShadowColor = UIColor.Black;
 			TextShadowOffset = new SizeF(0, 1);
 			DetailTextColor = UIColor.LightTextColor;
+
+			Name = "Denim";
 		}
 	}
 }

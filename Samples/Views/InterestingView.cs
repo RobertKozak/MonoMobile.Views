@@ -9,7 +9,7 @@ namespace Samples
 	[Preserve(AllMembers=true)]
 	public class InterestingView: View
 	{
-		[Bind("CaptionSize", "TextFont", ValueConverterType = typeof(FontConverter))]
+		[Bind("CaptionSize", "DetailTextFont", ValueConverterType = typeof(FontConverter))]
 		[Bind("Alignment", "TextAlignment")]
 		[Entry]
 		[Caption("test")]
@@ -58,6 +58,12 @@ namespace Samples
 			get;// { return Get (() => KeyboardType, UIKeyboardType.Default); }
 			set;// { Set (() => KeyboardType, value); }
 		}
+		
+
+		[Section]
+		[Root(ViewType = typeof(ThemeSampleView))]
+		public ThemeSampleViewModel ThemeSample { get; set; }
+		
 
 		[ToolbarButton(Style = UIBarButtonItemStyle.Plain)]
 		//[DisplayOrder(1)]
@@ -85,6 +91,7 @@ namespace Samples
 		public InterestingView()
 		{
 			DataContext = new InterestingViewModel();
+			ThemeSample = new ThemeSampleViewModel();
 		}
 	}	
 }

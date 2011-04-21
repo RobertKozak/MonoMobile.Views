@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 // 
 //  BindableProperty.cs
 // 
@@ -28,11 +27,13 @@ using System.Linq.Expressions;
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+#define DATABINDING
 namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Linq;
-	using System.Reflection;	
+	using System.Linq.Expressions;
+	using System.Reflection;
 	
 	public class BindableProperty
 	{

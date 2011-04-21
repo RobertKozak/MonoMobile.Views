@@ -816,7 +816,7 @@ namespace MonoMobile.MVVM
 				var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
 				if (rangeAttribute != null)
 				{
-					var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High };
+					var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, Value = rangeAttribute.Low };
 					element = floatElement;
 				}
 				else 

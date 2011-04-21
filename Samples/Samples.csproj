@@ -65,7 +65,7 @@
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>Full</MtouchLink>
     <MtouchI18n />
     <MtouchUseLlvm>false</MtouchUseLlvm>
     <MtouchUseArmv7>false</MtouchUseArmv7>
@@ -88,7 +88,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>Full</MtouchLink>
     <MtouchI18n />
     <MtouchExtraArgs>-aot "nimt-trampolines=2048"</MtouchExtraArgs>
   </PropertyGroup>
@@ -142,6 +142,8 @@
     <Compile Include="Themes\SmokeyTheme.cs" />
     <Compile Include="Themes\WoodenTheme.cs" />
     <Compile Include="Themes\NavbarTheme.cs" />
+    <Compile Include="Views\ThemeSampleView.cs" />
+    <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindowIPhone.xib" />

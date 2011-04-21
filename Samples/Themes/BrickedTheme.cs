@@ -20,6 +20,8 @@ namespace Samples
 			DetailTextColor = UIColor.White;
 			DetailTextShadowColor = UIColor.DarkGray;
 			DetailTextShadowOffset = new SizeF(1, 1);
+
+			Name = "Bricked";
 		}
 	}
 }

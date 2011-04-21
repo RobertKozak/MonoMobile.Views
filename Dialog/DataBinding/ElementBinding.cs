@@ -27,6 +27,7 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+#define DATABINDING
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
@@ -71,11 +72,14 @@ namespace MonoMobile.MVVM
 		public BindableProperty DetailTextAlignmentProperty = BindableProperty.Register("DetailTextAlignment");
 		public BindableProperty DetailTextShadowOffsetProperty = BindableProperty.Register("DetailTextShadowOffset");
 		public BindableProperty DetailTextShadowColorProperty = BindableProperty.Register("DetailTextShadowColor");
+
+		public BindableProperty ThemeProperty = BindableProperty.Register("Theme");
 #endif
 		public virtual void BindProperties()
 		{
 #if DATABINDING		
 			TextFontProperty.BindTo(this, ()=>TextLabel.Font);
+			ThemeProperty.BindTo(this, ()=>Theme);
 #endif
 		}
 	

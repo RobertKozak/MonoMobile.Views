@@ -245,6 +245,8 @@ namespace MonoMobile.MVVM
 
 		public Theme()
 		{
+			Name = GetType().Name.Replace("Theme", string.Empty);
+
 			PlaceholderAlignment = UITextAlignment.Right;
 			DetailTextAlignment = UITextAlignment.Right;
 			TextAlignment = UITextAlignment.Left;

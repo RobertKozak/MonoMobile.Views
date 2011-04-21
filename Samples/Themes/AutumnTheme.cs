@@ -20,6 +20,8 @@ namespace Samples
 			DetailTextColor = UIColor.White;
 			DetailTextShadowColor = UIColor.Brown;
 			DetailTextShadowOffset = new SizeF(0, 1);
+
+			Name = "Autumn";
 		}
 	}
 }

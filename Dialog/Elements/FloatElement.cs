@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 
 	public partial class FloatElement : Element
 	{
-	//	public float Value { get; set; }
+		public float Value { get; set; }
 
 		public UISlider Slider { get; set; }
 	
