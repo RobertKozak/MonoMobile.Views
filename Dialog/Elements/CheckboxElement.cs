@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public class CheckboxElement : BoolElement
+	public class CheckboxElement : BoolElement, ISelectable
 	{
 		public string Group { get; set; }
 
@@ -54,6 +54,13 @@ namespace MonoMobile.MVVM
 		{
 			return Caption;
 		}
+	
+		public void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+			Value = !Value;
+			UpdateSelected();
+		}
+
 	}
 }
 

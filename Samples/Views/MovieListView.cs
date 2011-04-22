@@ -33,6 +33,7 @@ namespace Samples
 		private View2 _View2 = new View2();
 		
 		[DefaultValue(true)]
+		[Checkbox]
 		public bool TestBool { get; set; }
 
 		[Date]

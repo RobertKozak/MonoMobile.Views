@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 //
 // BooleanElement.cs
 //
@@ -33,10 +31,9 @@ using System.IO;
 //
 namespace MonoMobile.MVVM
 {
-	using MonoTouch.UIKit;
-	using MonoMobile.MVVM;
 	using System.Drawing;
-	using MonoTouch.Foundation;
+	using MonoMobile.MVVM;
+	using MonoTouch.UIKit;
 
 	public partial class BooleanElement : BoolElement
 	{
