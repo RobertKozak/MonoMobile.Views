@@ -49,6 +49,7 @@ namespace MonoMobile.MVVM
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 			
 			Value = (bool)ValueProperty.Value;
+			ValueProperty.Update();
 			UpdateSelected();
 		}
 		

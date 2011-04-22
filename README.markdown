@@ -1,3 +1,10 @@
+NOTE:
+=====
+
+This is beta and not production ready. There are a number of bugs and is in active developent.
+
+There are many changes and fixes on the way.
+
 WHAT'S NEW
 ==========
 

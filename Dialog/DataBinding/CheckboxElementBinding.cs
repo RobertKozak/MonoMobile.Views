@@ -33,10 +33,23 @@ namespace MonoMobile.MVVM
 
 	public partial class CheckboxElement
 	{
+		public bool Checkmark
+		{
+			get { return Value; }
+			set 
+			{ 
+				if (Value != value)
+				{
+					Value = Value;
+					UpdateSelected();
+				}
+			}
+		}
+
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			ValueProperty.BindTo(this, () => Value );
+			ValueProperty.BindTo(this, () => Checkmark );
 		}
 	}
 }
