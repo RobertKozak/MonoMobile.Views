@@ -182,8 +182,7 @@ namespace MonoMobile.MVVM
 			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
 			if (bindingExpression != null)
 			{
-				MemberInfo member = null;
-				Value = (T)bindingExpression.ConvertbackValue(Value, member);
+				Value = (T)bindingExpression.ConvertbackValue(Value);
 			}
 #endif
 		}

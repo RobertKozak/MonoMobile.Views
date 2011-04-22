@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#define DATABINDING
 namespace MonoMobile.MVVM
 {
 	using System;
@@ -379,12 +378,12 @@ namespace MonoMobile.MVVM
 	
 			BindProperties();
 
-#if DATABINDING
 			UpdateTargets();
-#endif
 
 			if (!Enabled) 
 				SetDisabled(Cell);
+			
+			UpdateCell();
 
 			return Cell;
 		}
@@ -438,6 +437,10 @@ namespace MonoMobile.MVVM
 		{
 		}
 		
+		public virtual void UpdateCell()
+		{
+		}
+
 		public IRoot GetImmediateRootElement()
 		{
 			var section = Parent as Section;

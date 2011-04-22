@@ -83,9 +83,9 @@ namespace MonoMobile.MVVM
 #endif
 		}
 	
-#if DATABINDING
 		protected virtual void UpdateTargets()
 		{
+#if DATABINDING
 			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
 			if (bindingExpressions != null)
 			{
@@ -94,7 +94,7 @@ namespace MonoMobile.MVVM
 					bindingExpression.UpdateTarget();
 				}
 			}
-		}
 #endif
+		}
 	}
 }

@@ -166,7 +166,7 @@ namespace MonoMobile.MVVM
 						ApplyElementTheme(root.RootTheme, newElement, member);
 
 						var context = newElement as IView;
-						var displayInline = (inline || !isRoot) && newElement is IRoot && context != null;
+						var displayInline = (inline || !isRoot) && newElement is IRoot; //&& context != null;
 						
 						if (isList)
 						{
@@ -211,9 +211,9 @@ namespace MonoMobile.MVVM
 							}
 
 						}
-						else if (displayInline)
-						{							
-							lastSection = new Section(context.Caption, null) { };
+						else if (inline)
+						{			
+							lastSection = new Section(string.Empty, null) { };
 							lastSection.Parent = root as IElement;
 							sectionList.Add(lastSection);
 	
@@ -225,6 +225,7 @@ namespace MonoMobile.MVVM
 								lastSection.Add(element);
 		
 							root.Group = bindingContext.Root.Group;
+
 						}
 						else
 						{

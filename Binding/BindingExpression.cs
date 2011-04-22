@@ -189,6 +189,15 @@ namespace MonoMobile.MVVM
 
 			return convertedValue;
 		}
+		
+		public object ConvertbackValue(object value)
+		{
+			var member = SourceProperty;
+			if (member == null)
+				member = _ViewProperty;
+			
+			return ConvertbackValue(value, member);
+		}
 
 		public virtual object GetSourceValue()
 		{

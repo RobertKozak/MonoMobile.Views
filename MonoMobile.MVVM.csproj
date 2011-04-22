@@ -262,6 +262,7 @@
     <Compile Include="Interfaces\IBindingContext.cs" />
     <Compile Include="Application\ObservableObject.cs" />
     <Compile Include="Application\IObservableObject.cs" />
+    <Compile Include="Dialog\DataBinding\CheckboxElementBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

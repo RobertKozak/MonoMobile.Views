@@ -13,19 +13,28 @@ namespace Samples
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using System.Linq;
 	
 	[Preserve(AllMembers=true)]
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
-	[EnableSearch(true, IncrementalSearch = false)]
+	[EnableSearch(true, IncrementalSearch = true)]
 	public class MovieListView: View, INotifyPropertyChanged
 	{	
-//		[Section(Order = 2)]
+		[Section(Order = 2)]
 //		[EnableSearch(true, IncrementalSearch = false)]
 //		public List<ISection> Search(ISection[] sections, string searchText)
 //		{
-//			var result = new List<ISection>() { sections[1] };
+//			var result = new List<ISection>();
+//
+//			foreach(var section in sections)
+//				foreach(var element in section.Elements)
+//			{
+//				if (element.Caption.Contains(searchText))
+//					result.Add(new Section() { element });		
+//			}
+//
 //			return result;
 //		}
 
@@ -126,6 +135,7 @@ namespace Samples
 		}
 		
 		private bool _CanChangeStyle;
+		[Checkbox]
 		public bool CanChangeStyle 
 		{ 
 			get { return _CanChangeStyle; } 
@@ -181,10 +191,12 @@ namespace Samples
 			get; set;
 		}
 	
+//		[Inline]
+//		public Genre Genre { get; set; }
+
 		public MovieListView()
 		{
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
-		
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
