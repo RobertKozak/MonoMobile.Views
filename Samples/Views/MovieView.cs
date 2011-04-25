@@ -3,7 +3,7 @@ namespace Samples
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	
-	[Theme(typeof(FrostedTheme))]
+//	[Theme(typeof(FrostedTheme))]
 	public class MovieView: View
 	{
 		[Section()]

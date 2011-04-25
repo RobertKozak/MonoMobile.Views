@@ -557,13 +557,13 @@ namespace MonoMobile.MVVM
 									if (lifetime != null)
 										lifetime.BeginInit();
 								}
+
 							}
 						}
 			
 						bindingContext = new BindingContext(view, Caption, Theme);
 
 						var root = (RootElement)bindingContext.Root;
-						root.Theme = Theme;
 						root.ActivateController(dvc, tableView, path);
 		
 						return;
@@ -582,7 +582,8 @@ namespace MonoMobile.MVVM
 						{
 							if (e is IViewModel)
 							{
-								element = new RootElement(e.ToString()) { ViewBinding = ViewBinding };
+								element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
+								element.ViewBinding.DataContextCode = DataContextCode.Object;
 							}
 							else
 							{

@@ -176,8 +176,8 @@ namespace MonoMobile.MVVM
 							string caption = null;
 							if (!(view is IDataTemplate))
 								caption = newElement.Caption;
-							
-							lastSection = new Section(caption,null) {  };
+
+							lastSection = new Section(caption,null) { };
 							lastSection.Parent = root as IElement;
 							ApplyElementTheme(root.RootTheme, lastSection, null);
 							sectionList.Add(lastSection);
@@ -198,8 +198,16 @@ namespace MonoMobile.MVVM
 									element.ViewBinding.ViewType = viewType;
 									element.ViewBinding.DataContext = e;
 									
-									((IRoot)element).RootTheme = root.RootTheme;
-									element.Theme = root.RootTheme;
+									((IRoot)element).RootTheme = Theme.CreateTheme(root.RootTheme);
+									element.Theme = ((IRoot)element).RootTheme;
+
+									if (listAttribute.ThemeType != null)
+									{
+										var listTheme = Activator.CreateInstance(listAttribute.ThemeType) as Theme;
+										var rootTheme = Theme.CreateTheme(((IRoot)element).RootTheme);
+										rootTheme.MergeTheme(listTheme);
+										((IRoot)element).Theme = rootTheme;
+									}
 								}
 								else
 								{
@@ -390,7 +398,7 @@ namespace MonoMobile.MVVM
 				radioElement.Value = selected == index;
 				radioElement.Opaque = false;
 				
-				ApplyRootTheme(view, radioElement);
+				ApplyElementTheme(Root.RootTheme, radioElement, member);
 
 				csection.Add(radioElement);
 				index++;
@@ -990,11 +998,14 @@ namespace MonoMobile.MVVM
 		
 		private void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
 		{
-			var newTheme = Theme.CreateTheme(theme);
-			newTheme.MergeTheme(element.Theme);
+			if (theme != null)
+			{
+				var newTheme = Theme.CreateTheme(theme);
+				newTheme.MergeTheme(element.Theme);
 
-			element.Theme = newTheme;
-			
+				element.Theme = newTheme;
+			}
+
 			if (member != null)
 				ApplyMemberTheme(member, element);
 		}

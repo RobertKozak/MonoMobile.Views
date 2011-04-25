@@ -360,6 +360,12 @@ namespace MonoMobile.MVVM
 			for (int i = 0; i < count; i++)
 				paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
 			root.TableView.DeleteRows(paths, anim);
+
+			foreach(var element in Elements)
+			{
+				if (element.Cell != null)
+					element.Cell.SetNeedsDisplay();
+			}
 		}
 
 		/// <summary>
