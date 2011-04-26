@@ -31,9 +31,9 @@
 //
 namespace MonoMobile.MVVM
 {
-	using System;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using System.Linq;
 
 	public class RadioElement : BoolElement, ISelectable
 	{
@@ -59,7 +59,7 @@ namespace MonoMobile.MVVM
 				var root = (IRoot)Parent.Parent;
 				if (root != null)
 				{
-					var radioGroup = root.Group as RadioGroup;
+					var radioGroup = root.Groups.FirstOrDefault() as RadioGroup;
 
 					var section = root.Sections[indexPath.Section];
 					var index = 0;
@@ -68,7 +68,7 @@ namespace MonoMobile.MVVM
 						var radioView = e as RadioElement;
 						UpdateSelected(radioView, this == radioView);
 
-						if (this == radioView)
+						if (this == radioView && radioGroup != null)
 						{
 							radioGroup.Selected = index;
 						}
@@ -80,8 +80,9 @@ namespace MonoMobile.MVVM
 
 					var property = BindableProperty.GetBindableProperty(root, "ValueProperty");
 					property.Update();
-
-					root.ItemIndex = radioGroup.Selected;
+					
+					if (radioGroup != null)
+						root.ItemIndex = radioGroup.Selected;
 				}
 			}
 			

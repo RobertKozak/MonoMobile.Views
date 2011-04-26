@@ -91,7 +91,7 @@ namespace MonoMobile.MVVM
 		private int _SummaryElement;
 		private Func<IRoot, UIViewController> _ViewControllerFactory;
 
-		public Group Group { get; set; }
+		public List<Group> Groups { get; set; }
 		public bool UnevenRows { get; set; }
 
 		[Preserve]
@@ -109,6 +109,7 @@ namespace MonoMobile.MVVM
 		{
 			_SummarySection = -1;
 			Sections = new List<ISection>();
+			Groups = new List<Group>();
 		}
 
 		/// <summary>
@@ -123,7 +124,7 @@ namespace MonoMobile.MVVM
 		{
 			_SummarySection = -1;
 			this._ViewControllerFactory = viewControllerFactory;
-			Sections = new List<ISection>();
+			//Sections = new List<ISection>();
 		}
 
 		/// <summary>
@@ -154,16 +155,16 @@ namespace MonoMobile.MVVM
 		/// The group that contains the checkbox or radio information.  This is used to display
 		/// the summary information when a RootElement is rendered inside a section.
 		/// </param>
-		public RootElement(string caption, Group @group) : this(caption)
+		public RootElement(string caption, Group group) : this(caption)
 		{
-			Group = @group;
+			Groups.Add(group);
 		}
 
 		public List<ISection> Sections { get; set; }
 
 		public NSIndexPath PathForRadio()
 		{
-			RadioGroup radio = Group as RadioGroup;
+			RadioGroup radio = Groups[0] as RadioGroup;
 			if (radio == null)
 				return null;
 			
@@ -411,13 +412,13 @@ namespace MonoMobile.MVVM
 		public int ItemIndex
 		{
 			get {
-				var radio = Group as RadioGroup;
+				var radio = Groups.FirstOrDefault() as RadioGroup;
 				if (radio != null)
 					return radio.Selected;
 				return -1;
 			}
 			set {
-				var radio = Group as RadioGroup;
+				var radio = Groups[0] as RadioGroup;
 				if (radio != null)
 				{
 					radio.Selected = value;
@@ -443,7 +444,7 @@ namespace MonoMobile.MVVM
 			base.InitializeCell(tableView);
 
 			Cell.TextLabel.Text = Caption;
-			var radio = Group as RadioGroup;
+			var radio = Groups.FirstOrDefault() as RadioGroup;
 			var section = Sections.FirstOrDefault();
 			if (radio != null && section != null && !section.IsMultiselect && Cell.DetailTextLabel != null)
 			{
@@ -658,7 +659,7 @@ namespace MonoMobile.MVVM
 			}
 			if (Sections != null)
 			{
-				var radio = Group as RadioGroup;
+				var radio = Groups.FirstOrDefault() as RadioGroup;
 				var section = Sections.FirstOrDefault();
 				if (radio != null && section != null && !section.IsMultiselect) 
 				{
@@ -673,7 +674,7 @@ namespace MonoMobile.MVVM
 				}
 			}
 
-			if (Group != null && DetailTextLabel != null)
+			if (Groups != null && DetailTextLabel != null)
 			{
 				DetailTextLabel.Text = ToString();
 			}

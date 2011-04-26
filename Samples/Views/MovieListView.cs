@@ -191,8 +191,8 @@ namespace Samples
 			get; set;
 		}
 	
-//		[Inline]
-//		public Genre Genre { get; set; }
+		[Inline]
+		public Genre Genre { get; set; }
 
 		public MovieListView()
 		{

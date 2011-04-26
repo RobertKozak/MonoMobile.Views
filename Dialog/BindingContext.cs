@@ -220,20 +220,25 @@ namespace MonoMobile.MVVM
 
 						}
 						else if (inline)
-						{			
-							lastSection = new Section(string.Empty, null) { };
-							lastSection.Parent = root as IElement;
-							sectionList.Add(lastSection);
+						{	
+						//	lastSection.Add(newElement); continue;
+							var inlineSection = new Section(string.Empty, null) { };
+							inlineSection.Parent = root as IElement;
+							sectionList.Add(inlineSection);
 	
-							var bindingContext = new BindingContext(newElement.ContentView, newElement.Caption, newElement.Theme);
-							
-							lastSection.Caption = newElement.Caption;
-	
-							foreach(var element in bindingContext.Root.Sections[0].Elements)
-								lastSection.Add(element);
-		
-							root.Group = bindingContext.Root.Group;
+							IRoot inlineRoot = newElement as IRoot;
+							if (newElement.ViewBinding.DataContextCode == DataContextCode.Object)
+							{
+								var bindingContext = new BindingContext(newElement.ViewBinding.CurrentView, newElement.Caption, newElement.Theme);
+								inlineRoot = bindingContext.Root;
+							}
 
+							inlineSection.Caption = newElement.Caption;
+	
+							foreach(var element in inlineRoot.Sections[0].Elements)
+								inlineSection.Add(element);
+
+							//root.Groups.Add(inlineRoot.Groups[0]);
 						}
 						else
 						{
@@ -410,7 +415,9 @@ namespace MonoMobile.MVVM
 			element.ViewBinding.DataContextCode = DataContextCode.Enum;
 			element.Opaque = false;
 
-			((IRoot)element).Group = new RadioGroup(memberType.FullName, selected) { EnumType = memberType };
+			var radioGroup = new RadioGroup(memberType.FullName, selected) { EnumType = memberType };
+			((IRoot)element).Groups = new List<Group>() { radioGroup };
+		
 			element.Theme.CellStyle = UITableViewCellStyle.Value1;
 
 			return element;

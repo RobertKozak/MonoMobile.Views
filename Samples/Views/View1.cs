@@ -10,10 +10,11 @@ namespace Samples
 			get;// { return Get(()=>Person, "Robert"); } 
 			set;// { Set(()=>Person, value); }
 		} 
+		[Entry]
 		public int Age 
 		{
-			get;// { return Get(()=>Age, 43); } 
-			set;// { Set(()=>Age, value); }
+			get { return INPC.Get(()=>Age, 43); } 
+			set { INPC.Set(()=>Age, value); }
 		}
 		
 		[Button]
@@ -21,6 +22,14 @@ namespace Samples
 		{
 			Age = 44;
 			Person = "Robert";
+		}
+		
+		private IObservableObject INPC;
+		public View1()
+		{
+			INPC = new ObservableObject();
+			
+
 		}
 	}
 

@@ -1,53 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Samples/AppDelegateIPhone.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/BindingContext.cs">
     <Files>
-      <File FileName="Binding/Binding.cs" Line="59" Column="27" />
-      <File FileName="Binding/BindingOperations.cs" Line="188" Column="5" />
-      <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
-      <File FileName="README.markdown" Line="7" Column="1" />
-      <File FileName="System.Windows/System.Windows.Data/BindingExpressionBase.cs" Line="35" Column="22" />
-      <File FileName="System.Windows/System.Windows.Data/Binding.cs" Line="44" Column="17" />
-      <File FileName="System.Windows/System.Windows.Data/CollectionViewNode.cs" Line="36" Column="53" />
-      <File FileName="System.Windows/Mono/Helper.cs" Line="305" Column="24" />
-      <File FileName="System.Windows/System.Windows/DependencyObject.cs" Line="316" Column="1" />
-      <File FileName="System.Windows/System.Windows.Data/IndexedPropertyPathNode.cs" Line="39" Column="59" />
-      <File FileName="System.Windows/System.Windows/DependencyProperty.cs" Line="247" Column="103" />
-      <File FileName="System.Windows/System.Windows/UIElement.cs" Line="56" Column="24" />
-      <File FileName="System.Windows/Mono/NativeMethods.cs" Line="89" Column="69" />
-      <File FileName="System.Windows/Mono/Value.cs" Line="35" Column="1" />
-      <File FileName="System.Windows/Mono/Events.cs" Line="269" Column="1" />
-      <File FileName="System.Windows/Mono.Xaml/XamlLoaderFactory.cs" Line="35" Column="3" />
-      <File FileName="System.Windows/System.Windows/FrameworkElement.cs" Line="87" Column="61" />
-      <File FileName="System.Windows/System.Windows.Data/StandardPropertyPathNode.cs" Line="153" Column="1" />
-      <File FileName="System.Windows/Mono/MoonlightValueConverter.cs" Line="36" Column="3" />
-      <File FileName="System.Windows/Mono/MoonlightTypeConverter.cs" Line="36" Column="3" />
-      <File FileName="System.Windows/Mono/NativeDependencyObjectHelper.cs" Line="31" Column="3" />
-      <File FileName="System.Windows/System.Windows/RoutedEvent.cs" Line="32" Column="3" />
-      <File FileName="System.Windows/System.Windows/Visibility.cs" Line="31" Column="3" />
-      <File FileName="System.Windows/Microsoft.Windows.Controls/InteractionHelper.cs" Line="77" Column="18" />
-      <File FileName="System.Windows/Microsoft.Windows.Controls/IUpdateVisualState.cs" Line="1" Column="1" />
-      <File FileName="System.Windows/Microsoft.Windows.Controls/VisualStates.cs" Line="178" Column="38" />
-      <File FileName="System.Windows/System.Windows.Controls/Control.cs" Line="32" Column="3" />
-      <File FileName="System.Windows/Mono.Xaml/XamlParser.cs" Line="723" Column="25" />
-      <File FileName="System.Windows/Mono.Xaml/XamlTypeConverter.cs" Line="36" Column="3" />
-      <File FileName="System.Windows/System.Windows/Style.cs" Line="49" Column="45" />
-      <File FileName="System.Windows/System.Windows/Setter.cs" Line="33" Column="41" />
-      <File FileName="../moon/class/System.Windows/System.Windows.Documents/Inline.cs" Line="1" Column="1" />
-      <File FileName="System.Windows/System.Windows/SetterBase.cs" Line="1" Column="1" />
-      <File FileName="System.Windows/Mono/Hosting.cs" Line="45" Column="52" />
-      <File FileName="System.Windows/Clancey/Consts.cs" Line="77" Column="1" />
-      <File FileName="System.Windows/System.Windows/SizeChangedEventArgs.cs" Line="44" Column="14" />
-      <File FileName="System.Windows/System.Windows.Documents/FontSource.cs" Line="61" Column="3" />
-      <File FileName="System.Windows/Mono/WeakLayoutUpdatedListener.cs" Line="19" Column="51" />
-      <File FileName="System.Windows/System.Windows/Deployment.cs" Line="156" Column="59" />
-      <File FileName="Dialog/DataBinding/CheckboxElementBinding.cs" Line="41" Column="1" />
-      <File FileName="Binding/BindingBase.cs" Line="1" Column="1" />
-      <File FileName="System.Windows/System.Windows.Data/BindingBase.cs" Line="1" Column="1" />
-      <File FileName="System.Windows/System.Windows.Data/BindingExpression.cs" Line="1" Column="1" />
-      <File FileName="Binding/BindingExpression.cs" Line="1" Column="1" />
-      <File FileName="Dialog/DialogViewController.cs" Line="1" Column="1" />
-      <File FileName="Samples/AppDelegateIPhone.cs" Line="25" Column="22" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="453" Column="1" />
+      <File FileName="Dialog/BindingContext.cs" Line="224" Column="9" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="194" Column="1" />
+      <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="204" Column="1" />
+      <File FileName="Dialog/Section.cs" Line="46" Column="3" />
+      <File FileName="Dialog/RootElement.cs" Line="1" Column="1" />
+      <File FileName="Samples/Themes/FrostedTheme.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -55,11 +16,14 @@
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
           <Node name="MonoMobile.MVVM" expanded="True">
-            <Node name="References" expanded="True" />
-            <Node name="Dialog" expanded="True" />
+            <Node name="Dialog" expanded="True">
+              <Node name="Cell" expanded="True" />
+              <Node name="BindingContext.cs" selected="True" />
+            </Node>
           </Node>
           <Node name="Samples" expanded="True">
-            <Node name="AppDelegateIPhone.cs" selected="True" />
+            <Node name="Themes" expanded="True" />
+            <Node name="Views" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -79,7 +43,6 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Samples/Views/InterestingView.cs" line="1" />
-      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Elements/CheckboxElement.cs" line="70" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

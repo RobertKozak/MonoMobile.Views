@@ -51,7 +51,7 @@ namespace MonoMobile.MVVM
 		List<ISection> Sections { get; set; }
 		bool UnevenRows { get; set;}
 		string Caption { get; set; }
-		Group Group { get; set; }
+		List<Group> Groups { get; set; }
 		UITableView TableView { get; set; }
 		int Count { get; }
 		int ItemIndex { get; set; }
