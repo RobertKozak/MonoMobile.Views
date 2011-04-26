@@ -1,11 +1,11 @@
-using System.Drawing;
 namespace Samples
 {
-	using System;
-	using System.IO;
+	using System.Drawing;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers=true)]
 	public class PaperTheme: Theme
 	{
 		public PaperTheme()

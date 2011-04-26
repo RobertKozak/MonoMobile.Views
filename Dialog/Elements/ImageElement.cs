@@ -119,9 +119,8 @@ namespace MonoMobile.MVVM
 		{
 			if (_Scaled != null)
 			{
-				ISection psection = Parent as ISection;
-				bool roundTop = psection.Elements[0] == this;
-				bool roundBottom = psection.Elements[psection.Elements.Count - 1] == this;
+				bool roundTop = Section.Elements[0] == this;
+				bool roundBottom = Section.Elements[Section.Elements.Count - 1] == this;
 	
 				using (var cs = CGColorSpace.CreateDeviceRGB())
 				{

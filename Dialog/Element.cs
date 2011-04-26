@@ -55,23 +55,18 @@ namespace MonoMobile.MVVM
 		{
 			get 
 			{
-				var section = Parent as ISection;
-				if (section == null)
-					return null;
-				
-				var root = section.Parent as IRoot;
-				if (root == null)
+				if (Section == null || Root == null)
 					return null;
 				
 				int row = 0;
-				foreach (var element in section.Elements)
+				foreach (var element in Section.Elements)
 				{
 					if (element == this)
 					{
 						int nsect = 0;
-						foreach (var sect in root.Sections)
+						foreach (var sect in Root.Sections)
 						{
-							if (section == sect)
+							if (Section == sect)
 							{
 								return NSIndexPath.FromRowSection(row, nsect);
 							}
@@ -82,6 +77,18 @@ namespace MonoMobile.MVVM
 				}
 				return null;
 			}
+		}
+		
+		public ISection Section { get { return Parent as ISection; } }
+		public IRoot Root 
+		{ 
+			get
+			{ 
+				if (Section == null)
+					return null;
+
+				return Section.Parent as IRoot; 
+			} 
 		}
 
 		public UITableViewElementCell Cell { get; set; }
@@ -440,15 +447,6 @@ namespace MonoMobile.MVVM
 		public virtual void UpdateCell()
 		{
 		}
-
-		public IRoot GetImmediateRootElement()
-		{
-			var section = Parent as Section;
-			if (section == null)
-				return null;
-
-			return section.Parent as IRoot;
-		}
 		
 		private bool _Enabled;
 		public bool Enabled 
@@ -486,17 +484,15 @@ namespace MonoMobile.MVVM
 				if (_Visible != value)
 				{
 					_Visible = value;
-
-					var section = Parent as Section;
 					
-					if (section != null)
+					if (Section != null)
 					{
-						if(_Visible && !section.Elements.Contains(this))
-							section.Insert(_OldRow, this);
+						if(_Visible && !Section.Elements.Contains(this))
+							Section.Insert(_OldRow, this);
 						else
 						{
 							_OldRow = IndexPath.Row;
-							section.Remove(this);
+							Section.Remove(this);
 						}
 					}
 				}
@@ -517,10 +513,11 @@ namespace MonoMobile.MVVM
 		{
 			if (uri == null || _CellStyleInfo == null)
 				return;
-			var root = GetImmediateRootElement();
-			if (root == null || root.TableView == null)
+
+			if (Root == null || Root.TableView == null)
 				return;
-			root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
+			
+			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
 		}
 	}
 }

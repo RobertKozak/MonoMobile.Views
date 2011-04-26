@@ -46,7 +46,7 @@ namespace Samples
 		public bool TestBool { get; set; }
 
 		[Date]
-		[Theme(typeof(MarbledTheme))]
+	//	[Theme(typeof(MarbledTheme))]
 		public DateTime Date {get; set;}
 		
 		[Time]
@@ -67,12 +67,12 @@ namespace Samples
 
 	//	[Section]
 //		[Root(ViewType = typeof(MovieView))]
-		[List(ViewType = typeof(MovieView), ThemeType = typeof(PaperTheme))]
-		public ObservableCollection<MovieViewModel> Movies 
-		{
-			get;
-			set;
-		}
+//		[List(ViewType = typeof(MovieView))]//, ThemeType = typeof(WoodenTheme))]
+//		public ObservableCollection<MovieViewModel> Movies 
+//		{
+//			get;
+//			set;
+//		}
 		
 		[LoadMore]
 		public void Activity()
@@ -141,9 +141,12 @@ namespace Samples
 			get { return _CanChangeStyle; } 
 			set 
 			{
-				_CanChangeStyle = value; 
-				if (PropertyChanged != null) 
-					PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); 
+				if (_CanChangeStyle != value)
+				{
+					_CanChangeStyle = value; 
+					if (PropertyChanged != null) 
+						PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); 
+				}
 			}
 		}
 
@@ -191,17 +194,17 @@ namespace Samples
 			get; set;
 		}
 	
-		[Inline]
-		public Genre Genre { get; set; }
+//		[Inline]
+//		public Genre Genre { get; set; }
 
 		public MovieListView()
 		{
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
 
-			Movies = new ObservableCollection<MovieViewModel>();
+			Movies2 = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
 			dataModel.Load();
-			Movies =dataModel.Movies;
+			Movies2 =dataModel.Movies;
 			MyString = "Test string";
 
 InterestingStuff = new InterestingView();
@@ -218,7 +221,7 @@ DynamicView = new View1();
 ////				Movies.Add(new MovieView() { DataContext = movie });
 ////			}
 //
-Movies2 = Movies;
+//Movies2 = Movies;
 		
 			Time = DateTime.Now;
 			Date = DateTime.Now;
@@ -239,7 +242,7 @@ Movies2 = Movies;
 		[Preserve]
 		public BackgroundImageTheme()
 		{
-			BackgroundUri = new Uri("file://" + Path.GetFullPath("Images/bluesky.jpg"));
+			BackgroundUri = new Uri("file://" + Path.GetFullPath("Images/bluewallpaper.jpg"));
 		}
 	}
 }

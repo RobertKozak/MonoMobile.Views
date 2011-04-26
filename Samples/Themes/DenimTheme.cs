@@ -31,7 +31,9 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
 	using System.Drawing;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers = true)]
 	public class DenimTheme: Theme
 	{
 		public DenimTheme()

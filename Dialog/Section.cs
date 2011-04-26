@@ -44,7 +44,9 @@ namespace MonoMobile.MVVM
 		private UIView _Header, _Footer;
 
 		public List<IElement> Elements { get; set; }
-
+		
+		public new IRoot Root { get { return Parent as IRoot; } }
+		
 		public bool IsMultiselect { get; set; }
 
 		/// <summary>
@@ -238,11 +240,11 @@ namespace MonoMobile.MVVM
 				Elements.Insert(pos++, e);
 				e.Parent = this;
 			}
-			var root = Parent as IRoot;
-			if (Parent != null && root.TableView != null)
+			
+			if (Root != null && Root.TableView != null)
 			{
 				if (anim == UITableViewRowAnimation.None)
-					root.TableView.ReloadData();
+					Root.TableView.ReloadData();
 				else
 					InsertVisual(idx, anim, newElements.Length);
 			}
@@ -261,11 +263,11 @@ namespace MonoMobile.MVVM
 				e.Parent = this;
 				count++;
 			}
-			var root = Parent as IRoot;
-			if (root != null && root.TableView != null)
+
+			if (Root != null && Root.TableView != null)
 			{
 				if (anim == UITableViewRowAnimation.None)
-					root.TableView.ReloadData();
+					Root.TableView.ReloadData();
 				else
 					InsertVisual(idx, anim, pos - idx);
 			}
@@ -274,17 +276,15 @@ namespace MonoMobile.MVVM
 
 		void InsertVisual(int idx, UITableViewRowAnimation anim, int count)
 		{
-			var root = Parent as IRoot;
-			
-			if (root == null || root.TableView == null)
+			if (Root == null || Root.TableView == null)
 				return;
 			
-			int sidx = root.IndexOf(this as ISection);
+			int sidx = Root.IndexOf(this as ISection);
 			var paths = new NSIndexPath[count];
 			for (int i = 0; i < count; i++)
 				paths[i] = NSIndexPath.FromRowSection(idx + i, sidx);
 			
-			root.TableView.InsertRows(paths, anim);
+			Root.TableView.InsertRows(paths, anim);
 		}
 
 		public void Insert(int index, params IElement[] newElements)
@@ -345,21 +345,19 @@ namespace MonoMobile.MVVM
 			if (count == 0)
 				return;
 			
-			var root = Parent as IRoot;
-			
 			if (start + count > Elements.Count)
 				count = Elements.Count - start;
 			
 			Elements.RemoveRange(start, count);
 			
-			if (root == null || root.TableView == null)
+			if (Root == null || Root.TableView == null)
 				return;
 			
-			int sidx = root.IndexOf(this as ISection);
+			int sidx = Root.IndexOf(this as ISection);
 			var paths = new NSIndexPath[count];
 			for (int i = 0; i < count; i++)
 				paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
-			root.TableView.DeleteRows(paths, anim);
+			Root.TableView.DeleteRows(paths, anim);
 
 			foreach(var element in Elements)
 			{
@@ -396,9 +394,8 @@ namespace MonoMobile.MVVM
 				e.Dispose();
 			Elements = new List<IElement>();
 			
-			var root = Parent as IRoot;
-			if (root != null && root.TableView != null)
-				root.TableView.ReloadData();
+			if (Root != null && Root.TableView != null)
+				Root.TableView.ReloadData();
 		}
 
 		protected override void Dispose(bool disposing)

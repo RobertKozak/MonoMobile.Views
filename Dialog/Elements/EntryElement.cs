@@ -128,7 +128,7 @@ namespace MonoMobile.MVVM
 					IFocusable self = null;
 					var returnType = UIReturnKeyType.Done;
 					
-					foreach (IElement element in (Parent as ISection).Elements) 
+					foreach (IElement element in Section.Elements) 
 					{
 						if (element == null)
 							continue;
@@ -148,7 +148,7 @@ namespace MonoMobile.MVVM
 				Entry.ShouldReturn = delegate
 				{
 					IFocusable focus = null;
-					foreach (IElement element in (Parent as ISection).Elements) 
+					foreach (IElement element in Section.Elements) 
 					{
 						if (element == null) 
 							continue;

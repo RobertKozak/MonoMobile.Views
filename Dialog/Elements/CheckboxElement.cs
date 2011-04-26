@@ -46,6 +46,7 @@ namespace MonoMobile.MVVM
 		public override void UpdateCell()
 		{
 			base.UpdateCell();
+			//There is a visual artifact when using Checkmark and UITableViewCellSelectionStyle.Blue;
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 			
 			Value = (bool)ValueProperty.Value;

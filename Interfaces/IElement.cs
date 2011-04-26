@@ -40,6 +40,9 @@ namespace MonoMobile.MVVM
 		int Order { get; set; }
 		NSIndexPath IndexPath { get; }
 		IElement Parent { get; set; }
+		ISection Section { get; }
+		IRoot Root { get; }
+
 		string Caption { get; set; }
 		
 		bool Visible { get; set; }

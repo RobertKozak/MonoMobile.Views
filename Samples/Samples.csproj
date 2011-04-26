@@ -179,5 +179,14 @@
     <Content Include="Images\brick.jpg" />
     <Content Include="Images\granite.jpg" />
     <Content Include="Images\bluesky.jpg" />
+    <Content Include="Images\concrete.jpg" />
+    <Content Include="Images\dark metal.jpg" />
+    <Content Include="Images\leather.jpg" />
+    <Content Include="Images\Sample.png" />
+    <Content Include="Images\Aquablue.jpg" />
+    <Content Include="Images\bluecurtain.jpg" />
+    <Content Include="Images\bluewallpaper.jpg" />
+    <Content Include="Images\bluemac.jpg" />
+    <Content Include="Images\worntexture.jpg" />
   </ItemGroup>
 </Project>

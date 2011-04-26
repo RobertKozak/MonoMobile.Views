@@ -221,8 +221,8 @@ namespace MonoMobile.MVVM
 						}
 						else if (inline)
 						{	
-						//	lastSection.Add(newElement); continue;
-							var inlineSection = new Section(string.Empty, null) { };
+							var inlineSection = new Section(string.Empty, null) {  };
+							ApplyElementTheme(newElement.Theme, inlineSection, null);
 							inlineSection.Parent = root as IElement;
 							sectionList.Add(inlineSection);
 	
@@ -386,7 +386,7 @@ namespace MonoMobile.MVVM
 			var currentValue = GetValue(member, view);
 			int index = 0;
 			int selected = 0;
-
+	
 			ApplyRootTheme(view, csection);
 
 			var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
@@ -417,7 +417,7 @@ namespace MonoMobile.MVVM
 
 			var radioGroup = new RadioGroup(memberType.FullName, selected) { EnumType = memberType };
 			((IRoot)element).Groups = new List<Group>() { radioGroup };
-		
+			element.Theme = Theme.CreateTheme(Root.RootTheme);
 			element.Theme.CellStyle = UITableViewCellStyle.Value1;
 
 			return element;

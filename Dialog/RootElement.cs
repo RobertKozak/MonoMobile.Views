@@ -444,63 +444,63 @@ namespace MonoMobile.MVVM
 			base.InitializeCell(tableView);
 
 			Cell.TextLabel.Text = Caption;
-			var radio = Groups.FirstOrDefault() as RadioGroup;
-			var section = Sections.FirstOrDefault();
-			if (radio != null && section != null && !section.IsMultiselect && Cell.DetailTextLabel != null)
-			{
-				Cell.DetailTextLabel.Text = EnumExtensions.GetDescriptionValue(Enum.GetNames(radio.EnumType)[radio.Selected], radio.EnumType);
-			}
-			else if (_SummarySection != -1 && _SummarySection < Sections.Count)
-			{
-				var s = Sections[_SummarySection];
-				if (_SummaryElement < s.Elements.Count)
-					Cell.DetailTextLabel.Text = s.Elements[_SummaryElement].ToString();
-			}
-			else if (section != null && section.IsMultiselect)
-			{
-				var count = 0;
-				var val = 0;
-				var index = 0;
-				
-				foreach (var s in Sections)
-				{
-					foreach (var e in s.Elements)
-					{
-						index++;
-						
-						var ce = e as CheckboxElement;
-						if (ce != null)
-						{
-							if ((bool)ce.Value)
-							{
-								count++;
-								val |= (1 << index - 1);
-							}
-							continue;
-						}
-						var be = e as BoolElement;
-						if (be != null)
-						{
-							if ((bool)be.Value)
-								count++;
-							continue;
-						}
-					}
-				}
-				
-				if(Cell.DetailTextLabel != null)
-					Cell.DetailTextLabel.Text = count.ToString();
-			}
-
-			if (DetailTextLabel != null && ContentView != null)
-			{
-				DetailTextLabel.Text = ContentView.ToString();
-			}
-
-			if (Theme.CellStyle == UITableViewCellStyle.Default && ContentView != null && string.IsNullOrEmpty(Caption))
-			{
-				Cell.TextLabel.Text = ContentView.ToString();
-			}
+//			var radio = Groups.FirstOrDefault() as RadioGroup;
+//			var section = Sections.FirstOrDefault();
+//			if (radio != null && section != null && !section.IsMultiselect && Cell.DetailTextLabel != null)
+//			{
+//				Cell.DetailTextLabel.Text = EnumExtensions.GetDescriptionValue(Enum.GetNames(radio.EnumType)[radio.Selected], radio.EnumType);
+//			}
+//			else if (_SummarySection != -1 && _SummarySection < Sections.Count)
+//			{
+//				var s = Sections[_SummarySection];
+//				if (_SummaryElement < s.Elements.Count)
+//					Cell.DetailTextLabel.Text = s.Elements[_SummaryElement].ToString();
+//			}
+//			else if (section != null && section.IsMultiselect)
+//			{
+//				var count = 0;
+//				var val = 0;
+//				var index = 0;
+//				
+//				foreach (var s in Sections)
+//				{
+//					foreach (var e in s.Elements)
+//					{
+//						index++;
+//						
+//						var ce = e as CheckboxElement;
+//						if (ce != null)
+//						{
+//							if ((bool)ce.Value)
+//							{
+//								count++;
+//								val |= (1 << index - 1);
+//							}
+//							continue;
+//						}
+//						var be = e as BoolElement;
+//						if (be != null)
+//						{
+//							if ((bool)be.Value)
+//								count++;
+//							continue;
+//						}
+//					}
+//				}
+//				
+//				if(Cell.DetailTextLabel != null)
+//					Cell.DetailTextLabel.Text = count.ToString();
+//			}
+//
+//			if (DetailTextLabel != null && ContentView != null)
+//			{
+//				DetailTextLabel.Text = ContentView.ToString();
+//			}
+//
+//			if (Theme.CellStyle == UITableViewCellStyle.Default && ContentView != null && string.IsNullOrEmpty(Caption))
+//			{
+//				Cell.TextLabel.Text = ContentView.ToString();
+//			}
 		}
 
 		/// <summary>
@@ -633,12 +633,13 @@ namespace MonoMobile.MVVM
 		{
 			if (element == null)
 				throw new ArgumentNullException("element");
-			var section = element.Parent as ISection;
-			if (section == null)
+
+			if (element.Section == null)
 				throw new ArgumentException("Element is not attached to this root");
-			var root = section.Parent as IRoot;
-			if (root == null)
+
+			if (element.Root == null)
 				throw new ArgumentException("Element is not attached to this root");
+
 			var path = element.IndexPath;
 			if (path == null)
 				return;
