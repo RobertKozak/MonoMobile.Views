@@ -19,7 +19,7 @@ namespace Samples
 
 		public object ConvertBack(object value, Type targteType, object parameter, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 	}
 }

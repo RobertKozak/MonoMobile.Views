@@ -112,6 +112,9 @@ namespace MonoMobile.MVVM
 				catch (NotImplementedException)
 				{
 				}
+				catch (NotSupportedException)
+				{
+				}
 			}
 		}
 
@@ -142,6 +145,9 @@ namespace MonoMobile.MVVM
 				{
 				}
 				catch (NotImplementedException)
+				{
+				}
+				catch (NotSupportedException)
 				{
 				}
 			}

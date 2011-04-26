@@ -1,14 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/BindingContext.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialog/DialogViewController.cs">
     <Files>
-      <File FileName="Dialog/Cell/Theme.cs" Line="453" Column="1" />
-      <File FileName="Dialog/BindingContext.cs" Line="224" Column="9" />
-      <File FileName="Samples/Views/MovieListView.cs" Line="194" Column="1" />
-      <File FileName="Dialog/Cell/UITableViewElementCell.cs" Line="204" Column="1" />
-      <File FileName="Dialog/Section.cs" Line="46" Column="3" />
-      <File FileName="Dialog/RootElement.cs" Line="1" Column="1" />
-      <File FileName="Samples/Themes/FrostedTheme.cs" Line="1" Column="1" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="78" Column="59" />
+      <File FileName="Dialog/BindingContext.cs" Line="1042" Column="1" />
+      <File FileName="Dialog/Section.cs" Line="50" Column="3" />
+      <File FileName="Dialog/RootElement.cs" Line="643" Column="1" />
+      <File FileName="Dialog/RadioGroup.cs" Line="37" Column="29" />
+      <File FileName="Samples/ViewModels/MovieViewModel.cs" Line="1" Column="1" />
+      <File FileName="Dialog/Element.cs" Line="83" Column="1" />
+      <File FileName="Dialog/Elements/CheckboxElement.cs" Line="50" Column="60" />
+      <File FileName="Dialog/Elements/EntryElement.cs" Line="151" Column="42" />
+      <File FileName="Dialog/DialogViewController.cs" Line="657" Column="5" />
+      <File FileName="Samples/Views/MovieListView.cs" Line="197" Column="1" />
+      <File FileName="Binding/BindingOperations.cs" Line="231" Column="1" />
+      <File FileName="Binding/Binding.cs" Line="59" Column="1" />
+      <File FileName="Binding/BindableProperty.cs" Line="109" Column="1" />
+      <File FileName="Commands/ReflectiveCommand.cs" Line="72" Column="1" />
+      <File FileName="Samples/Main.cs" Line="10" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -16,12 +25,18 @@
           <Option id="ShowVersionControlOverlays" value="True" />
           <Option id="ShowAllFiles" value="False" />
           <Node name="MonoMobile.MVVM" expanded="True">
+            <Node name="Binding" expanded="True" />
+            <Node name="Commands" expanded="True" />
             <Node name="Dialog" expanded="True">
               <Node name="Cell" expanded="True" />
-              <Node name="BindingContext.cs" selected="True" />
+              <Node name="Elements" expanded="True" />
+              <Node name="DialogViewController.cs" selected="True" />
             </Node>
+            <Node name="Interfaces" expanded="True" />
+            <Node name="Model" expanded="True" />
           </Node>
           <Node name="Samples" expanded="True">
+            <Node name="Images" expanded="True" />
             <Node name="Themes" expanded="True" />
             <Node name="Views" expanded="True" />
           </Node>
@@ -32,7 +47,7 @@
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>bindings</Value>
+          <Value>csection.Theme</Value>
         </State>
       </Pad>
       <Pad Id="ConnectionManagerPad">
@@ -41,9 +56,7 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Samples/Views/InterestingView.cs" line="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <AuthorInfo Name="Robert Kozak" Email="rkozak@gmailcom" Copyright="2011 Nowcom Corporation" />

@@ -45,13 +45,13 @@ namespace MonoMobile.MVVM
 			{
 				throw new ArgumentException("value must be an IView");
 			}
-
+			
 			return view.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-			return value;
+			throw new NotSupportedException();
 		}
     }
 }

@@ -339,7 +339,14 @@ namespace MonoMobile.MVVM
 			{
 				element = new RootElement() { };
 
+				SetDefaultConverter(member, "Value", new ViewConverter(), bindings);
+
 				var nested = GetValue(member, view) as UIView;
+				if (nested != null)
+				{
+					element.ViewBinding.DataContext = view;
+					element.ViewBinding.View = nested;
+				}
 				var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
 
 				if (viewAttribute != null && viewAttribute.ViewType != null)
@@ -347,10 +354,7 @@ namespace MonoMobile.MVVM
 				else
 					element.ViewBinding.ViewType = memberType;
 
-				element.ViewBinding.DataContext = view;
-
 				element.ViewBinding.MemberInfo = member;
-				element.ViewBinding.View = nested;
 
 				element.Caption = caption;
 
@@ -380,7 +384,7 @@ namespace MonoMobile.MVVM
 		{
 			Type memberType = GetTypeForMember(member);
 
-			SetDefaultConverter(member, "Value", new MonoMobile.MVVM.EnumConverter() { PropertyType = memberType }, bindings);
+			SetDefaultConverter(member, "Value", new EnumConverter() { PropertyType = memberType }, bindings);
 
 			var csection = new Section() { Opaque = false };
 			var currentValue = GetValue(member, view);

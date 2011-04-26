@@ -16,9 +16,12 @@ namespace MonoMobile.MVVM
 		{
 			get 
 			{
-				var value = GetValue(MemberInfo, DataContext) as UIView;
-				if (value != null)
-					return value;
+				if (DataContext != null)
+				{
+					var value = GetValue(MemberInfo, DataContext) as UIView;
+					if (value != null)
+						return value;
+				}
 
 				return View; 
 			}

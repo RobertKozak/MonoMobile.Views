@@ -1,5 +1,3 @@
-using System.Reflection;
-using System.ComponentModel;
 //
 // RootElement.cs
 //
@@ -34,9 +32,10 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
-	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
 	/// <summary>
@@ -428,7 +427,7 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewElementCell NewCell()
 		{
-			var style = _SummarySection == -1 ? Theme.CellStyle : UITableViewCellStyle.Value1;
+			var style = UITableViewCellStyle.Subtitle;
 			
 			var cell = new UITableViewElementCell(style, Id, this);
 
@@ -437,7 +436,7 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			//DetailTextAlignment = UITextAlignment.Right;
+			DetailTextAlignment = UITextAlignment.Right;
 			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			TextAlignment = UITextAlignment.Left;
 
@@ -562,7 +561,7 @@ namespace MonoMobile.MVVM
 							}
 						}
 			
-						bindingContext = new BindingContext(view, Caption, Theme);
+						bindingContext = new BindingContext(view, Caption, Root.Theme);
 
 						var root = (RootElement)bindingContext.Root;
 						root.ActivateController(dvc, tableView, path);

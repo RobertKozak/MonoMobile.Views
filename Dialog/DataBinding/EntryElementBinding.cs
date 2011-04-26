@@ -63,7 +63,6 @@ namespace MonoMobile.MVVM
 				ValueProperty.BindTo(this, () => Entry.Text);
 
 #if DATABINDING
-				DetailTextFontProperty.BindTo(this, ()=>Entry.Font);
 				PlaceholderProperty.BindTo(this, () => Entry.Placeholder);
 				IsPasswordProperty.BindTo(this, () => Entry.SecureTextEntry);
 				TextProperty.BindTo(this, () => Entry.Text);

@@ -49,6 +49,7 @@ namespace MonoMobile.MVVM
 			SeparatorColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);
 			SeparatorStyle = UITableViewCellSeparatorStyle.None;
 			PlaceholderColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);
+			DetailTextColor = UIColor.FromWhiteAlpha(0.1f, 0.8f);
 			DetailTextAlignment = UITextAlignment.Left;
 			PlaceholderAlignment = UITextAlignment.Left;
 
