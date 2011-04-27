@@ -211,8 +211,9 @@ namespace MonoMobile.MVVM
 								}
 								else
 								{
-									var bindingContext = new BindingContext(e, newElement.Caption, newElement.Theme);
-									element = bindingContext.Root.Sections[0] as IElement;
+									element = new RadioElement(e.ToString());
+									element.Theme = ((IRoot)element).RootTheme;
+									
 								}
 		
 								lastSection.Add(element);
@@ -385,32 +386,18 @@ namespace MonoMobile.MVVM
 			Type memberType = GetTypeForMember(member);
 
 			SetDefaultConverter(member, "Value", new EnumConverter() { PropertyType = memberType }, bindings);
-
-			var csection = new Section() { Opaque = false };
-			var currentValue = GetValue(member, view);
-			int index = 0;
 			int selected = 0;
-	
-			ApplyRootTheme(view, csection);
-
-			var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 			
+			var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 			var enumValues = Enum.GetValues(memberType);
-			foreach(Enum value in enumValues)
+			var csection = CreateEnumSection(enumValues, null, pop, Root.RootTheme);
+
+			foreach(RadioElement radioElement in csection.Elements)
 			{
-				if (currentValue == value)
-					selected = index;
+				if (radioElement.Value)
+					break;
 
-				var radioElement = new RadioElement(value.GetDescription()) { };
-				radioElement.Index = index;
-				radioElement.PopOnSelect = pop;
-				radioElement.Value = selected == index;
-				radioElement.Opaque = false;
-				
-				ApplyElementTheme(Root.RootTheme, radioElement, member);
-
-				csection.Add(radioElement);
-				index++;
+				selected++;
 			}
 
 			var element = new RootElement(caption, new RadioGroup(memberType.FullName, selected)) { csection };
@@ -425,6 +412,38 @@ namespace MonoMobile.MVVM
 			element.Theme.CellStyle = UITableViewCellStyle.Value1;
 
 			return element;
+		}
+
+		public static ISection CreateEnumSection(IEnumerable values, object currentValue, bool popOnSelection, Theme theme)
+		{
+			var csection = new Section() { Opaque = false };
+
+			int index = 0;
+			int selected = 0;
+		
+			foreach(var value in values)
+			{
+				if (currentValue == value)
+					selected = index;
+				
+				var description = value.ToString();
+
+				if (value.GetType() == typeof(Enum))
+					description = ((Enum)value).GetDescription(); 
+				
+				var radioElement = new RadioElement(description) { };
+				radioElement.Index = index;
+				radioElement.PopOnSelect = popOnSelection;
+				radioElement.Value = selected == index;
+				radioElement.Opaque = false;
+				
+				ApplyElementTheme(theme, radioElement, null);
+
+				csection.Add(radioElement);
+				index++;
+			}
+
+			return csection;
 		}
 		
 		public IElement CreateEnumCollectionRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
@@ -474,24 +493,36 @@ namespace MonoMobile.MVVM
 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
-
+			
 			var items = (IEnumerable)GetValue(member, view);
 			
 			var element = new RootElement(caption);
 			element.ViewBinding.DataContext = view;
 			element.ViewBinding.MemberInfo = member;
-			element.ViewBinding.ViewType = memberType;
 
+			var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
+
+			element.ViewBinding.DataContext = items;
+			element.ViewBinding.DataContextCode = DataContextCode.Enumerable;
+ 
 			var dataTemplate = view as IDataTemplate;
 			if (dataTemplate != null)
 			{
-				element.ViewBinding.DataContext = items;
-				element.ViewBinding.DataContextCode = DataContextCode.Enumerable;
-
 				rootAttribute = dataTemplate.CustomAttributes.FirstOrDefault((o)=>o.GetType() == typeof(RootAttribute)) as RootAttribute;
 				listAttribute = dataTemplate.CustomAttributes.FirstOrDefault((o)=>o.GetType() == typeof(ListAttribute)) as ListAttribute;
 			}
-			else
+			
+			if (rootAttribute != null)
+			{
+				element.ViewBinding.ViewType = rootAttribute.ViewType;
+			}
+
+			if (listAttribute != null)
+			{
+				element.ViewBinding.ViewType = listAttribute.ViewType ?? element.ViewBinding.ViewType;
+			}
+
+			if (element.ViewBinding.ViewType != null)
 			{
 				dataTemplate = new StandardListView() { Items = items };
 				
@@ -507,16 +538,6 @@ namespace MonoMobile.MVVM
 			}
 
 			element.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
-
-			if(rootAttribute != null)
-			{
-				element.ViewBinding.ViewType = rootAttribute.ViewType;
-			}
-	
-			if(listAttribute != null)
-			{
-				element.ViewBinding.ViewType = listAttribute.ViewType ?? element.ViewBinding.ViewType;
-			}
 
 			return element;
 		}
@@ -985,7 +1006,7 @@ namespace MonoMobile.MVVM
 
 			return null;
 		}
-		private void ApplyRootTheme(object view, IThemeable element)
+		private static void ApplyRootTheme(object view, IThemeable element)
 		{
 			Theme theme = null;
 			var themeAttributes = view.GetType().GetCustomAttributes(typeof(ThemeAttribute), true);
@@ -1007,7 +1028,7 @@ namespace MonoMobile.MVVM
 				root.RootTheme = element.Theme;
 		}
 		
-		private void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
+		private static void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
 		{
 			if (theme != null)
 			{
@@ -1021,7 +1042,7 @@ namespace MonoMobile.MVVM
 				ApplyMemberTheme(member, element);
 		}
 		
-		private void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
+		private static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
 		{
 			var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
 

@@ -43,7 +43,7 @@ namespace MonoMobile.MVVM
 			var view = value as IView;
 			if (!(view is IView))
 			{
-				throw new ArgumentException("value must be an IView");
+				return string.Empty;
 			}
 			
 			return view.ToString();

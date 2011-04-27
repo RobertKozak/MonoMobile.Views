@@ -516,26 +516,33 @@ namespace MonoMobile.MVVM
 					case DataContextCode.Enumerable:
 					{
 						Sections.Clear();
-						Sections.Add(new Section());
 						IElement element = null;
 	
 						var items = (IEnumerable)ViewBinding.DataContext;
 	
-						foreach (var e in items)
+						var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
+					
+						if (genericType is IView)
 						{
-							if (e is IViewModel)
+							Sections.Add(new Section());
+
+							foreach (var e in items)
 							{
-								element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
-								element.ViewBinding.DataContextCode = DataContextCode.Object;
-							}
-							else
-							{
-								bindingContext = new BindingContext(e, Caption, Theme);
-								element = bindingContext.Root.Sections[0] as IElement;
-							}
-		
+						//		if (e is IViewModel)
+						//		{
+									element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
+									element.ViewBinding.DataContextCode = DataContextCode.Object;
+						//		}
+						//		else
+						//		{
 							Sections[0].Add(element);
+							}
 						}
+						else
+						{
+							Sections.Add(BindingContext.CreateEnumSection(items, null, true, Root.RootTheme));
+						}
+
 						break;
 					}
 				}

@@ -18,6 +18,7 @@ namespace Samples
 		
 		public ThemeSampleViewModel()
 		{
+			Themes = _Themes;
 		}
 	}
 }

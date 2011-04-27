@@ -462,6 +462,11 @@ namespace MonoMobile.MVVM
 			if (DetailTextLabel != null)
 				DetailTextLabel.BackgroundColor = UIColor.Clear;
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }
 
