@@ -162,7 +162,7 @@ namespace MonoMobile.MVVM
 					
 					if(newElement != null)
 					{
-						newElement.Theme = Theme.CreateTheme(root.RootTheme);
+						newElement.Theme.MergeTheme(root.RootTheme);
 						ApplyElementTheme(root.RootTheme, newElement, member);
 
 						var context = newElement as IView;
