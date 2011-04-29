@@ -45,7 +45,6 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
-		public Action<NSIndexPath, IElement> DoSomething { get; private set; }
 		private UISearchBar _Searchbar;
 		private UITableView _TableView;
 		private RefreshTableHeaderView _RefreshView;
@@ -56,7 +55,7 @@ namespace MonoMobile.MVVM
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
 		private Source _TableSource;
-		
+
 		public UIImage BackgroundImage { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
@@ -711,7 +710,6 @@ namespace MonoMobile.MVVM
 			EnablePullToRefresh = Root.PullToRefreshCommand != null;
 		}
 
-
 		private void ConfigureToolbarItems()
 		{
 			if (Root != null && Root.ToolbarButtons != null)
@@ -789,10 +787,10 @@ namespace MonoMobile.MVVM
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-
+			
 			if (Root == null)
 				return;
-			
+
 			HideSearch();
 			
 			Root.Prepare();
@@ -812,7 +810,8 @@ namespace MonoMobile.MVVM
 			var nav = parent as UINavigationController;
 			if (nav != null)
 			{
-				nav.ToolbarHidden = ToolbarItems == null;
+				nav.SetToolbarHidden(ToolbarItems == null, true);
+				
 				if (Root.NavbarButtons != null)
 				{
 					foreach (var button in Root.NavbarButtons)
@@ -894,6 +893,7 @@ namespace MonoMobile.MVVM
 		public override void ViewWillDisappear(bool animated)
 		{
 			HideSearch();
+
 			base.ViewWillDisappear(animated);
 			if (ViewDissapearing != null)
 				ViewDissapearing(this, EventArgs.Empty);
@@ -981,7 +981,7 @@ namespace MonoMobile.MVVM
 	{		
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
-
+		
 		public DialogViewController Controller { get; set; }
 		
 		public CustomTableView(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
@@ -1009,5 +1009,4 @@ namespace MonoMobile.MVVM
 			base.TouchesEnded(touches, evt);
 		}
 	}
-
 }

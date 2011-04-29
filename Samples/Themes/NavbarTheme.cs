@@ -14,6 +14,7 @@ namespace Samples
 
 			BarTintColor = UIColor.FromRGB(50, 100, 200);
 			BarStyle = UIBarStyle.Default;
+			//BarTranslucent = true;
 		}
 	}
 }

@@ -50,7 +50,7 @@ namespace Samples
 		{
 			BackgroundUri = new Uri("file://" + Path.GetFullPath("Images/honeycomb.jpg"));
 			this.BarTintColor = UIColor.Orange;
-			this.BarTranslucent = true;
+		//	this.BarTranslucent = true;
 		}
 	}
 }

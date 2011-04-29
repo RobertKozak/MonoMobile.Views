@@ -32,6 +32,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
+	using System.Linq;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
@@ -46,6 +47,7 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public partial class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
+		private UIKeyboardToolbar _KeyboardToolbar;
 		public UICustomTextField Entry { get; set; }
 		
 		public EditMode EditMode { get; set; }
@@ -120,6 +122,8 @@ namespace MonoMobile.MVVM
 
 				if (DetailTextColor != null)
 					Entry.TextColor = DetailTextColor;
+				
+				_KeyboardToolbar = new UIKeyboardToolbar(this);
 
 				Entry.Started += (s, e) =>
 				{
@@ -147,34 +151,8 @@ namespace MonoMobile.MVVM
 			
 				Entry.ShouldReturn = delegate
 				{
-					IFocusable focus = null;
-					foreach (IElement element in Section.Elements) 
-					{
-						if (element == null) 
-							continue;
-	
-						if (element == this)
-							focus = this; 
-						else if (focus != null && element is IFocusable)
-						{
-							focus = (IFocusable)element;
-							if (focus.Entry != null) break;
-							focus = this;
-						}
-					}
-					
-					if (focus != this) 
-					{
-						TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
-						focus.Entry.BecomeFirstResponder();
-						
-					}
-					else
-					{
-						focus.Entry.ResignFirstResponder();
-					}
+					MoveNext();
 
-					
 					return true;
 				};
 				
@@ -200,6 +178,71 @@ namespace MonoMobile.MVVM
 				Entry.InvokeOnMainThread(()=>{
 					Entry.BecomeFirstResponder();
 				});
+			}
+		}
+
+		public void MoveNext()
+		{
+			IFocusable focus = null;
+			foreach (IElement element in Section.Elements) 
+			{
+				if (element == null) 
+					continue;
+
+				if (element == this)
+					focus = this; 
+				else if (focus != null && element is IFocusable)
+				{
+					focus = (IFocusable)element;
+					if (focus.Entry != null) break;
+					focus = this;
+				}
+			}
+			
+			if (focus != this) 
+			{
+				TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
+				focus.Entry.BecomeFirstResponder();
+				
+			}
+			else
+			{
+				focus.Entry.ResignFirstResponder();
+			}
+		}
+		
+		public void MovePrev()
+		{
+			IFocusable focus = null;
+
+			var elements = Section.Elements.ToList();
+			elements.Reverse();
+			
+
+			foreach(IElement element in elements) 
+			{
+				if (element == null) 
+					continue;
+
+				if (element == this)
+					focus = this; 
+				else if (focus != null && element is IFocusable)
+				{
+					focus = (IFocusable)element;
+					if (focus.Entry != null) break;
+					focus = this;
+				}
+			}
+			
+			if (focus != this) 
+			{
+				TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
+				focus.Entry.BecomeFirstResponder();
+				
+			}
+			else
+			{
+				focus.Entry.ResignFirstResponder();
 			}
 		}
 

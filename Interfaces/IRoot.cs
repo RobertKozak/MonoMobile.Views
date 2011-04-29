@@ -46,7 +46,6 @@ namespace MonoMobile.MVVM
 		
 		List<CommandBarButtonItem> ToolbarButtons { get; set; }
 		List<CommandBarButtonItem> NavbarButtons { get; set; }
-		Theme RootTheme { get; set; }
  
 		List<ISection> Sections { get; set; }
 		bool UnevenRows { get; set;}

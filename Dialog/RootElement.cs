@@ -65,7 +65,6 @@ namespace MonoMobile.MVVM
 	/// </remarks>
 	public partial class RootElement : StringElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
-		public Theme RootTheme { get; set; }
 		public bool EnableSearch { get; set; }
 		public bool AutoHideSearch { get; set; }
 		public bool IncrementalSearch { get; set; }
@@ -82,8 +81,6 @@ namespace MonoMobile.MVVM
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; } 
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
 
-		private int _SummarySection; 
-		private int _SummaryElement;
 		private Func<IRoot, UIViewController> _ViewControllerFactory;
 
 		public List<Group> Groups { get; set; }
@@ -102,7 +99,6 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public RootElement(string caption) : base(caption)
 		{
-			_SummarySection = -1;
 			Sections = new List<ISection>();
 			Groups = new List<Group>();
 		}
@@ -117,27 +113,8 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public RootElement(string caption, Func<IRoot, UIViewController> viewControllerFactory) : this(caption)
 		{
-			_SummarySection = -1;
 			this._ViewControllerFactory = viewControllerFactory;
 			//Sections = new List<ISection>();
-		}
-
-		/// <summary>
-		///   Initializes a RootElement with a caption with a summary fetched from the specified section and leement
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to render cref="System.String"/>
-		/// </param>
-		/// <param name="section">
-		/// The section that contains the element with the summary.
-		/// </param>
-		/// <param name="element">
-		/// The element index inside the section that contains the summary for this RootSection.
-		/// </param>
-		public RootElement(string caption, int section, int element) : this(caption)
-		{
-			_SummarySection = section;
-			_SummaryElement = element;
 		}
 
 		/// <summary>
@@ -532,8 +509,6 @@ namespace MonoMobile.MVVM
 						}
 						else
 						{
-							//TODO: Check this. It should have been set by now.
-							RootTheme = Root.RootTheme;
 							var section = BindingContext.CreateEnumSection(this, items, null, true);
 							Sections.Add(section);
 						}

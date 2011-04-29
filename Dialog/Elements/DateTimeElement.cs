@@ -113,10 +113,39 @@ namespace MonoMobile.MVVM
 			
 			return new RectangleF(fX, fY, size.Width, size.Height);
 		}
+		
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+			var vc = new DateTimeController(this) { Autorotate = dvc.Autorotate };
+			DatePicker = CreatePicker();
+			DatePicker.Frame = PickerFrameWithSize(DatePicker.SizeThatFits(SizeF.Empty));
+			vc.View.BackgroundColor = tableView.BackgroundColor;
+			vc.View.AddSubview(DatePicker);
+			
+//InputAccessoryView
+			//dvc.PresentModalViewController(vc, true);
+			dvc.ActivateController(vc, dvc);
+		}
 
+		protected virtual void OnValueChanged()
+		{
+			if (DatePicker != null)
+				DatePicker.Date = Value;
+			
+			if (DetailTextLabel != null)
+				DetailTextLabel.Text = FormatDate(Value);
+		}
+
+		private class DatePickerToolBar: UIView
+		{
+
+		}
+		
 		private class DateTimeController : UIViewController
 		{
-			DateTimeElement container;
+			private DateTimeElement container;
+			
+			public bool Autorotate { get; set; }
 
 			public DateTimeController(DateTimeElement container)
 			{
@@ -135,36 +164,10 @@ namespace MonoMobile.MVVM
 				container.DatePicker.Frame = PickerFrameWithSize(container.DatePicker.SizeThatFits(SizeF.Empty));
 			}
 
-			public bool Autorotate
-			{
-				get;
-				set;
-			}
-
 			public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
 			{
 				return Autorotate;
 			}
-		}
-
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-			var vc = new DateTimeController(this) { Autorotate = dvc.Autorotate };
-			DatePicker = CreatePicker();
-			DatePicker.Frame = PickerFrameWithSize(DatePicker.SizeThatFits(SizeF.Empty));
-			vc.View.BackgroundColor = tableView.BackgroundColor;
-			vc.View.AddSubview(DatePicker);
-			//dvc.PresentModalViewController(vc, true);
-			dvc.ActivateController(vc, dvc);
-		}
-
-		protected virtual void OnValueChanged()
-		{
-			if (DatePicker != null)
-				DatePicker.Date = Value;
-			
-			if (DetailTextLabel != null)
-				DetailTextLabel.Text = FormatDate(Value);
 		}
 	}
 }

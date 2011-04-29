@@ -62,7 +62,7 @@ namespace MonoMobile.MVVM
 			Root.ViewBinding.DataContext = view;
 			var themeable = Root as IThemeable;
 			if (themeable != null)
-				themeable.Theme = currentTheme;
+				themeable.Theme = Theme.CreateTheme(currentTheme);
 			
 			Populate(view, Root);
 
@@ -152,7 +152,7 @@ namespace MonoMobile.MVVM
 						
 						lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) { Order = sectionAttribute.Order };
 						lastSection.Parent = root as IElement;
-						ApplyElementTheme(root.RootTheme, lastSection, null);
+						ApplyElementTheme(root.Theme, lastSection, null); 
 
 						ApplyElementTheme(sectionTheme, lastSection, null);
 						sectionList.Add(lastSection);
@@ -162,10 +162,10 @@ namespace MonoMobile.MVVM
 					
 					if(newElement != null)
 					{
-						newElement.Theme.MergeTheme(root.RootTheme);
-						ApplyElementTheme(root.RootTheme, newElement, member);
+						newElement.Theme.MergeTheme(root.Theme);
+						ApplyElementTheme(root.Theme, newElement, member);
 
-						var context = newElement as IView;
+						//var context = newElement as IView;
 						var displayInline = (inline || !isRoot) && newElement is IRoot; //&& context != null;
 						
 						if (isList)
@@ -179,7 +179,7 @@ namespace MonoMobile.MVVM
 
 							lastSection = new Section(caption,null) { };
 							lastSection.Parent = root as IElement;
-							ApplyElementTheme(root.RootTheme, lastSection, null);
+							ApplyElementTheme(root.Theme, lastSection, null); 
 							sectionList.Add(lastSection);
 			
 							IEnumerable datacontext = null;
@@ -198,13 +198,13 @@ namespace MonoMobile.MVVM
 									element.ViewBinding.ViewType = viewType;
 									element.ViewBinding.DataContext = e;
 									
-									((IRoot)element).RootTheme = Theme.CreateTheme(root.RootTheme);
-									element.Theme = ((IRoot)element).RootTheme;
+									((IRoot)element).Theme = Theme.CreateTheme(root.Theme); 
+									element.Theme = ((IRoot)element).Theme; 
 
 									if (listAttribute.ThemeType != null)
 									{
 										var listTheme = Activator.CreateInstance(listAttribute.ThemeType) as Theme;
-										var rootTheme = Theme.CreateTheme(((IRoot)element).RootTheme);
+										var rootTheme = Theme.CreateTheme(((IRoot)element).Theme);
 										rootTheme.MergeTheme(listTheme);
 										((IRoot)element).Theme = rootTheme;
 									}
@@ -212,7 +212,7 @@ namespace MonoMobile.MVVM
 								else
 								{
 									element = new RadioElement(e.ToString());
-									element.Theme = ((IRoot)element).RootTheme;
+									element.Theme = ((IRoot)element).Theme; 
 									
 								}
 		
@@ -397,7 +397,7 @@ namespace MonoMobile.MVVM
 			element.ViewBinding.DataContext = memberType;
 			element.ViewBinding.DataContextCode = DataContextCode.Enum;
 			element.Opaque = false;
-			element.Theme = Theme.CreateTheme(Root.RootTheme);
+			element.Theme = Theme.CreateTheme(Root.Theme); 
 			element.Theme.CellStyle = UITableViewCellStyle.Value1;
 
 			var radioGroup = new RadioGroup(memberType.FullName, currentValue) { EnumType = memberType };
@@ -413,7 +413,7 @@ namespace MonoMobile.MVVM
 			int index = 0;
 			int selected = 0;
 		
-			ApplyElementTheme(root.RootTheme, csection, null);
+			ApplyElementTheme(root.Theme, csection, null); 
 
 			foreach(var value in values)
 			{
@@ -431,7 +431,7 @@ namespace MonoMobile.MVVM
 				radioElement.Value = selected == index;
 				radioElement.Opaque = false;
 				
-				ApplyElementTheme(root.RootTheme, radioElement, null);
+				ApplyElementTheme(root.Theme, radioElement, null); 
 
 				csection.Add(radioElement);
 				index++;
@@ -485,7 +485,6 @@ namespace MonoMobile.MVVM
 		public IElement CreateEnumerableRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
-			Type memberType = GetTypeForMember(member);
 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
@@ -495,9 +494,6 @@ namespace MonoMobile.MVVM
 			var element = new RootElement(caption);
 			element.ViewBinding.DataContext = view;
 			element.ViewBinding.MemberInfo = member;
-
-			var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
-
 			element.ViewBinding.DataContext = items;
 			element.ViewBinding.DataContextCode = DataContextCode.Enumerable;
  
@@ -998,10 +994,8 @@ namespace MonoMobile.MVVM
 			}
 
 			return new ReflectiveCommand(view, methodInfo, propertyInfo) { CommandOption = commandOption };
-		
-
-			return null;
 		}
+
 		private static void ApplyRootTheme(object view, IThemeable element)
 		{
 			Theme theme = null;
@@ -1021,7 +1015,7 @@ namespace MonoMobile.MVVM
 			
 			var root = element as IRoot;
 			if (root != null)
-				root.RootTheme = element.Theme;
+				root.Theme = element.Theme;
 		}
 		
 		private static void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
