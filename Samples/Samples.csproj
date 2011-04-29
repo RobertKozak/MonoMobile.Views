@@ -144,6 +144,7 @@
     <Compile Include="Themes\NavbarTheme.cs" />
     <Compile Include="Views\ThemeSampleView.cs" />
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
+    <Compile Include="Views\HoneyDoList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindowIPhone.xib" />
@@ -188,5 +189,6 @@
     <Content Include="Images\bluewallpaper.jpg" />
     <Content Include="Images\bluemac.jpg" />
     <Content Include="Images\worntexture.jpg" />
+    <Content Include="Images\honeycomb.jpg" />
   </ItemGroup>
 </Project>

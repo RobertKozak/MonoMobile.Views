@@ -1,10 +1,12 @@
 namespace Samples
 {
 	using System;
-	using MonoMobile.MVVM;
 	using System.Globalization;
-	using MonoTouch.UIKit;
-
+	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;	
+	
+	[Preserve(AllMembers=true)]
 	public class FontConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

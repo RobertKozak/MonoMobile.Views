@@ -114,11 +114,11 @@ namespace MonoMobile.MVVM
 			return new RectangleF(fX, fY, size.Width, size.Height);
 		}
 
-		private class MyViewController : UIViewController
+		private class DateTimeController : UIViewController
 		{
 			DateTimeElement container;
 
-			public MyViewController(DateTimeElement container)
+			public DateTimeController(DateTimeElement container)
 			{
 				this.container = container;
 			}
@@ -149,11 +149,12 @@ namespace MonoMobile.MVVM
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			var vc = new MyViewController(this) { Autorotate = dvc.Autorotate };
+			var vc = new DateTimeController(this) { Autorotate = dvc.Autorotate };
 			DatePicker = CreatePicker();
 			DatePicker.Frame = PickerFrameWithSize(DatePicker.SizeThatFits(SizeF.Empty));
-			vc.View.BackgroundColor = UIColor.Black;
+			vc.View.BackgroundColor = tableView.BackgroundColor;
 			vc.View.AddSubview(DatePicker);
+			//dvc.PresentModalViewController(vc, true);
 			dvc.ActivateController(vc, dvc);
 		}
 

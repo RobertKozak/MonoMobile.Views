@@ -30,7 +30,8 @@
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
-
+	
+	[Preserve(AllMembers=true)]
 	public abstract class ViewModel: ObservableObject, IViewModel
 	{
 		public BindingContext BindingContext { get; set; }

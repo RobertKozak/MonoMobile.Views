@@ -80,6 +80,9 @@ namespace MonoMobile.MVVM
 
 					var property = BindableProperty.GetBindableProperty(root, "ValueProperty");
 					property.Update();
+
+					property = BindableProperty.GetBindableProperty(root, "ItemIndexProperty");
+				//	property.Update();
 					
 					if (radioGroup != null)
 						root.ItemIndex = radioGroup.Selected;

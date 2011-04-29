@@ -30,7 +30,9 @@
 namespace MonoMobile.MVVM
 {
     using System;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
     public class EnumItemsConverter : DisposableObject, IValueConverter
     {
         private EnumCollection _EnumCollection;

@@ -795,6 +795,19 @@ namespace MonoMobile.MVVM
 			
 			HideSearch();
 			
+			Root.Prepare();
+			
+			NavigationItem.HidesBackButton = !_Pushing;
+
+			if (Root.Caption != null)
+				NavigationItem.Title = Root.Caption;
+
+			if (_Dirty)
+			{
+				TableView.ReloadData();
+				_Dirty = false;
+			}
+
 			var parent = ParentViewController;
 			var nav = parent as UINavigationController;
 			if (nav != null)
@@ -829,24 +842,12 @@ namespace MonoMobile.MVVM
 //				}
 //				else
 					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-					if (themeable.Theme.BarTintColor != UIColor.Clear)
+				//	if (themeable.Theme.BarTintColor != UIColor.Clear)
 					{
 						nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
+						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
 					}
 				}
-			}
-
-			Root.Prepare();
-			
-			NavigationItem.HidesBackButton = !_Pushing;
-
-			if (Root.Caption != null)
-				NavigationItem.Title = Root.Caption;
-
-			if (_Dirty)
-			{
-				TableView.ReloadData();
-				_Dirty = false;
 			}
 
 			if (Root != null)

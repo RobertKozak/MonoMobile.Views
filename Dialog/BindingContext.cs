@@ -384,43 +384,37 @@ namespace MonoMobile.MVVM
 		public IElement CreateEnumRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			Type memberType = GetTypeForMember(member);
+			var currentValue = (int)member.GetValue(view);
 
 			SetDefaultConverter(member, "Value", new EnumConverter() { PropertyType = memberType }, bindings);
-			int selected = 0;
 			
 			var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 			var enumValues = Enum.GetValues(memberType);
-			var csection = CreateEnumSection(enumValues, null, pop, Root.RootTheme);
+			var csection = CreateEnumSection(Root, enumValues, currentValue, pop);
 
-			foreach(RadioElement radioElement in csection.Elements)
-			{
-				if (radioElement.Value)
-					break;
-
-				selected++;
-			}
-
-			var element = new RootElement(caption, new RadioGroup(memberType.FullName, selected)) { csection };
+			var element = new RootElement(caption) { csection };
 			element.Caption = caption;
 			element.ViewBinding.DataContext = memberType;
 			element.ViewBinding.DataContextCode = DataContextCode.Enum;
 			element.Opaque = false;
-
-			var radioGroup = new RadioGroup(memberType.FullName, selected) { EnumType = memberType };
-			((IRoot)element).Groups = new List<Group>() { radioGroup };
 			element.Theme = Theme.CreateTheme(Root.RootTheme);
 			element.Theme.CellStyle = UITableViewCellStyle.Value1;
+
+			var radioGroup = new RadioGroup(memberType.FullName, currentValue) { EnumType = memberType };
+			((IRoot)element).Groups.Add(radioGroup);
 
 			return element;
 		}
 
-		public static ISection CreateEnumSection(IEnumerable values, object currentValue, bool popOnSelection, Theme theme)
+		public static ISection CreateEnumSection(IRoot root, IEnumerable values, object currentValue, bool popOnSelection)
 		{
 			var csection = new Section() { Opaque = false };
 
 			int index = 0;
 			int selected = 0;
 		
+			ApplyElementTheme(root.RootTheme, csection, null);
+
 			foreach(var value in values)
 			{
 				if (currentValue == value)
@@ -437,11 +431,13 @@ namespace MonoMobile.MVVM
 				radioElement.Value = selected == index;
 				radioElement.Opaque = false;
 				
-				ApplyElementTheme(theme, radioElement, null);
+				ApplyElementTheme(root.RootTheme, radioElement, null);
 
 				csection.Add(radioElement);
 				index++;
 			}
+
+			csection.Parent = root as IElement;
 
 			return csection;
 		}

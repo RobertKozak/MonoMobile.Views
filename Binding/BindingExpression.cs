@@ -158,14 +158,23 @@ namespace MonoMobile.MVVM
 			object convertedValue = value;
 			var memberType = GetMemberType(TargetProperty);
 
-			if (Binding.Converter != null)
+	//		try
 			{
-				object parameter = Element;
-				if (Binding.ConverterParameter != null)
-					parameter = Binding.ConverterParameter;
-
-				convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
+				if (Binding.Converter != null)
+				{
+					object parameter = Element;
+					if (Binding.ConverterParameter != null)
+						parameter = Binding.ConverterParameter;
+	
+					convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
+				}
 			}
+//			catch (NotImplementedException)
+//			{
+//			}
+//			catch (NotSupportedException)
+//			{
+//			}
 
 			var typeCode = Convert.GetTypeCode(convertedValue);
 			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)

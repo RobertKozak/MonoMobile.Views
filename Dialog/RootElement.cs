@@ -63,7 +63,7 @@ namespace MonoMobile.MVVM
 	///    Sections are added by calling the Add method which supports the
 	///    C# 4.0 syntax to initialize a RootElement in one pass.
 	/// </remarks>
-	public class RootElement : StringElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
+	public partial class RootElement : StringElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
 		public Theme RootTheme { get; set; }
 		public bool EnableSearch { get; set; }
@@ -77,11 +77,7 @@ namespace MonoMobile.MVVM
 
 		public DialogViewController Controller {get; set;}
 		
-		public UITableViewStyle? TableViewStyle { get; set; }
-		public UIBarStyle? NavbarStyle { get; set; }
-		public UIColor NavbarTintColor { get; set; }
-		public string NavbarImage { get; set; }
-		public bool NavbarTranslucent { get; set; }
+		//public string NavbarImage { get; set; }
 
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; } 
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
@@ -528,25 +524,25 @@ namespace MonoMobile.MVVM
 
 							foreach (var e in items)
 							{
-						//		if (e is IViewModel)
-						//		{
-									element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
-									element.ViewBinding.DataContextCode = DataContextCode.Object;
-						//		}
-						//		else
-						//		{
-							Sections[0].Add(element);
+								element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
+								element.ViewBinding.DataContextCode = DataContextCode.Object;
+			
+								Sections[0].Add(element);
 							}
 						}
 						else
 						{
-							Sections.Add(BindingContext.CreateEnumSection(items, null, true, Root.RootTheme));
+							//TODO: Check this. It should have been set by now.
+							RootTheme = Root.RootTheme;
+							var section = BindingContext.CreateEnumSection(this, items, null, true);
+							Sections.Add(section);
 						}
 
 						break;
 					}
 				}
 			}
+
 			ActivateController(dvc, tableView, path);
 		}
 

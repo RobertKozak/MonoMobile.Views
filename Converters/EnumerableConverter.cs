@@ -32,7 +32,9 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Globalization;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers=true)]
 	public class EnumerableConverter : IValueConverter
 	{
 		//RK: Temporarily not implemented until I decide how to handle this case

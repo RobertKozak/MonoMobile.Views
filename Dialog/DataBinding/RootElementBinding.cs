@@ -1,10 +1,10 @@
 //
-// ViewConverter.cs: 
+// RootElementBinding.cs
 //
 // Author:
-//   Robert Kozak (rkozak@nowcom.com)
-//
-// Copyright 2011, Nowcom Corporation
+//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+//  Copyright 2011, Nowcom Corporation.
 //
 // Code licensed under the MIT X11 license
 //
@@ -29,32 +29,32 @@
 //
 namespace MonoMobile.MVVM
 {
-    using System;
-	using System.Globalization;
-	using MonoMobile.MVVM;
-	using MonoTouch.Foundation;
+	using System;
 
-	[Preserve(AllMembers = true)]
-    public class ViewConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return value;
-			
-			var view = value as IView;
-			if (!(view is IView))
+	public partial class RootElement
+	{
+		public BindableProperty ItemIndexProperty = BindableProperty.Register("ItemIndex");
+		
+		private int _Index
+		{
+			get { return ItemIndex; }
+			set
 			{
-				return string.Empty;
+				if (ItemIndex != value)
+				{
+					ItemIndex = value;
+				}
 			}
-			
-			return view.ToString();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-			throw new NotSupportedException();
 		}
-    }
+
+		public override void BindProperties()
+		{
+#if DATABINDING
+			base.BindProperties();
+			
+			ItemIndexProperty.BindTo(this, () => _Index);
+#endif
+		}
+	}
 }
 

@@ -32,7 +32,9 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Globalization;
 	using MonoMobile.MVVM;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers=true)]
 	public class MoneyConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

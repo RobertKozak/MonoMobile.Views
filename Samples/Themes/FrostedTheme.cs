@@ -1,4 +1,3 @@
-using MonoMobile.MVVM;
 //
 // FrostedStyle.cs:
 //
@@ -50,9 +49,9 @@ namespace MonoMobile.MVVM
 			SeparatorStyle = UITableViewCellSeparatorStyle.None;
 			PlaceholderColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);
 			DetailTextColor = UIColor.FromWhiteAlpha(0.1f, 0.8f);
-			DetailTextAlignment = UITextAlignment.Left;
-			PlaceholderAlignment = UITextAlignment.Left;
-
+			DetailTextAlignment = UITextAlignment.Right;
+			PlaceholderAlignment = UITextAlignment.Right;
+			
 			HeaderTextColor = UIColor.FromWhiteAlpha(1f, 0.8f);
 			HeaderTextShadowColor = UIColor.FromWhiteAlpha(0f, 0.2f);
 

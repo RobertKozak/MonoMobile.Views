@@ -194,12 +194,15 @@ namespace Samples
 			get; set;
 		}
 	
+		public HoneyDoList HoneyDoList { get; set; }
 //		[Inline]
 //		public Genre Genre { get; set; }
 
 		public MovieListView()
 		{
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
+			
+			HoneyDoList = new HoneyDoList();
 
 			Movies2 = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();

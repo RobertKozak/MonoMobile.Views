@@ -30,10 +30,10 @@
 namespace MonoMobile.MVVM
 {
     using System;
-	using System.ComponentModel;
-    using System.Globalization;
-    using System.Linq;
-
+	using System.Globalization;
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers=true)]
     public class EnumConverter : IValueConverter
     {
         public Type PropertyType { get; set; }

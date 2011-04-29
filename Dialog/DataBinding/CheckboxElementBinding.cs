@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 
 	public partial class CheckboxElement
 	{
-		public bool Checkmark
+		private bool Checkmark
 		{
 			get { return Value; }
 			set 
