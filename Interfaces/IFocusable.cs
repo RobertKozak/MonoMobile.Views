@@ -37,6 +37,9 @@ namespace MonoMobile.MVVM
 	{
 		UICustomTextField Entry { get; }
 		NSIndexPath IndexPath { get; }
+
+		void MoveNext();
+		void MovePrev();
 	}
 }
 

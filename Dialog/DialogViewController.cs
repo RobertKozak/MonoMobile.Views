@@ -166,7 +166,6 @@ namespace MonoMobile.MVVM
 			refreshThread.Start();
 		}
 
-		[Export("RefreshThread")]
 		private void RefreshThread()
 		{
 			using (var pool = new NSAutoreleasePool())
@@ -979,9 +978,6 @@ namespace MonoMobile.MVVM
 
 	public class CustomTableView : UITableView
 	{		
-		private ISection[] _OriginalSections;
-		private IElement[][] _OriginalElements;
-		
 		public DialogViewController Controller { get; set; }
 		
 		public CustomTableView(RectangleF bounds, UITableViewStyle style) : base(bounds, style)

@@ -1,4 +1,3 @@
-using System.Reflection;
 //
 // EntryElement.cs
 //
@@ -31,10 +30,11 @@ using System.Reflection;
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
-	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
 	public enum EditMode
@@ -48,6 +48,9 @@ namespace MonoMobile.MVVM
 	public partial class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
 	{
 		private UIKeyboardToolbar _KeyboardToolbar;
+		private NSTimer _Timer;
+		private IFocusable _Focus;
+
 		public UICustomTextField Entry { get; set; }
 		
 		public EditMode EditMode { get; set; }
@@ -124,34 +127,17 @@ namespace MonoMobile.MVVM
 					Entry.TextColor = DetailTextColor;
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
+				Entry.InputAccessoryView = _KeyboardToolbar;
+				Entry.ReturnKeyType = UIReturnKeyType.Default;
 
 				Entry.Started += (s, e) =>
 				{
 					ValueProperty.ConvertBack<string>();				
-
-					IFocusable self = null;
-					var returnType = UIReturnKeyType.Done;
-					
-					foreach (IElement element in Section.Elements) 
-					{
-						if (element == null)
-							continue;
-	
-						if (element == this)
-							self = this; 
-						else if (self != null && element is IFocusable)
-						{
-							returnType = UIReturnKeyType.Next;
-							break;
-						}
-					}
-					
-					Entry.ReturnKeyType = returnType;
 				};
 			
 				Entry.ShouldReturn = delegate
 				{
-					MoveNext();
+					Entry.ResignFirstResponder();
 
 					return true;
 				};
@@ -183,67 +169,38 @@ namespace MonoMobile.MVVM
 
 		public void MoveNext()
 		{
-			IFocusable focus = null;
-			foreach (IElement element in Section.Elements) 
-			{
-				if (element == null) 
-					continue;
-
-				if (element == this)
-					focus = this; 
-				else if (focus != null && element is IFocusable)
-				{
-					focus = (IFocusable)element;
-					if (focus.Entry != null) break;
-					focus = this;
-				}
-			}
-			
-			if (focus != this) 
-			{
-				TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
-				focus.Entry.BecomeFirstResponder();
-				
-			}
-			else
-			{
-				focus.Entry.ResignFirstResponder();
-			}
+			var elements = Section.Elements.Where((e)=>e is IFocusable).Cast<IFocusable>().ToList();
+			MoveFocus(elements); 
 		}
 		
 		public void MovePrev()
 		{
-			IFocusable focus = null;
-
-			var elements = Section.Elements.ToList();
+			var elements = Section.Elements.Where((e)=>e is IFocusable).Cast<IFocusable>().ToList();
 			elements.Reverse();
 			
+			MoveFocus(elements);
+		}
 
-			foreach(IElement element in elements) 
-			{
-				if (element == null) 
-					continue;
-
-				if (element == this)
-					focus = this; 
-				else if (focus != null && element is IFocusable)
-				{
-					focus = (IFocusable)element;
-					if (focus.Entry != null) break;
-					focus = this;
-				}
-			}
+		private void MoveFocus(IList<IFocusable> elements)
+		{
+			_Focus = null;
 			
-			if (focus != this) 
-			{
-				TableView.ScrollToRow(focus.IndexPath, UITableViewScrollPosition.Top, true);
-				focus.Entry.BecomeFirstResponder();
-				
-			}
-			else
-			{
-				focus.Entry.ResignFirstResponder();
-			}
+			var nextElements = elements.SkipWhile(e=>e != this);
+			_Focus = nextElements.Skip(1).FirstOrDefault();
+			if (_Focus == null)
+				_Focus = elements.FirstOrDefault();
+			
+			_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(300), FocusTimer);
+
+			TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);			
+		}
+
+		private void FocusTimer()
+		{
+			_Timer.Invalidate();
+			_Timer = null;
+			
+			_Focus.Entry.BecomeFirstResponder();
 		}
 
 		protected override void Dispose(bool disposing)

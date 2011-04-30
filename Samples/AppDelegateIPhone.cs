@@ -22,7 +22,6 @@ namespace Samples
 			return true;
 		}
 
-		[Export("Startup")]
 		private void Startup()
 		{
 			using (var pool = new NSAutoreleasePool()) 

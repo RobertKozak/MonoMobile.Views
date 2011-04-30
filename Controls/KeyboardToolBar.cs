@@ -42,13 +42,11 @@ namespace MonoMobile.MVVM
 		private UIBarButtonItem _Spacer;
 		private UIBarButtonItem _DoneButton;
 		
-		private EntryElement _EntryElement;
+		private IFocusable _FocusableElement;
 
-		private IEnumerable<UIView> _InputViews = new List<UIView>();
-
-		public UIKeyboardToolbar(EntryElement entryElement) : base(new RectangleF(0, 0, 320, 44))
+		public UIKeyboardToolbar(IFocusable focusableElement) : base(new RectangleF(0, 0, 320, 44))
 		{		
-			_EntryElement = entryElement;
+			_FocusableElement = focusableElement;
 
 			_PrevButton = new UIBarButtonItem("Previous", UIBarButtonItemStyle.Bordered, PreviousField);
 			_NextButton = new UIBarButtonItem("Next", UIBarButtonItemStyle.Bordered, NextField);
@@ -59,10 +57,9 @@ namespace MonoMobile.MVVM
 			
 			Items = buttons;
 			
-			if (_EntryElement != null && _EntryElement.InputAccessoryView == null)
+			if (_FocusableElement != null && _FocusableElement.Entry != null && _FocusableElement.Entry.InputAccessoryView == null)
 			{
-				TintColor = _EntryElement.Theme.BarTintColor;
-				_EntryElement.Entry.InputAccessoryView = this;
+				TintColor = ((IElement)_FocusableElement).Theme.BarTintColor;
 			}
 		}
 
@@ -84,17 +81,17 @@ namespace MonoMobile.MVVM
 
 		public void PreviousField(object sender, EventArgs e)
 		{
-			_EntryElement.MovePrev();
+			_FocusableElement.MovePrev();
 		}
 
 		public void NextField(object sender, EventArgs e)
 		{
-			_EntryElement.MoveNext();
+			_FocusableElement.MoveNext();
 		}
 
 		public void DismissKeyboard(object sender, EventArgs e)
 		{
-			_EntryElement.Entry.ResignFirstResponder();
+			_FocusableElement.Entry.ResignFirstResponder();
 		}
 	}
 }

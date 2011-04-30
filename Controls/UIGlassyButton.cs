@@ -146,7 +146,6 @@ namespace MonoMobile.MVVM.Controls
 			base.EndTracking(uitouch, uievent);
 		}
 		
-		[Export("ButtonTimer")]
 		private void ButtonTimer()
 		{
 			_Timer.Invalidate();

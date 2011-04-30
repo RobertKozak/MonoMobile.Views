@@ -128,7 +128,6 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		[Export("ExecuteCommandThread")]
 		private void ExecuteCommandThread()
 		{
 			using (var pool = new NSAutoreleasePool())

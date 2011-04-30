@@ -139,7 +139,7 @@ namespace MonoMobile.MVVM
 					if (skipAttribute != null) continue;
 					
 					var inline = member.GetCustomAttribute<InlineAttribute>() != null;
-					var isRoot = member.GetCustomAttribute<RootAttribute>() != null;
+				//	var isRoot = member.GetCustomAttribute<RootAttribute>() != null;
 					var listAttribute = member.GetCustomAttribute<ListAttribute>();		
 					var isList = listAttribute != null;
 					var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
@@ -166,7 +166,7 @@ namespace MonoMobile.MVVM
 						ApplyElementTheme(root.Theme, newElement, member);
 
 						//var context = newElement as IView;
-						var displayInline = (inline || !isRoot) && newElement is IRoot; //&& context != null;
+					//	var displayInline = (inline || !isRoot) && newElement is IRoot; //&& context != null;
 						
 						if (isList)
 						{

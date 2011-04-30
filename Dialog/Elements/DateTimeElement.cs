@@ -121,8 +121,7 @@ namespace MonoMobile.MVVM
 			DatePicker.Frame = PickerFrameWithSize(DatePicker.SizeThatFits(SizeF.Empty));
 			vc.View.BackgroundColor = tableView.BackgroundColor;
 			vc.View.AddSubview(DatePicker);
-			
-//InputAccessoryView
+		
 			//dvc.PresentModalViewController(vc, true);
 			dvc.ActivateController(vc, dvc);
 		}
