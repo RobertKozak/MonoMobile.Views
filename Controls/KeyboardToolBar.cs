@@ -60,6 +60,7 @@ namespace MonoMobile.MVVM
 			if (_FocusableElement != null && _FocusableElement.Entry != null && _FocusableElement.Entry.InputAccessoryView == null)
 			{
 				TintColor = ((IElement)_FocusableElement).Theme.BarTintColor;
+				Translucent = true;
 			}
 		}
 
