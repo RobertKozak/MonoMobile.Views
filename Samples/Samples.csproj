@@ -138,7 +138,6 @@
     <Compile Include="Views\ThemeSampleView.cs" />
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
     <Compile Include="Views\HoneyDoList.cs" />
-    <Compile Include="AppDelegate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -179,7 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoMobile.MVVM.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Project>{BA418E64-6532-4D8B-AD80-EB51C19A9F21}</Project>
       <Name>MonoMobile.MVVM</Name>
     </ProjectReference>
   </ItemGroup>
