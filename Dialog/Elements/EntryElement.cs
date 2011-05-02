@@ -145,6 +145,7 @@ namespace MonoMobile.MVVM
 				Entry.EditingDidEnd += delegate 
 				{
 					ValueProperty.Update();
+					Entry.SetNeedsDisplay();
 				};
 
 
