@@ -70,7 +70,6 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchExtraArgs>-aot "nimt-trampolines=2048"</MtouchExtraArgs>
-    <CodesignProvision>2837FA2E-23A0-449F-A222-C62150375140</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>

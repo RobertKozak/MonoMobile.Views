@@ -46,7 +46,8 @@ namespace MonoMobile.MVVM
 		protected object Control { get; private set; }
 
 		public Action PropertyChangedAction { get; set; }
-		
+		public string FullName { get { return string.Concat(SourceProperty.Name, "Property.Value"); } }
+
 		public object SourceValue
 		{
 			get
@@ -89,8 +90,7 @@ namespace MonoMobile.MVVM
 								SourceProperty.SetValue(SourceObject, convertedValue, null);
 							}
 #if DATABINDING							
-							var propName = string.Concat(SourceProperty.Name, "Property.Value");
-							var bindingExpression = BindingOperations.GetBindingExpression(this, propName);
+							var bindingExpression = BindingOperations.GetBindingExpression(this, FullName);
 							if (bindingExpression != null)
 							{
 								bindingExpression.UpdateSource();
@@ -161,7 +161,7 @@ namespace MonoMobile.MVVM
 		{
 			var value = Value; 
 #if DATABINDING
-			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
+			var bindingExpression = BindingOperations.GetBindingExpression(this, FullName);
 			if (bindingExpression != null)
 			{
 				value = bindingExpression.ConvertValue(Value);
