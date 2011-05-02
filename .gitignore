@@ -1,0 +1,5 @@
+*.svn
+bin/
+obj/
+Samples/bin
+Samples/obj
