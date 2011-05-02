@@ -184,6 +184,7 @@ namespace MonoMobile.MVVM.Utilities
 				DefaultLoader = new ImageLoader(50, 4 * 1024 * 1024);
 			return DefaultLoader.RequestImage(uri, notify);
 		}
+		
 
 		/// <summary>
 		///   Requests an image to be loaded from the network
