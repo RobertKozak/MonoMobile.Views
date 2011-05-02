@@ -1,5 +1,20 @@
+<<<<<<< HEAD
 *.svn
 bin/
 obj/
 Samples/bin
 Samples/obj
+=======
+# ReSharper meta directory
+_ReSharper*
+
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+bin
+obj
+
+# mstest test results
+TestResults
+
+# pidb files
+*.pidb
+>>>>>>> 4638c9466a3fd4bbf21c4e5eca4273253c90bedc
