@@ -5,9 +5,12 @@ namespace Samples
 	
 	public class Application
 	{
+		public static UIWindow Window { get; set; }
+		public static UINavigationController Navigation { get; set; }
+
 		static void Main(string[] args)
 		{
-			UIApplication.Main(args);
+			UIApplication.Main(args, null, "AppDelegate");
 		}	
 	}
 }

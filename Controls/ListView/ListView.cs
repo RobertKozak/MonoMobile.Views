@@ -49,7 +49,7 @@ namespace MonoMobile.MVVM
 		
 		public bool IsDirty { get; private set; }
 		public bool IsReloading { get; private set; }
-		public UITableViewStyle Style { get; private set; }
+		public new UITableViewStyle Style { get; private set; }
 		public UIImage BackgroundImage { get; set; }
 		public UIViewController ParentViewController { get; set; }
 		

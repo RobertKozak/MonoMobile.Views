@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMobile.MVVM", "MonoMobile.MVVM.csproj", "{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMobile.MVVM", "MonoMobile.MVVM.csproj", "{BA418E64-6532-4D8B-AD80-EB51C19A9F21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}"
 EndProject
@@ -27,18 +27,18 @@ Global
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhone.Build.0 = Release|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.AdHoc|iPhone.ActiveCfg = AdHoc|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.AdHoc|iPhone.Build.0 = AdHoc|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.AppStore|iPhone.Build.0 = AppStore|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Debug|iPhone.Build.0 = Debug|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhone.ActiveCfg = Release|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhone.Build.0 = Release|iPhone
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AdHoc|iPhone.ActiveCfg = AdHoc|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AdHoc|iPhone.Build.0 = AdHoc|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhone.Build.0 = Debug|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhone.ActiveCfg = Release|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhone.Build.0 = Release|iPhone
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Samples\Samples.csproj

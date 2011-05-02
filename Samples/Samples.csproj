@@ -9,17 +9,14 @@
     <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>Samples</RootNamespace>
-    <SupportedDevices>IPhoneAndIPad</SupportedDevices>
-    <MainNibFileIPad>MainWindowIPad.xib</MainNibFileIPad>
-    <MainNibFile>MainWindowIPhone.xib</MainNibFile>
     <AssemblyName>Samples</AssemblyName>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleIdentifier>DCMobile</BundleIdentifier>
     <BundleVersion>0.1</BundleVersion>
     <BundleDisplayName>MVVM Sample</BundleDisplayName>
-    <BundleIconHigh>DCAppiPhone4.png</BundleIconHigh>
-    <BundleIcon>DCAppiPhone.png</BundleIcon>
+    <BundleIconHigh>AppIcon4.png</BundleIconHigh>
+    <BundleIcon>AppIcon.png</BundleIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,6 +70,7 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchExtraArgs>-aot "nimt-trampolines=2048"</MtouchExtraArgs>
+    <CodesignProvision>2837FA2E-23A0-449F-A222-C62150375140</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -100,16 +98,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="DCAppiPhone.png" />
-    <None Include="DCAppiPhone4.png" />
+    <None Include="AppIcon.png" />
+    <None Include="AppIcon4.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindowIPhone.xib.designer.cs">
-      <DependentUpon>MainWindowIPhone.xib</DependentUpon>
-    </Compile>
     <Compile Include="Main.cs" />
-    <Compile Include="AppDelegateIPhone.cs" />
-    <Compile Include="MainMenu.cs" />
     <Compile Include="ViewModels\MovieViewModel.cs" />
     <Compile Include="Views\MovieView.cs" />
     <Compile Include="Views\MovieListView.cs" />
@@ -145,9 +138,7 @@
     <Compile Include="Views\ThemeSampleView.cs" />
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
     <Compile Include="Views\HoneyDoList.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="MainWindowIPhone.xib" />
+    <Compile Include="AppDelegate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -155,12 +146,6 @@
       <Properties InternalTargetFrameworkVersion="IPhone" />
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoMobile.MVVM.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>MonoMobile.MVVM</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
     <Folder Include="Views\" />
@@ -190,5 +175,12 @@
     <Content Include="Images\bluemac.jpg" />
     <Content Include="Images\worntexture.jpg" />
     <Content Include="Images\honeycomb.jpg" />
+    <Content Include="Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoMobile.MVVM.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoMobile.MVVM</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
