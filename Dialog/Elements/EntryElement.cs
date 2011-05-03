@@ -112,6 +112,8 @@ namespace MonoMobile.MVVM
 					Tag = 1 
 				};
 		
+			
+
 				if (EditMode == EditMode.NoCaption)
 					Entry.Placeholder = Caption;
 				else
@@ -128,6 +130,7 @@ namespace MonoMobile.MVVM
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
 				Entry.InputAccessoryView = _KeyboardToolbar;
+
 				Entry.ReturnKeyType = UIReturnKeyType.Default;
 
 				Entry.Started += (s, e) =>

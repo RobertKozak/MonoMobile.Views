@@ -212,6 +212,12 @@ namespace MonoMobile.MVVM
 		{
 			return Autorotate || toInterfaceOrientation == UIInterfaceOrientation.Portrait;
 		}
+		
+		public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+		{
+			if (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown)
+				base.WillRotate(toInterfaceOrientation, duration);
+		}
 
 		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
 		{
@@ -750,8 +756,10 @@ namespace MonoMobile.MVVM
 			if (color != null)
 			{
 				if (TableView.RespondsToSelector(new Selector("backgroundView")))
+				{
 					TableView.BackgroundView = new UIView() { Opaque = false };
-
+					TableView.BackgroundView.BackgroundColor = UIColor.Clear;
+				}
 				if (ParentViewController != null)
 				{
 					TableView.BackgroundColor = UIColor.Clear;

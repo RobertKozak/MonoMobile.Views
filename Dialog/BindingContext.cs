@@ -209,11 +209,15 @@ namespace MonoMobile.MVVM
 										((IRoot)element).Theme = rootTheme;
 									}
 								}
+								else if (e.GetType().Name.Contains("SelectionItem"))
+								{
+									element = new CheckboxElement(e.ToString()) { };
+									element.Theme = ((IRoot)newElement).Theme; 
+								}
 								else
 								{
 									element = new RadioElement(e.ToString());
-									element.Theme = ((IRoot)element).Theme; 
-									
+									element.Theme = ((IRoot)newElement).Theme; 
 								}
 		
 								lastSection.Add(element);
@@ -331,6 +335,10 @@ namespace MonoMobile.MVVM
 			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
 			{
 				element = CreateEnumCollectionRoot(member, caption, memberDataContext, bindings);
+			}
+			else if (memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>)))
+			{
+				element = CreateMultiselectCollectionRoot(member, caption, memberDataContext, bindings);
 			}
 			else if (typeof(IEnumerable).IsAssignableFrom(memberType) && !typeof(IView).IsAssignableFrom(memberType))
 			{
@@ -482,6 +490,36 @@ namespace MonoMobile.MVVM
 			return element;
 		}
 		
+		public IElement CreateMultiselectCollectionRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
+		{
+			SetDefaultConverter(member, "Value", new MultiselectCollectionConverter(), bindings);
+
+			var csection = new Section() { IsMultiselect = true, Opaque = false };
+			ApplyRootTheme(view, csection);
+
+			var collection = GetValue(member, view) as IEnumerable;
+
+			var index = 0;
+		
+			foreach (var item in collection)
+			{
+				var checkboxElement = new CheckboxElement(item.ToString()) { Index = index, Value = false};
+				ApplyRootTheme(view, checkboxElement);
+
+				csection.Add(checkboxElement);
+				
+				index++;
+			}
+			
+			var element = new RootElement(caption) { csection };
+			element.ViewBinding.DataContextCode = DataContextCode.MultiselectCollection;
+			element.ViewBinding.ViewType = null;
+
+			element.Theme.CellStyle = UITableViewCellStyle.Value1;
+
+			return element;
+		}
+
 		public IElement CreateEnumerableRoot(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);

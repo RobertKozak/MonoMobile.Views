@@ -91,6 +91,7 @@ namespace Samples
 		[NavbarButton("Add")]
 		public void AddMovie()
 		{
+			var selected = MovieClasses.SelectedItems.ToList();
 			CanChangeStyle = !CanChangeStyle;
 			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
 		}
@@ -125,6 +126,8 @@ namespace Samples
 			get { return _DynamicView; }
 			set { _DynamicView = value; } // { Set(()=>DynamicView, value); }
 		}
+
+		public MultiselectCollection<string> MovieClasses { get; set; }
 		
 		[Section]
 	//	[CellStyle(typeof(ClearStyle))]
@@ -194,8 +197,8 @@ namespace Samples
 		{
 			get; set;
 		}
-	
-		public HoneyDoList HoneyDoList { get; set; }
+
+		public HoneyDoListView HoneyDoList { get; set; }
 //		[Inline]
 //		public Genre Genre { get; set; }
 
@@ -203,7 +206,15 @@ namespace Samples
 		{
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
 			
-			HoneyDoList = new HoneyDoList();
+
+			HoneyDoList = new HoneyDoListView();
+
+			var enumType = typeof(Genre);
+            var enumItems = from field in enumType.GetFields()
+                            where field.IsLiteral
+                            select EnumExtensions.GetDescriptionValue(field.Name, enumType);
+
+			MovieClasses = new MultiselectCollection<string>(enumItems.ToList());
 
 			Movies2 = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();

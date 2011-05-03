@@ -63,7 +63,7 @@ namespace MonoMobile.MVVM
 				Translucent = true;
 			}
 		}
-
+		
 		public UIKeyboardToolbar(NSCoder coder) : base(coder)
 		{
 		}

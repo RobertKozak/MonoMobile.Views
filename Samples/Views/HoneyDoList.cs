@@ -9,37 +9,15 @@ namespace Samples
 
 	[Theme(typeof(HoneyDoTheme))]
 	[Theme(typeof(FrostedTheme))]
-	public class HoneyDoList
+	public class HoneyDoListView: View
 	{
-		[Checkbox]
-		[DefaultValue(true)]
-		public bool SubmitApp
+		[List]
+		public MultiselectCollection<string> Items { get; private set; }
+		public HoneyDoListView()
 		{
-			get;
-			set;
-		}
-		[Checkbox]
-		public bool OrderNewSupplies
-		{
-			get;
-			set;
-		}
-		[Checkbox]
-		public bool BuyTickets
-		{
-			get;
-			set;
-		}
-		[Checkbox]
-		[DefaultValue(true)]
-		public bool PickUpBooks
-		{
-			get;
-			set;
-		}
-		public HoneyDoList()
-		{
-			
+			var viewModel = new HoneyDoListViewModel();
+			Items = viewModel.Items;
+			DataContext = viewModel;
 		}
 	}
 

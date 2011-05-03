@@ -99,6 +99,7 @@
     <None Include="Info.plist" />
     <None Include="AppIcon.png" />
     <None Include="AppIcon4.png" />
+    <None Include="Default.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
     <Compile Include="Views\HoneyDoList.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="ViewModels\HoneyDoListViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -174,7 +176,6 @@
     <Content Include="Images\bluemac.jpg" />
     <Content Include="Images\worntexture.jpg" />
     <Content Include="Images\honeycomb.jpg" />
-    <Content Include="Default.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoMobile.MVVM.csproj">
