@@ -46,7 +46,7 @@ namespace MonoMobile.MVVM
 		protected object Control { get; private set; }
 
 		public Action PropertyChangedAction { get; set; }
-		public string FullName { get { return string.Concat(SourceProperty.Name, "Property.Value"); } }
+		public string FullName { get { return string.Concat(_SourcePropertyName, "Property.Value"); } }
 
 		public object SourceValue
 		{

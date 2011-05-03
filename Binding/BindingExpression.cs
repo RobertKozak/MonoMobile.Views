@@ -134,36 +134,26 @@ namespace MonoMobile.MVVM
 			{
 				if (sourceValue == null)
 					sourceValue = Binding.TargetNullValue;
-				try
-				{
-					object convertedSourceValue = ConvertValue(sourceValue);
 
-					if (Element != null && Element.Cell != null && Element.Cell.Element == Element)
-					{
-						SetValue(TargetProperty, Binding.Target, convertedSourceValue);
-					}
-				
-				}
-				catch (InvalidCastException)
+				object convertedSourceValue = ConvertValue(sourceValue);
+
+				if (Element != null && Element.Cell != null && Element.Cell.Element == Element)
 				{
+					SetValue(TargetProperty, Binding.Target, convertedSourceValue);
 				}
-				catch (NotImplementedException)
-				{
-				}
-				catch (NotSupportedException)
-				{
-				}
+
 			}
 		}
 
 		public object ConvertValue(object value)
 		{
 			object convertedValue = value;
+			
 			var memberType = GetMemberType(TargetProperty);
 
-			//try
+			if (Binding.Converter != null)
 			{
-				if (Binding.Converter != null)
+				try
 				{
 					object parameter = Element;
 					if (Binding.ConverterParameter != null)
@@ -171,22 +161,16 @@ namespace MonoMobile.MVVM
 	
 					convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
 				}
-
-				var typeCode = Convert.GetTypeCode(convertedValue);
-				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
-				{
-					convertedValue = Convert.ChangeType(convertedValue, memberType);
-				}
+				catch (InvalidCastException) {}
+				catch (NotSupportedException) {}
+				catch (NotImplementedException) {}
 			}
-//			catch (InvalidCastException)
-//			{
-//			}
-//			catch (NotImplementedException)
-//			{
-//			}
-//			catch (NotSupportedException)
-//			{
-//			}
+
+			var typeCode = Convert.GetTypeCode(convertedValue);
+			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+			{
+				convertedValue = Convert.ChangeType(convertedValue, memberType);
+			}
 
 			return convertedValue;
 		}
@@ -194,32 +178,25 @@ namespace MonoMobile.MVVM
 		public object ConvertbackValue(object value, MemberInfo member)
 		{
 			object convertedValue = value;
-			
-//			try
+		
+			if (Binding.Converter != null)
 			{
-				if (Binding.Converter != null)
+				try
 				{
 					object parameter = Element;
 					if (Binding.ConverterParameter != null)
 						parameter = Binding.ConverterParameter;
 					
-	
-						convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(member), parameter, CultureInfo.CurrentUICulture);
+					convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(member), parameter, CultureInfo.CurrentUICulture);
 				}
-
-				var typeCode = Convert.GetTypeCode(convertedValue);
-				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
-					convertedValue = Convert.ChangeType(convertedValue, GetMemberType(member));
+				catch (InvalidCastException) {}
+				catch (NotSupportedException) {}
+				catch (NotImplementedException) {}
 			}
-//			catch (InvalidCastException)
-//			{
-//			}
-//			catch (NotImplementedException)
-//			{
-//			}
-//			catch (NotSupportedException)
-//			{
-//			}
+
+			var typeCode = Convert.GetTypeCode(convertedValue);
+			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
+				convertedValue = Convert.ChangeType(convertedValue, GetMemberType(member));
 
 			return convertedValue;
 		}
@@ -229,22 +206,8 @@ namespace MonoMobile.MVVM
 			var member = SourceProperty;
 			if (member == null)
 				member = _ViewProperty;
-
-			object convertedValue = value;
-
-			try
-			{
-				convertedValue = ConvertbackValue(value, member);
-			}
-			catch (InvalidCastException)
-			{
-			}
-			catch (NotSupportedException)
-			{
-			}
-			catch (NotImplementedException)
-			{
-			}
+			
+			var convertedValue = ConvertbackValue(value, member);
 
 			return convertedValue;
 		}
@@ -290,14 +253,22 @@ namespace MonoMobile.MVVM
 
 		private void SetValue(MemberInfo member, object obj, object value)
 		{
-			if (member.MemberType == MemberTypes.Field)
+			try
 			{
-				((FieldInfo)member).SetValue(obj, value);
+				if (member.MemberType == MemberTypes.Field)
+				{
+					((FieldInfo)member).SetValue(obj, value);
+				}
+				
+				if (member.MemberType == MemberTypes.Property)
+				{
+					((PropertyInfo)member).SetValue(obj, value, null);
+				}
 			}
-			
-			if (member.MemberType == MemberTypes.Property)
+			catch (TargetInvocationException ex)
 			{
-				((PropertyInfo)member).SetValue(obj, value, null);
+				if (ex.InnerException.GetType() != typeof(InvalidCastException))
+					throw;
 			}
 		}
 

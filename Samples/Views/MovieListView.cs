@@ -117,12 +117,13 @@ namespace Samples
 			set;// { Set(()=>AddressView, value); } 
 		}
 		
+		private IView _DynamicView;
 		[Section(Order = 10)]
 		[Root]
 		public IView DynamicView
 		{
-			get;// { return Get(()=>DynamicView, new View1()); }
-			set;// { Set(()=>DynamicView, value); }
+			get { return _DynamicView; }
+			set { _DynamicView = value; } // { Set(()=>DynamicView, value); }
 		}
 		
 		[Section]

@@ -32,7 +32,7 @@ namespace Samples
 			Application.Navigation = _Navigation;
 
 			// this method initializes the main NavigationController
-			var startupThread = new Thread(Startup as ThreadStart);
+			var startupThread = new Thread(Startup);
 			startupThread.Start();
 			
 			return true;
