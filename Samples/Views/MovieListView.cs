@@ -91,7 +91,6 @@ namespace Samples
 		[NavbarButton("Add")]
 		public void AddMovie()
 		{
-			var selected = MovieClasses.SelectedItems.ToList();
 			CanChangeStyle = !CanChangeStyle;
 			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
 		}

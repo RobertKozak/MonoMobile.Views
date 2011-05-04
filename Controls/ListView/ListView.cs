@@ -32,15 +32,11 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Drawing;
-	using System.IO;
-	using System.Linq;
-	using System.Threading;
-	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
 	using MonoTouch.ObjCRuntime;
+	using MonoMobile.MVVM;
+	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.UIKit;
 
 	public class ListView : UITableView
@@ -77,15 +73,12 @@ namespace MonoMobile.MVVM
 		public Action<bool> ViewWillAppear { get; private set; }
 		public Action<UIInterfaceOrientation> DidRotate { get; private set; }
 		
-		
 		public ListView()
-		{
-			
+		{	
 		}
 		
 		public ListView(RectangleF bounds, UITableViewStyle style = UITableViewStyle.Grouped) : base(bounds, style)
-		{
-			
+		{	
 		}
 		
 		public ListView(UIViewController parentViewController, RectangleF bounds,UITableViewStyle style = UITableViewStyle.Grouped) : base(bounds, style)
@@ -124,59 +117,59 @@ namespace MonoMobile.MVVM
 			
 		}
 		
-		
 		public virtual ListViewSizingSource CreateSizingSource(bool unevenRows)
 		{
 			return unevenRows ? new ListViewSizingSource(this) : new ListViewSizingSource(this);
 		}
 		
-		
-
-		
 		private void ConfigureBackgroundImage()
 		{
-			UIColor color = null;
-			if (BackgroundImage == null)
+			if (BackgroundColor == null)
 			{
-				if (Root.Theme.BackgroundUri != null)
+				if (BackgroundImage == null)
 				{
-					var imageUri = Root.Theme.BackgroundUri;
-					BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
+					if (Root != null)
+					{
+						if (Root.Theme.BackgroundUri != null)
+						{
+							var imageUri = Root.Theme.BackgroundUri;
+							BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
+						}
+						
+						if (Root.Theme.BackgroundColor != null)
+						{
+							BackgroundColor = Root.Theme.BackgroundColor;
+						}
+		
+						if (Root.Theme.BackgroundImage != null)
+						{
+							BackgroundImage = Root.Theme.BackgroundImage;
+						}
+					}
 				}
-
-				if (Root.Theme.BackgroundColor != null)
+		
+				if (BackgroundImage != null)
 				{
-					color = Root.Theme.BackgroundColor;
-				}
-
-				if (Root.Theme.BackgroundImage != null)
-				{
-					BackgroundImage = Root.Theme.BackgroundImage;
+					BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
 				}
 			}
-
-			if (BackgroundImage != null)
+				
+			if (BackgroundColor != null)
 			{
-				color = UIColor.FromPatternImage(BackgroundImage);
-			}
-
-			if (color != null)
-			{
-				if (this.RespondsToSelector(new Selector("backgroundView")))
-					BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Red };
-
+				if (RespondsToSelector(new Selector("backgroundView")))
+				{
+					if (BackgroundView == null)
+					{
+						BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Clear };
+					}
+				}
 				if (ParentViewController != null)
 				{
-					this.BackgroundColor = UIColor.Clear;
-					ParentViewController.View.BackgroundColor = color;
-				} else
-				{
-					this.BackgroundColor = color;
-				}
+					ParentViewController.View.BackgroundColor = BackgroundColor;
+				} 
 			}
 		}
 
-		
 		public override void TouchesEnded(NSSet touches, UIEvent evt)
 		{
 			if (Root != null)
@@ -233,10 +226,7 @@ namespace MonoMobile.MVVM
 					var path = Root.PathForRadio();
 					this.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
-
 			}
-		}
-		
-		}
-	
+		}	
+	}
 }
