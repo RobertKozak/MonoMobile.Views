@@ -57,6 +57,7 @@ namespace MonoMobile.MVVM
 		private Source _TableSource;
 
 		public UIImage BackgroundImage { get; set; }
+		public UIColor BackgroundColor { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
 
@@ -223,6 +224,7 @@ namespace MonoMobile.MVVM
 		{
 			base.DidRotate(fromInterfaceOrientation);
 			ReloadData();
+			ConfigureBackgroundImage();
 		}
 
 		/// <summary>
@@ -518,7 +520,7 @@ namespace MonoMobile.MVVM
 				headerLabel.ShadowOffset = new SizeF(0, 1);
 				headerLabel.Text = caption;
 
-				var view = new UIView(rect);
+				var view = new UIView(rect) { Opaque = false, BackgroundColor = UIColor.Clear };
 				view.AddSubview(headerLabel);
 
 				return view;
@@ -725,49 +727,53 @@ namespace MonoMobile.MVVM
 
 		private void ConfigureBackgroundImage()
 		{
-			UIColor color = null;
-			if (BackgroundImage == null)
+			if (BackgroundColor == null)
 			{
-				if (Root != null)
+				if (BackgroundImage == null)
 				{
-					if (Root.Theme.BackgroundUri != null)
+					if (Root != null)
 					{
-						var imageUri = Root.Theme.BackgroundUri;
-						BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
-					}
-					
-					if (Root.Theme.BackgroundColor != null)
-					{
-						color = Root.Theme.BackgroundColor;
-					}
-
-					if (Root.Theme.BackgroundImage != null)
-					{
-						BackgroundImage = Root.Theme.BackgroundImage;
+						if (Root.Theme.BackgroundUri != null)
+						{
+							var imageUri = Root.Theme.BackgroundUri;
+							BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
+						}
+						
+						if (Root.Theme.BackgroundColor != null)
+						{
+							BackgroundColor = Root.Theme.BackgroundColor;
+						}
+		
+						if (Root.Theme.BackgroundImage != null)
+						{
+							BackgroundImage = Root.Theme.BackgroundImage;
+						}
 					}
 				}
-			}
-
-			if (BackgroundImage != null)
-			{
-				color = UIColor.FromPatternImage(BackgroundImage);
+		
+				if (BackgroundImage != null)
+				{
+					BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
+				}
 			}
 				
-			if (color != null)
+			if (BackgroundColor != null)
 			{
 				if (TableView.RespondsToSelector(new Selector("backgroundView")))
 				{
-					TableView.BackgroundView = new UIView() { Opaque = false };
-					TableView.BackgroundView.BackgroundColor = UIColor.Clear;
+					if (TableView.BackgroundView == null)
+					{
+						TableView.BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Clear };
+					}
 				}
 				if (ParentViewController != null)
 				{
 					TableView.BackgroundColor = UIColor.Clear;
-					ParentViewController.View.BackgroundColor = color;
+					ParentViewController.View.BackgroundColor = BackgroundColor;
 				} 
 				else
 				{
-					TableView.BackgroundColor = color;
+					TableView.BackgroundColor = BackgroundColor;
 				}
 			}
 		}

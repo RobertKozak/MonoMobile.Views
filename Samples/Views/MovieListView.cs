@@ -19,7 +19,7 @@ namespace Samples
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
-	[EnableSearch(true, IncrementalSearch = true)]
+//	[EnableSearch(true, IncrementalSearch = true)]
 	public class MovieListView: View, INotifyPropertyChanged
 	{	
 		[Section(Order = 2)]
@@ -185,7 +185,7 @@ namespace Samples
 			set;// { Set(()=>InterestingStuff, value); }
 		}
 		
-		[PullToRefresh]
+	//	[PullToRefresh]
 		public void RefreshData()
 		{
 			for(var index = 0; index < 100; index++)
@@ -201,6 +201,14 @@ namespace Samples
 		public HoneyDoListView HoneyDoList { get; set; }
 //		[Inline]
 //		public Genre Genre { get; set; }
+		[Section]
+		public string FakeSection { get; set; }
+
+		[Section]
+		public string FakeSection2 { get; set; }
+
+		[Section]
+		public string FakeSection3 { get; set; }
 
 		public MovieListView()
 		{

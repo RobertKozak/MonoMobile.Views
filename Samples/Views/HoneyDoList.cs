@@ -25,6 +25,13 @@ namespace Samples
 			Items = viewModel.Items;
 			viewModel.Caption = "Things to do";
 		}
+
+		[Section]
+		[Button]
+		public void ChangeCaption()
+		{
+			((HoneyDoListViewModel)DataContext).Caption = "TODO";
+		}
 	}
 
 	public class HoneyDoTheme : Theme

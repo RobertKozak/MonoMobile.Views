@@ -163,7 +163,7 @@ namespace MonoMobile.MVVM
 			if (color != null)
 			{
 				if (this.RespondsToSelector(new Selector("backgroundView")))
-					BackgroundView = new UIView() { Opaque = false };
+					BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Red };
 
 				if (ParentViewController != null)
 				{
