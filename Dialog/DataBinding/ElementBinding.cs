@@ -73,6 +73,8 @@ namespace MonoMobile.MVVM
 		public BindableProperty DetailTextShadowOffsetProperty = BindableProperty.Register("DetailTextShadowOffset");
 		public BindableProperty DetailTextShadowColorProperty = BindableProperty.Register("DetailTextShadowColor");
 
+		public BindableProperty CaptionProperty = BindableProperty.Register("Caption");
+
 		public BindableProperty ThemeProperty = BindableProperty.Register("Theme");
 #endif
 		public virtual void BindProperties()
@@ -80,6 +82,9 @@ namespace MonoMobile.MVVM
 #if DATABINDING		
 			TextFontProperty.BindTo(this, ()=>TextLabel.Font);
 			ThemeProperty.BindTo(this, ()=>Theme);
+			
+			if (TextLabel != null)
+				CaptionProperty.BindTo(this, () => TextLabel.Text);
 #endif
 		}
 	

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace Samples
 {
 	using System;
@@ -11,13 +12,18 @@ namespace Samples
 	[Theme(typeof(FrostedTheme))]
 	public class HoneyDoListView: View
 	{
-		[List]
+		[Bind("Caption", "Caption")]
+		[Root(ViewType = typeof(StandardListView))]
 		public MultiselectCollection<string> Items { get; private set; }
+
+		
 		public HoneyDoListView()
 		{
 			var viewModel = new HoneyDoListViewModel();
-			Items = viewModel.Items;
 			DataContext = viewModel;
+
+			Items = viewModel.Items;
+			viewModel.Caption = "Things to do";
 		}
 	}
 

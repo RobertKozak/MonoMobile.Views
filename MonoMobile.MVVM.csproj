@@ -269,6 +269,7 @@
     <Compile Include="Controls\ListView\ListViewSource.cs" />
     <Compile Include="Collections\MultiselectCollection.cs" />
     <Compile Include="Converters\MultiselectCollectionConverter.cs" />
+    <Compile Include="Dialog\DataBinding\SectionBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

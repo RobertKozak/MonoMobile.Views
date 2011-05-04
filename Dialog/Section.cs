@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 	/// Generic base version of Section
 	/// </summary>
 	[Preserve(AllMembers=true)]
-	public class Section : StringElement, ISection, IEnumerable
+	public partial class Section : StringElement, ISection, IEnumerable
 	{
 		private UIView _Header, _Footer;
 
@@ -65,6 +65,7 @@ namespace MonoMobile.MVVM
 		public Section(string caption) : base(caption)
 		{
 			Elements = new List<IElement>();
+			BindProperties();
 		}
 
 		/// <summary>
