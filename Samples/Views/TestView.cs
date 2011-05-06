@@ -1,51 +1,123 @@
-using MonoMobile.MVVM;
-
+using MonoTouch.UIKit;
+using MonoTouch.CoreLocation;
+using System.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 namespace Samples
 {
 	using System;
-	using MonoTouch.UIKit;
-	using System.Drawing;
-	using MonoTouch.CoreAnimation;
-	using MonoTouch.CoreGraphics;
-	using MonoMobile.MVVM.Controls;
-
+	using MonoMobile.MVVM;
+	
+	[Theme(typeof(BackgroundImageTheme))]
+	[Theme(typeof(NavbarTheme))]
+	[Theme(typeof(FrostedTheme))]
 	public class TestView : View
 	{
-		private UILabel label;
+	[Section("Enumerables")]
+		public TestEnum TestEnum;
+		[PopOnSelection]
+		public TestEnum PopEnum;
+		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
+		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
+		public MultiselectCollection<string> MySelectableList = new MultiselectCollection<string>() { "Windows", "OS X", "Linux" }; 
+
+		[Root(ViewType = typeof(MovieView))]
+		public ObservableCollection<MovieViewModel> Movies;
+
+		public List<MyObject> Tests = new List<MyObject>() { new MyObject() , new MyObject()};
+
+	[Section("Fields")]
+		[Entry]
+		public string String = "a string";
+		public bool Bool = true;
+		public int Int = 5;
+		[Range(1, 30, ShowCaption = false)]
+		public float Float = 8.3f;
+		public DateTime DateTime1;
+		public UIImage Image;
+		public Uri Uri;
+		[Map("A Map")]
+		public CLLocationCoordinate2D Location;
+
+
+	[Section("Properties")]
+		public string StringProperty { get; set; }
+		public bool BoolProperty { get; set; }
+		public int IntProperty { get; set; }
+		public float FloatProperty { get; set; }
+		public DateTime DateTime1Property { get; set; }
+		public UIImage ImageProperty { get; set; }
+		public Uri UriProperty { get; set; }
+		[Map("A Map")]
+		public CLLocationCoordinate2D LocationProperty { get; set; }
+
+	[Section("Classes")]
+		public MyObject MyObject { get; set; }
+		
+		[Inline]
+		public ButtonTestView ButtonTestView { get; set; }
 
 		public TestView()
 		{
-			this.BackgroundColor = UIColor.White;
-			Frame = new RectangleF(0, 0, 400, 400);
-			label = new UILabel (Frame);
-			label.Text = "";
-			label.Font = UIFont.BoldSystemFontOfSize(17);
-			label.BackgroundColor = this.BackgroundColor;
-			AddSubview (label);
+			ButtonTestView = new ButtonTestView();
 
-		var color = UIColor.FromRGB(88, 170, 34);
-		UIButton btn = new UIGlassyButton(new RectangleF(0, 0, 250, 42)) { Color = UIColor.Red, Title ="Red Button" };
-			UIButton btn2 = new UIGlassyButton (new RectangleF (0, 50, 250, 42)) { Color = UIColor.Gray, Title = "Gray Button" };
-			var btn3 = new UIGlassyButton (new RectangleF (0, 100, 250, 42)) { Color = UIColor.Black, Title = "Black Button", HighlightColor = UIColor.Blue };
-			UIButton btn4 = new UIGlassyButton (new RectangleF (0, 150, 250, 42)) { Color = color, Title = "Green Button" };
+			Uri = new Uri("Http://www.google.com");
+			DateTime1 = DateTime.Now;
+			Image = UIImage.FromFile("Images/brick.jpg");
+			Location = new CLLocationCoordinate2D(-33.867139, 151.207114);
 
+			StringProperty = String;
+			BoolProperty = Bool;
+			IntProperty = Int;
+			FloatProperty = Float;
+			DateTime1Property = DateTime1;
+			ImageProperty = Image;
+			UriProperty = Uri;
+			LocationProperty = Location;
 
-			AddSubview (btn);
-			AddSubview (btn2);
-			AddSubview (btn3);
-			AddSubview (btn4);
+			MyObject = new MyObject();
 
-			btn.TouchDown += HandleBtnTouchDown;
-			btn2.TouchDown += HandleBtnTouchDown;
-			btn3.TouchDown += HandleBtnTouchDown;
-			btn4.TouchDown += HandleBtnTouchDown;
+			Movies = new ObservableCollection<MovieViewModel>();
+			var dataModel = new MovieDataModel();
+			dataModel.Load();
+			Movies =dataModel.Movies;
 		}
+	}
 
-		void HandleBtnTouchDown (object sender, EventArgs e)
+	public class MyObject :View
+	{
+		public string TestString = "A Test String"; 
+
+	[Section("Lists")]
+		public TestEnum TestEnum;
+		[PopOnSelection]
+		public TestEnum PopEnum;
+		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
+		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
+		public MultiselectCollection<string> MySelectableList = new MultiselectCollection<string>() { "Windows", "OS X", "Linux" }; 
+
+		[Root(ViewType = typeof(MovieView))]
+		public ObservableCollection<MovieViewModel> Movies;
+
+		public MyObject()
 		{
-			Console.WriteLine("Clicked");
+			Movies = new ObservableCollection<MovieViewModel>();
+			var dataModel = new MovieDataModel();
+			dataModel.Load();
+			Movies =dataModel.Movies;
 		}
+	}
 
-
+	public enum TestEnum
+	{
+		One, 
+		Two,
+		Three,
+		Apple, 
+		Orange,
+		[Description("Slippers & Socks")]
+		SlippersAndSocks
 	}
 }
+

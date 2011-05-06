@@ -178,7 +178,8 @@ namespace MonoMobile.MVVM
 		public object ConvertbackValue(object value, MemberInfo member)
 		{
 			object convertedValue = value;
-		
+			var convertSupported = true;
+
 			if (Binding.Converter != null)
 			{
 				try
@@ -190,13 +191,16 @@ namespace MonoMobile.MVVM
 					convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(member), parameter, CultureInfo.CurrentUICulture);
 				}
 				catch (InvalidCastException) {}
-				catch (NotSupportedException) {}
-				catch (NotImplementedException) {}
+				catch (NotSupportedException) { convertSupported = false; }
+				catch (NotImplementedException) { convertSupported = false; }
 			}
-
-			var typeCode = Convert.GetTypeCode(convertedValue);
-			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
-				convertedValue = Convert.ChangeType(convertedValue, GetMemberType(member));
+			
+			if (convertSupported)
+			{
+				var typeCode = Convert.GetTypeCode(convertedValue);
+				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
+					convertedValue = Convert.ChangeType(convertedValue, GetMemberType(member));
+			}
 
 			return convertedValue;
 		}
@@ -218,12 +222,12 @@ namespace MonoMobile.MVVM
 
 			if (SourceProperty != null)
 			{
-				value = GetValue(SourceProperty, Binding.Source);
+				value = SourceProperty.GetValue(Binding.Source);
 			}
 			
 			if (value == null && _ViewProperty != null)
 			{
-				value = GetValue(_ViewProperty, Binding.ViewSource);
+				value = _ViewProperty.GetValue(Binding.ViewSource);
 			}
 			
 			if (value != null) return value;
@@ -233,7 +237,7 @@ namespace MonoMobile.MVVM
 
 		public virtual object GetTargetValue()
 		{
-			return GetValue(TargetProperty, Binding.Target);
+			return TargetProperty.GetValue(Binding.Target);
 		}
 
 		private Type GetMemberType(MemberInfo member)
@@ -265,26 +269,9 @@ namespace MonoMobile.MVVM
 					((PropertyInfo)member).SetValue(obj, value, null);
 				}
 			}
-			catch (TargetInvocationException ex)
+			catch 
 			{
-				if (ex.InnerException.GetType() != typeof(InvalidCastException))
-					throw;
 			}
-		}
-
-		private object GetValue(MemberInfo member, object obj)
-		{
-			if (member.MemberType == MemberTypes.Field)
-			{
-				return ((FieldInfo)member).GetValue(obj);
-			}
-			
-			if (member.MemberType == MemberTypes.Property)
-			{
-				return ((PropertyInfo)member).GetValue(obj, null);
-			}
-			
-			return null;
 		}
 	}
 }

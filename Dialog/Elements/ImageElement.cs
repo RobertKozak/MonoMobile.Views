@@ -50,6 +50,7 @@ namespace MonoMobile.MVVM
 		{
 			if (Value != value)
 			{				
+				_Value = value;
 				_Scaled = Scale((UIImage)Value);
 			}
 			else

@@ -429,101 +429,29 @@ namespace MonoMobile.MVVM
 		/// <summary>
 		/// Creates the UIViewController that will be pushed by this RootElement
 		/// </summary>
-		protected virtual UIViewController MakeViewController()
+		protected virtual UIViewController MakeViewController(UITableViewStyle style)
 		{
 			if (_ViewControllerFactory != null)
 				return _ViewControllerFactory(this);
 
-			var dvc = new DialogViewController(this, true) { Autorotate = true };
+			var dvc = new DialogViewController(style, this, true) { Autorotate = true };
 
 			return dvc;
 		}
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			BindingContext bindingContext = null;
-			if (ViewBinding != null)
-			{
-				switch (ViewBinding.DataContextCode)
-				{
-					case DataContextCode.Object:
-					{
-						object view = ViewBinding.CurrentView;
-
-						if (view == null)
-						{
-							if (ViewBinding.DataContext != null && ViewBinding.DataContext is UIView)
-							{
-								view = ViewBinding.DataContext as UIView;
-							}
-							else if (ViewBinding.ViewType != null) 
-							{
-								view = Activator.CreateInstance(ViewBinding.ViewType);
-								var dataContext = view as IDataContext;
-								if (dataContext != null)
-								{
-									if (dataContext.DataContext == null)
-										dataContext.DataContext = ViewBinding.DataContext;
-	
-									var lifetime = dataContext.DataContext as ISupportInitialize;
-									if (lifetime != null)
-										lifetime.BeginInit();
-									
-									lifetime = view as ISupportInitialize;
-									if (lifetime != null)
-										lifetime.BeginInit();
-								}
-
-							}
-						}
+			var root = BindingContext.CreateRootedView(this);
 			
-						bindingContext = new BindingContext(view, Caption, Root.Theme);
-
-						var root = (RootElement)bindingContext.Root;
-						root.ActivateController(dvc, tableView, path);
-		
-						return;
-					}
-					case DataContextCode.Enum: break;
-					case DataContextCode.EnumCollection: break;
-					case DataContextCode.Enumerable:
-					{
-						Sections.Clear();
-						IElement element = null;
-	
-						var items = (IEnumerable)ViewBinding.DataContext;
-	
-						var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
-					
-						if (genericType is IView)
-						{
-							Sections.Add(new Section());
-
-							foreach (var e in items)
-							{
-								element = new RootElement(e.ToString()) { ViewBinding = ViewBinding, Theme = Theme };
-								element.ViewBinding.DataContextCode = DataContextCode.Object;
-			
-								Sections[0].Add(element);
-							}
-						}
-						else
-						{
-							var section = BindingContext.CreateEnumSection(this, items, null, true);
-							Sections.Add(section);
-						}
-
-						break;
-					}
-				}
-			}
-
-			ActivateController(dvc, tableView, path);
+			if (root != null)
+				((RootElement)root).ActivateController(dvc, tableView, path);
+			else	
+				ActivateController(dvc, tableView, path);
 		}
 
 		public void ActivateController(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{	
-			var newDvc = MakeViewController();
+			var newDvc = MakeViewController(dvc.Style);
 			PrepareDialogViewController(newDvc);
 			dvc.ActivateController(newDvc, dvc);
 			

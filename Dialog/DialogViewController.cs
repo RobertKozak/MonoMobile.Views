@@ -505,22 +505,31 @@ namespace MonoMobile.MVVM
 
 			private UIView CreateHeaderView(UITableView tableView, string caption)
 			{
-				var bounds = tableView.Bounds;
 				var headerLabel = new UILabel();
 
 				headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
 				var size = headerLabel.StringSize(caption, headerLabel.Font);
-				var rect = new RectangleF(bounds.X + 20, bounds.Y, bounds.Width - 20, size.Height + 10);
 				
-				headerLabel.Bounds = rect;
-				headerLabel.Frame = headerLabel.Bounds;
-				headerLabel.BackgroundColor = UIColor.Clear;
+				var bounds = new RectangleF(tableView.Bounds.X, tableView.Bounds.Y, tableView.Bounds.Width, size.Height + 10);
+				var frame = new RectangleF(bounds.X + 20, bounds.Y, bounds.Width - 20, size.Height + 10);
+	
+				headerLabel.Bounds = bounds;
+				headerLabel.Frame = frame;
+				
 				headerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
 				headerLabel.ShadowColor = UIColor.White;
 				headerLabel.ShadowOffset = new SizeF(0, 1);
 				headerLabel.Text = caption;
+				
+				var view = new UIView(bounds) { BackgroundColor = tableView.BackgroundColor };
 
-				var view = new UIView(rect) { Opaque = false, BackgroundColor = UIColor.Clear };
+				if (tableView.Style == UITableViewStyle.Grouped)
+				{
+					headerLabel.BackgroundColor = UIColor.Clear;
+					view.Opaque = false;
+					view.BackgroundColor = UIColor.Clear;
+				}
+
 				view.AddSubview(headerLabel);
 
 				return view;

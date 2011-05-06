@@ -44,8 +44,8 @@ namespace Samples
 			{
 				InvokeOnMainThread(delegate 
 				{
-					var binding = new BindingContext(new MovieListView(), "Samples MVVM");
-					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } };//{Autorotate = true } };
+					var binding = new BindingContext(new TestView(), "Samples MVVM");
+					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } };
 
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(0.3f);

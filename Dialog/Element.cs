@@ -333,6 +333,10 @@ namespace MonoMobile.MVVM
 			Enabled = true;
 		}
 		
+		public Element(string caption, Binding binding): this(caption)
+		{
+
+		}
 		public RectangleF ContentFrame 
 		{ 
 			get { var frame = base.Frame; frame.Location = new PointF(0, 0); return frame; } 

@@ -270,6 +270,9 @@
     <Compile Include="Collections\MultiselectCollection.cs" />
     <Compile Include="Converters\MultiselectCollectionConverter.cs" />
     <Compile Include="Dialog\DataBinding\SectionBinding.cs" />
+    <Compile Include="Dialog\DataBinding\RadioElementBinding.cs" />
+    <Compile Include="Dialog\ViewParser.cs" />
+    <Compile Include="Extensions\ThemeExtentions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

@@ -37,6 +37,8 @@ namespace MonoMobile.MVVM
 
 	public interface ISection : IThemeable, IDisposable
 	{
+		ViewBinding ViewBinding { get; set; }
+
 		List<IElement> Elements { get; set; }
 		string Caption { get; set; }
 		int Order { get; set; }

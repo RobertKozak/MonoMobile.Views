@@ -172,15 +172,12 @@ namespace MonoMobile.MVVM
 				ClearBackground();
 			}
 		}
-		
-		public UILabel HeaderTextLabel { get; set; }
 		public UIFont HeaderTextFont { get; set; }
 		public UITextAlignment HeaderTextAlignment { get; set; }
 		public UIColor HeaderTextColor { get; set; }
 		public SizeF HeaderTextShadowOffset { get; set; }
 		public UIColor HeaderTextShadowColor { get; set; }
 
-		public UILabel FooterTextLabel { get; set; }
 		public UIFont FooterTextFont { get; set; }
 		public UITextAlignment FooterTextAlignment { get; set; }
 		public UIColor FooterTextColor { get; set; }
@@ -365,9 +362,6 @@ namespace MonoMobile.MVVM
 				
 				if (theme.HeaderTextShadowColor != null)
 					HeaderTextShadowColor = theme.HeaderTextShadowColor;
-				
-				if (theme.HeaderTextLabel != null)
-					HeaderTextLabel = theme.HeaderTextLabel;
 
 
 				FooterTextAlignment = theme.FooterTextAlignment;
@@ -384,8 +378,6 @@ namespace MonoMobile.MVVM
 				if (theme.FooterTextShadowColor != null)
 					FooterTextShadowColor = theme.FooterTextShadowColor;
 				
-				if (theme.FooterTextLabel != null)
-					FooterTextLabel = theme.FooterTextLabel;
 
 				if (theme.DrawContentViewAction != null)
 				{
@@ -467,6 +459,7 @@ namespace MonoMobile.MVVM
 		{
 			return Name;
 		}
+
 	}
 }
 
