@@ -39,7 +39,7 @@ namespace Samples
 		[Description("West Coast")]
 		WestCoast
 	}
-
+	
 	public class MovieViewModel : ViewModel
 	{
 		public string Name 

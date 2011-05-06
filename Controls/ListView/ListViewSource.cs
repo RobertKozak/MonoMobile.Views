@@ -117,11 +117,13 @@ namespace MonoMobile.MVVM
 
 			headerLabel.Bounds = rect;
 			headerLabel.Frame = headerLabel.Bounds;
-			headerLabel.BackgroundColor = UIColor.Clear;
 			headerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
 			headerLabel.ShadowColor = UIColor.White;
 			headerLabel.ShadowOffset = new SizeF(0, 1);
 			headerLabel.Text = caption;
+
+			if (tableView.Style == UITableViewStyle.Grouped)
+				headerLabel.BackgroundColor = UIColor.Clear;
 
 			var view = new UIView(rect);
 			view.AddSubview(headerLabel);

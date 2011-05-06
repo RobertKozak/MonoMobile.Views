@@ -1,5 +1,5 @@
 // 
-//  ViewAttribute.cs
+//  RadioElementBinding.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,19 +27,33 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
-{
-	using System;
 
-	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-	public class ViewAttribute: Attribute
-	{
-		public ViewAttribute(Type viewType)
-		{
-			ViewType = viewType;
-		}
+// not sure if needed yet
 
-		public Type ViewType { get; set; }
-	}
-}
+//namespace MonoMobile.MVVM
+//{
+//	using System;
+//
+//	public partial class RadioElement
+//	{
+//		private bool Checkmark
+//		{
+//			get { return Value; }
+//			set
+//			{
+//				if (Value != value)
+//				{
+//					Value = Value;
+//					UpdateSelected();
+//				}
+//			}
+//		}
+//
+//		public override void BindProperties()
+//		{
+//			base.BindProperties();
+//			ValueProperty.BindTo(this, () => Checkmark);
+//		}
+//	}
+//}
 

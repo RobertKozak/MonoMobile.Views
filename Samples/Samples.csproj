@@ -115,7 +115,6 @@
     <Compile Include="Views\View1.cs" />
     <Compile Include="Converters\CurrentMovieConverter.cs" />
     <Compile Include="Views\WebSamples.cs" />
-    <Compile Include="Views\TestView.cs" />
     <Compile Include="Views\ElementAPIView.cs" />
     <Compile Include="ViewModels\MovieListViewModel.cs" />
     <Compile Include="Themes\AutumnTheme.cs" />
@@ -140,6 +139,8 @@
     <Compile Include="Views\HoneyDoList.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\HoneyDoListViewModel.cs" />
+    <Compile Include="Views\ButtonTestView.cs" />
+    <Compile Include="Views\TestView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

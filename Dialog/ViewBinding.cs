@@ -18,7 +18,7 @@ namespace MonoMobile.MVVM
 			{
 				if (DataContext != null)
 				{
-					var value = GetValue(MemberInfo, DataContext) as UIView;
+					var value = MemberInfo.GetValue(DataContext) as UIView;
 					if (value != null)
 						return value;
 				}
@@ -29,24 +29,6 @@ namespace MonoMobile.MVVM
 
 		public ViewBinding()
 		{
-		}
-
-		public static object GetValue(MemberInfo mi, object o)
-		{
-			var fi = mi as FieldInfo;
-			if (fi != null)
-			{
-				return fi.GetValue(o);
-			}
-
-			var pi = mi as PropertyInfo;
-			if (pi != null)
-			{
-				object value = pi.GetValue(o,new object[] {}); 
-				return value;
-			}
-
-			return null;
 		}
 	}
 }
