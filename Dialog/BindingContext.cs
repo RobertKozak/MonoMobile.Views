@@ -1,4 +1,3 @@
-using System.Linq;
 //
 // BindingContext.cs
 //
@@ -36,6 +35,7 @@ namespace MonoMobile.MVVM
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Linq;
 	using System.Reflection;
 	using System.Text;
 	using MonoMobile.MVVM;
@@ -166,7 +166,7 @@ namespace MonoMobile.MVVM
 							section.Add(element);
 						}
 					
-					ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
+						ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
 						break;
 					}
 				}
