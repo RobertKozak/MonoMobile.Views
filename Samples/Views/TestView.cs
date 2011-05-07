@@ -25,7 +25,7 @@ namespace Samples
 		[Root(ViewType = typeof(MovieView))]
 		public ObservableCollection<MovieViewModel> Movies;
 
-		public List<MyObject> Tests = new List<MyObject>() { new MyObject() , new MyObject()};
+		public List<MyObject> Tests = new List<MyObject>() { new MyObject(), new MyObject() };
 
 	[Section("Fields")]
 		[Entry]
@@ -55,7 +55,7 @@ namespace Samples
 	[Section("Classes")]
 		public MyObject MyObject { get; set; }
 		
-		[Inline]
+		//[Inline]
 		public ButtonTestView ButtonTestView { get; set; }
 
 		public TestView()

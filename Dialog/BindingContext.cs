@@ -116,12 +116,14 @@ namespace MonoMobile.MVVM
 									if (lifetime != null)
 										lifetime.BeginInit();
 								}
-								
 							}
 						}
 						
 						var bindingContext = new BindingContext(view, root.Caption, root.Theme);
-						return (RootElement)bindingContext.Root;
+
+						var newRoot = (IRoot)bindingContext.Root;
+						newRoot.ViewBinding = root.ViewBinding;
+						return newRoot;
 					}
 					case DataContextCode.Enum:
 						break;
@@ -138,7 +140,7 @@ namespace MonoMobile.MVVM
 						
 						var items = (IEnumerable)root.ViewBinding.DataContext;
 					
-						var section = new Section();
+						var section = new Section() { ViewBinding = root.ViewBinding };
 						root.Sections.Add(section);
 						
 						foreach (var e in items)
@@ -149,8 +151,10 @@ namespace MonoMobile.MVVM
 								caption = MakeCaption(root.ViewBinding.ViewType.Name);
 							}
 
-							element = new RootElement(caption) { ViewBinding = root.ViewBinding, Theme = root.Theme, Opaque = false };
+							element = new RootElement(caption) { Theme = root.Theme, Opaque = false };
 							element.ViewBinding.DataContextCode = DataContextCode.Object;
+							element.ViewBinding.ViewType = root.ViewBinding.ViewType;
+							element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
 							element.ViewBinding.DataContext = null;
 
 							if (element.ViewBinding.ViewType == null)

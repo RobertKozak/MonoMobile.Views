@@ -137,15 +137,17 @@ namespace MonoMobile.MVVM
 							
 							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) { Order = sectionAttribute.Order };
 							lastSection.Parent = root as IElement;
+
 							ThemeHelper.ApplyElementTheme(root.Theme, lastSection, null); 
-	
 							ThemeHelper.ApplyElementTheme(sectionTheme, lastSection, null);
+
 							sectionList.Add(lastSection);
 						}
 		
 						var bindings = GetBindings(view, member);
 	
 						newElement = GetElementForMember(root.Theme, view, member, bindings);
+						
 						ThemeHelper.ApplyElementTheme(theme, newElement, member);
 						
 						if (newElement is ISection)
@@ -341,9 +343,7 @@ namespace MonoMobile.MVVM
 			var csection = new Section() { Opaque = false };
 
 			int index = 0;
-			int selected = 0;
-		
-			ThemeHelper.ApplyElementTheme(theme, csection, null); 
+			int selected = 0; 
 
 			foreach(var value in values)
 			{
@@ -360,8 +360,6 @@ namespace MonoMobile.MVVM
 				radioElement.PopOnSelect = popOnSelection;
 				radioElement.Value = selected == index;
 				radioElement.Opaque = false;
-				
-				ThemeHelper.ApplyElementTheme(theme, radioElement, null); 
 
 				csection.Add(radioElement);
 				index++;
@@ -379,7 +377,6 @@ namespace MonoMobile.MVVM
 			SetDefaultConverter(member, "Value", new EnumItemsConverter(), bindings);
 
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
-			ThemeHelper.ApplyMemberTheme(member, csection);
 
 			var collection = member.GetValue(view);
 			if (collection == null)
@@ -397,10 +394,8 @@ namespace MonoMobile.MVVM
 			foreach (var item in items.AllValues)
 			{
 				var checkboxElement = new CheckboxElement(item.Description) { Index = index, Value = item.IsChecked, Group = item.GroupName};
-				ThemeHelper.ApplyRootTheme(view, checkboxElement);
 
-				csection.Add(checkboxElement);
-				
+				csection.Add(checkboxElement);				
 				index++;
 			}
 			
@@ -415,8 +410,6 @@ namespace MonoMobile.MVVM
 			SetDefaultConverter(member, "Value", new MultiselectCollectionConverter(), bindings);
 
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
-			ThemeHelper.ApplyRootTheme(view, csection);
-
 			var collection = member.GetValue(view) as IEnumerable;
 
 			var index = 0;
@@ -424,10 +417,7 @@ namespace MonoMobile.MVVM
 			foreach (var item in collection)
 			{
 				var checkboxElement = new CheckboxElement(item.ToString()) { Index = index, Value = false};
-				ThemeHelper.ApplyRootTheme(view, checkboxElement);
-
 				csection.Add(checkboxElement);
-				
 				index++;
 			}
 			

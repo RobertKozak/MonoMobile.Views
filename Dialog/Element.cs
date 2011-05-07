@@ -317,8 +317,13 @@ namespace MonoMobile.MVVM
 		public bool ShowCaption { get; set; }
 		
 		public UIView ContentView { get; set; }
-
-		public ViewBinding ViewBinding { get; set; }
+		
+		private ViewBinding _ViewBinding;
+		public ViewBinding ViewBinding 
+		{ 
+			get { return _ViewBinding; }
+			set { _ViewBinding = value; }
+		}
 		
 		public UITableView TableView { get; set; }
 

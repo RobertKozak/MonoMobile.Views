@@ -69,6 +69,13 @@ namespace MonoMobile.MVVM
 			
 			if (member != null)
 				ApplyMemberTheme(member, element);
+
+			if (element is IRoot)
+			{
+				foreach(var section in ((IRoot)element).Sections)
+					foreach(var e in section.Elements)
+						ApplyElementTheme(element.Theme, e, null);
+			}
 		}
 
 		public static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
