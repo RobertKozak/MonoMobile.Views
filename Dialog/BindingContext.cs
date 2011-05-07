@@ -1,3 +1,4 @@
+using System.Linq;
 //
 // BindingContext.cs
 //
@@ -84,6 +85,8 @@ namespace MonoMobile.MVVM
 		
 		public static IRoot CreateRootedView(IRoot root)
 		{
+			IRoot newRoot = null;
+
 			if (root.ViewBinding != null)
 			{
 				switch (root.ViewBinding.DataContextCode)
@@ -121,9 +124,9 @@ namespace MonoMobile.MVVM
 						
 						var bindingContext = new BindingContext(view, root.Caption, root.Theme);
 
-						var newRoot = (IRoot)bindingContext.Root;
+						newRoot = (IRoot)bindingContext.Root;
 						newRoot.ViewBinding = root.ViewBinding;
-						return newRoot;
+						break;
 					}
 					case DataContextCode.Enum:
 						break;
@@ -135,14 +138,14 @@ namespace MonoMobile.MVVM
 						break;
 					case DataContextCode.ViewEnumerable:
 					{
-						root.Sections.Clear();
+						newRoot = new RootElement() { Opaque = false };
 						IElement element = null;
 						
 						var items = (IEnumerable)root.ViewBinding.DataContext;
-					
-						var section = new Section() { ViewBinding = root.ViewBinding };
-						root.Sections.Add(section);
-						
+						var section = new Section() { Opaque = false, ViewBinding = root.ViewBinding, Parent = newRoot as IElement };
+
+						newRoot.Sections.Add(section);
+
 						foreach (var e in items)
 						{
 							var caption = e.ToString();
@@ -151,7 +154,7 @@ namespace MonoMobile.MVVM
 								caption = MakeCaption(root.ViewBinding.ViewType.Name);
 							}
 
-							element = new RootElement(caption) { Theme = root.Theme, Opaque = false };
+							element = new RootElement(caption) { Opaque = false };
 							element.ViewBinding.DataContextCode = DataContextCode.Object;
 							element.ViewBinding.ViewType = root.ViewBinding.ViewType;
 							element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
@@ -160,17 +163,16 @@ namespace MonoMobile.MVVM
 							if (element.ViewBinding.ViewType == null)
 								element.ViewBinding.ViewType = e.GetType();
 
-							element.Parent = section;
-						
 							section.Add(element);
 						}
-						
+					
+					ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
 						break;
 					}
 				}
 			}
 
-			return root;
+			return newRoot;
 		}
 
 		public static string MakeCaption(string name)
