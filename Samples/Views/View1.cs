@@ -36,7 +36,7 @@ namespace Samples
 	public class View2 : View
 	{
 		public string Company { get; set; }
-		[Inline]
+		[List]
 		public AddressView AddressView { get; set; }
 		
 		public View2()

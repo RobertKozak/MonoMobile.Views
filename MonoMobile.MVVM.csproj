@@ -172,7 +172,6 @@
     <Compile Include="Converters\EnumerableConverter.cs" />
     <Compile Include="Dialog\Reflection API\RootAttribute.cs" />
     <Compile Include="Dialog\Reflection API\PopOnSelectionAttribute.cs" />
-    <Compile Include="Dialog\Reflection API\InlineAttribute.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Model\IModel.cs" />
     <Compile Include="Dialog\Reflection API\MapAttribute.cs" />

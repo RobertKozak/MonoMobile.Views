@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	{
 		public BindableProperty ItemIndexProperty = BindableProperty.Register("ItemIndex");
 		
-		private int _Index
+		private int Index
 		{
 			get { return ItemIndex; }
 			set
@@ -52,7 +52,7 @@ namespace MonoMobile.MVVM
 #if DATABINDING
 			base.BindProperties();
 			
-			ItemIndexProperty.BindTo(this, () => _Index);
+			ItemIndexProperty.BindTo(this, () => Index);
 #endif
 		}
 	}

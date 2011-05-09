@@ -15,69 +15,85 @@ namespace Samples
 	public class TestView : View
 	{
 	[Section("Enumerables")]
+		//[Root]
+		//[List]
 		public TestEnum TestEnum;
+		//[Root]
+		//[List]
 		[PopOnSelection]
 		public TestEnum PopEnum;
+		//[Root]
+		//[List]
 		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
+		//[Root]
+		//[List]
 		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
+		//[Root]
+		//[List]
 		public MultiselectCollection<string> MySelectableList = new MultiselectCollection<string>() { "Windows", "OS X", "Linux" }; 
-
-		[Root(ViewType = typeof(MovieView))]
+		
+		//[List]
+		//[List(ViewType = typeof(MovieView))]
+		//[Root(ViewType=typeof(MovieView))]
+		[Root]
 		public ObservableCollection<MovieViewModel> Movies;
 
+		//[List]
+		[Root]
 		public List<MyObject> Tests = new List<MyObject>() { new MyObject(), new MyObject() };
-
-	[Section("Fields")]
-		[Entry]
-		public string String = "a string";
-		public bool Bool = true;
-		public int Int = 5;
-		[Range(1, 30, ShowCaption = false)]
-		public float Float = 8.3f;
-		public DateTime DateTime1;
-		public UIImage Image;
-		public Uri Uri;
-		[Map("A Map")]
-		public CLLocationCoordinate2D Location;
-
-
-	[Section("Properties")]
-		public string StringProperty { get; set; }
-		public bool BoolProperty { get; set; }
-		public int IntProperty { get; set; }
-		public float FloatProperty { get; set; }
-		public DateTime DateTime1Property { get; set; }
-		public UIImage ImageProperty { get; set; }
-		public Uri UriProperty { get; set; }
-		[Map("A Map")]
-		public CLLocationCoordinate2D LocationProperty { get; set; }
-
-	[Section("Classes")]
-		public MyObject MyObject { get; set; }
-		
-		//[Inline]
-		public ButtonTestView ButtonTestView { get; set; }
+//
+//	[Section("Fields")]
+//		[Entry]
+//		public string String = "a string";
+//		public bool Bool = true;
+//		public int Int = 5;
+//		[Range(1, 30, ShowCaption = false)]
+//		public float Float = 8.3f;
+//		public DateTime DateTime1;
+//		public UIImage Image;
+//		public Uri Uri;
+//		[Map("A Map")]
+//		public CLLocationCoordinate2D Location;
+//		[Inline]
+//		public MyObject MyObject = new MyObject();
+//
+//	[Section("Properties")]
+//		public string StringProperty { get; set; }
+//		public bool BoolProperty { get; set; }
+//		public int IntProperty { get; set; }
+//		public float FloatProperty { get; set; }
+//		public DateTime DateTime1Property { get; set; }
+//		public UIImage ImageProperty { get; set; }
+//		public Uri UriProperty { get; set; }
+//		[Map("A Map")]
+//		public CLLocationCoordinate2D LocationProperty { get; set; }
+//
+//	[Section("Classes")]
+//		public MyObject MyObject { get; set; }
+//		
+//		//[Inline]
+//		public ButtonTestView ButtonTestView { get; set; }
 
 		public TestView()
 		{
-			ButtonTestView = new ButtonTestView();
-
-			Uri = new Uri("Http://www.google.com");
-			DateTime1 = DateTime.Now;
-			Image = UIImage.FromFile("Images/brick.jpg");
-			Location = new CLLocationCoordinate2D(-33.867139, 151.207114);
-
-			StringProperty = String;
-			BoolProperty = Bool;
-			IntProperty = Int;
-			FloatProperty = Float;
-			DateTime1Property = DateTime1;
-			ImageProperty = Image;
-			UriProperty = Uri;
-			LocationProperty = Location;
-
-			MyObject = new MyObject();
-
+//			ButtonTestView = new ButtonTestView();
+//
+//			Uri = new Uri("Http://www.google.com");
+//			DateTime1 = DateTime.Now;
+//			Image = UIImage.FromFile("Images/brick.jpg");
+//			Location = new CLLocationCoordinate2D(-33.867139, 151.207114);
+//
+//			StringProperty = String;
+//			BoolProperty = Bool;
+//			IntProperty = Int;
+//			FloatProperty = Float;
+//			DateTime1Property = DateTime1;
+//			ImageProperty = Image;
+//			UriProperty = Uri;
+//			LocationProperty = Location;
+//
+//			MyObject = new MyObject();
+//
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
 			dataModel.Load();

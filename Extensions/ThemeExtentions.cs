@@ -76,6 +76,10 @@ namespace MonoMobile.MVVM
 					foreach(var e in section.Elements)
 						ApplyElementTheme(element.Theme, e, null);
 			}
+
+			if (element is ISection)
+				foreach(var e in ((ISection)element).Elements)
+					ApplyElementTheme(element.Theme, e, null);
 		}
 
 		public static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
