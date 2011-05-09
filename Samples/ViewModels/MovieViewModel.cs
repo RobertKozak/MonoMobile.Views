@@ -89,10 +89,17 @@ namespace Samples
 			get { return Get(() => Location); }
 			set { Set(() => Location, value); }
 		}
+		
+		public AddressView AddressView 
+		{
+			get { return Get(() => AddressView); }
+			set { Set(() => AddressView, value); }
+		}
 
 		public override string ToString()
 		{
 			return string.Format("{0}", Name);
+			AddressView = new AddressView();
 		}
 	
 

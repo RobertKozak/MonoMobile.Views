@@ -109,8 +109,10 @@ namespace MonoMobile.MVVM
 								if (dataContext != null)
 								{
 									if (dataContext.DataContext == null)
+									{
 										dataContext.DataContext = root.ViewBinding.DataContext;
-									
+									}
+
 									var lifetime = dataContext.DataContext as ISupportInitialize;
 									if (lifetime != null)
 										lifetime.BeginInit();
@@ -126,6 +128,7 @@ namespace MonoMobile.MVVM
 
 						newRoot = (IRoot)bindingContext.Root;
 						newRoot.ViewBinding = root.ViewBinding;
+						newRoot.ViewBinding.View = view;
 						break;
 					}
 					case DataContextCode.Enum:
@@ -158,7 +161,7 @@ namespace MonoMobile.MVVM
 							element.ViewBinding.DataContextCode = DataContextCode.Object;
 							element.ViewBinding.ViewType = root.ViewBinding.ViewType;
 							element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
-							element.ViewBinding.DataContext = null;
+							element.ViewBinding.DataContext = e;
 
 							if (element.ViewBinding.ViewType == null)
 								element.ViewBinding.ViewType = e.GetType();

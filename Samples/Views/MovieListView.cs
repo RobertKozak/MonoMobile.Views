@@ -168,7 +168,7 @@ namespace Samples
 //		{
 //			
 //		}
-////		[Inline]
+////		[List]
 ////		[Section("", "This Address is the same as Root Address above")]
 ////		public AddressView InlineAddress 
 ////		{
@@ -198,7 +198,7 @@ namespace Samples
 //		}
 //
 //		public HoneyDoListView HoneyDoList { get; set; }
-////		[Inline]
+////		[List]
 ////		public Genre Genre { get; set; }
 //
 		public MovieListView()

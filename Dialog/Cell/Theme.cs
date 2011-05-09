@@ -410,8 +410,8 @@ namespace MonoMobile.MVVM
 				
 				if (TextLabel != null)
 				{
-					if (TextFont == null)
-						TextFont = cell.TextLabel.Font;
+//					if (TextFont == null)
+//						TextFont = cell.TextLabel.Font;
 	
 					if (TextColor == null)
 						TextColor = cell.TextLabel.TextColor;
@@ -427,8 +427,8 @@ namespace MonoMobile.MVVM
 
 				if (DetailTextLabel != null)
 				{
-					if (DetailTextFont == null)
-						DetailTextFont = cell.DetailTextLabel.Font;
+//					if (DetailTextFont == null)
+//						DetailTextFont = cell.DetailTextLabel.Font;
 					
 					if (DetailTextColor == null)
 						DetailTextColor = cell.DetailTextLabel.TextColor;

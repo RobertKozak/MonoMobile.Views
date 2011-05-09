@@ -182,7 +182,7 @@ namespace MonoMobile.MVVM
 
 			foreach (var section in sectionList)
 			{
-				var orderedList = section.Elements.OrderBy(e=>e.Order).ToList();
+				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
 				section.Elements = orderedList;
 			}
 
@@ -282,7 +282,7 @@ namespace MonoMobile.MVVM
 			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
 
 			var isEnumerable = typeof(IEnumerable).IsAssignableFrom(memberType) && !(isView || isUIView);
-
+		
 			var isList = member.GetCustomAttribute<ListAttribute>() != null;
 
 			if (isEnum || isEnumCollection || isMultiselectCollection)
@@ -300,8 +300,10 @@ namespace MonoMobile.MVVM
 					root = rootElement;
 				}
 				else
+				{
 					root = section as IElement;
-			} 
+				} 
+			}
 			else if (isEnumerable)
 			{
 				var rootElement = CreateEnumerableRoot(theme, member, caption, view, bindings);
@@ -310,43 +312,47 @@ namespace MonoMobile.MVVM
 					root = rootElement.Sections.FirstOrDefault() as IElement;
 				}
 				else
+				{
 					root = rootElement as IElement;
+				}
 			}
 			else if (isView || isUIView)
 			{
 				var rootElement = new RootElement(caption) { Opaque = false };
 
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
-				rootElement.Theme.CellStyle = UITableViewCellStyle.Value1;
-	
 				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
-				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
 				rootElement.ViewBinding.MemberInfo = member;
-				rootElement.ViewBinding.DataContext = view;
 				rootElement.ViewBinding.ViewType = memberType;
+				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
 				
-				if (isList)
+				if (genericType != null)
 				{
 					var items = member.GetValue(view);
 					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
 					rootElement.ViewBinding.ViewType = viewType;
 					rootElement.ViewBinding.DataContext = items;
+				}
+				else
+				{
+
+				}
+
+				if (isList)
+				{
 					var innerRoot = BindingContext.CreateRootedView(rootElement);
 					root = innerRoot as IElement;
 				}
 				else
 				{
-					var items = member.GetValue(view);
-					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
-					rootElement.ViewBinding.ViewType = viewType;
-					rootElement.ViewBinding.DataContext = items;
 					root = rootElement;
 				}
 			}
 			else
 			{
 				throw new Exception(string.Format("Unknown Enumerable type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
-			}			
+			}		
+	
 			return root;
 		}
 		
@@ -362,7 +368,7 @@ namespace MonoMobile.MVVM
 
 				var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 				
-				var currentValue = (int)member.GetValue(view);
+				var currentValue = member.GetValue(view);
 				var enumValues = Enum.GetValues(memberType);
 
 				section = CreateEnumSection(theme, enumValues, currentValue, pop);
@@ -384,11 +390,11 @@ namespace MonoMobile.MVVM
 			var csection = new Section() { Opaque = false };
 
 			int index = 0;
-			int selected = 0; 
+			int selected = -1; 
 
 			foreach(var value in values)
 			{
-				if (currentValue == value)
+				if (currentValue != null && currentValue.Equals(value))
 					selected = index;
 				
 				var description = value.ToString();
@@ -470,7 +476,7 @@ namespace MonoMobile.MVVM
 
 		private IRoot CreateEnumerableRoot(Theme theme, MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
-			SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
+		//	SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
 		 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();

@@ -109,6 +109,29 @@ namespace MonoMobile.MVVM
 			return result;
 		}
 
+		public static object TryGetValue(this MemberInfo member, object obj)
+		{
+			object result = null;
+			
+			try
+			{
+				if (member.MemberType == MemberTypes.Field)
+				{
+					result = ((FieldInfo)member).GetValue(obj);
+				}
+			
+				if (member.MemberType == MemberTypes.Property)
+				{
+					result = ((PropertyInfo)member).GetValue(obj, null);
+				}
+			}
+			catch (ArgumentException)
+			{
+			}
+			
+			return result;
+		}
+
 		public static bool IsAssignableToGenericType(this Type givenType, Type genericType)
 		{
 			var interfaceTypes = givenType.GetInterfaces();

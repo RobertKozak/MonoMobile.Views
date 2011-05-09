@@ -18,7 +18,7 @@ namespace MonoMobile.MVVM
 			{
 				if (DataContext != null)
 				{
-					var value = MemberInfo.GetValue(DataContext) as UIView;
+					var value = MemberInfo.TryGetValue(DataContext) as UIView;
 					if (value != null)
 						return value;
 				}
