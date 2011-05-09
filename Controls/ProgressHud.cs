@@ -34,6 +34,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
+	using System.Linq;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
@@ -52,7 +53,7 @@ namespace MonoMobile.MVVM
 	{
 		private static UIImage _CheckmarkImage = UIImage.FromResource(null, "checkmark.png");
 		
-		private UIWindow _Window = UIApplication.SharedApplication.Windows[0];
+		private UIWindow _Window = UIApplication.SharedApplication.Windows.FirstOrDefault();
 		private UIView _Indicator;
 		private float _Width;
 		private float _Height;

@@ -7,7 +7,7 @@ namespace Samples
 	using System.Drawing;
 	using MonoTouch.CoreAnimation;
 	using MonoTouch.CoreGraphics;
-	using MonoMobile.MVVM.Controls;
+	using Samples.Controls;
 
 	public class ButtonTestView : UIView
 	{
@@ -15,7 +15,7 @@ namespace Samples
 
 		public ButtonTestView()
 		{
-			this.BackgroundColor = UIColor.White;
+			this.BackgroundColor = UIColor.Clear;
 			Frame = new RectangleF(0, 0, 300, 250);
 			label = new UILabel (Frame);
 			label.Text = "";
@@ -23,8 +23,8 @@ namespace Samples
 			label.BackgroundColor = this.BackgroundColor;
 			AddSubview (label);
 
-		var color = UIColor.FromRGB(88, 170, 34);
-		UIButton btn = new UIGlassyButton(new RectangleF(0, 0, 250, 42)) { Color = UIColor.Red, Title ="Red Button" };
+			var color = UIColor.FromRGB(88, 170, 34);
+			UIButton btn = new UIGlassyButton(new RectangleF(0, 0, 250, 42)) { Color = UIColor.Red, Title ="Red Button" };
 			UIButton btn2 = new UIGlassyButton (new RectangleF (0, 50, 250, 42)) { Color = UIColor.Gray, Title = "Gray Button" };
 			var btn3 = new UIGlassyButton (new RectangleF (0, 100, 250, 42)) { Color = UIColor.Black, Title = "Black Button", HighlightColor = UIColor.Blue };
 			UIButton btn4 = new UIGlassyButton (new RectangleF (0, 150, 250, 42)) { Color = color, Title = "Green Button" };

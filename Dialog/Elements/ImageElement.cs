@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
+	using System.Linq;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
@@ -120,7 +121,7 @@ namespace MonoMobile.MVVM
 		{
 			if (_Scaled != null)
 			{
-				bool roundTop = Section.Elements[0] == this;
+				bool roundTop = Section.Elements.FirstOrDefault() == this;
 				bool roundBottom = Section.Elements[Section.Elements.Count - 1] == this;
 	
 				using (var cs = CGColorSpace.CreateDeviceRGB())

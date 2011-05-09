@@ -79,7 +79,7 @@ namespace MonoMobile.MVVM
 			UpdateBindings();
 			if (_BindingExpressions != null)
 			{
-				return _BindingExpressions.SingleOrDefault((b)=>b.Binding.TargetPath == property && b.Binding.Target == target);
+				return _BindingExpressions.SingleOrDefault((b)=>b.Binding.TargetPath == property && b.Binding.Target.Equals(target));
 			}
 
 			return null;

@@ -8,7 +8,7 @@ namespace Samples
 {
 	using System;
 	using MonoMobile.MVVM;
-	
+
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
@@ -71,13 +71,14 @@ namespace Samples
 	[Section("Classes")]
 		public MyObject MyObject { get; set; }
 		
-		//[List]
+		[List]
 		public ButtonTestView ButtonTestView { get; set; }
 
 		public TestView()
 		{
 			ButtonTestView = new ButtonTestView();
-
+			EnumCollection[1].IsChecked = true;
+ 
 			Uri = new Uri("Http://www.google.com");
 			DateTime1 = DateTime.Now;
 			Image = UIImage.FromFile("Images/brick.jpg");
@@ -93,7 +94,7 @@ namespace Samples
 			LocationProperty = Location;
 
 			MyObject = new MyObject();
-//
+
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
 			dataModel.Load();

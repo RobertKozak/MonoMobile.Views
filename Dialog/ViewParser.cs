@@ -107,7 +107,7 @@ namespace MonoMobile.MVVM
 			
 			if (!(view is IView))
 			{
-				newElement = new UIViewElement(root.Caption, view, false);
+				newElement = new UIViewElement(null, view, false);
 				lastSection.Add(newElement);
 			}
 			else
@@ -429,7 +429,7 @@ namespace MonoMobile.MVVM
 			if (collection == null)
 			{
 				var collectionType = typeof(EnumCollection<>);
-				var enumType = memberType.GetGenericArguments()[0];
+				var enumType = memberType.GetGenericArguments().FirstOrDefault();
 				Type[] generic = { enumType };
 
 				collection = Activator.CreateInstance(collectionType.MakeGenericType(generic));

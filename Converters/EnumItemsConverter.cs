@@ -30,12 +30,14 @@
 namespace MonoMobile.MVVM
 {
     using System;
+	using System.Linq;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
     public class EnumItemsConverter : DisposableObject, IValueConverter
     {
         private EnumCollection _EnumCollection;
+		private int _ConvertedValue;
 
         public EnumCollection EnumCollection { get { return _EnumCollection; } }
 
@@ -49,13 +51,15 @@ namespace MonoMobile.MVVM
 			if (!typeof(EnumCollection).IsAssignableFrom(valueType))
 				throw new ArgumentException("value must be an EnumCollection");
 
-			var convertedValue = 0;
-			foreach(var item in ((EnumCollection)value).TrueValues)
+			_ConvertedValue = 0;
+			var collection = (EnumCollection)value;
+			foreach(var item in collection.TrueValues)
 			{
-				convertedValue |= (1 << item.Index);
+				_ConvertedValue |= (1 << item.Index);
 			}
 
-			return convertedValue;
+			
+			return collection.TrueValues.Count;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -63,12 +67,12 @@ namespace MonoMobile.MVVM
 			if (!typeof(EnumCollection).IsAssignableFrom(targetType))
 				throw new ArgumentException("target must be an EnumCollection");
 
-			var intValue = System.Convert.ToInt64(value);
+			var intValue = System.Convert.ToInt64(_ConvertedValue);
 			if (intValue == -1 )
 				intValue = 0;
 
 			var collectionType = typeof(EnumCollection<>);
-			var enumType = targetType.GetGenericArguments()[0];
+			var enumType = targetType.GetGenericArguments().FirstOrDefault();
 			Type[] generic = { enumType };
 
 			var collection = Activator.CreateInstance(collectionType.MakeGenericType(generic));

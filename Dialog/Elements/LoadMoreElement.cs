@@ -33,6 +33,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
+	using System.Linq;
 	using System.Threading;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
@@ -81,7 +82,7 @@ namespace MonoMobile.MVVM
 				// Doesn't work due to a bug in MonoTouch that should be fixed in 4.0 
 				//float hue, saturation, brightness, alpha;
 				//TextColor.GetHSBA(out hue, out saturation, out brightness, out alpha);
-				var brightness = 1 - TextColor.CGColor.Components[0];
+				var brightness = 1 - TextColor.CGColor.Components.FirstOrDefault();
 
 
 				if (brightness > 0.5f)

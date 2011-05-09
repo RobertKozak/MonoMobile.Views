@@ -136,7 +136,7 @@ namespace MonoMobile.MVVM
 
 		public NSIndexPath PathForRadio()
 		{
-			RadioGroup radio = Groups[0] as RadioGroup;
+			RadioGroup radio = Groups.FirstOrDefault() as RadioGroup;
 			if (radio == null)
 				return null;
 			
@@ -390,7 +390,7 @@ namespace MonoMobile.MVVM
 				return -1;
 			}
 			set {
-				var radio = Groups[0] as RadioGroup;
+				var radio = Groups.FirstOrDefault() as RadioGroup;
 				if (radio != null)
 				{
 					radio.Selected = value;
@@ -546,8 +546,8 @@ namespace MonoMobile.MVVM
 
 		protected int FromString(string value)
 		{
-			var element = Sections[0].Elements.SingleOrDefault((e)=>e.ToString() == value);
-			return Sections[0].Elements.IndexOf(element);
+			var element = Sections.FirstOrDefault().Elements.SingleOrDefault((e)=>e.ToString() == value);
+			return Sections.FirstOrDefault().Elements.IndexOf(element);
 		}
 	}
 }

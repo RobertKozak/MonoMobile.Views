@@ -181,7 +181,6 @@
     <Compile Include="Converters\UriConverter.cs" />
     <Compile Include="Dialog\Reflection API\NavbarButtonAttribute.cs" />
     <Compile Include="Dialog\Reflection API\BarButtonLocation.cs" />
-    <Compile Include="Controls\UIGlassyButton.cs" />
     <Compile Include="Controls\CommandBarButtonItem.cs" />
     <Compile Include="Dialog\DataContextCode.cs" />
     <Compile Include="Dialog\BindingContext.cs" />

@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Reflection;
+	using System.Linq;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
@@ -46,7 +47,7 @@ namespace MonoMobile.MVVM
 			if (!valueType.IsAssignableToGenericType(typeof(IMultiselectCollection<>)))
 				throw new ArgumentException("value must be an MultiselectCollection");
 			
-			var genericType = valueType.GetGenericArguments()[0];
+			var genericType = valueType.GetGenericArguments().FirstOrDefault();
 			Type[] generic = { genericType };
 		
 			MethodInfo method = typeof(MultiselectCollectionConverter).GetMethod("CollectionToInt", BindingFlags.NonPublic | BindingFlags.Static);
@@ -65,7 +66,7 @@ namespace MonoMobile.MVVM
 			if (intValue == -1 )
 				intValue = 0;
 
-			var genericType = targetType.GetGenericArguments()[0];
+			var genericType = targetType.GetGenericArguments().FirstOrDefault();
 			Type[] generic = { genericType };
 			
 			MethodInfo method = typeof(MultiselectCollectionConverter).GetMethod("IntToCollection", BindingFlags.NonPublic | BindingFlags.Static);

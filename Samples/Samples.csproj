@@ -141,6 +141,7 @@
     <Compile Include="ViewModels\HoneyDoListViewModel.cs" />
     <Compile Include="Views\ButtonTestView.cs" />
     <Compile Include="Views\TestView.cs" />
+    <Compile Include="Controls\UIGlassyButton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -155,6 +156,7 @@
     <Folder Include="Converters\" />
     <Folder Include="Images\" />
     <Folder Include="Themes\" />
+    <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\cork.png" />
