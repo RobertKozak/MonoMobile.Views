@@ -262,7 +262,6 @@
     <Compile Include="Application\IObservableObject.cs" />
     <Compile Include="Dialog\DataBinding\CheckboxElementBinding.cs" />
     <Compile Include="Dialog\DataBinding\RootElementBinding.cs" />
-    <Compile Include="Controls\KeyboardToolBar.cs" />
     <Compile Include="Controls\ListView\ListView.cs" />
     <Compile Include="Controls\ListView\ListViewSource.cs" />
     <Compile Include="Collections\MultiselectCollection.cs" />
@@ -271,6 +270,10 @@
     <Compile Include="Dialog\DataBinding\RadioElementBinding.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
     <Compile Include="Extensions\ThemeExtentions.cs" />
+    <Compile Include="Controls\UIDatePickerToolbar.cs" />
+    <Compile Include="Controls\UIKeyboardToolBar.cs" />
+    <Compile Include="Controls\UIInputViewToolBar.cs" />
+    <Compile Include="Dialog\Elements\FocusableElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

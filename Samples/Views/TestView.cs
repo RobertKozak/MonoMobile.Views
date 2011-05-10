@@ -17,6 +17,7 @@ namespace Samples
 	[Section("Enumerables")]
 		//[Root]
 		//[List]
+		[Caption("Testing Enums")]
 		public TestEnum TestEnum = TestEnum.Two;
 		//[Root]
 		//[List]

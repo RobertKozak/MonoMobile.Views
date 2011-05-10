@@ -153,7 +153,15 @@ namespace MonoMobile.MVVM
 			if (value != null && Value != value)
 			{
 				if (Control != null)
-					ControlProperty.SetValue(Control, value);
+				{
+					try
+					{
+						ControlProperty.SetValue(Control, value);
+					}
+					catch(ArgumentException)
+					{
+					}
+				}
 			}
 		}
 

@@ -1015,10 +1015,10 @@ namespace MonoMobile.MVVM
 				{
 					foreach(var element in section.Elements)
 					{
-						var selected = element as EntryElement;
-						if (selected != null && selected.Entry != null && selected.Entry.IsFirstResponder) 
+						var selected = element as IFocusable;
+						if (selected != null && selected.InputControl != null && selected.InputControl.IsFirstResponder) 
 						{
-							selected.Entry.ResignFirstResponder();
+							selected.InputControl.ResignFirstResponder();
 							break;
 						}
 					}

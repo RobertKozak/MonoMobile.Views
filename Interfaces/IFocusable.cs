@@ -35,11 +35,14 @@ namespace MonoMobile.MVVM
 
 	public interface IFocusable
 	{
-		UICustomTextField Entry { get; }
+		UICustomTextField InputControl { get; }
+		
 		NSIndexPath IndexPath { get; }
 
 		void MoveNext();
 		void MovePrev();
+
+		UIControl Control { get; set; }
 	}
 }
 

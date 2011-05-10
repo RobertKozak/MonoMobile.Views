@@ -30,17 +30,16 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Drawing;
+	using System.Linq;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public partial class DateTimeElement : Element, ISelectable, IFocusable
+	public partial class DateTimeElement : FocusableElement, ISelectable
 	{
-		private UICustomTextField _Dummy { get; set; }
-
-		public UICustomTextField Entry { get; set; }
-		public DateTime Value { get; set; }  
+		public NSDate Value { get; set; }  
 
 		public UIDatePicker DatePicker;
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
@@ -51,11 +50,6 @@ namespace MonoMobile.MVVM
 		public DateTimeElement(string caption, DateTime date) : base(caption)
 		{
 			Value = date;
-		}
-
-		public override UITableViewElementCell NewCell()
-		{
-			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id, this);
 		}
 
 		public override void InitializeCell(UITableView tableView)
@@ -92,45 +86,27 @@ namespace MonoMobile.MVVM
 		
 		public override void InitializeContent()
 		{ 
-			_Dummy = new UICustomTextField(Bounds) { Tag = 1 };
-			_Dummy.ShouldBeginEditing = (tf) => 
-			{ 
-				Entry.BecomeFirstResponder(); 
-				return false;
-			};
-
-			Entry = new UICustomTextField(Bounds) 
-			{ 
-				BackgroundColor = UIColor.Clear, 
-				Tag = 2,
-				Hidden = true
-			};
+			base.InitializeContent();
 
 			DatePicker = CreatePicker();
 			var view = new UIView(DatePicker.Bounds);
 			view.AddSubview(DatePicker);
 		
-			Entry.InputView = view;
-			Entry.InputAccessoryView = new UIKeyboardToolbar(this) { PreviousButtonVisible = false, NextButtonVisible = false };
+			Control = DatePicker;
 
-			Entry.Started += (s, e) =>
+			InputControl.InputView = view;
+			InputControl.InputAccessoryView = new UIDatePickerToolbar(this) { };
+
+			InputControl.Started += (s, e) =>
 			{
-				ValueProperty.ConvertBack<string>();				
+				ValueProperty.ConvertBack<NSDate>();				
 			};
 
-			Entry.Ended += (s, e) => 
+			InputControl.Ended += (s, e) => 
 			{
 				Value = DatePicker.Date;
 				OnValueChanged();
 			};
-	
-			ContentView = _Dummy;
-			ContentView.AddSubview(Entry);
-		}
-
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-			Entry.BecomeFirstResponder();
 		}
 
 		public virtual UIDatePicker CreatePicker()
@@ -146,16 +122,6 @@ namespace MonoMobile.MVVM
 			
 			if (DetailTextLabel != null)
 				DetailTextLabel.Text = FormatDate(Value);
-		}
-
-		public void MoveNext ()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void MovePrev ()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

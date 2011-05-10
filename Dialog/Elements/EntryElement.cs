@@ -45,14 +45,12 @@ namespace MonoMobile.MVVM
 	}
 	
 	[Preserve(AllMembers = true)]
-	public partial class EntryElement : StringElement, IFocusable, ISearchable, ISelectable
+	public partial class EntryElement : FocusableElement, IFocusable, ISearchable, ISelectable
 	{
 		private UIKeyboardToolbar _KeyboardToolbar;
 		private NSTimer _Timer;
 		private IFocusable _Focus;
-
-		public UICustomTextField Entry { get; set; }
-		
+ 
 		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
@@ -101,7 +99,7 @@ namespace MonoMobile.MVVM
 		{ 
 			if (EditMode != EditMode.ReadOnly)
 			{
-				Entry = new UICustomTextField() 
+				InputControl = new UICustomTextField() 
 				{ 
 					BackgroundColor = UIColor.Clear, 
 					PlaceholderColor = Theme.PlaceholderColor, 
@@ -115,44 +113,44 @@ namespace MonoMobile.MVVM
 			
 
 				if (EditMode == EditMode.NoCaption)
-					Entry.Placeholder = Caption;
+					InputControl.Placeholder = Caption;
 				else
-					Entry.Placeholder = Placeholder;
+					InputControl.Placeholder = Placeholder;
 
-				Entry.SecureTextEntry = IsPassword;
-				Entry.Font = DetailTextFont;
-				Entry.KeyboardType = KeyboardType;
-				Entry.TextAlignment = DetailTextAlignment;
-				Entry.ReturnKeyType = ReturnKeyType;
+				InputControl.SecureTextEntry = IsPassword;
+				InputControl.Font = DetailTextFont;
+				InputControl.KeyboardType = KeyboardType;
+				InputControl.TextAlignment = DetailTextAlignment;
+				InputControl.ReturnKeyType = ReturnKeyType;
 
 				if (DetailTextColor != null)
-					Entry.TextColor = DetailTextColor;
+					InputControl.TextColor = DetailTextColor;
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
-				Entry.InputAccessoryView = _KeyboardToolbar;
+				InputControl.InputAccessoryView = _KeyboardToolbar;
 
-				Entry.ReturnKeyType = UIReturnKeyType.Default;
+				InputControl.ReturnKeyType = UIReturnKeyType.Default;
 
-				Entry.Started += (s, e) =>
+				InputControl.Started += (s, e) =>
 				{
 					ValueProperty.ConvertBack<string>();				
 				};
 			
-				Entry.ShouldReturn = delegate
+				InputControl.ShouldReturn = delegate
 				{
-					Entry.ResignFirstResponder();
+					InputControl.ResignFirstResponder();
 
 					return true;
 				};
 				
-				Entry.EditingDidEnd += delegate 
+				InputControl.EditingDidEnd += delegate 
 				{
 					ValueProperty.Update();
-					Entry.Text = Value;
+					InputControl.Text = Value;
 				};
 
 
-				ContentView = Entry;
+				ContentView = InputControl;
 			}
 			else
 			{
@@ -163,56 +161,20 @@ namespace MonoMobile.MVVM
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			if (Entry != null)
+			if (InputControl != null)
 			{
-				Entry.InvokeOnMainThread(()=>{
-					Entry.BecomeFirstResponder();
+				InputControl.InvokeOnMainThread(()=>{
+					InputControl.BecomeFirstResponder();
 				});
 			}
 		}
 
-		public void MoveNext()
-		{
-			var elements = Section.Elements.Where((e)=>e is IFocusable).Cast<IFocusable>().ToList();
-			MoveFocus(elements); 
-		}
-		
-		public void MovePrev()
-		{
-			var elements = Section.Elements.Where((e)=>e is IFocusable).Cast<IFocusable>().ToList();
-			elements.Reverse();
-			
-			MoveFocus(elements);
-		}
-
-		private void MoveFocus(IList<IFocusable> elements)
-		{
-			_Focus = null;
-			
-			var nextElements = elements.SkipWhile(e=>e != this);
-			_Focus = nextElements.Skip(1).FirstOrDefault();
-			if (_Focus == null)
-				_Focus = elements.FirstOrDefault();
-			
-			_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(300), FocusTimer);
-
-			TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);			
-		}
-
-		private void FocusTimer()
-		{
-			_Timer.Invalidate();
-			_Timer = null;
-			
-			_Focus.Entry.BecomeFirstResponder();
-		}
-
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && Entry != null)
+			if (disposing && InputControl != null)
 			{
-				Entry.Dispose();
-				Entry = null;
+				InputControl.Dispose();
+				InputControl = null;
 			}
 			
 			base.Dispose(disposing);

@@ -36,16 +36,12 @@ namespace MonoMobile.MVVM
 	using System.Collections.Generic;
 	using MonoTouch.UIKit;
 
-	public class UIKeyboardToolbar : UIToolbar
+	public class UIKeyboardToolbar : UIInputViewToolbar
 	{
 		private bool _NextButtonVisible;
 		private bool _PreviousButtonVisible;
 		private UIBarButtonItem _NextButton;
 		private UIBarButtonItem _PrevButton;
-		private UIBarButtonItem _Spacer;
-		private UIBarButtonItem _DoneButton;
-		
-		private IFocusable _FocusableElement;
 		
 		public bool NextButtonVisible 
 		{ 
@@ -73,67 +69,40 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		public UIKeyboardToolbar(IFocusable focusableElement) : base(new RectangleF(0, 0, 320, 44))
+		public UIKeyboardToolbar(IFocusable focusableElement) : base(focusableElement)
 		{		
-			_FocusableElement = focusableElement;
-			
 			PreviousButtonVisible = true;
 			NextButtonVisible = true;
-			
-			_Spacer = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
-			_DoneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, DismissKeyboard);
-			
-			if (_FocusableElement != null && _FocusableElement.Entry != null && _FocusableElement.Entry.InputAccessoryView == null)
-			{
-				TintColor = ((IElement)_FocusableElement).Theme.BarTintColor;
-				Translucent = true;
-			}
 		}
 		
-		public UIKeyboardToolbar(NSCoder coder) : base(coder)
-		{
-		}
-
-		public UIKeyboardToolbar(NSObjectFlag t) : base(t)
-		{
-		}
-
-		public UIKeyboardToolbar(IntPtr handle) : base(handle)
-		{
-		}
-
-		public UIKeyboardToolbar(RectangleF frame) : base(frame)
-		{
-		}
+		public UIKeyboardToolbar(NSCoder coder) : base(coder) { }
+		public UIKeyboardToolbar(NSObjectFlag t) : base(t) { }
+		public UIKeyboardToolbar(IntPtr handle) : base(handle) { }
+		public UIKeyboardToolbar(RectangleF frame) : base(frame) { }
 		
-		public override void LayoutSubviews()
+		public override UIBarButtonItem[] CreateToolbarItems()
 		{
-			base.LayoutSubviews();
-		
+			var baseButtons = base.CreateToolbarItems();
+
 			if (PreviousButtonVisible)
 				_PrevButton = new UIBarButtonItem("Previous", UIBarButtonItemStyle.Bordered, PreviousField);
 
 			if (NextButtonVisible)
 				_NextButton = new UIBarButtonItem("Next", UIBarButtonItemStyle.Bordered, NextField);
-			
-			UIBarButtonItem[] buttons = { _PrevButton, _NextButton, _Spacer, _DoneButton };
-			
-			Items = buttons.Where((b)=>b != null).ToArray();
+	
+			UIBarButtonItem[] buttons = { _PrevButton, _NextButton };
+
+			return buttons.Union(baseButtons).Where((b)=>b != null).ToArray();
 		}
 
 		public void PreviousField(object sender, EventArgs e)
 		{
-			_FocusableElement.MovePrev();
+			FocusableElement.MovePrev();
 		}
 
 		public void NextField(object sender, EventArgs e)
 		{
-			_FocusableElement.MoveNext();
-		}
-
-		public void DismissKeyboard(object sender, EventArgs e)
-		{
-			_FocusableElement.Entry.ResignFirstResponder();
+			FocusableElement.MoveNext();
 		}
 	}
 }

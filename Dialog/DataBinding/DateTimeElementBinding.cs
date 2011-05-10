@@ -31,7 +31,12 @@ namespace MonoMobile.MVVM
 {
 	public partial class DateTimeElement
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			
+			ValueProperty.BindTo(this, () => DatePicker.Date);
+		}
 	}
 }
 
