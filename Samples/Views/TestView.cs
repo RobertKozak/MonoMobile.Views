@@ -54,7 +54,10 @@ namespace Samples
 		public int Int = 5;
 		[Range(1, 30, ShowCaption = false)]
 		public float Float = 8.3f;
+		[Date]
 		public DateTime DateTime1;
+		[Time]
+		public DateTime DateTime2 = DateTime.Now;
 		public UIImage Image;
 		public Uri Uri;
 		[Map("A Map")]

@@ -31,12 +31,15 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
-	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public partial class DateTimeElement : Element, ISelectable
+	public partial class DateTimeElement : Element, ISelectable, IFocusable
 	{
+		private UICustomTextField _Dummy { get; set; }
+
+		public UICustomTextField Entry { get; set; }
 		public DateTime Value { get; set; }  
 
 		public UIDatePicker DatePicker;
@@ -84,6 +87,49 @@ namespace MonoMobile.MVVM
 		{
 			return fmt.ToString(dt) + " " + dt.ToLocalTime().ToShortTimeString();
 		}
+		
+		public override void InitializeContent()
+		{ 
+			_Dummy = new UICustomTextField(Bounds);
+			_Dummy.ShouldBeginEditing = (tf) => 
+			{ 
+				Entry.BecomeFirstResponder(); 
+				return false;
+			};
+
+			Entry = new UICustomTextField(Bounds) 
+			{ 
+				BackgroundColor = UIColor.Clear, 
+				Tag = 1,
+				Hidden = true
+			};
+
+			var view = new UIView(new RectangleF(0,0,320,216));
+			DatePicker = CreatePicker();
+			view.AddSubview(DatePicker);
+		
+			Entry.InputView = view;
+			Entry.InputAccessoryView = new UIKeyboardToolbar(this) { PreviousButtonVisible = false, NextButtonVisible = false };
+
+			Entry.Started += (s, e) =>
+			{
+				ValueProperty.ConvertBack<string>();				
+			};
+
+			Entry.Ended += (s, e) => 
+			{
+				Value = DatePicker.Date;
+				OnValueChanged();
+			};
+	
+			ContentView = _Dummy;
+			ContentView.AddSubview(Entry);
+		}
+
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{
+			Entry.BecomeFirstResponder();
+		}
 
 		public virtual UIDatePicker CreatePicker()
 		{
@@ -113,18 +159,6 @@ namespace MonoMobile.MVVM
 			
 			return new RectangleF(fX, fY, size.Width, size.Height);
 		}
-		
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-			var vc = new DateTimeController(this) { Autorotate = dvc.Autorotate };
-			DatePicker = CreatePicker();
-			DatePicker.Frame = PickerFrameWithSize(DatePicker.SizeThatFits(SizeF.Empty));
-			vc.View.BackgroundColor = tableView.BackgroundColor;
-			vc.View.AddSubview(DatePicker);
-		
-			//dvc.PresentModalViewController(vc, true);
-			dvc.ActivateController(vc, dvc);
-		}
 
 		protected virtual void OnValueChanged()
 		{
@@ -135,38 +169,14 @@ namespace MonoMobile.MVVM
 				DetailTextLabel.Text = FormatDate(Value);
 		}
 
-		private class DatePickerToolBar: UIView
+		public void MoveNext ()
 		{
-
+			throw new NotImplementedException ();
 		}
-		
-		private class DateTimeController : UIViewController
+
+		public void MovePrev ()
 		{
-			private DateTimeElement container;
-			
-			public bool Autorotate { get; set; }
-
-			public DateTimeController(DateTimeElement container)
-			{
-				this.container = container;
-			}
-
-			public override void ViewWillDisappear(bool animated)
-			{
-				base.ViewWillDisappear(animated);
-				container.Value = container.DatePicker.Date;
-			}
-
-			public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
-			{
-				base.DidRotate(fromInterfaceOrientation);
-				container.DatePicker.Frame = PickerFrameWithSize(container.DatePicker.SizeThatFits(SizeF.Empty));
-			}
-
-			public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-			{
-				return Autorotate;
-			}
+			throw new NotImplementedException ();
 		}
 	}
 }

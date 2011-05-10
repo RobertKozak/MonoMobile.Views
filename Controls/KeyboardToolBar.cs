@@ -31,31 +31,57 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
+	using System.Linq;
 	using MonoTouch.Foundation;
 	using System.Collections.Generic;
 	using MonoTouch.UIKit;
 
 	public class UIKeyboardToolbar : UIToolbar
 	{
+		private bool _NextButtonVisible;
+		private bool _PreviousButtonVisible;
 		private UIBarButtonItem _NextButton;
 		private UIBarButtonItem _PrevButton;
 		private UIBarButtonItem _Spacer;
 		private UIBarButtonItem _DoneButton;
 		
 		private IFocusable _FocusableElement;
+		
+		public bool NextButtonVisible 
+		{ 
+			get { return _NextButtonVisible; } 
+			set 
+			{ 
+				if (_NextButtonVisible != value) 
+				{ 
+					_NextButtonVisible = value; 
+					SetNeedsLayout(); 
+				} 
+			}
+		} 
+
+		public bool PreviousButtonVisible
+		{
+			get { return _PreviousButtonVisible; }
+			set
+			{
+				if (_PreviousButtonVisible != value)
+				{
+					_PreviousButtonVisible = value;
+					SetNeedsLayout();
+				}
+			}
+		}
 
 		public UIKeyboardToolbar(IFocusable focusableElement) : base(new RectangleF(0, 0, 320, 44))
 		{		
 			_FocusableElement = focusableElement;
-
-			_PrevButton = new UIBarButtonItem("Previous", UIBarButtonItemStyle.Bordered, PreviousField);
-			_NextButton = new UIBarButtonItem("Next", UIBarButtonItemStyle.Bordered, NextField);
+			
+			PreviousButtonVisible = true;
+			NextButtonVisible = true;
+			
 			_Spacer = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
 			_DoneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, DismissKeyboard);
-			
-			UIBarButtonItem[] buttons = { _PrevButton, _NextButton, _Spacer, _DoneButton };
-			
-			Items = buttons;
 			
 			if (_FocusableElement != null && _FocusableElement.Entry != null && _FocusableElement.Entry.InputAccessoryView == null)
 			{
@@ -78,6 +104,21 @@ namespace MonoMobile.MVVM
 
 		public UIKeyboardToolbar(RectangleF frame) : base(frame)
 		{
+		}
+		
+		public override void LayoutSubviews()
+		{
+			base.LayoutSubviews();
+		
+			if (PreviousButtonVisible)
+				_PrevButton = new UIBarButtonItem("Previous", UIBarButtonItemStyle.Bordered, PreviousField);
+
+			if (NextButtonVisible)
+				_NextButton = new UIBarButtonItem("Next", UIBarButtonItemStyle.Bordered, NextField);
+			
+			UIBarButtonItem[] buttons = { _PrevButton, _NextButton, _Spacer, _DoneButton };
+			
+			Items = buttons.Where((b)=>b != null).ToArray();
 		}
 
 		public void PreviousField(object sender, EventArgs e)
