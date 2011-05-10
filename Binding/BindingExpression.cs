@@ -149,7 +149,7 @@ namespace MonoMobile.MVVM
 		{
 			object convertedValue = value;
 			
-			var memberType = GetMemberType(TargetProperty);
+			var memberType = TargetProperty.GetMemberType();
 
 			if (Binding.Converter != null)
 			{
@@ -188,7 +188,7 @@ namespace MonoMobile.MVVM
 					if (Binding.ConverterParameter != null)
 						parameter = Binding.ConverterParameter;
 					
-					convertedValue = Binding.Converter.ConvertBack(value, GetMemberType(member), parameter, CultureInfo.CurrentUICulture);
+					convertedValue = Binding.Converter.ConvertBack(value, member.GetMemberType(), parameter, CultureInfo.CurrentUICulture);
 				}
 				catch (InvalidCastException) {}
 				catch (NotSupportedException) { convertSupported = false; }
@@ -199,7 +199,7 @@ namespace MonoMobile.MVVM
 			{
 				var typeCode = Convert.GetTypeCode(convertedValue);
 				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
-					convertedValue = Convert.ChangeType(convertedValue, GetMemberType(member));
+					convertedValue = Convert.ChangeType(convertedValue, member.GetMemberType());
 			}
 
 			return convertedValue;
@@ -238,21 +238,6 @@ namespace MonoMobile.MVVM
 		public virtual object GetTargetValue()
 		{
 			return TargetProperty.GetValue(Binding.Target);
-		}
-
-		private Type GetMemberType(MemberInfo member)
-		{
-			if (member.MemberType == MemberTypes.Field)
-			{
-				return ((FieldInfo)member).FieldType;
-			}
-			
-			if (member.MemberType == MemberTypes.Property)
-			{
-				return ((PropertyInfo)member).PropertyType;
-			}
-			
-			return null;
 		}
 
 		private void SetValue(MemberInfo member, object obj, object value)

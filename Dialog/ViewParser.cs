@@ -318,6 +318,8 @@ namespace MonoMobile.MVVM
 			}
 			else if (isView || isUIView)
 			{
+				var items = member.GetValue(view);
+				
 				var rootElement = new RootElement(caption) { Opaque = false };
 
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
@@ -325,17 +327,12 @@ namespace MonoMobile.MVVM
 				rootElement.ViewBinding.MemberInfo = member;
 				rootElement.ViewBinding.ViewType = memberType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-				
+				rootElement.ViewBinding.DataContext = items;
+
 				if (genericType != null)
 				{
-					var items = member.GetValue(view);
 					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
 					rootElement.ViewBinding.ViewType = viewType;
-					rootElement.ViewBinding.DataContext = items;
-				}
-				else
-				{
-
 				}
 
 				if (isList)
@@ -371,7 +368,7 @@ namespace MonoMobile.MVVM
 				var currentValue = member.GetValue(view);
 				var enumValues = Enum.GetValues(memberType);
 
-				section = CreateEnumSection(theme, enumValues, currentValue, pop);
+				section = CreateEnumSection(theme, member, enumValues, currentValue, pop, bindings);
 			}
 			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
 			{
@@ -385,7 +382,7 @@ namespace MonoMobile.MVVM
 			return section;
 		}
 			
-		private static ISection CreateEnumSection(Theme theme, IEnumerable values, object currentValue, bool popOnSelection)
+		private ISection CreateEnumSection(Theme theme, MemberInfo member, IEnumerable values, object currentValue, bool popOnSelection, List<Binding> bindings)
 		{
 			var csection = new Section() { Opaque = false };
 
@@ -421,8 +418,6 @@ namespace MonoMobile.MVVM
 		{
 			Type memberType = GetTypeForMember(member);
 
-			SetDefaultConverter(member, "Value", new EnumItemsConverter(), bindings);
-
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
 
 			var collection = member.GetValue(view);
@@ -454,8 +449,6 @@ namespace MonoMobile.MVVM
 		
 		private ISection CreateMultiselectCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
-			SetDefaultConverter(member, "Value", new MultiselectCollectionConverter(), bindings);
-
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
 			var collection = member.GetValue(view) as IEnumerable;
 
@@ -464,6 +457,7 @@ namespace MonoMobile.MVVM
 			foreach (var item in collection)
 			{
 				var checkboxElement = new CheckboxElement(item.ToString()) { Index = index, Value = false};
+				
 				csection.Add(checkboxElement);
 				index++;
 			}
@@ -476,8 +470,6 @@ namespace MonoMobile.MVVM
 
 		private IRoot CreateEnumerableRoot(Theme theme, MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
-		//	SetDefaultConverter(member, "Value", new EnumerableConverter(), bindings);
-		 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
 			var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
@@ -490,7 +482,7 @@ namespace MonoMobile.MVVM
 
 			var isUIView = typeof(UIView).IsAssignableFrom(genericType);
  
-			var section = CreateEnumSection(theme, items, null, true);
+			var section = CreateEnumSection(theme, member, items, null, true, bindings);
 
 			var root = new RootElement(caption) { section };
 			root.Opaque = false;

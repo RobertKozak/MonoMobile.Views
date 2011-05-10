@@ -25,8 +25,11 @@ namespace Samples
 		//[Root]
 		//[List]
 		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
+
+		//public string MyListSelection;
 		//[Root]
 		//[List]
+		//[Bind("MyListSelection")]
 		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
 		//[Root]
 		//[List]
@@ -37,10 +40,12 @@ namespace Samples
 		[Root(ViewType=typeof(MovieView))]
 		//[Root]
 		public ObservableCollection<MovieViewModel> Movies;
-
+		
+		public MyObject MyObjectSelection = new MyObject("Selected");
 		//[List]
 		//[Root]
-		public List<MyObject> Tests = new List<MyObject>() { new MyObject(), new MyObject() };
+		[Bind("MyObjectSelection")]
+		public List<MyObject> Tests = new List<MyObject>() { new MyObject("First Object"), new MyObject("Second Object") };
 
 	[Section("Fields")]
 		[Entry]
@@ -54,8 +59,8 @@ namespace Samples
 		public Uri Uri;
 		[Map("A Map")]
 		public CLLocationCoordinate2D Location;
-		[List]
-		public MyObject MyObject2 = new MyObject();
+		//[List]
+		public MyObject MyObject2;
 
 	[Section("Properties")]
 		public string StringProperty { get; set; }
@@ -73,7 +78,13 @@ namespace Samples
 		
 		[List]
 		public ButtonTestView ButtonTestView { get; set; }
+		
+		[NavbarButton("Test")]
+		public void Test()
+		{
+MyObject2 = new MyObject("Object 2");
 
+		}
 		public TestView()
 		{
 			ButtonTestView = new ButtonTestView();
@@ -93,7 +104,7 @@ namespace Samples
 			UriProperty = Uri;
 			LocationProperty = Location;
 
-			MyObject = new MyObject();
+			MyObject = new MyObject("Object 1");
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
@@ -105,6 +116,7 @@ namespace Samples
 	[Theme(typeof(HoneyDoTheme))]
 	public class MyObject :View
 	{
+		public string Name;
 		public string TestString = "A Test String"; 
 
 	[Section("Lists")]
@@ -118,8 +130,10 @@ namespace Samples
 		[List(ViewType = typeof(MovieView))]
 		public ObservableCollection<MovieViewModel> Movies;
 
-		public MyObject()
+		public MyObject(string name)
 		{
+			Name = name;
+
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
 			dataModel.Load();
