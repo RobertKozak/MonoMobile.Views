@@ -170,7 +170,11 @@ namespace MonoMobile.MVVM
 				element.ViewBinding.DataContextCode = DataContextCode.Object;
 				element.ViewBinding.ViewType = root.ViewBinding.ViewType;
 				element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
-				element.ViewBinding.DataContext = e;
+
+				if (e is UIView)
+					element.ViewBinding.View = e as UIView;
+				else
+					element.ViewBinding.DataContext = e;
 
 				if (element.ViewBinding.ViewType == null)
 					element.ViewBinding.ViewType = e.GetType();
@@ -199,37 +203,25 @@ namespace MonoMobile.MVVM
 
 			try
 			{
-				if (view == null)
+				if (view == null && root.ViewBinding.ViewType != null)
 				{
-					if (root.ViewBinding.DataContext != null && root.ViewBinding.DataContext is UIView)
+					view = Activator.CreateInstance(root.ViewBinding.ViewType) as UIView;
+		
+					var dataContext = view as IDataContext;
+					if (dataContext != null)
 					{
-						view = root.ViewBinding.DataContext as UIView;
-					
-						if (view == null)
+						if (dataContext.DataContext == null)
 						{
-							view = root.ViewBinding.MemberInfo.TryGetValue(root.ViewBinding.DataContext) as UIView;
+							dataContext.DataContext = root.ViewBinding.DataContext;
 						}
-					}
-					else if (root.ViewBinding.ViewType != null)
-					{
-						view = Activator.CreateInstance(root.ViewBinding.ViewType) as UIView;
-			
-						var dataContext = view as IDataContext;
-						if (dataContext != null)
-						{
-							if (dataContext.DataContext == null)
-							{
-								dataContext.DataContext = root.ViewBinding.DataContext;
-							}
-
-							var lifetime = dataContext.DataContext as ISupportInitialize;
-							if (lifetime != null)
-								lifetime.BeginInit();
-							
-							lifetime = dataContext as ISupportInitialize;
-							if (lifetime != null)
-								lifetime.BeginInit();
-						}
+	
+						var lifetime = dataContext.DataContext as ISupportInitialize;
+						if (lifetime != null)
+							lifetime.BeginInit();
+						
+						lifetime = dataContext as ISupportInitialize;
+						if (lifetime != null)
+							lifetime.BeginInit();
 					}
 				}
 				

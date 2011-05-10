@@ -327,7 +327,15 @@ namespace MonoMobile.MVVM
 				rootElement.ViewBinding.MemberInfo = member;
 				rootElement.ViewBinding.ViewType = memberType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-				rootElement.ViewBinding.DataContext = items;
+				rootElement.ViewBinding.DataContext = view;
+
+				if (items != null)
+				{
+					if (items is UIView)
+						rootElement.ViewBinding.View = items as UIView;
+					else
+						rootElement.ViewBinding.DataContext = items;
+				}
 
 				if (genericType != null)
 				{

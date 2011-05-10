@@ -68,7 +68,7 @@ namespace MonoMobile.MVVM
 			var buttonList = baseButtons.ToList();
 			buttonList.Insert(2, _TodayButton);
 			
-			return buttonList.Where(b => b != null).ToArray();
+			return buttonList.ToArray();
 		}
 
 		public void Today(object sender, EventArgs e)

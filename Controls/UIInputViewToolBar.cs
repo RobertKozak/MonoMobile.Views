@@ -47,11 +47,11 @@ namespace MonoMobile.MVVM
 		{
 			FocusableElement = focusableElement;
 						
-			if (FocusableElement != null && FocusableElement.InputControl != null && FocusableElement.InputControl.InputAccessoryView == null)
-			{
-				TintColor = ((IElement)FocusableElement).Theme.BarTintColor;
-				Translucent = true;
-			}
+			var themeable = FocusableElement as IThemeable;
+			if (themeable != null)
+				TintColor = themeable.Theme.BarTintColor;
+				
+			Translucent = true;
 		}
 
 		public UIInputViewToolbar(NSCoder coder) : base(coder) { }
