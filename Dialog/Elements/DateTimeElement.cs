@@ -60,6 +60,8 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeCell(UITableView tableView)
 		{
+			RemoveTag(2);
+
 			base.InitializeCell(tableView);
 
 			Cell.Accessory = UITableViewCellAccessory.None;
@@ -90,7 +92,7 @@ namespace MonoMobile.MVVM
 		
 		public override void InitializeContent()
 		{ 
-			_Dummy = new UICustomTextField(Bounds);
+			_Dummy = new UICustomTextField(Bounds) { Tag = 1 };
 			_Dummy.ShouldBeginEditing = (tf) => 
 			{ 
 				Entry.BecomeFirstResponder(); 
@@ -100,12 +102,12 @@ namespace MonoMobile.MVVM
 			Entry = new UICustomTextField(Bounds) 
 			{ 
 				BackgroundColor = UIColor.Clear, 
-				Tag = 1,
+				Tag = 2,
 				Hidden = true
 			};
 
-			var view = new UIView(new RectangleF(0,0,320,216));
 			DatePicker = CreatePicker();
+			var view = new UIView(DatePicker.Bounds);
 			view.AddSubview(DatePicker);
 		
 			Entry.InputView = view;
@@ -133,31 +135,8 @@ namespace MonoMobile.MVVM
 
 		public virtual UIDatePicker CreatePicker()
 		{
-			var picker = new UIDatePicker(RectangleF.Empty) { AutoresizingMask = UIViewAutoresizing.FlexibleWidth, Mode = UIDatePickerMode.Date, Date = (DateTime)Value };
+			var picker = new UIDatePicker(RectangleF.Empty) { AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight, Mode = UIDatePickerMode.Date, Date = (DateTime)Value };
 			return picker;
-		}
-
-		private static RectangleF PickerFrameWithSize(SizeF size)
-		{
-			var screenRect = UIScreen.MainScreen.ApplicationFrame;
-			float fY = 0, fX = 0;
-			
-			switch (UIApplication.SharedApplication.StatusBarOrientation)
-			{
-				case UIInterfaceOrientation.LandscapeLeft:
-				case UIInterfaceOrientation.LandscapeRight:
-					fX = (screenRect.Height - size.Width) / 2;
-					fY = (screenRect.Width - size.Height) / 2 - 17;
-					break;
-				
-				case UIInterfaceOrientation.Portrait:
-				case UIInterfaceOrientation.PortraitUpsideDown:
-					fX = (screenRect.Width - size.Width) / 2;
-					fY = (screenRect.Height - size.Height) / 2 - 25;
-					break;
-			}
-			
-			return new RectangleF(fX, fY, size.Width, size.Height);
 		}
 
 		protected virtual void OnValueChanged()
@@ -171,12 +150,12 @@ namespace MonoMobile.MVVM
 
 		public void MoveNext ()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException();
 		}
 
 		public void MovePrev ()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException();
 		}
 	}
 }
