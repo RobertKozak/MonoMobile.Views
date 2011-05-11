@@ -598,6 +598,7 @@ namespace MonoMobile.MVVM
 			if (typeof(DialogViewController) == controller.GetType())
 			{
 				var dialog = (DialogViewController)controller;
+
 				dialog.TableView.Opaque = false;
 				
 				if (dialog.BackgroundImage == null)

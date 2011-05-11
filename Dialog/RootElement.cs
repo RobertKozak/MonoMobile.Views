@@ -447,6 +447,10 @@ namespace MonoMobile.MVVM
 			{
 				((RootElement)root).ActivateController(dvc, tableView, path);
 			}
+			else
+			{
+				ActivateController(dvc, tableView, path);
+			}
 		}
 
 		public void ActivateController(DialogViewController dvc, UITableView tableView, NSIndexPath path)
