@@ -76,16 +76,22 @@ namespace MonoMobile.MVVM
 
 		public void MoveNext()
 		{
-			var elements = Section.Elements.Where(e => e is IFocusable).Cast<IFocusable>().ToList();
-			MoveFocus(elements);
+			var elements = from section in Root.Sections 
+				from element in section.Elements 
+					where (element is IFocusable)
+					select element as IFocusable; 
+					
+			MoveFocus(elements.ToList());
 		}
 
 		public void MovePrev()
 		{
-			var elements = Section.Elements.Where(e => e is IFocusable).Cast<IFocusable>().ToList();
-			elements.Reverse();
-			
-			MoveFocus(elements);
+			var elements = (from section in Root.Sections
+				from element in section.Elements
+				where (element is IFocusable)
+				select element as IFocusable).Reverse();
+
+			MoveFocus(elements.ToList());
 		}
 
 		private void MoveFocus(IList<IFocusable> elements)
