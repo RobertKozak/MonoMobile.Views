@@ -708,7 +708,6 @@ namespace MonoMobile.MVVM
 				return;
 			
 			ConfigureToolbarItems();
-			ConfigureBackgroundImage();
 
 			Root.TableView = TableView;
 			
@@ -880,6 +879,8 @@ namespace MonoMobile.MVVM
 					TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
 			}
+
+			ConfigureBackgroundImage();
 		}
 
 		public virtual Source CreateSizingSource(bool unevenRows)
