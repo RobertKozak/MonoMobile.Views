@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	{
 		public static float GetIndentation(this UIDevice device)
 		{
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom = UIUserInterfaceIdiom.Phone)
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 				return 10;
 			else
 				return 40;
@@ -45,7 +45,7 @@ namespace MonoMobile.MVVM
 
 		public static float GetFixedGap(this UIDevice device)
 		{
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom = UIUserInterfaceIdiom.Phone)
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 				return 3;
 			else
 				return 6;
