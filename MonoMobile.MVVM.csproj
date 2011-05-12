@@ -274,6 +274,7 @@
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
     <Compile Include="Dialog\Elements\FocusableElement.cs" />
+    <Compile Include="Extensions\UIDevice.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

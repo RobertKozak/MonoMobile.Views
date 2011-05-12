@@ -241,6 +241,8 @@ namespace MonoMobile.MVVM
 					TextLabel.ShadowColor = TextShadowColor;
 				if (TextShadowOffset != SizeF.Empty)
 					TextLabel.ShadowOffset = TextShadowOffset;
+				if (Theme.TextHighlightColor != null)
+					TextLabel.HighlightedTextColor = Theme.TextHighlightColor;
 			}
 			
 			if (DetailTextLabel != null)
@@ -255,6 +257,8 @@ namespace MonoMobile.MVVM
 					DetailTextLabel.ShadowColor = DetailTextShadowColor;
 				if (DetailTextShadowOffset != SizeF.Empty)
 					DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
+				if (Theme.DetailTextHighlightColor != null)
+					DetailTextLabel.HighlightedTextColor = Theme.DetailTextHighlightColor;
 			}
 			
 			if (_CellStyleInfo != null && Cell != null)

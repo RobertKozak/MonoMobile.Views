@@ -53,7 +53,7 @@ namespace Samples
 		public string String = "a string";
 		public bool Bool = true;
 		public int Int = 5;
-		[Range(1, 30, ShowCaption = false)]
+		[Range(1, 30, ShowCaption = true)]
 		public float Float = 8.3f;
 		[Date]
 		public DateTime DateTime1;

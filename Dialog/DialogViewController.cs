@@ -412,6 +412,11 @@ namespace MonoMobile.MVVM
 				
 				return element.GetCell(tableView) as UITableViewElementCell;
 			}
+			
+			public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+			{
+				var frame = cell.Frame;
+			}
 
 			public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 			{
@@ -505,13 +510,15 @@ namespace MonoMobile.MVVM
 
 			private UIView CreateHeaderView(UITableView tableView, string caption)
 			{
+				var indentation = UIDevice.CurrentDevice.GetIndentation();
+
 				var headerLabel = new UILabel();
 
 				headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
 				var size = headerLabel.StringSize(caption, headerLabel.Font);
 				
 				var bounds = new RectangleF(tableView.Bounds.X, tableView.Bounds.Y, tableView.Bounds.Width, size.Height + 10);
-				var frame = new RectangleF(bounds.X + 20, bounds.Y, bounds.Width - 20, size.Height + 10);
+				var frame = new RectangleF(bounds.X + indentation + 10, bounds.Y, bounds.Width - (indentation + 10), size.Height + 10);
 	
 				headerLabel.Bounds = bounds;
 				headerLabel.Frame = frame;
@@ -537,6 +544,8 @@ namespace MonoMobile.MVVM
 			
 			private UIView CreateFooterView(UITableView tableView, string caption)
 			{
+				var indentation = UIDevice.CurrentDevice.GetIndentation();
+
 				var bounds = tableView.Bounds;
 				var footerLabel = new UILabel();
 
@@ -544,7 +553,7 @@ namespace MonoMobile.MVVM
 				var size = footerLabel.StringSize(caption, footerLabel.Font);
 				var height = size.Height * (caption.Count((ch)=>ch == '\n') + 1); 
 				caption = caption.Replace("\n","");
-				var rect = new RectangleF(bounds.X + 10, bounds.Y, bounds.Width - 20, height + 10);
+				var rect = new RectangleF(bounds.X + indentation, bounds.Y, bounds.Width - (indentation * 2), height + 10);
 				
 				footerLabel.Bounds = rect;
 				footerLabel.BackgroundColor = UIColor.Clear;
@@ -913,7 +922,7 @@ namespace MonoMobile.MVVM
 		}
 
 		public event EventHandler ViewDissapearing;
-
+		
 		public override void ViewWillDisappear(bool animated)
 		{
 			HideSearch();
@@ -1003,14 +1012,33 @@ namespace MonoMobile.MVVM
 
 	public class CustomTableView : UITableView
 	{		
+		private UIColor oldTextShadowColor = UIColor.Clear;
+		private UIColor oldDetailTextShadowColor = UIColor.Clear;
+
 		public DialogViewController Controller { get; set; }
 		
 		public CustomTableView(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
 		{
 		}
 
+		public override void TouchesBegan(NSSet touches, UIEvent evt)
+		{
+			ResetTextShadow(false, touches);
+		
+			base.TouchesBegan(touches, evt);
+		}
+		
+		public override void TouchesCancelled (NSSet touches, UIEvent evt)
+		{
+			base.TouchesCancelled (touches, evt);
+						
+			ResetTextShadow(true, touches);
+		}
+
 		public override void TouchesEnded(NSSet touches, UIEvent evt)
 		{
+			base.TouchesEnded(touches, evt);
+
 			if (Controller != null)
 			{
 				foreach (var section in Controller.Root.Sections) 
@@ -1027,7 +1055,42 @@ namespace MonoMobile.MVVM
 				}	
 			}
 
-			base.TouchesEnded(touches, evt);
+			ResetTextShadow(true, touches);
+		}
+
+		private void ResetTextShadow(bool visible, NSSet touches)
+		{
+			var touch = touches.AnyObject as UITouch;
+			var view = touch.View;
+
+			var textLabel = view.Subviews.FirstOrDefault() as UILabel;
+			if (textLabel != null)
+			{
+				if (visible)
+				{
+					textLabel.ShadowColor = oldTextShadowColor;
+				}
+				else
+				{
+					oldTextShadowColor = textLabel.ShadowColor;
+					textLabel.ShadowColor = UIColor.Clear;
+				}
+			}
+
+			var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;
+			
+			if (detailTextLabel != null)
+			{
+				if (visible)
+				{
+					detailTextLabel.ShadowColor = oldTextShadowColor;
+				}
+				else
+				{
+					oldDetailTextShadowColor = detailTextLabel.ShadowColor;
+					detailTextLabel.ShadowColor = UIColor.Clear;
+				}
+			}
 		}
 	}
 }

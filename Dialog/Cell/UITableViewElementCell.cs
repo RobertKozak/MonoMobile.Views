@@ -31,10 +31,9 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
-	using System.Reflection;
+	using MonoMobile.MVVM;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
 	public enum CellPosition
@@ -110,24 +109,27 @@ namespace MonoMobile.MVVM
 
 		public RectangleF RecalculateContentFrame(RectangleF frame, bool showCaption)
 		{
+			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			var fixedGap = UIDevice.CurrentDevice.GetFixedGap();
+
 			var indentedSides = 1;
 			if (Element.TableView.Style == UITableViewStyle.Grouped)
 			{
 				indentedSides = 2;
 			}
 			
-			SizeF captionSize = new SizeF((IndentationWidth + (IndentationWidth / 2)), Bounds.Height);
+			SizeF captionSize = new SizeF(indentation, Bounds.Height);
 			var caption = TextLabel.Text;
 			if (!string.IsNullOrEmpty(caption) && showCaption)
 			{
 				captionSize = TextLabel.StringSize(caption, UIFont.FromName(TextLabel.Font.Name, UIFont.LabelFontSize));
-				captionSize.Width += (IndentationWidth * indentedSides);
+				captionSize.Width += ((fixedGap * 2) * indentedSides);
 			}
 			
-			float x = captionSize.Width - (IndentationWidth / 2);
-			float y = (float)Math.Round((double)Bounds.Height - (double)captionSize.Height) / 2;
-			float width = Bounds.Width - captionSize.Width - (IndentationWidth * ((indentedSides * 2) - 1)) + (IndentationWidth / 2);
-			
+			float x = captionSize.Width; //+ fixedGap;
+			float y = ((float)Math.Round((double)Bounds.Height - (double)captionSize.Height) / 2) - 1;
+			float width = Bounds.Width - captionSize.Width - (indentation * 2f) - (fixedGap * 2);
+
 			RectangleF actualFrame;
 			
 			if (frame == RectangleF.Empty)
@@ -170,7 +172,7 @@ namespace MonoMobile.MVVM
 
 		public void DrawContentView()
 		{
-			if (!Highlighted || Element.Theme.DrawWhenHighlighted)
+			if (!Highlighted)
 			{
 				var borderRect = Bounds;
 
@@ -183,6 +185,7 @@ namespace MonoMobile.MVVM
 				CGContext context = UIGraphics.GetCurrentContext();
 				context.SaveState();
 				
+
 				context.SetFillColorWithColor(backgroundColor.CGColor);
 	
 				if (TableView.Style == UITableViewStyle.Grouped)
@@ -333,11 +336,12 @@ namespace MonoMobile.MVVM
 		public UITableViewCellContentView(UITableViewElementCell cell) : base(cell.Bounds)
 		{
 			Cell = cell;
+
 			Opaque = false;
 		}
 
 		public override void Draw(RectangleF rect)
-		{
+		{	
 			if (Cell != null)
 			{
 				Cell.DrawContentView();

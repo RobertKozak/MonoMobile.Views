@@ -45,6 +45,9 @@ namespace MonoMobile.MVVM
 			CellBackgroundColor = UIColor.Clear;
 
 			TextColor = UIColor.DarkTextColor;
+			TextShadowColor = UIColor.White;
+			TextShadowOffset = new SizeF(0,1);
+
 			SeparatorColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);
 			SeparatorStyle = UITableViewCellSeparatorStyle.None;
 			PlaceholderColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);

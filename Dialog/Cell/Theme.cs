@@ -54,7 +54,6 @@ namespace MonoMobile.MVVM
 		private UIColor _BackgroundColor;
 
 		public string Name { get; set; }
-		public bool DrawWhenHighlighted { get; set; }
 
 		public UIColor PlaceholderColor { get; set; }
 		public UITextAlignment PlaceholderAlignment { get; set; }
@@ -148,12 +147,14 @@ namespace MonoMobile.MVVM
 		public UITextAlignment TextAlignment { get; set; }
 		public SizeF TextShadowOffset { get; set; }
 		public UIColor TextShadowColor { get; set; }
+		public UIColor TextHighlightColor { get; set; }
 
 		public UILabel DetailTextLabel { get; set; }
 		public UIFont DetailTextFont { get; set; }
 		public UITextAlignment DetailTextAlignment { get; set; }
 		public SizeF DetailTextShadowOffset { get; set; }
 		public UIColor DetailTextShadowColor { get; set; }
+		public UIColor DetailTextHighlightColor { get; set; }
 
 		public UIColor TextColor
 		{
@@ -301,9 +302,13 @@ namespace MonoMobile.MVVM
 				
 				if (theme.TextShadowColor != null)
 					TextShadowColor = theme.TextShadowColor;
+			
+				if (theme.TextHighlightColor != null)
+					TextHighlightColor = theme.TextHighlightColor;
 
 				TextAlignment = theme.TextAlignment;
 		
+
 				if (theme.DetailTextLabel != null)
 					DetailTextLabel = theme.DetailTextLabel;
 
@@ -319,8 +324,12 @@ namespace MonoMobile.MVVM
 				if (theme.DetailTextShadowColor != null)
 					TextShadowColor = theme.DetailTextShadowColor;
 
+				if (theme.DetailTextHighlightColor != null)
+					DetailTextHighlightColor = theme.DetailTextHighlightColor;
+
 				DetailTextAlignment = theme.DetailTextAlignment;
 	
+		
 				if (theme.PlaceholderColor != null)
 					PlaceholderColor = theme.PlaceholderColor;
 				
