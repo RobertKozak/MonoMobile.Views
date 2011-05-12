@@ -1063,32 +1063,40 @@ namespace MonoMobile.MVVM
 			var touch = touches.AnyObject as UITouch;
 			var view = touch.View;
 
-			var textLabel = view.Subviews.FirstOrDefault() as UILabel;
-			if (textLabel != null)
+			if (view != null)
 			{
-				if (visible)
+				var cell = view.Superview as UITableViewElementCell;
+	
+				if (cell != null && cell.SelectionStyle != UITableViewCellSelectionStyle.None)
 				{
-					textLabel.ShadowColor = oldTextShadowColor;
-				}
-				else
-				{
-					oldTextShadowColor = textLabel.ShadowColor;
-					textLabel.ShadowColor = UIColor.Clear;
-				}
-			}
-
-			var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;
-			
-			if (detailTextLabel != null)
-			{
-				if (visible)
-				{
-					detailTextLabel.ShadowColor = oldTextShadowColor;
-				}
-				else
-				{
-					oldDetailTextShadowColor = detailTextLabel.ShadowColor;
-					detailTextLabel.ShadowColor = UIColor.Clear;
+					var textLabel = view.Subviews.FirstOrDefault() as UILabel;
+					if (textLabel != null)
+					{
+						if (visible)
+						{
+							textLabel.ShadowColor = oldTextShadowColor;
+						}
+						else
+						{
+							oldTextShadowColor = textLabel.ShadowColor;
+							textLabel.ShadowColor = UIColor.Clear;
+						}
+					}
+		
+					var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;
+					
+					if (detailTextLabel != null)
+					{
+						if (visible)
+						{
+							detailTextLabel.ShadowColor = oldTextShadowColor;
+						}
+						else
+						{
+							oldDetailTextShadowColor = detailTextLabel.ShadowColor;
+							detailTextLabel.ShadowColor = UIColor.Clear;
+						}
+					}
 				}
 			}
 		}

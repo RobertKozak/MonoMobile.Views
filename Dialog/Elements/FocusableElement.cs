@@ -51,19 +51,19 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewElementCell NewCell()
 		{
-			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id, this);
+			return new UITableViewElementCell(UITableViewCellStyle.Default, Id, this);
 		}
 
 		public override void InitializeContent()
 		{
-			_Dummy = new UICustomTextField(Bounds) { Tag = 1 };
+			_Dummy = new UICustomTextField(Bounds);
 			_Dummy.ShouldBeginEditing = tf =>
 			{
 				InputControl.BecomeFirstResponder();
 				return false;
 			};
 			
-			InputControl = new UICustomTextField(Bounds) { BackgroundColor = UIColor.Clear, Tag = 2, Hidden = true };
+			InputControl = new UICustomTextField(Bounds) { BackgroundColor = UIColor.Clear, Tag = 1, Hidden = true };
 			
 			ContentView = _Dummy;
 			ContentView.AddSubview(InputControl);

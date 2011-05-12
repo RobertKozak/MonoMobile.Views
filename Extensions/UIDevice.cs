@@ -48,7 +48,27 @@ namespace MonoMobile.MVVM
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 				return 3;
 			else
-				return 6;
+				return 7;
+		}
+
+		public static float GetKeyboardHeight(this UIDevice device)
+		{
+			var orientation = UIDevice.CurrentDevice.Orientation;
+
+			var landscape = orientation == UIDeviceOrientation.LandscapeLeft || orientation == UIDeviceOrientation.LandscapeRight;
+
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+			{
+				if (landscape)
+					return 352;
+				
+				return 264;
+			}
+			
+			if (landscape)
+				return 140;
+			
+			return 216;
 		}
 	}
 }

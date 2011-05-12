@@ -126,9 +126,9 @@ namespace MonoMobile.MVVM
 				captionSize.Width += ((fixedGap * 2) * indentedSides);
 			}
 			
-			float x = captionSize.Width; //+ fixedGap;
+			float x = captionSize.Width + 5;
 			float y = ((float)Math.Round((double)Bounds.Height - (double)captionSize.Height) / 2) - 1;
-			float width = Bounds.Width - captionSize.Width - (indentation * 2f) - (fixedGap * 2);
+			float width = Bounds.Width - captionSize.Width - (indentation * 2f) - (fixedGap * 3) - 5;
 
 			RectangleF actualFrame;
 			

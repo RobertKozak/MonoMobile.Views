@@ -434,6 +434,9 @@ namespace MonoMobile.MVVM
 
 		protected virtual void CreateContentView()
 		{
+			if (ContentView != null)
+				ContentView.RemoveFromSuperview();
+
 			InitializeContent();
 
 			if (Cell != null)

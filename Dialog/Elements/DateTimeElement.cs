@@ -51,11 +51,14 @@ namespace MonoMobile.MVVM
 		{
 			Value = date;
 		}
+		
+		public override UITableViewElementCell NewCell()
+		{
+			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id, this);
+		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			RemoveTag(2);
-
 			base.InitializeCell(tableView);
 
 			Cell.Accessory = UITableViewCellAccessory.None;
@@ -89,7 +92,7 @@ namespace MonoMobile.MVVM
 			base.InitializeContent();
 
 			DatePicker = CreatePicker();
-			var view = new UIView(DatePicker.Bounds);
+			var view = new UIView(DatePicker.Bounds) { BackgroundColor = UIColor.Black };
 			view.AddSubview(DatePicker);
 		
 			Control = DatePicker;
@@ -111,7 +114,14 @@ namespace MonoMobile.MVVM
 
 		public virtual UIDatePicker CreatePicker()
 		{
-			var picker = new UIDatePicker(RectangleF.Empty) { AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight, Mode = UIDatePickerMode.Date, Date = (DateTime)Value };
+			var bounds = UIScreen.MainScreen.Bounds;
+
+			var picker = new UIDatePicker(new RectangleF(0, 0, bounds.Width, UIDevice.CurrentDevice.GetKeyboardHeight())) 
+			{ 
+				AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight, 
+				Mode = UIDatePickerMode.Date, Date = (DateTime)Value 
+			};
+
 			return picker;
 		}
 
