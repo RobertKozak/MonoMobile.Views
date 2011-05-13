@@ -17,7 +17,6 @@
     <BundleDisplayName>MVVM Sample</BundleDisplayName>
     <BundleIconHigh>AppIcon4.png</BundleIconHigh>
     <BundleIcon>AppIcon.png</BundleIcon>
-    <SupportedDevices>IPad</SupportedDevices>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
