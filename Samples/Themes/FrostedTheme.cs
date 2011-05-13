@@ -1,5 +1,5 @@
 //
-// FrostedStyle.cs:
+// FrostedTheme.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
@@ -45,7 +45,7 @@ namespace MonoMobile.MVVM
 			CellBackgroundColor = UIColor.Clear;
 
 			TextColor = UIColor.DarkTextColor;
-			TextShadowColor = UIColor.White;
+			TextShadowColor = UIColor.FromWhiteAlpha(0.8f, 1.0f);
 			TextShadowOffset = new SizeF(0,1);
 
 			SeparatorColor = UIColor.FromWhiteAlpha(0.4f, 1.0f);

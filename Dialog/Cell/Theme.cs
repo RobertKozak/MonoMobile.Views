@@ -66,7 +66,7 @@ namespace MonoMobile.MVVM
 		public UIColor BarTintColor { get; set; }
 		public string BarImage { get; set; }
 		public bool BarTranslucent { get; set; }
-		
+
 		public UITableViewElementCell Cell 
 		{ 
 			get {return _Cell; }
@@ -393,7 +393,6 @@ namespace MonoMobile.MVVM
 					DrawContentViewAction = theme.DrawContentViewAction;
 				}
 
-			
 				if (theme.BackgroundColor != null)
 					BackgroundColor = theme.BackgroundColor;
 				

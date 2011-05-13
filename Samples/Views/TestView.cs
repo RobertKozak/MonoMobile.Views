@@ -81,6 +81,7 @@ namespace Samples
 		public MyObject MyObject { get; set; }
 		
 		[List]
+		[Theme(typeof(ClearTheme))]
 		public ButtonTestView ButtonTestView { get; set; }
 		
 		[NavbarButton("Test")]

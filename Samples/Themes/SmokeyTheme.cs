@@ -1,6 +1,5 @@
-using MonoMobile.MVVM;
 //
-// SmokeyStyle.cs:
+// SmokeyTheme.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak

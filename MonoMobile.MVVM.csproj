@@ -275,6 +275,7 @@
     <Compile Include="Controls\UIInputViewToolBar.cs" />
     <Compile Include="Dialog\Elements\FocusableElement.cs" />
     <Compile Include="Extensions\UIDevice.cs" />
+    <Compile Include="Dialog\Themes\ClearTheme.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -295,6 +296,7 @@
     <Folder Include="Dialog\Cell\" />
     <Folder Include="Dialog\DataBinding\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="Dialog\Themes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

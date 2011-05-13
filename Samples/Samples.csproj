@@ -119,7 +119,6 @@
     <Compile Include="ViewModels\MovieListViewModel.cs" />
     <Compile Include="Themes\AutumnTheme.cs" />
     <Compile Include="Themes\BrickedTheme.cs" />
-    <Compile Include="Themes\ClearTheme.cs" />
     <Compile Include="Themes\CorkTheme.cs" />
     <Compile Include="Themes\DarkHeaderTheme.cs" />
     <Compile Include="Themes\DenimTheme.cs" />

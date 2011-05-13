@@ -205,12 +205,12 @@ namespace MonoMobile.MVVM
 				context.Clip();
 	
 				ShouldDrawBorder = false;
-
+				
 				if (Element.Theme.DrawContentViewAction != null)
 					Element.Theme.DrawContentViewAction(innerRect, context, this);
-	
+
 				context.RestoreState();
-	
+		
 				if (ShouldDrawBorder)
 				{
 					DrawBorder(context, path);

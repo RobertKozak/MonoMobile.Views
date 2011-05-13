@@ -1,6 +1,5 @@
-using MonoMobile.MVVM;
 //
-// GlassButtonStyle.cs:
+// GlassButtonTheme.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak

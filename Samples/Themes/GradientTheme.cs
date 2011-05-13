@@ -1,6 +1,5 @@
-using MonoMobile.MVVM;
 //
-// GradientStyle.cs:
+// GradientTheme.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak

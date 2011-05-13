@@ -386,9 +386,12 @@ namespace MonoMobile.MVVM
 			}
 			else
 				Cell.Element = this;
-
+			
 			TextLabel = Cell.TextLabel;
 			DetailTextLabel = Cell.DetailTextLabel;
+
+			if (DetailTextLabel != null)
+				DetailTextLabel.Text = string.Empty;
 		
 			InitializeTheme();
 
@@ -428,7 +431,7 @@ namespace MonoMobile.MVVM
 			Cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;			
 
 			ThemeChanged();
-
+			
 			CreateContentView();
 		}
 
