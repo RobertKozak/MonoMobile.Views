@@ -109,9 +109,11 @@ namespace MonoMobile.MVVM
 
 		public RectangleF RecalculateContentFrame(RectangleF frame, bool showCaption)
 		{
+			var screenWidth = UIScreen.MainScreen.Bounds.Width;
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			var margin = UIDevice.CurrentDevice.GetDeviceMargin();
 			var fixedGap = UIDevice.CurrentDevice.GetFixedGap();
-
+ 
 			var indentedSides = 1;
 			if (Element.TableView.Style == UITableViewStyle.Grouped)
 			{
@@ -123,12 +125,12 @@ namespace MonoMobile.MVVM
 			if (!string.IsNullOrEmpty(caption) && showCaption)
 			{
 				captionSize = TextLabel.StringSize(caption, UIFont.FromName(TextLabel.Font.Name, UIFont.LabelFontSize));
-				captionSize.Width += ((fixedGap * 2) * indentedSides);
+				captionSize.Width += ((margin * 2) * indentedSides);
 			}
 			
-			float x = captionSize.Width + 5;
+			float x = captionSize.Width + fixedGap;
 			float y = ((float)Math.Round((double)Bounds.Height - (double)captionSize.Height) / 2) - 1;
-			float width = Bounds.Width - captionSize.Width - (indentation * 2f) - (fixedGap * 3) - 5;
+			float width = screenWidth - captionSize.Width - (indentation * 2f) - (margin * 3) - fixedGap;
 
 			RectangleF actualFrame;
 			
@@ -234,9 +236,13 @@ namespace MonoMobile.MVVM
 		{
 			var indentationOffset = 0f;
 			var borderOffset = 1;
+			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			var gap = UIDevice.CurrentDevice.GetFixedGap();
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+				gap = 0;
 
 			if (TableView.Style == UITableViewStyle.Grouped)
-				indentationOffset = IndentationWidth;
+				indentationOffset = indentation + gap;
 			
 //			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.DoubleLineEtched)
 //				borderOffset = 2;

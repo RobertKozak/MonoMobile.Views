@@ -37,27 +37,32 @@ namespace MonoMobile.MVVM
 	{
 		public static float GetIndentation(this UIDevice device)
 		{
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 				return 10;
 			else
 				return 40;
 		}
 
-		public static float GetFixedGap(this UIDevice device)
+		public static float GetDeviceMargin(this UIDevice device)
 		{
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 				return 3;
 			else
 				return 7;
 		}
-
+		
+		public static float GetFixedGap(this UIDevice device)
+		{
+			return 5;
+		}
+		
 		public static float GetKeyboardHeight(this UIDevice device)
 		{
-			var orientation = UIDevice.CurrentDevice.Orientation;
+			var orientation = device.Orientation;
 
 			var landscape = orientation == UIDeviceOrientation.LandscapeLeft || orientation == UIDeviceOrientation.LandscapeRight;
 
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
 			{
 				if (landscape)
 					return 352;

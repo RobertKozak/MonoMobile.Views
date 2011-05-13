@@ -779,11 +779,13 @@ namespace MonoMobile.MVVM
 			{
 				if (TableView.RespondsToSelector(new Selector("backgroundView")))
 				{
-					if (TableView.BackgroundView == null)
-					{
-						TableView.BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Clear };
-					}
+					//if (TableView.BackgroundView == null)
+						TableView.BackgroundView = new UIView(); 
+
+					TableView.BackgroundView.Opaque = false;
+					TableView.BackgroundColor = UIColor.Clear;
 				}
+
 				if (ParentViewController != null)
 				{
 					TableView.BackgroundColor = UIColor.Clear;
