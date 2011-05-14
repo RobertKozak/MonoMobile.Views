@@ -176,6 +176,7 @@ namespace MonoMobile.MVVM
 		{
 			if (!Highlighted)
 			{
+
 				var borderRect = Bounds;
 
 				var innerRect = CalculateInnerRect(); 

@@ -1,4 +1,3 @@
-using System.Collections;
 // 
 //  MultiselectCollection.cs
 // 
@@ -30,10 +29,10 @@ using System.Collections;
 // 
 namespace MonoMobile.MVVM
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Linq; 
 	
 	public class SelectionItem<T> : ObservableObject
 	{		

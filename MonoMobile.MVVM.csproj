@@ -209,7 +209,6 @@
     <Compile Include="Dialog\RootElement.cs" />
     <Compile Include="Dialog\Section.cs" />
     <Compile Include="Dialog\Reflection API\PullToRefreshAttribute.cs" />
-    <Compile Include="Dialog\Reflection API\EnableSearchAttribute.cs" />
     <Compile Include="Dialog\Views\StandardListView.cs" />
     <Compile Include="Dialog\SearchChangedEventArgs.cs" />
     <Compile Include="Dialog\ImageLoader.cs" />
@@ -276,6 +275,8 @@
     <Compile Include="Dialog\Elements\FocusableElement.cs" />
     <Compile Include="Extensions\UIDevice.cs" />
     <Compile Include="Dialog\Themes\ClearTheme.cs" />
+    <Compile Include="Application\MonoMobileApp.cs" />
+    <Compile Include="Dialog\Reflection API\SearchbarAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

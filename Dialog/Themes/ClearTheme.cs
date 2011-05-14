@@ -40,7 +40,6 @@ namespace MonoMobile.MVVM
 			CellBackgroundColor = UIColor.Clear;
 			DrawContentViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
 			TextColor = UIColor.DarkTextColor;
-SeparatorStyle = UITableViewCellSeparatorStyle.None;
 		}
 
 		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)

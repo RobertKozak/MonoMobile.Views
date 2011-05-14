@@ -12,6 +12,7 @@ namespace Samples
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
+	[Searchbar(IncrementalSearch = false)]
 	public class TestView : View
 	{
 	[Section("Enumerables")]
@@ -84,10 +85,15 @@ namespace Samples
 		[Theme(typeof(ClearTheme))]
 		public ButtonTestView ButtonTestView { get; set; }
 		
+		[PullToRefresh]
+		public void PullToRefresh()
+		{}
+
 		[NavbarButton("Test")]
 		public void Test()
 		{
 MyObject2 = new MyObject("Object 2");
+			Application.ToggleSearchbar();
 
 		}
 		public TestView()

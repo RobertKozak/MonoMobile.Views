@@ -66,13 +66,12 @@ namespace MonoMobile.MVVM
 			if (themeable != null)
 				themeable.Theme = Theme.CreateTheme(theme);
 			
-			var enableSearchAttribute = view.GetType().GetCustomAttribute<EnableSearchAttribute>();
+			var searchbarAttribute = view.GetType().GetCustomAttribute<SearchbarAttribute>();
 			var searchbar = Root as ISearchBar;
-			if (enableSearchAttribute != null && searchbar != null)
+			if (searchbarAttribute != null && searchbar != null)
 			{
-				searchbar.AutoHideSearch = enableSearchAttribute.AutoHide;
-				searchbar.SearchPlaceholder = enableSearchAttribute.Placeholder;
-				searchbar.IncrementalSearch = enableSearchAttribute.IncrementalSearch;
+				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
+				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
 				searchbar.EnableSearch = true;
 			}
 			
@@ -774,13 +773,12 @@ namespace MonoMobile.MVVM
 					element = new LoadMoreElement(normalCaption, loadingCaption, null) { Command = GetCommandForMember(view, member) };
 				}
 
-				var enableSearchAttribute = member.GetCustomAttribute<EnableSearchAttribute>();
+				var searchbarAttribute = member.GetCustomAttribute<SearchbarAttribute>();
 				var searchbar = Root as ISearchBar;
-				if (enableSearchAttribute != null && searchbar != null)
+				if (searchbarAttribute != null && searchbar != null)
 				{
-					searchbar.AutoHideSearch = enableSearchAttribute.AutoHide;
-					searchbar.SearchPlaceholder = enableSearchAttribute.Placeholder;
-					searchbar.IncrementalSearch = enableSearchAttribute.IncrementalSearch;
+					searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
+					searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
 					searchbar.EnableSearch = true;
 					
 					var methodInfo = member as MethodInfo;

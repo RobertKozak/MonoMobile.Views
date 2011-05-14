@@ -1,5 +1,5 @@
 //
-// EnableSearchAttribute.cs
+// SearchbarAttribute.cs
 //
 // Author:
 //   Robert Kozak (rkozak@nowcom.com)
@@ -32,14 +32,12 @@ namespace MonoMobile.MVVM
 	using System;
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-	public class EnableSearchAttribute : Attribute
+	public class SearchbarAttribute : Attribute
 	{
-		public EnableSearchAttribute(bool autoHide)
+		public SearchbarAttribute()
 		{
-			AutoHide = autoHide;
 		}
 
-		public bool AutoHide { get; set; }
 		public string Placeholder { get; set; }
 		public bool IncrementalSearch { get; set; }
 	}

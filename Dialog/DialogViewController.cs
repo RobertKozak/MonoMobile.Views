@@ -45,6 +45,8 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
+		private UIBarButtonItem doneAddingButton;
+
 		private UISearchBar _Searchbar;
 		private UITableView _TableView;
 		private RefreshTableHeaderView _RefreshView;
@@ -92,14 +94,7 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		// If set, we automatically scroll the content to avoid showing the search bar until 
-		// the user manually pulls it down.
-		public bool AutoHideSearch { get; set; }
-		public string SearchPlaceholder { get; set; }
-		public bool EnableSearch { get; set; }
-		public bool IncrementalSearch { get; set; }
-		public SearchCommand SearchCommand { get; set; }
-
+		public bool IsSearchbarVisible { get; set; }
 
 		public bool EnablePullToRefresh 
 		{ 
@@ -231,33 +226,67 @@ namespace MonoMobile.MVVM
 		/// Allows caller to programatically activate the search bar and start the search process
 		/// </summary>
 		public void StartSearch()
-		{
-			if (_OriginalSections != null)
-				return;
+		{			
+			CreateSearchbar();
+
+			UIView.BeginAnimations(null);
+			UIView.SetAnimationDuration(0.3);
 			
-			_Searchbar.BecomeFirstResponder();
+			_Searchbar.Frame = new RectangleF(0, 0, _Searchbar.Frame.Width, 45);
+			View.Superview.AddSubview(_Searchbar);
 
-			_OriginalSections = Root.Sections.ToArray();
-			_OriginalElements = new IElement[_OriginalSections.Length][];
-
-			for (int i = 0; i < _OriginalSections.Length; i++)
-				_OriginalElements[i] = _OriginalSections[i].Elements.ToArray();
+			if (_OriginalSections == null)
+			{
+				_OriginalSections = Root.Sections.ToArray();
+				_OriginalElements = new IElement[_OriginalSections.Length][];
+	
+				for (int i = 0; i < _OriginalSections.Length; i++)
+					_OriginalElements[i] = _OriginalSections[i].Elements.ToArray();
+			}
+		
+			UIView.CommitAnimations();
+			
+			IsSearchbarVisible = true;
 		}
 
 		/// <summary>
 		/// Allows the caller to programatically stop searching.
 		/// </summary>
-		public virtual void FinishSearch()
+		public virtual void FinishSearch(bool hide)
 		{
-			if (_OriginalSections == null)
-				return;
+			if (_OriginalSections != null)
+			{
+				Root.Sections = new List<ISection>(_OriginalSections);
+				_OriginalSections = null;
+				_OriginalElements = null;
+				
+				ReloadData();
+			}
 			
-			Root.Sections = new List<ISection>(_OriginalSections);
-			_OriginalSections = null;
-			_OriginalElements = null;
+			if (hide)
+			{
+				UIView.BeginAnimations(null);
+				UIView.SetAnimationDuration(0.3);
+				
+				// we need to perform some post operations after the animation is complete
+				UIView.SetAnimationDelegate(this);
+				UIView.SetAnimationDidStopSelector(new Selector("fadeOutDidFinish"));
+				
+				_Searchbar.Frame = new RectangleF(0, -45, _Searchbar.Frame.Width, 45);
+				
+				UIView.CommitAnimations();
+	
+				IsSearchbarVisible = false;
+			}
 
-			ReloadData();
-			HideSearch();
+			_Searchbar.ResignFirstResponder();
+			_Searchbar.Text = string.Empty;
+		}
+
+		[Export("fadeOutDidFinish")]
+		public void FadeOutDidFinish()
+		{
+			_Searchbar.Hidden = true;	
 		}
 
 		public delegate void SearchTextEventHandler(object sender, SearchChangedEventArgs args);
@@ -278,37 +307,41 @@ namespace MonoMobile.MVVM
 			
 			var newSections = new List<ISection>();
 			
-			if (SearchCommand == null)
+			var searchable = Root as ISearchBar;
+			if (searchable != null)
 			{
-				for (int sidx = 0; sidx < _OriginalSections.Length; sidx++)
+				if (searchable.SearchCommand == null)
 				{
-					ISection newSection = null;
-					var section = _OriginalSections[sidx];
-					IElement[] elements = _OriginalElements[sidx];
-					
-					for (int eidx = 0; eidx < elements.Length; eidx++)
+					for (int sidx = 0; sidx < _OriginalSections.Length; sidx++)
 					{
-						var searchableView = elements[eidx] as ISearchable;
+						ISection newSection = null;
+						var section = _OriginalSections[sidx];
+						IElement[] elements = _OriginalElements[sidx];
 						
-						if (searchableView != null && searchableView.Matches(text))
+						for (int eidx = 0; eidx < elements.Length; eidx++)
 						{
-							if (newSection == null)
+							var searchableView = elements[eidx] as ISearchable;
+							
+							if ((searchableView != null && searchableView.Matches(text)) || (elements[eidx].Caption != null) && elements[eidx].Caption.Contains(text))
 							{
-								newSection = new Section(section.HeaderText, section.FooterText) { FooterView = section.FooterView, HeaderView = section.HeaderView };
-								newSections.Add(newSection);
+								if (newSection == null)
+								{
+									newSection = new Section(section.HeaderText, section.FooterText) { FooterView = section.FooterView, HeaderView = section.HeaderView };
+									newSections.Add(newSection);
+								}
+								newSection.Add(elements[eidx]);
 							}
-							newSection.Add(elements[eidx]);
 						}
 					}
 				}
-			}
-			else
-			{
-				newSections = SearchCommand.Execute(_OriginalSections, text);
+				else
+				{
+					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
+				}
 			}
 			
 			Root.Sections = newSections;
-			
+
 			ReloadData();
 		}
 
@@ -328,11 +361,12 @@ namespace MonoMobile.MVVM
 			public override void OnEditingStarted(UISearchBar _Searchbar)
 			{
 				_Searchbar.ShowsCancelButton = true;
-
-				if (_Container.IncrementalSearch)
+				
+				var searchable = _Container.Root as ISearchBar;
+				if (searchable != null && searchable.IncrementalSearch)
 				{
 					var textField = _Searchbar.Subviews.FirstOrDefault((v)=>v.GetType() == typeof(UITextField)) as UITextField;
-					if(textField != null)
+					if (textField != null)
 						textField.ReturnKeyType = UIReturnKeyType.Done;	
 				}
 
@@ -341,29 +375,33 @@ namespace MonoMobile.MVVM
 
 			public override void OnEditingStopped(UISearchBar _Searchbar)
 			{
-				if (_Container.IncrementalSearch)
+				var searchable = _Container.Root as ISearchBar;
+				if (searchable != null && searchable.IncrementalSearch)
 				{
 					_Searchbar.ShowsCancelButton = false;
-					_Container.FinishSearch();
+					_Container.FinishSearch(false);
 				}
 			}
 			public override void TextChanged(UISearchBar _Searchbar, string searchText)
 			{
-				if (_Container.IncrementalSearch)
+				var searchable = _Container.Root as ISearchBar;
+				if (searchable != null && searchable.IncrementalSearch)
 					_Container.PerformFilter(searchText ?? "");
 			}
 
 			public override void CancelButtonClicked(UISearchBar _Searchbar)
 			{
 				_Searchbar.ShowsCancelButton = false;
-				_Container.FinishSearch();
+				_Container.FinishSearch(false);
 			}
 
 			public override void SearchButtonClicked(UISearchBar _Searchbar)
 			{
 				_Container.SearchButtonClicked(_Searchbar.Text);
-				if (_Container.IncrementalSearch)
-					_Container.FinishSearch();
+				var searchable = _Container.Root as ISearchBar;
+
+				if (searchable != null && searchable.IncrementalSearch)
+					_Container.FinishSearch(false);
 				else
 					_Container.PerformFilter(_Searchbar.Text);
 			}
@@ -636,37 +674,6 @@ namespace MonoMobile.MVVM
 				DismissModalViewControllerAnimated(animated);
 		}
 
-		private void SetupSearch()
-		{
-			var searchbar = Root as ISearchBar;
-			if (searchbar != null)
-			{
-				IncrementalSearch = searchbar.IncrementalSearch ?  IncrementalSearch || searchbar.IncrementalSearch : false;
-				AutoHideSearch = AutoHideSearch || searchbar.AutoHideSearch;
-				EnableSearch = EnableSearch || searchbar.EnableSearch;
-				SearchCommand = SearchCommand ?? searchbar.SearchCommand;
-
-				if (string.IsNullOrEmpty(SearchPlaceholder))
-					SearchPlaceholder = searchbar.SearchPlaceholder;
-			}
-
-			if (EnableSearch)
-			{
-				_Searchbar = new UISearchBar(new RectangleF(0, 0, TableView.Bounds.Width, TableView.RowHeight)) { Delegate = new SearchDelegate(this) };
-				
-				if (SearchPlaceholder != null)
-					_Searchbar.Placeholder = SearchPlaceholder;
-
-				TableView.TableHeaderView = _Searchbar;	
-			}
-			else if (TableView.TableHeaderView != null)
-			{
-				// For some reason setting to null when already null causes it to shift a few pixels down
-				// Should work for MonoTouch 3.0
-				//TableView.TableHeaderView = null;
-			}
-		}
-
 		public void Selected(NSIndexPath indexPath)
 		{
 			var section = Root.Sections[indexPath.Section];
@@ -711,8 +718,6 @@ namespace MonoMobile.MVVM
 
 			UpdateSource();
 			View = TableView;
-		
-			SetupSearch();
 
 			if (Root == null)
 				return;
@@ -733,6 +738,17 @@ namespace MonoMobile.MVVM
 			}
 
 			EnablePullToRefresh = Root.PullToRefreshCommand != null;
+		}
+		
+		public override void ViewDidAppear(bool animated)
+		{
+			base.ViewDidAppear(animated);
+		
+			var searchBar = Root as ISearchBar;
+			if (searchBar != null && searchBar.EnableSearch)
+			{
+				StartSearch();
+			}
 		}
 
 		private void ConfigureToolbarItems()
@@ -803,18 +819,44 @@ namespace MonoMobile.MVVM
 			return new RefreshTableHeaderView(rect, defaultSettingsKey);
 		}
 		
-		private void HideSearch()
+		public void ToggleSearchbar()
 		{
-			if (AutoHideSearch && EnableSearch && TableView.ContentOffset.Y < TableView.TableHeaderView.Bounds.Height)
+			if (!IsSearchbarVisible)
+			{	
+				StartSearch();
+				_Searchbar.BecomeFirstResponder();
+			}
+			else
 			{
-				TableView.ContentOffset = new PointF(0, TableView.TableHeaderView.Bounds.Height);
-			}	
-			
-			if (_Searchbar != null)
-			{
+				FinishSearch(true);
+		
 				_Searchbar.ResignFirstResponder();
 				_Searchbar.Text = string.Empty;
 			}
+		}
+		
+		private void CreateSearchbar()
+		{
+			if (_Searchbar == null)
+			{
+				var searchable = Root as ISearchBar;
+				if (searchable != null)
+				{
+					_Searchbar = new UISearchBar(new RectangleF(0, 0, TableView.Bounds.Width, 45)) 
+					{ 
+						Delegate = new SearchDelegate(this),
+						TintColor = Root.Theme.BarTintColor,
+					};	
+
+					if (!string.IsNullOrEmpty(searchable.SearchPlaceholder))
+						_Searchbar.Placeholder = searchable.SearchPlaceholder;
+				}
+			}
+
+			var frame = _Searchbar.Frame;
+			frame.Height = 45;
+			_Searchbar.Frame = frame;
+			_Searchbar.Hidden = false;
 		}
 
 		public override void ViewWillAppear(bool animated)
@@ -823,8 +865,6 @@ namespace MonoMobile.MVVM
 			
 			if (Root == null)
 				return;
-
-			HideSearch();
 			
 			Root.Prepare();
 			
@@ -920,6 +960,7 @@ namespace MonoMobile.MVVM
 				UpdateSource();
 				TableView.ReloadData();
 			}
+
 			_Dirty = false;
 		}
 
@@ -927,7 +968,8 @@ namespace MonoMobile.MVVM
 		
 		public override void ViewWillDisappear(bool animated)
 		{
-			HideSearch();
+			if (IsSearchbarVisible)
+				FinishSearch(true);
 
 			base.ViewWillDisappear(animated);
 			if (ViewDissapearing != null)
@@ -944,14 +986,12 @@ namespace MonoMobile.MVVM
 		protected DialogViewController(bool pushing) : base(UITableViewStyle.Grouped)
 		{
 			_Pushing = pushing;
-			IncrementalSearch = true;
 		}
 
 		protected DialogViewController(UITableViewStyle style, bool pushing) : base(style)
 		{
 			_Pushing = pushing;
 			Style = style;
-			IncrementalSearch = true;
 		}
 
 		public DialogViewController(UITableViewStyle style, BindingContext binding, bool pushing) : base(style)
@@ -959,7 +999,6 @@ namespace MonoMobile.MVVM
 			if (binding == null)
 				throw new ArgumentNullException("binding");
 			_Pushing = pushing;
-			IncrementalSearch = true;
 			Style = style;
 			
 			PrepareRoot(binding.Root);
@@ -971,15 +1010,11 @@ namespace MonoMobile.MVVM
 
 		public DialogViewController(IRoot root) : base(UITableViewStyle.Grouped)
 		{
-			IncrementalSearch = true;
-
 			PrepareRoot(root);
 		}
 
 		public DialogViewController(UITableViewStyle style, IRoot root) : base(style)
 		{
-			IncrementalSearch = true;
-
 			PrepareRoot(root);
 		}
 
@@ -996,16 +1031,12 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public DialogViewController(IRoot root, bool pushing) : base(UITableViewStyle.Grouped)
 		{
-			IncrementalSearch = true;
-
 			_Pushing = pushing;
 			PrepareRoot(root);
 		}
 
 		public DialogViewController(UITableViewStyle style, IRoot root, bool pushing) : base(style)
 		{
-			IncrementalSearch = true;
-
 			_Pushing = pushing;
 			Style = style;
 			PrepareRoot(root);
