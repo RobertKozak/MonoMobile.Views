@@ -94,8 +94,6 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		public bool IsSearchbarVisible { get; set; }
-
 		public bool EnablePullToRefresh 
 		{ 
 			get { return _RefreshView != null; } 
@@ -245,8 +243,6 @@ namespace MonoMobile.MVVM
 			}
 		
 			UIView.CommitAnimations();
-			
-			IsSearchbarVisible = true;
 		}
 
 		/// <summary>
@@ -275,8 +271,6 @@ namespace MonoMobile.MVVM
 				_Searchbar.Frame = new RectangleF(0, -45, _Searchbar.Frame.Width, 45);
 				
 				UIView.CommitAnimations();
-	
-				IsSearchbarVisible = false;
 			}
 
 			_Searchbar.ResignFirstResponder();
@@ -745,7 +739,7 @@ namespace MonoMobile.MVVM
 			base.ViewDidAppear(animated);
 		
 			var searchBar = Root as ISearchBar;
-			if (searchBar != null && searchBar.EnableSearch)
+			if (searchBar != null && searchBar.EnableSearch && !searchBar.IsSearchbarHidden)
 			{
 				StartSearch();
 			}
@@ -821,17 +815,23 @@ namespace MonoMobile.MVVM
 		
 		public void ToggleSearchbar()
 		{
-			if (!IsSearchbarVisible)
-			{	
-				StartSearch();
-				_Searchbar.BecomeFirstResponder();
-			}
-			else
+			var searchbar = Root as ISearchBar;
+			if (searchbar != null)
 			{
-				FinishSearch(true);
-		
-				_Searchbar.ResignFirstResponder();
-				_Searchbar.Text = string.Empty;
+				if (searchbar.IsSearchbarHidden)
+				{	
+					StartSearch();
+					_Searchbar.BecomeFirstResponder();
+					searchbar.IsSearchbarHidden = false;
+				}
+				else
+				{
+					FinishSearch(true);
+			
+					_Searchbar.ResignFirstResponder();
+					_Searchbar.Text = string.Empty;
+					searchbar.IsSearchbarHidden = true;
+				}
 			}
 		}
 		
@@ -968,7 +968,8 @@ namespace MonoMobile.MVVM
 		
 		public override void ViewWillDisappear(bool animated)
 		{
-			if (IsSearchbarVisible)
+			var searchbar = Root as ISearchBar;
+			if (searchbar != null && searchbar.EnableSearch && !searchbar.IsSearchbarHidden)
 				FinishSearch(true);
 
 			base.ViewWillDisappear(animated);

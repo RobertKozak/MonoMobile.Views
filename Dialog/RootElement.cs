@@ -65,6 +65,7 @@ namespace MonoMobile.MVVM
 	/// </remarks>
 	public partial class RootElement : StringElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
+		public bool IsSearchbarHidden { get; set; }
 		public bool EnableSearch { get; set; }
 		public bool IncrementalSearch { get; set; }
 		public string SearchPlaceholder { get; set; }
