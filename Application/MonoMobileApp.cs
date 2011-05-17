@@ -60,5 +60,10 @@ namespace MonoMobile.MVVM
 			MainViewType = mainViewType;
 			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
+
+		public static void Run(string delegateName, string[] args)
+		{
+			UIApplication.Main(args, "MonoMobileApplication", delegateName);
+		}
 	}
 }

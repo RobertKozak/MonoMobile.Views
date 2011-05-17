@@ -140,6 +140,7 @@
     <Compile Include="Views\ButtonTestView.cs" />
     <Compile Include="Views\TestView.cs" />
     <Compile Include="Controls\UIGlassyButton.cs" />
+    <Compile Include="AppDelegate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
