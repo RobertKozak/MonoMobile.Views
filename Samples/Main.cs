@@ -2,11 +2,11 @@ namespace Samples
 {
 	using MonoMobile.MVVM;
 	
-	public class Application : MonoMobileApp
+	public class Application : MonoMobileApplication
 	{
 		static void Main(string[] args)
 		{
-			Run(args);
+			Run("Samples MVVM", typeof(TestView), args);
 		}	
 	}
 }

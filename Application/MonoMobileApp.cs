@@ -29,16 +29,22 @@
 // 
 namespace MonoMobile.MVVM
 {
+	using System;
 	using System.Linq;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-
-	public class MonoMobileApp
+	
+	[Register("MonoMobileApplication")]
+	public class MonoMobileApplication: UIApplication
 	{
+		public static Type MainViewType { get; private set; }  
+
 		public static UIWindow Window { get; set; }
 		public static UINavigationController Navigation { get; set; }
-
+		public static UIView MainView { get; set; }
+		public static string Title { get; set; }
+ 
 		public static void ToggleSearchbar()
 		{
 			var dvc = (DialogViewController)Navigation.ViewControllers.FirstOrDefault();
@@ -48,9 +54,11 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
-		public static void Run(string[] args)
+		public static void Run(string title, Type mainViewType, string[] args)
 		{
-			UIApplication.Main(args, null, "AppDelegate");
+			Title = title;
+			MainViewType = mainViewType;
+			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
 	}
 }

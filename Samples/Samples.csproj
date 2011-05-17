@@ -136,7 +136,6 @@
     <Compile Include="Views\ThemeSampleView.cs" />
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
     <Compile Include="Views\HoneyDoList.cs" />
-    <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\HoneyDoListViewModel.cs" />
     <Compile Include="Views\ButtonTestView.cs" />
     <Compile Include="Views\TestView.cs" />

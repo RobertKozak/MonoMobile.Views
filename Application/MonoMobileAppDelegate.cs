@@ -1,12 +1,13 @@
 namespace Samples
 {
+	using System;
 	using System.Threading;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;	
 
-	[Register("AppDelegate")]
-	public class AppDelegate : UIApplicationDelegate
+	[Register("MonoMobileAppDelegate")]
+	public class MonoMobileAppDelegate : UIApplicationDelegate
 	{
 		private static UIImage _DefaultImage = UIImage.FromFile("Default.png");
 		
@@ -27,9 +28,10 @@ namespace Samples
 
 			_Window.AddSubview(_Navigation.View);
 			_Window.MakeKeyAndVisible();
-
-			Application.Window = _Window;
-			Application.Navigation = _Navigation;
+			
+			MonoMobileApplication.Window = _Window;
+			MonoMobileApplication.Navigation = _Navigation;
+			MonoMobileApplication.MainView = Activator.CreateInstance(MonoMobileApplication.MainViewType) as UIView;
 
 			// this method initializes the main NavigationController
 			var startupThread = new Thread(Startup);
@@ -44,7 +46,7 @@ namespace Samples
 			{
 				InvokeOnMainThread(delegate 
 				{
-					var binding = new BindingContext(new TestView(), "Samples MVVM");
+					var binding = new BindingContext(MonoMobileApplication.MainView, MonoMobileApplication.Title);
 					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } };
 
 					UIView.BeginAnimations("fadeIn");
@@ -62,26 +64,10 @@ namespace Samples
 		
 		public override void WillTerminate(UIApplication application)
 		{
-			SaveScreen();
 		}
 
 		public override void DidEnterBackground(UIApplication application)
 		{
-			SaveScreen();
-		}
-
-		private void SaveScreen()
-		{
-			// Save screenshot as splashscreen
-//			UIGraphics.BeginImageContext(_Window.Bounds.Size);
-//
-//			_Window.Layer.RenderInContext(UIGraphics.GetCurrentContext());
-//			var image = UIGraphics.GetImageFromCurrentImageContext();
-//
-//			UIGraphics.EndImageContext();
-//
-//			NSError err = new NSError();
-//			image.AsPNG().Save("Default.png", true, out err);
 		}
 	}
 }
