@@ -53,13 +53,13 @@ namespace MonoMobile.MVVM
 
 			_ConvertedValue = 0;
 			var collection = (EnumCollection)value;
-			foreach(var item in collection.TrueValues)
+			foreach(var item in collection.SelectedItems)
 			{
 				_ConvertedValue |= (1 << item.Index);
 			}
 
 			
-			return collection.TrueValues.Count;
+			return collection.SelectedItems.Count;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

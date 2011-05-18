@@ -56,6 +56,9 @@ namespace MonoMobile.MVVM
 		int ItemIndex { get; set; }
 		NSIndexPath PathForRadio();
 
+		List<object> SelectedItems { get; }
+		object SelectedItem { get; set; }
+
 		void Prepare();
 		void Add(IEnumerable<ISection> sections);
 		void Add(ISection section);

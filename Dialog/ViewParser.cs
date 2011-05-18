@@ -276,7 +276,8 @@ namespace MonoMobile.MVVM
 
 			var isEnum = memberType.IsEnum;
 			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
-			var isMultiselectCollection = memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>));
+		//	var isMultiselectCollection = memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>));
+			var isMultiselect = member.GetCustomAttribute<MultiselectAttribute>() != null;
 			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
 			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
 
@@ -284,7 +285,7 @@ namespace MonoMobile.MVVM
 		
 			var isList = member.GetCustomAttribute<ListAttribute>() != null;
 
-			if (isEnum || isEnumCollection || isMultiselectCollection)
+			if (isEnum || isEnumCollection || isMultiselect)
 			{
 				ISection section = GetSectionElementForMember(theme, view, member, bindings);
 				if (!isList && section != null)
@@ -365,6 +366,7 @@ namespace MonoMobile.MVVM
 			var caption = GetCaption(member);
 			Type memberType = GetTypeForMember(member);
 			ISection section = null;
+			var isMultiselect = member.GetCustomAttribute<MultiselectAttribute>() != null;
 
 			if (memberType.IsEnum)
 			{
@@ -381,7 +383,7 @@ namespace MonoMobile.MVVM
 			{
 				section = CreateEnumCollectionSection(member, caption, view, bindings);
 			}
-			else if (memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>)))
+			else if (isMultiselect)//if (memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>)))
 			{
 				section = CreateMultiselectCollectionSection(member, caption, view, bindings);
 			}
@@ -406,7 +408,7 @@ namespace MonoMobile.MVVM
 				if (value.GetType().IsEnum)
 					description = ((Enum)value).GetDescription();
 				
-				var radioElement = new RadioElement(description) { };
+				var radioElement = new RadioElement(description) { Item = value };
 				radioElement.Index = index;
 				radioElement.PopOnSelect = popOnSelection;
 				radioElement.Value = selected == index;
@@ -440,9 +442,15 @@ namespace MonoMobile.MVVM
 
 			var index = 0;
 			var items = (EnumCollection)collection;
-			foreach (var item in items.AllValues)
+			foreach (var item in items.Items)
 			{
-				var checkboxElement = new CheckboxElement(item.Description) { Index = index, Value = item.IsChecked, Group = item.GroupName};
+				var checkboxElement = new CheckboxElement(item.Description) 
+				{ 
+					Item = item, 
+					Index = index, 
+					Value = item.IsChecked, 
+					Group = item.GroupName
+				};
 
 				csection.Add(checkboxElement);				
 				index++;
@@ -463,7 +471,7 @@ namespace MonoMobile.MVVM
 		
 			foreach (var item in collection)
 			{
-				var checkboxElement = new CheckboxElement(item.ToString()) { Index = index, Value = false};
+				var checkboxElement = new CheckboxElement(item.ToString()) { Item = item, Index = index, Value = false};
 				
 				csection.Add(checkboxElement);
 				index++;

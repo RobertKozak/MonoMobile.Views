@@ -34,6 +34,8 @@ namespace MonoMobile.MVVM
 	public partial class RootElement
 	{
 		public BindableProperty ItemIndexProperty = BindableProperty.Register("ItemIndex");
+		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
+		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
 		
 		private int Index
 		{
@@ -53,6 +55,8 @@ namespace MonoMobile.MVVM
 			base.BindProperties();
 			
 			ItemIndexProperty.BindTo(this, () => Index);
+			SelectedItemsProperty.BindTo(this, () => SelectedItems);
+			SelectedItemProperty.BindTo(this, () => SelectedItem);
 #endif
 		}
 	}

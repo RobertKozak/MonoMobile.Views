@@ -56,37 +56,38 @@ namespace MonoMobile.MVVM
 		{
 			if (Parent != null)
 			{
-				var root = (IRoot)Parent.Parent;
-				if (root != null)
+				if (Root != null)
 				{
-					var radioGroup = root.Groups.FirstOrDefault() as RadioGroup;
-
-					var section = root.Sections[indexPath.Section];
+					var section = Root.Sections[indexPath.Section];
+					var selectedIndex = -1;
 					var index = 0;
 					foreach (var e in section.Elements)
 					{
 						var radioView = e as RadioElement;
 						UpdateSelected(radioView, this == radioView);
-
-						if (this == radioView && radioGroup != null)
+						
+						if (this == radioView)
 						{
-							radioGroup.Selected = index;
+							selectedIndex = index;
+							Root.SelectedItem = Item;
 						}
-
 						index++;
 					}
 					
-					root.Value = this.Caption;
-
-					var property = BindableProperty.GetBindableProperty(root, "ValueProperty");
+					Root.Value = this.Caption;
+					
+					var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
 					if (property != null)
 						property.Update();
 
-					property = BindableProperty.GetBindableProperty(root, "ItemIndexProperty");
+					property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
+					if (property != null)
+						property.Update();
+
+					property = BindableProperty.GetBindableProperty(Root, "ItemIndexProperty");
 					property.Update();
-					
-					if (radioGroup != null)
-						root.ItemIndex = radioGroup.Selected;
+				
+					Root.ItemIndex = selectedIndex;
 				}
 			}
 			

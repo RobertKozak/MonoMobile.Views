@@ -34,7 +34,8 @@ namespace MonoMobile.MVVM
 	public abstract partial class BoolElement : Element
 	{
 		public bool Value { get; set; }
-		
+		public object Item { get; set; }
+
 		public BoolElement(string caption, bool value) : base(caption)
 		{
 			Value = value;

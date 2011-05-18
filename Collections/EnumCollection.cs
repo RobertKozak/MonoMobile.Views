@@ -45,17 +45,12 @@ namespace MonoMobile.MVVM
     {
         public Type EnumType { get; set; }
 
-        public ICollection<EnumBinder> TrueValues
+        public ICollection<EnumBinder> SelectedItems
         {
             get { return this.Where(binder => binder.IsChecked).ToList(); }
         }
 
-        public ICollection<EnumBinder> FalseValues
-        {
-            get { return this.Where(binder => !binder.IsChecked).ToList(); }
-        }
-        
-        public ICollection<EnumBinder> AllValues
+        public ICollection<EnumBinder> Items
         {
             get { return this.ToList(); }
         }

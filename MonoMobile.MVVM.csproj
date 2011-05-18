@@ -278,6 +278,7 @@
     <Compile Include="Application\MonoMobileApp.cs" />
     <Compile Include="Dialog\Reflection API\SearchbarAttribute.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
+    <Compile Include="Dialog\Reflection API\MultiselectAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

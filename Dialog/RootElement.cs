@@ -85,6 +85,9 @@ namespace MonoMobile.MVVM
 
 		public List<Group> Groups { get; set; }
 		public bool UnevenRows { get; set; }
+		
+		public List<object> SelectedItems { get; private set; }
+		public object SelectedItem { get; set; }
 
 		[Preserve]
 		public RootElement(): this(null)
@@ -101,6 +104,8 @@ namespace MonoMobile.MVVM
 		{
 			Sections = new List<ISection>();
 			Groups = new List<Group>();
+
+			SelectedItems = new List<object>();
 		}
 
 		/// <summary>

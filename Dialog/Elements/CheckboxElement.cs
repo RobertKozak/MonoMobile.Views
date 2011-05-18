@@ -31,6 +31,7 @@
 //
 namespace MonoMobile.MVVM
 {
+	using System.Linq;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
@@ -59,6 +60,37 @@ namespace MonoMobile.MVVM
 			Cell.AccessoryView = null;
 			Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
+
+			if (Root != null)
+			{
+				if ((bool)Value && !Root.SelectedItems.Contains(Item))
+				{
+					Root.SelectedItems.Add(Item);
+					Root.SelectedItem = Item;
+				}
+				
+				if (!(bool)Value && Root.SelectedItems.Contains(Item))
+				{
+					Root.SelectedItems.Remove(Item);
+				}
+
+			
+				var property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
+				if (property != null)
+					property.Update();
+
+				property = BindableProperty.GetBindableProperty(Root, "SelectedItemsProperty");
+				if (property != null)
+					property.Update();
+
+				property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
+				if (property != null)
+					property.Update();
+
+				property = BindableProperty.GetBindableProperty(Root, "ItemIndexProperty");
+				if (property != null)
+					property.Update();
+			}
 		}
 
 		public override string ToString()
