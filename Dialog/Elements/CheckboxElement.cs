@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 
 	public partial class CheckboxElement : BoolElement, ISelectable
-	{
+	{		
 		public string Group { get; set; }
 
 		public CheckboxElement(string caption) : base(caption)
@@ -73,21 +73,27 @@ namespace MonoMobile.MVVM
 				{
 					Root.SelectedItems.Remove(Item);
 				}
+				
+				var enumBinder = Item as EnumBinder;
+				if (enumBinder != null)
+				{
+					enumBinder.IsChecked = Value;
+					Root.Value = Root.SelectedItems.Count.ToString();
+				}
 
-			
-				var property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
+				var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
 				if (property != null)
 					property.Update();
-
+								
 				property = BindableProperty.GetBindableProperty(Root, "SelectedItemsProperty");
 				if (property != null)
 					property.Update();
 
-				property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
+				property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
 				if (property != null)
 					property.Update();
 
-				property = BindableProperty.GetBindableProperty(Root, "ItemIndexProperty");
+				property = BindableProperty.GetBindableProperty(Root, "IndexProperty");
 				if (property != null)
 					property.Update();
 			}

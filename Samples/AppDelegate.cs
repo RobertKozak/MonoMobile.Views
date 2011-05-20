@@ -45,7 +45,7 @@ namespace Samples
 			{
 				InvokeOnMainThread(delegate
 				{
-					var binding = new BindingContext(new TestView(), "Samples MVVM");
+					var binding = new BindingContext(new TestView(), "Sample");
 					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } };
 					
 					UIView.BeginAnimations("fadeIn");

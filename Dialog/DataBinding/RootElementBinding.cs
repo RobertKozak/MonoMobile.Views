@@ -33,18 +33,18 @@ namespace MonoMobile.MVVM
 
 	public partial class RootElement
 	{
-		public BindableProperty ItemIndexProperty = BindableProperty.Register("ItemIndex");
+		public BindableProperty IndexProperty = BindableProperty.Register("Index");
 		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
 		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
 		
-		private int Index
+		private int ItemIndex
 		{
-			get { return ItemIndex; }
+			get { return Index; }
 			set
 			{
-				if (ItemIndex != value)
+				if (Index != value)
 				{
-					ItemIndex = value;
+					Index = value;
 				}
 			}
 		}
@@ -54,7 +54,7 @@ namespace MonoMobile.MVVM
 #if DATABINDING
 			base.BindProperties();
 			
-			ItemIndexProperty.BindTo(this, () => Index);
+			IndexProperty.BindTo(this, () => ItemIndex);
 			SelectedItemsProperty.BindTo(this, () => SelectedItems);
 			SelectedItemProperty.BindTo(this, () => SelectedItem);
 #endif

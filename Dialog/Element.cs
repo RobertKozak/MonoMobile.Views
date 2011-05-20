@@ -41,6 +41,8 @@ namespace MonoMobile.MVVM
 		private bool _Visible;
 		private int _OldRow;
 		private DisabledCellView _DisabledCellView; 
+		
+		public Element ElementInstance { get { return this; } }
 
 		public NSString Id { get; set; }
 		public int Order { get; set; }
@@ -402,6 +404,7 @@ namespace MonoMobile.MVVM
 			BindProperties();
 
 			UpdateTargets();
+			UpdateSources();
 
 			if (!Enabled) 
 				SetDisabled(Cell);

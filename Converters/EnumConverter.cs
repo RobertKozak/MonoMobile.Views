@@ -36,8 +36,6 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers=true)]
     public class EnumConverter : IValueConverter
     {
-        public Type PropertyType { get; set; }
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -47,11 +45,17 @@ namespace MonoMobile.MVVM
 			{
 				return (int)value;
 			}
+			
+			if (value.GetType().IsAssignableFrom(typeof(EnumBinder)))
+				value = ((EnumBinder)value).FieldName;
 
 			if (value.GetType() == typeof(string))
 			{
-				var enumValue = EnumExtensions.GetValueFromString(PropertyType, (string)value);
-				var enumString = Enum.GetName(PropertyType, enumValue);
+				if (string.IsNullOrEmpty((string)value))
+					return string.Empty;
+
+				var enumValue = EnumExtensions.GetValueFromString((Type)parameter, (string)value);
+				var enumString = Enum.GetName((Type)parameter, enumValue);
 				return enumString;
 			}
 
@@ -60,13 +64,23 @@ namespace MonoMobile.MVVM
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-			if (value.GetType() == typeof(int))
+			if (string.IsNullOrEmpty((string)value))
+				value = 0;
+			
+			if (targetType == value.GetType())
+				return value;
+
+			if (targetType == typeof(int))
 			{
-				var values = Enum.GetValues(PropertyType);
-				return values.GetValue((int)value);
+				if (value.GetType() == typeof(int))
+				{
+					var values = Enum.GetValues((Type)parameter);
+					var v = values.GetValue((int)value);
+					return values.GetValue((int)value);
+				}
 			}
 
-			return EnumExtensions.GetValueFromString(targetType, (string)value);
+			return EnumExtensions.GetValueFromString((Type)parameter, (string)value);
         }
     }
 }

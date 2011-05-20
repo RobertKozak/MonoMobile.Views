@@ -220,7 +220,7 @@ namespace MonoMobile.MVVM
 					IsDirty = false;
 				}
 				
-				var index = Root.ItemIndex;
+				var index = Root.Index;
 				if (index > -1)
 				{
 					var path = Root.PathForRadio();

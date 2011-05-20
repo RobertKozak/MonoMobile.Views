@@ -61,6 +61,9 @@ namespace MonoMobile.MVVM
 					var section = Root.Sections[indexPath.Section];
 					var selectedIndex = -1;
 					var index = 0;
+
+					Root.SelectedItems.Clear();
+
 					foreach (var e in section.Elements)
 					{
 						var radioView = e as RadioElement;
@@ -70,13 +73,19 @@ namespace MonoMobile.MVVM
 						{
 							selectedIndex = index;
 							Root.SelectedItem = Item;
+							Root.SelectedItems.Add(Item);
 						}
 						index++;
 					}
-					
+							
+					Root.Index = selectedIndex;					
 					Root.Value = this.Caption;
 					
 					var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
+					if (property != null)
+						property.Update();
+					
+					property = BindableProperty.GetBindableProperty(Root, "SelectedItemsProperty");
 					if (property != null)
 						property.Update();
 
@@ -84,10 +93,8 @@ namespace MonoMobile.MVVM
 					if (property != null)
 						property.Update();
 
-					property = BindableProperty.GetBindableProperty(Root, "ItemIndexProperty");
+					property = BindableProperty.GetBindableProperty(Root, "IndexProperty");
 					property.Update();
-				
-					Root.ItemIndex = selectedIndex;
 				}
 			}
 			

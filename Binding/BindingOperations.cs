@@ -77,6 +77,7 @@ namespace MonoMobile.MVVM
 		public static IBindingExpression GetBindingExpression(object target, string property)
 		{
 			UpdateBindings();
+
 			if (_BindingExpressions != null)
 			{
 				return _BindingExpressions.SingleOrDefault((b)=>b.Binding.TargetPath == property && b.Binding.Target.Equals(target));

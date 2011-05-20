@@ -141,6 +141,7 @@
     <Compile Include="Views\TestView.cs" />
     <Compile Include="Controls\UIGlassyButton.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Views\EnumerableTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

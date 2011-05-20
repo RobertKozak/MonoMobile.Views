@@ -83,7 +83,6 @@ namespace MonoMobile.MVVM
 
 		private Func<IRoot, UIViewController> _ViewControllerFactory;
 
-		public List<Group> Groups { get; set; }
 		public bool UnevenRows { get; set; }
 		
 		public List<object> SelectedItems { get; private set; }
@@ -102,8 +101,9 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public RootElement(string caption) : base(caption)
 		{
+			Index = -1;
+			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
-			Groups = new List<Group>();
 
 			SelectedItems = new List<object>();
 		}
@@ -122,29 +122,10 @@ namespace MonoMobile.MVVM
 			//Sections = new List<ISection>();
 		}
 
-		/// <summary>
-		/// Initializes a RootElement that renders the summary based on the radio settings of the contained elements. 
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to ender
-		/// </param>
-		/// <param name="group">
-		/// The group that contains the checkbox or radio information.  This is used to display
-		/// the summary information when a RootElement is rendered inside a section.
-		/// </param>
-		public RootElement(string caption, Group group) : this(caption)
-		{
-			Groups.Add(group);
-		}
-
 		public List<ISection> Sections { get; set; }
 
 		public NSIndexPath PathForRadio()
-		{
-			RadioGroup radio = Groups.FirstOrDefault() as RadioGroup;
-			if (radio == null)
-				return null;
-			
+		{			
 			uint current = 0, section = 0;
 			foreach (ISection s in Sections)
 			{
@@ -155,7 +136,7 @@ namespace MonoMobile.MVVM
 					if (!(e is RadioElement))
 						continue;
 					
-					if (current == ItemIndex)
+					if (current == Index)
 					{
 						return NSIndexPath.Create(section, row);
 					}
@@ -383,26 +364,6 @@ namespace MonoMobile.MVVM
 				yield return s;
 		}
 
-		/// <summary>
-		/// The currently selected Radio item in the whole Root.
-		/// </summary>
-		public int ItemIndex
-		{
-			get {
-				var radio = Groups.FirstOrDefault() as RadioGroup;
-				if (radio != null)
-					return radio.Selected;
-				return -1;
-			}
-			set {
-				var radio = Groups.FirstOrDefault() as RadioGroup;
-				if (radio != null)
-				{
-					radio.Selected = value;
-				}
-			}
-		}
-
 		public override UITableViewElementCell NewCell()
 		{
 			var style = Theme.CellStyle;
@@ -515,26 +476,10 @@ namespace MonoMobile.MVVM
 					Sections = binding.Root.Sections;
 				}
 			}
-			if (Sections != null)
-			{
-				var radio = Groups.FirstOrDefault() as RadioGroup;
-				var section = Sections.FirstOrDefault();
-				if (radio != null && section != null && !section.IsMultiselect) 
-				{
-					var selected = EnumExtensions.GetValueFromString(radio.EnumType, (string)Value);
-					radio.Selected = selected;
-					foreach (RadioElement element in section)
-					{
-						element.UpdateSelected(element, false);
-					}
 
-					((RadioElement)section[selected]).Value = true;
-				}
-			}
-
-			if (Groups != null && DetailTextLabel != null)
+			if (DetailTextLabel != null)
 			{
-				DetailTextLabel.Text = ToString();
+				DetailTextLabel.Text = Value;
 			}
 		}
 

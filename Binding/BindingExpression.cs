@@ -75,6 +75,7 @@ namespace MonoMobile.MVVM
 			object viewSource = Binding.Source;
 			_ViewProperty = viewSource.GetType().GetNestedMember(ref viewSource, Binding.SourcePath, true);
 			Binding.ViewSource = viewSource;
+			SourceProperty = _ViewProperty;
 
 			var dataContext = viewSource as IDataContext;
 			if (dataContext != null && dataContext.DataContext != null)
@@ -179,7 +180,9 @@ namespace MonoMobile.MVVM
 		{
 			object convertedValue = value;
 			var convertSupported = true;
-
+			
+			try
+			{
 			if (Binding.Converter != null)
 			{
 				try
@@ -200,6 +203,12 @@ namespace MonoMobile.MVVM
 				var typeCode = Convert.GetTypeCode(convertedValue);
 				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
 					convertedValue = Convert.ChangeType(convertedValue, member.GetMemberType());
+			}
+			}
+			catch(FormatException ex)
+			{
+				var message = string.Format("{0} is a {1} but {2} is a {3}. Did you forget to specify an IValueConverter?", convertedValue, convertedValue.GetType(), member.Name, member.GetMemberType());
+				throw new FormatException(message);
 			}
 
 			return convertedValue;

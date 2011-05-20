@@ -51,7 +51,7 @@ namespace MonoMobile.MVVM
 		private UIColor __TextAlignmentShadowColor { get { return Cell.TextLabel.ShadowColor; } set { Cell.TextLabel.ShadowColor = value; } }
 		private UIColor __DetailTextAlignmentShadowColor { get { return Cell.DetailTextLabel.ShadowColor; } set { Cell.DetailTextLabel.ShadowColor = value; } }
 
-
+		public BindableProperty ElementInstanceProperty = BindableProperty.Register("ElementInstance");
 		public BindableProperty AccessoryProperty = BindableProperty.Register("Accessory");
 		public BindableProperty ImageIconProperty = BindableProperty.Register("ImageIcon");
 		public BindableProperty ImageIconUriProperty = BindableProperty.Register("ImageIconUri");
@@ -85,6 +85,8 @@ namespace MonoMobile.MVVM
 			
 			if (TextLabel != null)
 				CaptionProperty.BindTo(this, () => TextLabel.Text);
+
+			ElementInstanceProperty.BindTo(this, ()=>ElementInstance);
 #endif
 		}
 	
@@ -100,6 +102,20 @@ namespace MonoMobile.MVVM
 				}
 			}
 #endif
+		}
+
+		protected virtual void UpdateSources()
+		{
+			#if DATABINDING
+			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
+			if (bindingExpressions != null)
+			{
+				foreach (var bindingExpression in bindingExpressions)
+				{
+					bindingExpression.UpdateSource();
+				}
+			}
+			#endif
 		}
 	}
 }

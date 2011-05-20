@@ -73,6 +73,7 @@ namespace MonoMobile.MVVM
 				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
 				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
 				searchbar.EnableSearch = true;
+				searchbar.IsSearchbarHidden = false;
 			}
 			
 			Root.Add(CreateSectionList(view, Root));
@@ -224,6 +225,21 @@ namespace MonoMobile.MVVM
 			{
 				element = _ElementPropertyMap[memberType](member, caption, view, bindings);
 			}
+			
+			if (typeof(IElement).IsAssignableFrom(memberType))
+			{
+				var memberValue = member.GetValue(view) as IElement;
+				if (memberValue == null)
+				{
+					memberValue = Activator.CreateInstance(memberType) as IElement;
+				}
+				if (memberValue != null)
+				{
+					memberValue.Caption = caption;
+				}
+
+				element = memberValue;
+			}
 
 			if (element == null)
 			{
@@ -276,7 +292,6 @@ namespace MonoMobile.MVVM
 
 			var isEnum = memberType.IsEnum;
 			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
-		//	var isMultiselectCollection = memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>));
 			var isMultiselect = member.GetCustomAttribute<MultiselectAttribute>() != null;
 			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
 			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
@@ -370,7 +385,8 @@ namespace MonoMobile.MVVM
 
 			if (memberType.IsEnum)
 			{
-				SetDefaultConverter(member, "Value", new EnumConverter() { PropertyType = memberType }, bindings);
+				SetDefaultConverter(view, member, "Value", new EnumConverter(), memberType, bindings);
+			//	SetDefaultConverter(view, member, "SelectedItem", new EnumConverter(), memberType, bindings);
 
 				var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 				
@@ -383,7 +399,7 @@ namespace MonoMobile.MVVM
 			{
 				section = CreateEnumCollectionSection(member, caption, view, bindings);
 			}
-			else if (isMultiselect)//if (memberType.IsAssignableToGenericType(typeof(IMultiselectCollection<>)))
+			else if (isMultiselect)
 			{
 				section = CreateMultiselectCollectionSection(member, caption, view, bindings);
 			}
@@ -501,7 +517,6 @@ namespace MonoMobile.MVVM
 
 			var root = new RootElement(caption) { section };
 			root.Opaque = false;
-			root.ViewBinding.DataContext = view;
 			root.ViewBinding.MemberInfo = member;
 			root.ViewBinding.DataContext = items;
 			root.ViewBinding.DataContextCode = DataContextCode.Enumerable;
@@ -543,14 +558,15 @@ namespace MonoMobile.MVVM
 			return cellStyle;
 		}
 
-		private void SetDefaultConverter(MemberInfo member, string targetPath, IValueConverter converter, List<Binding> bindings)
+		private void SetDefaultConverter(object view, MemberInfo member, string targetPath, IValueConverter converter, object parameter, List<Binding> bindings)
 		{
 			foreach (var binding in bindings)
 			{
-				if (binding.SourcePath == member.Name && binding.Converter == null)
+				if (binding.SourcePath == member.Name && binding.Source == view && binding.Converter == null)
 				{
 					binding.TargetPath = targetPath;
 					binding.Converter = converter;
+					binding.ConverterParameter = parameter;
 				}
 			}
 		}
@@ -788,6 +804,7 @@ namespace MonoMobile.MVVM
 					searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
 					searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
 					searchbar.EnableSearch = true;
+					searchbar.IsSearchbarHidden = false;
 					
 					var methodInfo = member as MethodInfo;
 					searchbar.SearchCommand = new SearchCommand(view, methodInfo);
@@ -809,7 +826,7 @@ namespace MonoMobile.MVVM
 
 				return element ?? _NoElement;
 			});
-
+			
 			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
@@ -843,7 +860,7 @@ namespace MonoMobile.MVVM
 					element = new MultilineElement(caption);
 				else if (htmlAttribute != null)
 				{
-					SetDefaultConverter(member, "Value", new UriConverter(), bindings);
+					SetDefaultConverter(view, member, "Value", new UriConverter(), null, bindings);
 					element = new HtmlElement(caption);
 				}
 				else
@@ -926,7 +943,7 @@ namespace MonoMobile.MVVM
 
 			_ElementPropertyMap.Add(typeof(int), (member, caption, view, bindings)=>
 			{
-				SetDefaultConverter(member, "Value", new IntConverter(), bindings);
+				SetDefaultConverter(view, member, "Value", new IntConverter(), null, bindings);
 				return new StringElement(caption) { Value = member.GetValue(view).ToString() };
 			});
 		}
@@ -948,4 +965,3 @@ namespace MonoMobile.MVVM
 		}
 	}
 }
-

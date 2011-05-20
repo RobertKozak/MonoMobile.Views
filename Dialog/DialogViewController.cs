@@ -818,19 +818,19 @@ namespace MonoMobile.MVVM
 			var searchbar = Root as ISearchBar;
 			if (searchbar != null)
 			{
-				if (searchbar.IsSearchbarHidden)
-				{	
-					StartSearch();
-					_Searchbar.BecomeFirstResponder();
-					searchbar.IsSearchbarHidden = false;
-				}
-				else
+				if (!searchbar.IsSearchbarHidden)
 				{
 					FinishSearch(true);
 			
 					_Searchbar.ResignFirstResponder();
 					_Searchbar.Text = string.Empty;
 					searchbar.IsSearchbarHidden = true;
+				}
+				else
+				{
+					StartSearch();
+					_Searchbar.BecomeFirstResponder();
+					searchbar.IsSearchbarHidden = false;
 				}
 			}
 		}
@@ -924,11 +924,12 @@ namespace MonoMobile.MVVM
 
 			if (Root != null)
 			{
-				var index = Root.ItemIndex;
+				var index = Root.Index;
 				if (index > -1)
 				{
 					var path = Root.PathForRadio();
-					TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
+					if (path != null)
+						TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
 			}
 
@@ -1106,7 +1107,7 @@ namespace MonoMobile.MVVM
 					var textLabel = view.Subviews.FirstOrDefault() as UILabel;
 					if (textLabel != null)
 					{
-						if (visible)
+						if (visible && oldTextShadowColor != null)
 						{
 							textLabel.ShadowColor = oldTextShadowColor;
 						}

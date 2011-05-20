@@ -1,10 +1,11 @@
 using System;
 using MonoMobile.MVVM;
+using System.Collections.Generic;
 namespace Samples
 {
 	public class HoneyDoListViewModel : ViewModel
 	{
-		public MultiselectCollection<string> Items 
+		public List<string> Items 
 		{
 			get { return Get(()=>Items); }
 			private set { Set(()=>Items, value); }
@@ -18,7 +19,7 @@ namespace Samples
 
 		public HoneyDoListViewModel()
 		{
-			Items = new MultiselectCollection<string>(new string []
+			Items = new List<string>(new string []
 			{
 				"Take out trash",
 				"Buy Groceries",

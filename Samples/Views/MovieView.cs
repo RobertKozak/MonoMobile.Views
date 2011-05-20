@@ -3,7 +3,6 @@ namespace Samples
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	
-//	[Theme(typeof(FrostedTheme))]
 	public class MovieView: View
 	{
 		[Section()]
@@ -87,4 +86,3 @@ namespace Samples
 		}
 	}
 }
-

@@ -50,10 +50,10 @@ namespace MonoMobile.MVVM
 		List<ISection> Sections { get; set; }
 		bool UnevenRows { get; set;}
 		string Caption { get; set; }
-		List<Group> Groups { get; set; }
+
 		UITableView TableView { get; set; }
 		int Count { get; }
-		int ItemIndex { get; set; }
+		int Index { get; set; }
 		NSIndexPath PathForRadio();
 
 		List<object> SelectedItems { get; }
