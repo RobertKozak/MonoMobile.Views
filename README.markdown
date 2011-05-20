@@ -300,5 +300,5 @@ You can also specify Elements directly:
 
 	public EntryElement UserName { get; set; }
 
-if the Element is just declared and is null the ViewParser will create on for you and assign it our
+if the Element is just declared and is null the ViewParser will create one for you and assign it our
 property or field.
