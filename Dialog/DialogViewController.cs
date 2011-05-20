@@ -142,7 +142,7 @@ namespace MonoMobile.MVVM
 				return;
 			
 			_Reloading = true;
-			
+
 			if (_Reloading && showStatus && _RefreshView != null)
 			{
 				UIView.BeginAnimations("reloadingData");
@@ -179,6 +179,8 @@ namespace MonoMobile.MVVM
 		/// </summary>
 		public void ReloadComplete()
 		{
+			var inset = 60;
+
 			if (_RefreshView != null)
 				_RefreshView.LastUpdate = DateTime.Now;
 			if (!_Reloading)
@@ -224,25 +226,30 @@ namespace MonoMobile.MVVM
 		/// Allows caller to programatically activate the search bar and start the search process
 		/// </summary>
 		public void StartSearch()
-		{			
-			CreateSearchbar();
-
-			UIView.BeginAnimations(null);
-			UIView.SetAnimationDuration(0.3);
-			
-			_Searchbar.Frame = new RectangleF(0, 0, _Searchbar.Frame.Width, 45);
-			View.Superview.AddSubview(_Searchbar);
-
-			if (_OriginalSections == null)
+		{		
+			var searchbar = Root as ISearchBar;
+			if (searchbar != null && searchbar.IsSearchbarHidden || _Searchbar == null)
 			{
-				_OriginalSections = Root.Sections.ToArray();
-				_OriginalElements = new IElement[_OriginalSections.Length][];
+				CreateSearchbar();
 	
-				for (int i = 0; i < _OriginalSections.Length; i++)
-					_OriginalElements[i] = _OriginalSections[i].Elements.ToArray();
-			}
+				UIView.BeginAnimations(null);
+				UIView.SetAnimationDuration(0.3);
+				
+				_Searchbar.Frame = new RectangleF(0, 0, _Searchbar.Frame.Width, 45);
+	
+				TableView.TableHeaderView = _Searchbar;
+
+				if (_OriginalSections == null)
+				{
+					_OriginalSections = Root.Sections.ToArray();
+					_OriginalElements = new IElement[_OriginalSections.Length][];
 		
-			UIView.CommitAnimations();
+					for (int i = 0; i < _OriginalSections.Length; i++)
+						_OriginalElements[i] = _OriginalSections[i].Elements.ToArray();
+				}
+			
+				UIView.CommitAnimations();
+			}
 		}
 
 		/// <summary>
@@ -270,6 +277,7 @@ namespace MonoMobile.MVVM
 				
 				_Searchbar.Frame = new RectangleF(0, -45, _Searchbar.Frame.Width, 45);
 				
+				TableView.ContentOffset = new PointF(0, 45);
 				UIView.CommitAnimations();
 			}
 
@@ -280,7 +288,10 @@ namespace MonoMobile.MVVM
 		[Export("fadeOutDidFinish")]
 		public void FadeOutDidFinish()
 		{
-			_Searchbar.Hidden = true;	
+			_Searchbar.Hidden = true;
+
+			TableView.TableHeaderView = null;
+			TableView.ContentOffset = PointF.Empty;
 		}
 
 		public delegate void SearchTextEventHandler(object sender, SearchChangedEventArgs args);
@@ -829,8 +840,8 @@ namespace MonoMobile.MVVM
 				else
 				{
 					StartSearch();
-					_Searchbar.BecomeFirstResponder();
 					searchbar.IsSearchbarHidden = false;
+					_Searchbar.BecomeFirstResponder();
 				}
 			}
 		}

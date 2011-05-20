@@ -13,7 +13,7 @@ namespace Samples
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
-	[Searchbar(IncrementalSearch = false)]
+	//[Searchbar(IncrementalSearch = false)]
 	public class TestView : View
 	{
 	[Section("Enumerables")]
