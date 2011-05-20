@@ -245,46 +245,49 @@ Reflection API
 The reflection api follows MonoTouch.Dialog closely but differs in many important ways.
 
 Main UI Elements:
+-----------------
 
-[Entry]			- creates an EntryElement
-[Password]		- creates an EntryElement with IsPassword set to true
-[Date]			- creates a RootElement that can input a date via popup 
-[DateTime]		- creats a RootElement that can input a DateTime via popup
-[Html]			- creates a RootElement that can navigate to a webpage 
-[Map]			- creates a RootElement that can show a location on a map
-[Multiline] 	- multiline string Element
-[Ownerdrawn]	- draw your own element
-[Radio]			- creates a RadioButtonElement
-[Range]			- creates a UISlider	
-[String]		- creates a element to display a readonly string
-[Time]			- creates a RootElement to edit time via popup
+	[Entry]			- creates an EntryElement
+	[Password]		- creates an EntryElement with IsPassword set to true
+	[Date]			- creates a RootElement that can input a date via popup 
+	[DateTime]		- creats a RootElement that can input a DateTime via popup
+	[Html]			- creates a RootElement that can navigate to a webpage 
+	[Map]			- creates a RootElement that can show a location on a map
+	[Multiline] 	- multiline string Element
+	[Ownerdrawn]	- draw your own element
+	[Radio]			- creates a RadioButtonElement
+	[Range]			- creates a UISlider	
+	[String]		- creates a element to display a readonly string
+	[Time]			- creates a RootElement to edit time via popup
 
 Modifier Attributes:
+--------------------
 these are attributes that modify the Elements or another Attribute
 
-[Bind]			- used in DataBinding. See above
-[Caption] 		- use this caption instead of default
-[Checkmark]		- creates a CheckboxElement rather than a RadioButtonElement
-[List]			- Takes an IEnumerable and renders it inline in a section rather than on another page
-[Order]			- makes the order the elements are rendered more explicit
-[PopOnSelection]- for Enumerables and Enums tells it to popback after selection
-[Root]			- puts Elements into a RootElement, oposite of [List]
-[Section]		- starts a new section to hold elements
-[Skip] 			- ignore this field or property
-[View]			- used with lists of ViewModels to tell it which view to use to render
-[Theme]			- specify a theme to apply to this element or at the Class level all elements in view
-					Themes can be stacked.
+	[Bind]			- used in DataBinding. See above
+	[Caption] 		- use this caption instead of default
+	[Checkmark]		- creates a CheckboxElement rather than a RadioButtonElement
+	[List]			- Takes an IEnumerable and renders it inline in a section rather than on another page
+	[Order]			- makes the order the elements are rendered more explicit
+	[PopOnSelection]- for Enumerables and Enums tells it to popback after selection
+	[Root]			- puts Elements into a RootElement, oposite of [List]
+	[Section]		- starts a new section to hold elements
+	[Skip] 			- ignore this field or property
+	[View]			- used with lists of ViewModels to tell it which view to use to render
+	[Theme]			- specify a theme to apply to this element or at the Class level all elements in view
+						Themes can be stacked.
 
 Method Attributes:
+------------------
 Attributes that work on Methods.
 
-[Button]		- creates a button that will execute this method when touched.
-[LoadMore]		- creates a button that has an activity control that displays while method is executing
-[NavbarButton]	- creates a button on the NavBar that will execute this method when touched.
-[PullToRefresh]	- this method will be called when user pulls down to refresh
-[Searchbar]		- this method will be called during the search funtion of the Searchbar. 
-					On a class it means show the search bar automatically when View is loaded
-[Toolbar]		- creates a button on the toolbar that will execute this method when touched 
+	[Button]		- creates a button that will execute this method when touched.
+	[LoadMore]		- creates a button that has an activity control that displays while method is executing
+	[NavbarButton]	- creates a button on the NavBar that will execute this method when touched.
+	[PullToRefresh]	- this method will be called when user pulls down to refresh
+	[Searchbar]		- this method will be called during the search funtion of the Searchbar. 
+						On a class it means show the search bar automatically when View is loaded
+	[Toolbar]		- creates a button on the toolbar that will execute this method when touched 
 
 
 When the View is passed to the BindingContext it is parsed and a new TableView is created. Each field, 
