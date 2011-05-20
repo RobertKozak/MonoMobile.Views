@@ -910,8 +910,8 @@ namespace MonoMobile.MVVM
 			{
 				IElement element = null;
 
-				var checkboxAttribute = member.GetCustomAttribute<CheckboxAttribute>();
-				if (checkboxAttribute != null)
+				var checkmarkAttribute = member.GetCustomAttribute<CheckmarkAttribute>();
+				if (checkmarkAttribute != null)
 				    element = new CheckboxElement(caption) {  };
 				else
 					element = new BooleanElement(caption) { };

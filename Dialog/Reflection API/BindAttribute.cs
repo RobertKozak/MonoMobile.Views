@@ -53,16 +53,16 @@ namespace MonoMobile.MVVM
 			Binding = new Binding(sourcePath, targetPath);
 		}
 
-		public string TargetPath
-		{
-			get { return Binding.TargetPath; }
-			set { Binding.TargetPath = value; }
-		}
-
 		public string SourcePath
 		{
 			get { return Binding.SourcePath; }
 			set { Binding.SourcePath = value; }
+		}
+		
+		public string TargetPath
+		{
+			get { return Binding.TargetPath; }
+			set { Binding.TargetPath = value; }
 		}
 
 		public BindingMode BindingMode

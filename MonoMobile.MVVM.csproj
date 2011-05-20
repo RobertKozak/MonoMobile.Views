@@ -152,7 +152,6 @@
     <Compile Include="Dialog\Reflection API\EntryAttribute.cs" />
     <Compile Include="Dialog\Reflection API\DateAttribute.cs" />
     <Compile Include="Dialog\Reflection API\TimeAttribute.cs" />
-    <Compile Include="Dialog\Reflection API\CheckboxAttribute.cs" />
     <Compile Include="Dialog\Reflection API\MulitlineAttribute.cs" />
     <Compile Include="Dialog\Reflection API\HtmlAttribute.cs" />
     <Compile Include="Dialog\Reflection API\SkipAttribute.cs" />
@@ -166,8 +165,6 @@
     <Compile Include="Dialog\Reflection API\OrderAttribute.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
-    <Compile Include="Converters\EnumItemsConverter.cs" />
-    <Compile Include="Converters\ViewConverter.cs" />
     <Compile Include="Dialog\Reflection API\ListAttribute.cs" />
     <Compile Include="Converters\EnumerableConverter.cs" />
     <Compile Include="Dialog\Reflection API\RootAttribute.cs" />
@@ -275,6 +272,7 @@
     <Compile Include="Dialog\Reflection API\SearchbarAttribute.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
     <Compile Include="Dialog\Reflection API\MultiselectAttribute.cs" />
+    <Compile Include="Dialog\Reflection API\CheckmarkAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

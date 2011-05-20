@@ -1,10 +1,10 @@
 //
-// ViewConverter.cs: 
+// CheckboxAttribute.cs
 //
 // Author:
-//   Robert Kozak (rkozak@nowcom.com)
+//   Miguel de Icaza (miguel@gnome.org)
 //
-// Copyright 2011, Nowcom Corporation
+// Copyright 2010, Novell, Inc.
 //
 // Code licensed under the MIT X11 license
 //
@@ -29,32 +29,10 @@
 //
 namespace MonoMobile.MVVM
 {
-    using System;
-	using System.Globalization;
-	using MonoMobile.MVVM;
-	using MonoTouch.Foundation;
+	using System;
 
-	[Preserve(AllMembers = true)]
-    public class ViewConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return value;
-			
-			var view = value as IView;
-			if (!(view is IView))
-			{
-				return string.Empty;
-			}
-			
-			return view.ToString();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-			throw new NotSupportedException();
-		}
-    }
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	public class CheckmarkAttribute : Attribute
+	{
+	}
 }
-

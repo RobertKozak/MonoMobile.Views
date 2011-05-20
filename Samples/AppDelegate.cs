@@ -30,7 +30,7 @@ namespace Samples
 			_Window.MakeKeyAndVisible();
 			
 			MonoMobileApplication.Window = _Window;
-			MonoMobileApplication.Navigation = _Navigation;
+			MonoMobileApplication.NavigationController = _Navigation;
 			
 			// this method initializes the main NavigationController
 			var startupThread = new Thread(Startup);

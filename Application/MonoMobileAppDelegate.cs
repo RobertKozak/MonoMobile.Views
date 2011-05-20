@@ -59,7 +59,7 @@ namespace MonoMobile.MVVM
 			_Window.MakeKeyAndVisible();
 			
 			MonoMobileApplication.Window = _Window;
-			MonoMobileApplication.Navigation = _Navigation;
+			MonoMobileApplication.NavigationController = _Navigation;
 			MonoMobileApplication.MainView = Activator.CreateInstance(MonoMobileApplication.MainViewType) as UIView;
 
 			// this method initializes the main NavigationController

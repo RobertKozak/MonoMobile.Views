@@ -38,16 +38,18 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication: UIApplication
 	{
+		public const string Version = "0.5";
+
 		public static Type MainViewType { get; private set; }  
 
 		public static UIWindow Window { get; set; }
-		public static UINavigationController Navigation { get; set; }
+		public static UINavigationController NavigationController { get; set; }
 		public static UIView MainView { get; set; }
 		public static string Title { get; set; }
  
 		public static void ToggleSearchbar()
 		{
-			var dvc = (DialogViewController)Navigation.ViewControllers.FirstOrDefault();
+			var dvc = (DialogViewController)NavigationController.ViewControllers.FirstOrDefault();
 			if (dvc != null)
 			{
 				dvc.ToggleSearchbar();

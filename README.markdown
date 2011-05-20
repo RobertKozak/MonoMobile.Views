@@ -1,28 +1,19 @@
-NOTE:
-=====
-
-This is beta and not production ready. There are a number of bugs and is in active developent.
-
-There are many changes and fixes on the way.
-
 WHAT'S NEW
 ==========
 
-0. 	Changed the name of the project from MonoTouch.MVVM to MonoMobile.MVVM 
-1. 	Fixed some bugs
-2. 	Added Support for Themes
-3.  More refactoring of interfaces, classes
-4. 	Added more Attributes
-5. 	Added ToolbarButton attribute and a simple implementation for creating Toolbar Buttons. 
-	More to come with this in the next update.
+This document has been updated.
 
+NOTE:
+=====
 
-This is a big release and there are bugs. I wanted to get this out because a number of people 
-want to get a look at it and help out on the project. So don't use it yet in a production 
-environment but do play with it and give me feedback.
+This is beta and not production ready. There are a number of bugs and is in active development.
 
-There is a lot more documentation coming. 
+There are many changes and fixes on the way.
 
+Current Version
+===============
+
+Beta 0.5
 
 MonoMobile.MVVM
 ================
@@ -51,14 +42,11 @@ Robert Kozak (rkozak@gmail.com)
 Project Status
 ==============
 
-MonoMobile.MVVM is being released as Beta 0.1. I would like feedback and I have 
-plans to take this to MonoDroid and possibly WM7. If this works we can have a common 
+MonoMobile.MVVM is being released as Beta 0.5. I would like feedback and I have 
+plans to take this to MonoDroid and possibly WP7. If this works we can have a common 
 platform for all 3 major phone/tablet OSs
 
-Consider this to be highly experimental POC release. I have a lot more refactoring to do
-and I have a lot of ideas I want to incorporate but it is a good start. 
-
-Take a look at the sample I provided to give you an idea what can be done.
+Take a look at the samples I provide to give you an idea what can be done.
 
 If you want to help out on this project please send me a message.
     
@@ -71,18 +59,59 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+Application
+===========
+
+Creating an application in MonoMobile.MVVM is very easy. You don't need to create a 
+app delegate. In the Main method just call Run passing in a Title, the type of the view 
+you want to display and args.  
+
+	namespace Samples
+	{
+		using MonoMobile.MVVM;
+		
+		public class Application : MonoMobileApplication
+		{
+			static void Main(string[] args)
+			{
+				Run("Sample View", typeof(TestView), args);
+			}	
+		}
+	}
+
+if you want to customize the run behavior there is an overload where you can pass in
+the name of your AppDelegate.  
+
+	namespace Samples
+	{
+		using MonoMobile.MVVM;
+		
+		public class Application : MonoMobileApplication
+		{
+			static void Main(string[] args)
+			{
+				Run("AppDelegate", args);
+			}	
+		}
+	}
+
+The main Properties of MonoMobileApp are:
+
+		public static UIWindow Window { get; set; }
+		public static UINavigationController NavigationController { get; set; }
+		public static UIView MainView { get; set; }
+		public static string Title { get; set; }
 
 Data Binding
-===========
+============
 
 I've made a few changes to MonoTouch.Dialog to support data binding.
 
-First, there is a never Element type that is generic and a new property 
-"Value" to hold the value of the generic type. Element<string> has a 
-property Value of type string and Element<int> has a Value of type int.
+First, there is a new abstract Element type and a new property 
+"Value". Value has been reimplemented in descendent elements as the type needed.
 
-The other concrete Element types derive from Element<T> and so they all
-have a Value property. This is the default binding property:
+[Bind] attribute takes a SourcePath and/or TargetPath. Source is assumed to be
+the property it is attached to. Target is the property in the UIElement to bind to.
 
 		[Entry]
 		[Bind("Value")]
@@ -106,11 +135,19 @@ above:
 			set;
 		}
 
-Note: Any public property of Element or derived classes can be data bound, except for Cell.
-There is no real programatic limitation of binding to Cell but the cell of an element is 
-virtualized by iOS and if you have more cells than what can be seen on the screen it will 
-be reused. And your binding may affect another unrelated cell. For this reason I suggest 
-you don't bind to any property of Cell and only to public properties of an Element.
+Note: You can bind to any BindableProperty of Element and descendents. 
+You can see these in the source.
+
+Other properties of BindAttribute:
+
+		public string SourcePath		
+		public string TargetPath
+		public BindingMode BindingMode
+		public object TargetNullValue
+		public object FallbackValue
+		public Type ValueConverterType
+		public object ConverterParameter
+		public CultureInfo ConverterCulture
 
 Value Converters
 ================
@@ -150,6 +187,16 @@ and he is how it used:
 		set { Set(()=>CriticsRating, value); }
 	} 
 
+Included IValueConverters:
+	
+	EnumConverter
+	EnumerableConverter
+	FloatConverter
+	IntConverter
+	MoneyConverter
+	PercentConverter
+	UriConverter
+	
 INotifyPropertyChanged 
 ======================
 
@@ -187,3 +234,68 @@ problem.
 
 It also uses a Dictionary to hold the property values so you don't need a backing field.
 
+Themes
+======
+
+MonoMobile.MVVM has a full theming engine. Check the Samples for implementation and ideas.
+
+Reflection API
+==============
+
+The reflection api follows MonoTouch.Dialog closely but differs in many important ways.
+
+Main UI Elements:
+
+[Entry]			- creates an EntryElement
+[Password]		- creates an EntryElement with IsPassword set to true
+[Date]			- creates a RootElement that can input a date via popup 
+[DateTime]		- creats a RootElement that can input a DateTime via popup
+[Html]			- creates a RootElement that can navigate to a webpage 
+[Map]			- creates a RootElement that can show a location on a map
+[Multiline] 	- multiline string Element
+[Ownerdrawn]	- draw your own element
+[Radio]			- creates a RadioButtonElement
+[Range]			- creates a UISlider	
+[String]		- creates a element to display a readonly string
+[Time]			- creates a RootElement to edit time via popup
+
+Modifier Attributes:
+these are attributes that modify the Elements or another Attribute
+
+[Bind]			- used in DataBinding. See above
+[Caption] 		- use this caption instead of default
+[Checkmark]		- creates a CheckboxElement rather than a RadioButtonElement
+[List]			- Takes an IEnumerable and renders it inline in a section rather than on another page
+[Order]			- makes the order the elements are rendered more explicit
+[PopOnSelection]- for Enumerables and Enums tells it to popback after selection
+[Root]			- puts Elements into a RootElement, oposite of [List]
+[Section]		- starts a new section to hold elements
+[Skip] 			- ignore this field or property
+[View]			- used with lists of ViewModels to tell it which view to use to render
+[Theme]			- specify a theme to apply to this element or at the Class level all elements in view
+					Themes can be stacked.
+
+Method Attributes:
+Attributes that work on Methods.
+
+[Button]		- creates a button that will execute this method when touched.
+[LoadMore]		- creates a button that has an activity control that displays while method is executing
+[NavbarButton]	- creates a button on the NavBar that will execute this method when touched.
+[PullToRefresh]	- this method will be called when user pulls down to refresh
+[Searchbar]		- this method will be called during the search funtion of the Searchbar. 
+					On a class it means show the search bar automatically when View is loaded
+[Toolbar]		- creates a button on the toolbar that will execute this method when touched 
+
+
+When the View is passed to the BindingContext it is parsed and a new TableView is created. Each field, 
+property and method is analyzed and depending on type, value and attributes UIElements are created. 
+There are certain built in rules, such as, if property type is bool then create a BooleanElement which can
+be tweaked or overriden by an attribute. A [Checkmark] on a boolean will change the Element from a UISwitch
+to a checkmark.
+
+You can also specify Elements directly:
+
+	public EntryElement UserName { get; set; }
+
+if the Element is just declared and is null the ViewParser will create on for you and assign it our
+property or field.
