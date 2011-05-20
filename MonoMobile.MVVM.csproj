@@ -229,8 +229,6 @@
     <Compile Include="Dialog\Reflection API\ViewAttribute.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
     <Compile Include="Application\UrlConnection.cs" />
-    <Compile Include="Application\TinyIoC.cs" />
-    <Compile Include="Application\TinyMessenger.cs" />
     <Compile Include="Dialog\DataBinding\EntryElementBinding.cs" />
     <Compile Include="Dialog\DataBinding\ElementBinding.cs" />
     <Compile Include="Dialog\DataBinding\StringElementBinding.cs" />
