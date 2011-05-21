@@ -6,8 +6,8 @@ namespace Samples
 	{
 		static void Main(string[] args)
 		{
-			//Run("Samples MVVM", typeof(TestView), args);
-			Run("AppDelegate", args);
+			Run("Sample", typeof(MovieListView), args);
+		//	Run("AppDelegate", args);
 		}	
 	}
 }

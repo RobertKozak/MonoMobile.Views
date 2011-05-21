@@ -1,5 +1,5 @@
 //
-// View.cs: Base class for MVVM Views
+// DataContext.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
@@ -29,50 +29,28 @@
 //
 namespace MonoMobile.MVVM
 {
-	using System.Drawing;
-	using MonoTouch.UIKit;
-
-	public class View : UIView, IView, IDataContext
+	using System;
+	
+	public class DataContext : DataContext<object>
 	{
-		private object _DataContext;
-		
-		public string Caption { get; set; }
-		public BindingContext BindingContext { get; set; }
-
-		public virtual object DataContext 
-		{ 
-			get { return _DataContext; }
-			set 
-			{ 
-				if (_DataContext != value)
-				{
-					_DataContext = value;
-					var viewModel = DataContext as IViewModel;
-					if (viewModel != null)
-					{
-						viewModel.BindingContext = BindingContext;	
-					}
-				}
-			}
-		}
-
-		public View(): this(null)
+		public DataContext(object value): base(value)
 		{
-		}
-		
-		public View(RectangleF frame): base(frame)
-		{
-
-		}
-
-		public View(string caption) : base()
-		{
-		}
-
-		public override string ToString()
-		{
-			return null;
 		}
 	}
-}
+	
+	public class DataContext<T>
+	{
+		private T _Value = default(T);
 
+		public DataContext() : this(Activator.CreateInstance<T>())
+		{
+		}
+		
+		public DataContext(T value)
+		{
+			_Value = value;
+		}
+
+		public T Value { get { return _Value; } }
+	}
+}

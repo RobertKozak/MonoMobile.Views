@@ -135,13 +135,13 @@
     <Compile Include="Themes\NavbarTheme.cs" />
     <Compile Include="Views\ThemeSampleView.cs" />
     <Compile Include="ViewModels\ThemeSampleViewModel.cs" />
-    <Compile Include="Views\HoneyDoList.cs" />
     <Compile Include="ViewModels\HoneyDoListViewModel.cs" />
     <Compile Include="Views\ButtonTestView.cs" />
     <Compile Include="Views\TestView.cs" />
     <Compile Include="Controls\UIGlassyButton.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Views\EnumerableTest.cs" />
+    <Compile Include="Views\HoneyDoListView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

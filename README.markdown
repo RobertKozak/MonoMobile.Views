@@ -294,11 +294,11 @@ When the View is passed to the BindingContext it is parsed and a new TableView i
 property and method is analyzed and depending on type, value and attributes UIElements are created. 
 There are certain built in rules, such as, if property type is bool then create a BooleanElement which can
 be tweaked or overriden by an attribute. A [Checkmark] on a boolean will change the Element from a UISwitch
-to a checkmark.
+to a checkmark. This is known as Implict Elements or Implicit UI.
 
 You can also specify Elements directly:
 
 	public EntryElement UserName { get; set; }
 
 if the Element is just declared and is null the ViewParser will create one for you and assign it our
-property or field.
+property or field. These is also known as Explicit Elements or Explicit UI.

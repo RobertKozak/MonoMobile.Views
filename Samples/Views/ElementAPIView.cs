@@ -29,7 +29,7 @@ namespace Samples
 		public ElementAPIView(): base(new RectangleF(0,0,320, 80))
 		{
 			Text = "This";
-Text2 = "That";
+			Text2 = "That";
 		}
 	}
 }

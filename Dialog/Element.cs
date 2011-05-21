@@ -401,10 +401,10 @@ namespace MonoMobile.MVVM
 		
 			Theme.Cell = Cell;		
 	
+			//RK: These things are sloooooow, Optimize.
 			BindProperties();
-
 			UpdateTargets();
-			UpdateSources();
+//			UpdateSources();
 
 			if (!Enabled) 
 				SetDisabled(Cell);
