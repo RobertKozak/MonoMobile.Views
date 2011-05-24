@@ -274,6 +274,9 @@
     <Compile Include="Dialog\Reflection API\MultiselectAttribute.cs" />
     <Compile Include="Dialog\Reflection API\CheckmarkAttribute.cs" />
     <Compile Include="View\DataContext.cs" />
+    <Compile Include="Extensions\DateExtentions.cs" />
+    <Compile Include="Converters\DateTimeConverter.cs" />
+    <Compile Include="Converters\EnumCollectionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

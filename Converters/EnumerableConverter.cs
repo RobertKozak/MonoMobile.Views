@@ -30,6 +30,7 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections;
 	using System.Globalization;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
@@ -40,12 +41,16 @@ namespace MonoMobile.MVVM
 		//RK: Temporarily not implemented until I decide how to handle this case
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			throw new NotSupportedException();
+			var list = value as ICollection;
+			if (list != null)
+				return list.Count;
+
+			return value;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			throw new NotSupportedException();
+			return value;
 		}
 	}
 }

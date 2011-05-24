@@ -58,6 +58,7 @@ namespace MonoMobile.MVVM
 
 		List<object> SelectedItems { get; }
 		object SelectedItem { get; set; }
+		bool IsMultiselect { get; set; }
 
 		void Prepare();
 		void Add(IEnumerable<ISection> sections);

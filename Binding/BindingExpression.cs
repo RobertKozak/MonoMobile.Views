@@ -263,8 +263,9 @@ namespace MonoMobile.MVVM
 					((PropertyInfo)member).SetValue(obj, value, null);
 				}
 			}
-			catch 
+			catch (Exception ex)
 			{
+				Console.WriteLine(ex.Message+ ":"+ member.Name);
 			}
 		}
 	}

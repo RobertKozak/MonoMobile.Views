@@ -76,7 +76,9 @@ namespace MonoMobile.MVVM
 				searchbar.IsSearchbarHidden = false;
 			}
 			
-			Root.Add(CreateSectionList(view, Root));
+			var sectionList = CreateSectionList(view, Root);
+			sectionList.ForEach((section)=>section.BeginInit());
+			Root.Add(sectionList);
 			
 			Root.ToolbarButtons = CheckForToolbarItems(view);
 			Root.NavbarButtons = CheckForNavbarItems(view);
@@ -250,7 +252,7 @@ namespace MonoMobile.MVVM
 				element.Order = orderAttribute.Order;
 
 			var bindable = element as IBindable;
-			if (bindable != null && bindings.Count != 0)
+			if (bindable != null && bindable != _NoElement && bindings.Count != 0)
 			{
 				foreach (Binding binding in bindings)
 				{
@@ -386,8 +388,7 @@ namespace MonoMobile.MVVM
 			if (memberType.IsEnum)
 			{
 				SetDefaultConverter(view, member, "Value", new EnumConverter(), memberType, bindings);
-			//	SetDefaultConverter(view, member, "SelectedItem", new EnumConverter(), memberType, bindings);
-
+	
 				var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 				
 				var currentValue = member.GetValue(view);
@@ -442,7 +443,9 @@ namespace MonoMobile.MVVM
 		private ISection CreateEnumCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			Type memberType = GetTypeForMember(member);
-
+			
+			SetDefaultConverter(view, member, "Value", new EnumCollectionConverter(), null, bindings);
+			
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
 
 			var collection = member.GetValue(view);
@@ -484,6 +487,8 @@ namespace MonoMobile.MVVM
 			var collection = member.GetValue(view) as IEnumerable;
 
 			var index = 0;
+
+			SetDefaultConverter(view, member, "Value", new EnumerableConverter(), null, bindings);
 		
 			foreach (var item in collection)
 			{
@@ -504,6 +509,8 @@ namespace MonoMobile.MVVM
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
 			var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
+
+			SetDefaultConverter(view, member, "Value", new EnumerableConverter(), null, bindings);
 			
 			var items = (IEnumerable)member.GetValue(view);
 			if (items == null)
@@ -922,6 +929,8 @@ namespace MonoMobile.MVVM
 			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, view, bindings)=>
 			{
 				IElement element = null;
+
+				SetDefaultConverter(view, member, "Value", new DateTimeConverter(), null, bindings);
 
 				var dateAttribute = member.GetCustomAttribute<DateAttribute>();
 				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();

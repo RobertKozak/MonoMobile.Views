@@ -102,12 +102,13 @@ namespace MonoMobile.MVVM
 
 			InputControl.Started += (s, e) =>
 			{
-				ValueProperty.ConvertBack<NSDate>();				
+				//ValueProperty.ConvertBack<NSDate>();				
 			};
 
 			InputControl.Ended += (s, e) => 
 			{
 				Value = DatePicker.Date;
+				ValueProperty.Update();
 				OnValueChanged();
 			};
 		}

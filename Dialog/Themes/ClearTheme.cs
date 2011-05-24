@@ -31,8 +31,10 @@ namespace MonoMobile.MVVM
 {
 	using System.Drawing;
 	using MonoTouch.CoreGraphics;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers=true)]
 	public class ClearTheme: Theme
 	{		
 		public ClearTheme()

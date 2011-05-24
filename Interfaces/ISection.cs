@@ -32,10 +32,11 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public interface ISection : IThemeable, IDisposable
+	public interface ISection : IThemeable, IDisposable, ISupportInitialize
 	{
 		ViewBinding ViewBinding { get; set; }
 

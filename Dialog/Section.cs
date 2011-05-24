@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
@@ -39,7 +40,7 @@ namespace MonoMobile.MVVM
 	/// Generic base version of Section
 	/// </summary>
 	[Preserve(AllMembers=true)]
-	public partial class Section : StringElement, ISection, IEnumerable
+	public partial class Section : StringElement, ISection, IEnumerable, ISupportInitialize
 	{
 		private UIView _Header, _Footer;
 
@@ -412,6 +413,15 @@ namespace MonoMobile.MVVM
 		public override void InitializeCell(UITableView tableView)
 		{
 			Cell.TextLabel.Text = "Section was used for Element";
+		}
+
+		public override void BeginInit()
+		{
+			Elements.ForEach((element)=>element.BeginInit());
+		}
+
+		public override void EndInit()
+		{
 		}
 	}
 }

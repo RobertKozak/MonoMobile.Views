@@ -46,7 +46,7 @@ namespace MonoMobile.MVVM
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-			if (value.GetType() == typeof(string))
+			if (value != null && value.GetType() == typeof(string))
 			{
 				return System.Convert.ToInt32(value);
 			}

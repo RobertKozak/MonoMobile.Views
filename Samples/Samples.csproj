@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -73,7 +73,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -113,7 +113,6 @@
     <Compile Include="ViewModels\InterestingViewModel.cs" />
     <Compile Include="Converters\FontConverter.cs" />
     <Compile Include="Views\View1.cs" />
-    <Compile Include="Converters\CurrentMovieConverter.cs" />
     <Compile Include="Views\WebSamples.cs" />
     <Compile Include="Views\ElementAPIView.cs" />
     <Compile Include="ViewModels\MovieListViewModel.cs" />

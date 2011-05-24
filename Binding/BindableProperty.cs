@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 		private string _SourcePropertyName { get; set; }
 		
 		protected PropertyInfo SourceProperty { get; private set; }
-		protected MemberInfo ControlProperty { get; private set; }
+		protected PropertyInfo ControlProperty { get; private set; }
 		protected object SourceObject { get; private set; }
 		protected object Control { get; private set; }
 
@@ -77,7 +77,7 @@ namespace MonoMobile.MVVM
 					{		
 						var convertedValue = value;
 
-						if (Control != null)
+						if (Control != null && (ControlProperty.CanWrite))
 						{
 							convertedValue = Convert.ChangeType(value, ControlProperty.GetMemberType());
 							ControlProperty.SetValue(Control, convertedValue);
@@ -85,7 +85,7 @@ namespace MonoMobile.MVVM
 					
 						if (SourceProperty != null)
 						{							
-							if (SourceProperty != ControlProperty)
+							if (SourceProperty != ControlProperty && SourceProperty.CanWrite)
 							{
 								SourceProperty.SetValue(SourceObject, convertedValue, null);
 							}
@@ -134,32 +134,35 @@ namespace MonoMobile.MVVM
 		
 		private void BindTo(object obj, string propertyName)
 		{
-			object value = null;
-
-			SourceObject = obj;
-
-			Type type = SourceObject.GetType();
-			SourceProperty= type.GetProperty(_SourcePropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-			if (SourceProperty != null)
-				value = SourceProperty.GetValue(SourceObject, null);
-
-			object owner = obj;
-			ControlProperty = type.GetNestedMember(ref owner, propertyName, true);
 			if (ControlProperty == null)
-				throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, owner.GetType().Name));
-			
-			Control = owner;
-			
-			if (value != null && Value != value)
 			{
-				if (Control != null)
+				object value = null;
+	
+				SourceObject = obj;
+	
+				Type type = SourceObject.GetType();
+				SourceProperty= type.GetProperty(_SourcePropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+				if (SourceProperty != null)
+					value = SourceProperty.GetValue(SourceObject, null);
+	
+				object owner = obj;
+				ControlProperty = type.GetNestedMember(ref owner, propertyName, true) as PropertyInfo;
+				if (ControlProperty == null)
+					throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, owner.GetType().Name));
+				
+				Control = owner;
+				
+				if (value != null && Value != value)
 				{
-					try
+					if (Control != null)
 					{
-						ControlProperty.SetValue(Control, value);
-					}
-					catch(ArgumentException)
-					{
+						try
+						{
+							ControlProperty.SetValue(Control, value);
+						}
+						catch(ArgumentException)
+						{
+						}
 					}
 				}
 			}
@@ -167,7 +170,7 @@ namespace MonoMobile.MVVM
 
 		public void Update()
 		{
-			var value = Value; 
+			object value = Value; 
 #if DATABINDING
 			var bindingExpression = BindingOperations.GetBindingExpression(this, FullName);
 			if (bindingExpression != null)

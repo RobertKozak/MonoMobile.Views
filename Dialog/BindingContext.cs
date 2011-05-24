@@ -43,11 +43,6 @@ namespace MonoMobile.MVVM
 
 	public class BindingContext : DisposableObject
 	{
-		private class NoElement : Element
-		{
-			public NoElement(): base(null) { }
-		}
-		
 		private static Dictionary<DataContextCode, Func<IRoot, IRoot>> RootBuilder = new Dictionary<DataContextCode, Func<IRoot, IRoot>>()
 		{
 			{ DataContextCode.Enum, (root) => { return null; } },
@@ -57,8 +52,6 @@ namespace MonoMobile.MVVM
 			{ DataContextCode.Object, (root) => { return CreateObjectRoot(root); } },
 			{ DataContextCode.ViewEnumerable, (root) => { return CreateViewEnumerableRoot(root); } }
 		};
-
-		private readonly NoElement _NoElement = new NoElement();
 
 		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
 

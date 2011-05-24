@@ -302,3 +302,12 @@ You can also specify Elements directly:
 
 if the Element is just declared and is null the ViewParser will create one for you and assign it our
 property or field. These is also known as Explicit Elements or Explicit UI.
+
+Dynamic Nature of Reflection and Databinding
+============================================
+
+MonoTouch has a very agressive linker. This is because the entire .Net Framework is compiled into your app since
+iOS does not allow for Dlls to be shared between Apps. This can be very big so it is suggested that you change the 
+Link Behavior in your project options. This will do a static analysis of your code and determine which members are 
+not being called and remove them. This is problematic in that many classes in MonoMobile.MVVM are created dynamically 
+as needed. For these classes you need to decorate them with a [b][Preserve(AllMembers=true)][/b] attribute. 

@@ -7,21 +7,21 @@ namespace Samples
 	{
 		private Element Element;
 
-		private List<Theme> SelectedThemes = new List<Theme>();
+		private List<object> SelectedThemes = new List<object>();
 		
-		//[Bind("Selected")]
-		//public string MyThemeName;
+//		[Bind("Selected")]
+//		public string MyThemeName;
 
-//		[Bind("Selected", "SelectedItem")]
-//		[Bind("SelectedThemes", "SelectedItems")]
-//		[Bind("Element", "ElementInstance")]
-//	//	[Multiselect]
-//		public List<Theme> MyList = new List<Theme>() { new FrostedTheme(), new NavbarTheme(), new BackgroundImageTheme() }; 
+	//	[Bind("Selected", "SelectedItem")]
+		[Bind("SelectedThemes", "SelectedItems")]
+		[Bind("Element", "ElementInstance")]
+		[Multiselect]
+		public List<Theme> MyList = new List<Theme>() { new FrostedTheme(), new NavbarTheme(), new BackgroundImageTheme() }; 
 		
-		public TestEnum Selected;
-		//[Bind("Selected", "SelectedItem", ValueConverterType = typeof(EnumCollection), ConverterParameter = typeof(TestEnum))]
-		[Bind("Selected", "SelectedItem")]
-		public EnumCollection<TestEnum> EnumTest { get; set; }
+//		public TestEnum Selected;
+//		//[Bind("Selected", "SelectedItem", ValueConverterType = typeof(EnumCollection), ConverterParameter = typeof(TestEnum))]
+//		[Bind("Selected", "SelectedItem")]
+//		public EnumCollection<TestEnum> EnumTest { get; set; }
 	
 
 		[Button]

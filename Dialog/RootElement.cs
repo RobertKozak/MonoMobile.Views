@@ -87,6 +87,7 @@ namespace MonoMobile.MVVM
 		
 		public List<object> SelectedItems { get; private set; }
 		public object SelectedItem { get; set; }
+		public bool IsMultiselect { get; set; }
 
 		[Preserve]
 		public RootElement(): this(null)

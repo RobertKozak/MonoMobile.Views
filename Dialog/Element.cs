@@ -375,6 +375,14 @@ namespace MonoMobile.MVVM
 				viewToRemove.RemoveFromSuperview();
 			}
 		}
+		
+		public virtual void BeginInit()
+		{
+		}
+
+		public virtual void EndInit()
+		{
+		}
 
 		public virtual UITableViewElementCell GetCell(UITableView tableView)
 		{
@@ -404,7 +412,7 @@ namespace MonoMobile.MVVM
 			//RK: These things are sloooooow, Optimize.
 			BindProperties();
 			UpdateTargets();
-//			UpdateSources();
+		//	UpdateSources();
 
 			if (!Enabled) 
 				SetDisabled(Cell);

@@ -6,7 +6,7 @@ namespace Samples
 	{
 		static void Main(string[] args)
 		{
-			Run("Sample", typeof(MovieListView), args);
+			Run("Sample", typeof(TestView), args);
 		//	Run("AppDelegate", args);
 		}	
 	}

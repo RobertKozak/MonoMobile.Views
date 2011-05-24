@@ -72,6 +72,7 @@ namespace MonoMobile.MVVM
 						if (this == radioView)
 						{
 							selectedIndex = index;
+
 							Root.SelectedItem = Item;
 							Root.SelectedItems.Add(Item);
 						}
