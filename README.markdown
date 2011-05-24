@@ -310,4 +310,4 @@ MonoTouch has a very agressive linker. This is because the entire .Net Framework
 iOS does not allow for Dlls to be shared between Apps. This can be very big so it is suggested that you change the 
 Link Behavior in your project options. This will do a static analysis of your code and determine which members are 
 not being called and remove them. This is problematic in that many classes in MonoMobile.MVVM are created dynamically 
-as needed. For these classes you need to decorate them with a [b][Preserve(AllMembers=true)][/b] attribute. 
+as needed. For these classes you need to decorate them with a [Preserve(AllMembers=true)] attribute. 
