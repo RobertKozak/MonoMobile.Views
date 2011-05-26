@@ -955,9 +955,28 @@ namespace MonoMobile.MVVM
 			});
 
 			_ElementPropertyMap.Add(typeof(int), (member, caption, view, bindings)=>
-			{
-				SetDefaultConverter(view, member, "Value", new IntConverter(), null, bindings);
-				return new StringElement(caption) { Value = member.GetValue(view).ToString() };
+			{				
+				IElement element = null;
+
+				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
+				string placeholder = null;
+				var keyboardType = UIKeyboardType.NumberPad;
+
+				if(entryAttribute != null)
+				{
+					placeholder = entryAttribute.Placeholder;
+					if(entryAttribute.KeyboardType != UIKeyboardType.Default)
+						keyboardType = entryAttribute.KeyboardType;
+
+					element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
+				}
+				else
+				{
+					SetDefaultConverter(view, member, "Value", new IntConverter(), null, bindings);
+					element = new StringElement(caption) { Value = member.GetValue(view).ToString() };
+				}
+
+				return element;
 			});
 		}
 
