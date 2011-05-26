@@ -301,7 +301,7 @@ You can also specify Elements directly:
 	public EntryElement UserName { get; set; }
 
 if the Element is just declared and is null the ViewParser will create one for you and assign it our
-property or field. These is also known as Explicit Elements or Explicit UI.
+property or field. This is also known as Explicit Elements or Explicit UI.
 
 Dynamic Nature of Reflection and Databinding
 ============================================

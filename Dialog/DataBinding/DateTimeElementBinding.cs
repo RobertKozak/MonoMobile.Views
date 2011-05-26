@@ -29,13 +29,17 @@
 //
 namespace MonoMobile.MVVM
 {
+	using MonoTouch.Foundation;
+
 	public partial class DateTimeElement
 	{
+		private NSDate __Date { get { return DatePicker.Date; } set { DatePicker.Date = value; } } 
+		
 		public override void BindProperties()
 		{
 			base.BindProperties();
 			
-			ValueProperty.BindTo(this, () => DatePicker.Date);
+			ValueProperty.BindTo(this, DatePicker, "Date");
 		}
 	}
 }

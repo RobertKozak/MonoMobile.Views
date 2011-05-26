@@ -230,8 +230,10 @@ namespace MonoMobile.MVVM
 			var searchbar = Root as ISearchBar;
 			if (searchbar != null && searchbar.IsSearchbarHidden || _Searchbar == null)
 			{
+				TableView.ScrollToRow(NSIndexPath.FromRowSection(0, 0), UITableViewScrollPosition.Top, true);
+
 				CreateSearchbar();
-	
+			
 				UIView.BeginAnimations(null);
 				UIView.SetAnimationDuration(0.3);
 				

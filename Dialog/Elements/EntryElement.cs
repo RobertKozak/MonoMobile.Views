@@ -110,8 +110,6 @@ namespace MonoMobile.MVVM
 					Tag = 1 
 				};
 		
-			
-
 				if (EditMode == EditMode.NoCaption)
 					InputControl.Placeholder = Caption;
 				else
@@ -122,6 +120,7 @@ namespace MonoMobile.MVVM
 				InputControl.KeyboardType = KeyboardType;
 				InputControl.TextAlignment = DetailTextAlignment;
 				InputControl.ReturnKeyType = ReturnKeyType;
+				InputControl.Text = Value;
 
 				if (DetailTextColor != null)
 					InputControl.TextColor = DetailTextColor;

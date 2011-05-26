@@ -27,7 +27,6 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-#define DATABINDING
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
@@ -35,7 +34,6 @@ namespace MonoMobile.MVVM
 
 	public abstract partial class Element
 	{
-#if DATABINDING
 		private UITableViewCellAccessory __Accessory { get { return Cell.Accessory; } set { Cell.Accessory = value; } }
 		private UIImage __ImageIcon { get { return Cell.ImageView.Image; } set { Cell.ImageView.Image = value; } }
 		private UIColor __BackgroundColor { get { return Cell.BackgroundColor; } set { Cell.BackgroundColor = value; } }
@@ -76,23 +74,20 @@ namespace MonoMobile.MVVM
 		public BindableProperty CaptionProperty = BindableProperty.Register("Caption");
 
 		public BindableProperty ThemeProperty = BindableProperty.Register("Theme");
-#endif
+
 		public virtual void BindProperties()
 		{
-#if DATABINDING		
-			TextFontProperty.BindTo(this, ()=>TextLabel.Font);
-			ThemeProperty.BindTo(this, ()=>Theme);
+			TextFontProperty.BindTo(this, TextLabel, "Font");
+			ThemeProperty.BindTo(this, this, "Theme");
 			
 			if (TextLabel != null)
-				CaptionProperty.BindTo(this, () => TextLabel.Text);
+				CaptionProperty.BindTo(this, TextLabel, "Text");
 
-			ElementInstanceProperty.BindTo(this, ()=>ElementInstance);
-#endif
+			ElementInstanceProperty.BindTo(this, this, "ElementInstance");
 		}
 	
 		protected virtual void UpdateTargets()
 		{
-#if DATABINDING
 			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
 			if (bindingExpressions != null)
 			{
@@ -101,12 +96,10 @@ namespace MonoMobile.MVVM
 					bindingExpression.UpdateTarget();
 				}
 			}
-#endif
 		}
 
 		protected virtual void UpdateSources()
 		{
-			#if DATABINDING
 			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(this);
 			if (bindingExpressions != null)
 			{
@@ -115,7 +108,6 @@ namespace MonoMobile.MVVM
 					bindingExpression.UpdateSource();
 				}
 			}
-			#endif
 		}
 	}
 }

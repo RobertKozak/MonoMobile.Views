@@ -277,6 +277,10 @@
     <Compile Include="Extensions\DateExtentions.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\EnumCollectionConverter.cs" />
+    <Compile Include="Binding\DataBindingException.cs" />
+    <Compile Include="Converters\ViewConverter.cs" />
+    <Compile Include="Converters\ViewModelConverter.cs" />
+    <Compile Include="Binding\IValueFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

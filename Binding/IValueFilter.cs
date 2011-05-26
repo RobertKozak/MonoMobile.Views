@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  IValueFilter.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -31,12 +31,9 @@ namespace MonoMobile.MVVM
 {
 	using System;
 
-	public partial class Section
+	public interface IValueFilter
 	{
-		public override void BindProperties()
-		{
-			CaptionProperty.BindTo(this, this, "HeaderText");
-		}
+		bool AcceptValue(object value);
 	}
 }
 

@@ -10,9 +10,9 @@ namespace Samples
 	using System;
 	using MonoMobile.MVVM;
 
-	[Theme(typeof(BackgroundImageTheme))]
-	[Theme(typeof(NavbarTheme))]
-	[Theme(typeof(FrostedTheme))]
+//	[Theme(typeof(BackgroundImageTheme))]
+//	[Theme(typeof(NavbarTheme))]
+//	[Theme(typeof(FrostedTheme))]
 	//[Searchbar(IncrementalSearch = false)]
 	public class TestView : View
 	{
@@ -114,7 +114,6 @@ namespace Samples
 		}
 		public TestView()
 		{
-			
             var enumItems = from field in typeof(TestEnum).GetFields()
                             where field.IsLiteral
                             select field.Name;

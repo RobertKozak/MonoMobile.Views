@@ -402,18 +402,18 @@ namespace MonoMobile.MVVM
 
 			if (DetailTextLabel != null)
 				DetailTextLabel.Text = string.Empty;
-		
-			InitializeTheme();
 
+			InitializeTheme();
+			
 			InitializeCell(tableView);
-		
-			Theme.Cell = Cell;		
-	
+			
+			Theme.Cell = Cell;
+			
 			//RK: These things are sloooooow, Optimize.
 			BindProperties();
 			UpdateTargets();
-		//	UpdateSources();
-
+			UpdateSources();
+			
 			if (!Enabled) 
 				SetDisabled(Cell);
 			

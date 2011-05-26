@@ -27,26 +27,28 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-#define DATABINDING
 namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Linq;
 	using System.Linq.Expressions;
+	using System.Globalization;
 	using System.Reflection;
-	
+
 	public class BindableProperty
 	{
 		private bool _Updating { get; set; }
 		private string _SourcePropertyName { get; set; }
-		
+		private Type _SourceObjectType { get; set; }
+
 		protected PropertyInfo SourceProperty { get; private set; }
 		protected PropertyInfo ControlProperty { get; private set; }
 		protected object SourceObject { get; private set; }
 		protected object Control { get; private set; }
 
 		public Action PropertyChangedAction { get; set; }
-		public string FullName { get { return string.Concat(_SourcePropertyName, "Property.Value"); } }
+		public IBindingExpression BindingExpression { get; set; }
+		public IValueFilter Filter { get; set; }
 
 		public object SourceValue
 		{
@@ -64,8 +66,11 @@ namespace MonoMobile.MVVM
 			get 
 			{ 
 				if (ControlProperty != null && Control != null)
-					return ControlProperty.GetValue(Control); 
-				
+				{
+					var value = ControlProperty.GetValue(Control); 
+					return value;
+				}
+
 				return null;
 			}
 			set 
@@ -75,12 +80,16 @@ namespace MonoMobile.MVVM
 					_Updating = true;
 					try 
 					{		
-						var convertedValue = value;
+						object convertedValue = value;
 
 						if (Control != null && (ControlProperty.CanWrite))
 						{
-							convertedValue = Convert.ChangeType(value, ControlProperty.GetMemberType());
-							ControlProperty.SetValue(Control, convertedValue);
+							if (Filter == null || Filter.AcceptValue(convertedValue)) 	
+							{
+								Type type = ControlProperty.GetMemberType();
+								convertedValue = Convert.ChangeType(value, type);
+								ControlProperty.SetValue(Control, convertedValue);
+							}	
 						}
 					
 						if (SourceProperty != null)
@@ -89,13 +98,11 @@ namespace MonoMobile.MVVM
 							{
 								SourceProperty.SetValue(SourceObject, convertedValue, null);
 							}
-#if DATABINDING							
-							var bindingExpression = BindingOperations.GetBindingExpression(this, FullName);
-							if (bindingExpression != null)
+
+							if (BindingExpression != null)
 							{
-								bindingExpression.UpdateSource();
+								BindingExpression.UpdateSource();
 							}
-#endif
 						}
 
 						if (PropertyChangedAction != null)
@@ -107,7 +114,6 @@ namespace MonoMobile.MVVM
 					}
 				} 
 			}
-
 		}
 		
 		private BindableProperty()
@@ -122,93 +128,75 @@ namespace MonoMobile.MVVM
 			return bindableProperty;
 		}
 
-		public static BindableProperty Register()
+		public void BindTo(object source, object target, string propertyName)
 		{
-			return BindableProperty.Register(null);
+			BindTo(source, target, propertyName, null);
 		}
-		
-		public void BindTo<T>(object obj, Expression<Func<T>> property)
+
+		public void BindTo(object source, object target, string propertyName, IValueFilter filter)
 		{
-			BindTo(obj, property.PropertyName());
-		}
-		
-		private void BindTo(object obj, string propertyName)
-		{
-			if (ControlProperty == null)
+			if (SourceObject == null)
 			{
-				object value = null;
-	
-				SourceObject = obj;
-	
-				Type type = SourceObject.GetType();
-				SourceProperty= type.GetProperty(_SourcePropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-				if (SourceProperty != null)
-					value = SourceProperty.GetValue(SourceObject, null);
-	
-				object owner = obj;
-				ControlProperty = type.GetNestedMember(ref owner, propertyName, true) as PropertyInfo;
+				SourceObject = source;
+				
+				_SourceObjectType = SourceObject.GetType();
+				SourceProperty = _SourceObjectType.GetProperty(_SourcePropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			
+				Filter = filter;
+			}
+						
+			if (Control != target)
+			{
+				Control = target;
+
+				ControlProperty = Control.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+
 				if (ControlProperty == null)
-					throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, owner.GetType().Name));
-				
-				Control = owner;
-				
-				if (value != null && Value != value)
+					throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, Control.GetType().Name));
+			}
+			
+			object value = null;
+			if (SourceProperty != null)
+				value = SourceProperty.GetValue(SourceObject, null);
+
+			if (value != null && Value != value)
+			{
+				if (Control != null)
 				{
-					if (Control != null)
+					try
 					{
-						try
-						{
-							ControlProperty.SetValue(Control, value);
-						}
-						catch(ArgumentException)
-						{
-						}
+						ControlProperty.SetValue(Control, value);
+					}
+					catch (ArgumentException)
+					{
 					}
 				}
 			}
+
 		}
 
 		public void Update()
 		{
 			object value = Value; 
-#if DATABINDING
-			var bindingExpression = BindingOperations.GetBindingExpression(this, FullName);
-			if (bindingExpression != null)
+
+			if (BindingExpression != null)
 			{
-				value = bindingExpression.ConvertValue(Value);
-#endif
+				value = BindingExpression.ConvertValue(Value);
+
 				if (SourceProperty != null)
 				{
 					SourceProperty.SetValue(SourceObject, value, null);
 				}
-#if DATABINDING
-				bindingExpression.UpdateSource();
+				
+				BindingExpression.UpdateSource();
 			}
-#endif
 		}
 		
 		public void ConvertBack<T>()
 		{
-#if DATABINDING
-			var bindingExpression = BindingOperations.GetBindingExpressionsForElement(SourceObject).FirstOrDefault();
-			if (bindingExpression != null)
-			{
-				object val = bindingExpression.ConvertbackValue(Value);
-				Type type = typeof(T);
-				Value = Convert.ChangeType(val, type); 
-			}
-#endif
-		}
-
-		public void RefreshFromSource()
-		{
-			if (SourceObject != null)
-			{
-				Type type = SourceObject.GetType();
-				SourceProperty = type.GetProperty(_SourcePropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-				if (SourceProperty != null)
-					Value = SourceProperty.GetValue(SourceObject, null);
-			}
+			object sourceValue = SourceValue;
+			sourceValue = BindingExpression.ConvertbackValue(sourceValue);
+			Value = Convert.ChangeType(sourceValue, typeof(T));
 		}
 
 		public static BindableProperty GetBindableProperty(object obj, string bindablePropertyName)

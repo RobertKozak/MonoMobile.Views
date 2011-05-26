@@ -124,7 +124,8 @@ namespace MonoMobile.MVVM
 
 		public void UpdateTarget()
 		{
-			UpdateTarget(GetSourceValue());
+			var sourceValue = GetSourceValue();
+			UpdateTarget(sourceValue);
 		}
 
 		public void UpdateTarget(object sourceValue)
@@ -265,7 +266,8 @@ namespace MonoMobile.MVVM
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message+ ":"+ member.Name);
+				var message = string.Format("{0} : {1} : {2}", ex.Message, member.Name, value.ToString());
+				Console.WriteLine(message);
 			}
 		}
 	}

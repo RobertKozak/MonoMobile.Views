@@ -122,24 +122,20 @@ namespace MonoMobile.MVVM
 			if (binding == null)
 				throw new ArgumentNullException("binding");
 
-			var binderKey =_Bindings.SingleOrDefault((kvp)=>kvp.Key.Object == target && kvp.Key.Property == targetProperty).Key;
-
 			IBindingExpression bindingExpression = null;
 
 			object nestedTarget = target;
 			var element = target as IElement;
 			
-			var name = string.Concat(targetProperty, "Property.Value");
+			var name = string.Concat(targetProperty, "Property");
+			var bindablePropertyInfo = target.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+			
+			name = string.Concat(name, ".Value");			
 			MemberInfo memberInfo = target.GetType().GetNestedMember(ref nestedTarget, name, false);
 			if (memberInfo != null)
 			{
 				binding.TargetPath = name;
 				binding.Target = nestedTarget;
-			}
-			else
-			{
-				nestedTarget = target;
-				memberInfo = target.GetType().GetNestedMember(ref nestedTarget, targetProperty, false);
 			}
 	
 			var targetReady = memberInfo != null && nestedTarget != null;
@@ -174,10 +170,19 @@ namespace MonoMobile.MVVM
 			}
 			else
 			{
+				var binderKey =_Bindings.SingleOrDefault((kvp)=>kvp.Key.Object == target && kvp.Key.Property == targetProperty).Key;
+
 				if (binderKey == null)
 					_Bindings.Add(new PropertyBinder() { Object = target, Property = targetProperty }, binding);
 				else
 					_Bindings[binderKey] = binding;
+			}
+			
+			if (bindablePropertyInfo != null)
+			{
+				var bindableProperty = bindablePropertyInfo.GetValue(target) as BindableProperty;
+				if (bindableProperty != null)
+					bindableProperty.BindingExpression = bindingExpression;
 			}
 
 			return bindingExpression;

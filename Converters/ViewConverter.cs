@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  ViewConverter.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,12 +30,28 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Globalization;
 
-	public partial class Section
+	public class ViewConverter : IValueConverter
 	{
-		public override void BindProperties()
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			CaptionProperty.BindTo(this, this, "HeaderText");
+			return value; 
+			string result = string.Empty;
+
+			var view = value as IView;
+			if (view != null)
+				result = view.ToString();
+			
+			if (string.IsNullOrEmpty(result))
+				return value;
+
+			return result;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return value;
 		}
 	}
 }

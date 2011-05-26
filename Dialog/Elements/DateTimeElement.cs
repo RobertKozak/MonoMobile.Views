@@ -100,14 +100,9 @@ namespace MonoMobile.MVVM
 			InputControl.InputView = view;
 			InputControl.InputAccessoryView = new UIDatePickerToolbar(this) { };
 
-			InputControl.Started += (s, e) =>
-			{
-				//ValueProperty.ConvertBack<NSDate>();				
-			};
 
 			InputControl.Ended += (s, e) => 
 			{
-				Value = DatePicker.Date;
 				ValueProperty.Update();
 				OnValueChanged();
 			};

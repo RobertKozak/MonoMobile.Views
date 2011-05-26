@@ -41,6 +41,9 @@ namespace MonoMobile.MVVM
 			if (value == null)
 				return string.Empty;
 			
+			if (parameter is FloatElement)
+				return value;
+
 			return value.ToString();
 		}
 
@@ -51,7 +54,7 @@ namespace MonoMobile.MVVM
 				return (float)System.Convert.ToDouble(value);
 			}
 			
-			return 0f;
+			return value;
 		}
 	}
 }

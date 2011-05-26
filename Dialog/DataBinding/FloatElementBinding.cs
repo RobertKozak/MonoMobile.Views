@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 		{
 			if (Slider != null)
 			{
-				ValueProperty.BindTo(this, () => Slider.Value);
+				ValueProperty.BindTo(this, Slider, "Value");
 			}
 		}
 	}

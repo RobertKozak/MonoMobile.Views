@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 		public BindableProperty IndexProperty = BindableProperty.Register("Index");
 		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
 		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
-		
+	
 		private int ItemIndex
 		{
 			get { return Index; }
@@ -48,17 +48,28 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
-
+		
 		public override void BindProperties()
 		{
-#if DATABINDING
 			base.BindProperties();
 			
-			IndexProperty.BindTo(this, () => ItemIndex);
-			SelectedItemsProperty.BindTo(this, () => SelectedItems);
-			SelectedItemProperty.BindTo(this, () => SelectedItem);
-#endif
+		//	ValueProperty.BindTo(this, ViewBinding, "View", new ViewFilter());
+			
+			if (DetailTextLabel != null)
+				ValueProperty.BindTo(this, DetailTextLabel, "Text");
+
+			IndexProperty.BindTo(this, this, "ItemIndex");
+			SelectedItemsProperty.BindTo(this, this, "SelectedItems");
+			SelectedItemProperty.BindTo(this, this, "SelectedItem");
 		}
 	}
+
+//	public class ViewFilter: IValueFilter
+//	{
+//		public bool AcceptValue(object value)
+//		{
+//			return value == null || value.GetType().IsAssignableFrom(typeof(IView));
+//		}
+//	}
 }
 

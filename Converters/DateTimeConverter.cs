@@ -38,7 +38,7 @@ namespace MonoMobile.MVVM
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value.GetType().IsAssignableFrom(typeof(DateTime)))
-				return ((NSDate)value).ToDateTime();
+				return ((DateTime)value).ToNSDate();
 			else
 				return value;
 		}

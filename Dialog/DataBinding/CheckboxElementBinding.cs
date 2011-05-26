@@ -49,7 +49,7 @@ namespace MonoMobile.MVVM
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			ValueProperty.BindTo(this, () => Checkmark );
+			ValueProperty.BindTo(this, this, "Checkmark");
 		}
 	}
 }

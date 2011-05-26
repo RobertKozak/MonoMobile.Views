@@ -478,10 +478,10 @@ namespace MonoMobile.MVVM
 				}
 			}
 
-			if (DetailTextLabel != null)
-			{
-				DetailTextLabel.Text = Value;
-			}
+//			if (DetailTextLabel != null && Value != null)
+//			{
+//				DetailTextLabel.Text = Value.ToString();
+//			}
 		}
 
 		public override string ToString()

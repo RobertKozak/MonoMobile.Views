@@ -38,7 +38,7 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileAppDelegate")]
 	public class MonoMobileAppDelegate : UIApplicationDelegate
 	{
-		private static UIImage _DefaultImage = UIImage.FromFile("Default.png");
+		private static UIImage _DefaultImage = UIImage.FromBundle("Default.png");
 		
 		private UIWindow _Window;
 		private UINavigationController _Navigation;

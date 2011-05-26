@@ -99,7 +99,6 @@ namespace Samples
 		public override string ToString()
 		{
 			return string.Format("{0}", Name);
-			AddressView = new AddressView();
 		}
 	
 
@@ -110,9 +109,12 @@ namespace Samples
 
 		public override void EndInit()
 		{
-
 		}
-
-}
+		
+		public MovieViewModel()
+		{
+			AddressView = new AddressView();
+		}
+	}
 }
 

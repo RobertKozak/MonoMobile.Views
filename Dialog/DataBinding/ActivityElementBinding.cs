@@ -27,9 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#define DATABINDING
-
-#if DATABINDING
 namespace MonoMobile.MVVM
 {
 	using System.Diagnostics;
@@ -40,6 +37,10 @@ namespace MonoMobile.MVVM
 
 	public partial class ActivityElement
 	{
+		private bool __IsAnimating { get { return ActivityView.IsAnimating; } }
+
+		private UIActivityIndicatorView ActivityView { get { return ((UIActivityIndicatorView)ContentView); } }
+ 
 		public BindableProperty ActivityProperty = BindableProperty.Register("Animating");
 
 		public override void BindProperties()
@@ -54,10 +55,9 @@ namespace MonoMobile.MVVM
 					activity.StopAnimating();
 			};
 			
-			ActivityProperty.BindTo(ContentView, () => ((UIActivityIndicatorView)ContentView).IsAnimating);
+			ActivityProperty.BindTo(ContentView, ((UIActivityIndicatorView)ContentView), "IsAnimating");
 		}
 
 	}
 }
-#endif
 

@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  DataBindingException.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,12 +30,23 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Runtime.Serialization;
 
-	public partial class Section
+	public class DataBindingException : Exception
 	{
-		public override void BindProperties()
+		public string PropertyName { get; set; }
+
+		public DataBindingException(string propertyName) : base(string.Format("Property {0} is not a bindable property.", propertyName))
 		{
-			CaptionProperty.BindTo(this, this, "HeaderText");
+			PropertyName = propertyName;
+		}
+
+		public DataBindingException(string message, Exception innerException) : base(message, innerException) 
+		{
+		}
+
+		protected DataBindingException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
 		}
 	}
 }

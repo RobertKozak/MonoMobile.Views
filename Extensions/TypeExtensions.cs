@@ -86,6 +86,8 @@ namespace MonoMobile.MVVM
 							}
 						}
 					}
+					else
+						break;
 				}	
 				return info;
 			}

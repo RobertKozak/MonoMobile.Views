@@ -123,7 +123,12 @@ namespace Samples
 		public IView DynamicView
 		{
 			get { return _DynamicView; }
-			set { _DynamicView = value; } // { Set(()=>DynamicView, value); }
+			set 
+			{ 
+				_DynamicView = value;
+				if (PropertyChanged != null) 
+					PropertyChanged(this, new PropertyChangedEventArgs("DynamicView")); 
+			} // { Set(()=>DynamicView, value); }
 		}
 		
 		[Multiselect]
@@ -192,12 +197,6 @@ namespace Samples
 				System.Threading.Thread.Sleep(50);
 		}
 
-		[Root]
-		public ElementAPIView ElementAPIView 
-		{
-			get; set;
-		}
-
 		public HoneyDoListView HoneyDoList { get; set; }
 //		[List]
 //		public Genre Genre { get; set; }
@@ -227,7 +226,6 @@ InterestingStuff = new InterestingView();
 			Location = new CLLocationCoordinate2D(-33.867139,151.207114);
 
 DynamicView = new View1();
-			ElementAPIView = new ElementAPIView();
 			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
 			WebSamples = new WebSamples();
 

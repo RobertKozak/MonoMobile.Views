@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  ViewModelConverter.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,12 +30,18 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Globalization;
 
-	public partial class Section
+	public class ViewModelConverter : IValueConverter
 	{
-		public override void BindProperties()
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			CaptionProperty.BindTo(this, this, "HeaderText");
+			return value.ToString();
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return value;
 		}
 	}
 }

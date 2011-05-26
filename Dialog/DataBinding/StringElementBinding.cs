@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 			base.BindProperties();
 			
 			if (DetailTextLabel != null && this is IRoot && !((IRoot)this).IsMultiselect)
-				ValueProperty.BindTo(this, () => DetailTextLabel.Text);
+				ValueProperty.BindTo(this, DetailTextLabel, "Text");
 		}
 	}
 }

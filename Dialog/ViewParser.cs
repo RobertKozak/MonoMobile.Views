@@ -252,6 +252,7 @@ namespace MonoMobile.MVVM
 				element.Order = orderAttribute.Order;
 
 			var bindable = element as IBindable;
+
 			if (bindable != null && bindable != _NoElement && bindings.Count != 0)
 			{
 				foreach (Binding binding in bindings)
@@ -264,7 +265,7 @@ namespace MonoMobile.MVVM
 					BindingOperations.SetBinding(bindable, binding.TargetPath, binding);
 				}
 			}
-			
+
 			return element;
 		}
 		
@@ -336,7 +337,9 @@ namespace MonoMobile.MVVM
 			else if (isView || isUIView)
 			{
 				var items = member.GetValue(view);
-				
+
+				SetDefaultConverter(view, member, "Value", new ViewConverter(), null, bindings);
+
 				var rootElement = new RootElement(caption) { Opaque = false };
 
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
@@ -569,7 +572,7 @@ namespace MonoMobile.MVVM
 		{
 			foreach (var binding in bindings)
 			{
-				if (binding.SourcePath == member.Name && binding.Source == view && binding.Converter == null)
+				if (binding.SourcePath == member.Name && binding.Source == view && string.IsNullOrEmpty(binding.TargetPath) && binding.Converter == null)
 				{
 					binding.TargetPath = targetPath;
 					binding.Converter = converter;
@@ -886,6 +889,7 @@ namespace MonoMobile.MVVM
 				var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
 				if (rangeAttribute != null)
 				{
+					SetDefaultConverter(view, member, "Value", new FloatConverter(), null, bindings);
 					var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, Value = rangeAttribute.Low };
 					element = floatElement;
 				}

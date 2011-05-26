@@ -99,7 +99,6 @@
     <None Include="Info.plist" />
     <None Include="AppIcon.png" />
     <None Include="AppIcon4.png" />
-    <None Include="Default.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -114,7 +113,6 @@
     <Compile Include="Converters\FontConverter.cs" />
     <Compile Include="Views\View1.cs" />
     <Compile Include="Views\WebSamples.cs" />
-    <Compile Include="Views\ElementAPIView.cs" />
     <Compile Include="ViewModels\MovieListViewModel.cs" />
     <Compile Include="Themes\AutumnTheme.cs" />
     <Compile Include="Themes\BrickedTheme.cs" />
@@ -178,6 +176,7 @@
     <Content Include="Images\bluemac.jpg" />
     <Content Include="Images\worntexture.jpg" />
     <Content Include="Images\honeycomb.jpg" />
+    <Content Include="Default.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoMobile.MVVM.csproj">

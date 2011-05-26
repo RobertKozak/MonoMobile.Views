@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			ValueProperty.BindTo(this, () => Value);
+			ValueProperty.BindTo(this, this, "Value");
 		}
 	}
 }
