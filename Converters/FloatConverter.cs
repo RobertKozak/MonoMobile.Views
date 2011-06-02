@@ -49,11 +49,14 @@ namespace MonoMobile.MVVM
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (value.GetType() == typeof(string))
+			if (value != null)
 			{
-				return (float)System.Convert.ToDouble(value);
+				if (value.GetType() == typeof(string))
+				{
+					return (float)System.Convert.ToDouble(value);
+				}
 			}
-			
+
 			return value;
 		}
 	}

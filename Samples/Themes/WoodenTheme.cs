@@ -7,7 +7,7 @@ namespace Samples
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
 
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class WoodenTheme: Theme
 	{
 		public WoodenTheme()

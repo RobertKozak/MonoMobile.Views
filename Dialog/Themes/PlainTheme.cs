@@ -1,5 +1,5 @@
 // 
-//  IValueFilter.cs
+//  PlainStyle.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,10 +30,16 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-
-	public interface IValueFilter
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
+	
+	[Preserve(AllMembers = true)]
+	public class PlainStyle : Theme
 	{
-		bool AcceptValue(object value);
+		public PlainStyle()
+		{
+			TableViewStyle = UITableViewStyle.Plain;
+		}
 	}
 }
 

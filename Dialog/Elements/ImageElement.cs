@@ -38,26 +38,19 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 
 	public partial class ImageElement : Element, ISelectable
-	{
-		public UIImage _Value;
-		
-		public UIImage Value
+	{		
+		protected override void SetDataContext(object value)
 		{
-			get { return _Value; }
-			set { SetValue(value); }
-		}
-
-		protected void SetValue(UIImage value)
-		{
-			if (Value != value)
+			if (value != null && DataContext != value && value is UIImage)
 			{				
-				_Value = value;
-				_Scaled = Scale((UIImage)Value);
+				_DataContext = value;
+				_Scaled = Scale((UIImage)DataContext);
+				SetNeedsDisplay();
 			}
 			else
 			{
-				Value = MakeEmpty();
-				_Scaled = Value;
+			//	_DataContext = MakeEmpty();
+			//	_Scaled = (UIImage)DataContext;
 			}
 		}
 
@@ -114,10 +107,10 @@ namespace MonoMobile.MVVM
 
 		public ImageElement(UIImage image) : base("")
 		{
-			Value = image;
+			DataContext = image;
 		}
 
-		public override void InitializeCell(UITableView tableView)
+		public override void UpdateCell()
 		{
 			if (_Scaled != null)
 			{
@@ -166,7 +159,9 @@ namespace MonoMobile.MVVM
 			if (disposing)
 			{
 				_Scaled.Dispose();
-				Value.Dispose();
+				var disposable = DataContext as IDisposable;
+				if (disposable != null)
+					disposable.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -193,7 +188,7 @@ namespace MonoMobile.MVVM
 
 		void Picked(UIImage image)
 		{
-			Value = image;
+			DataContext = image;
 			_Scaled = Scale(image);
 			currentController.DismissModalViewControllerAnimated(true);
 			

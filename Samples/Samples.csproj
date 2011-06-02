@@ -94,6 +94,18 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Newtonsoft.Json.Mono, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DCMobile\Nowcom.VersionedLocalDB\bin\iPhoneSimulator\Debug\Newtonsoft.Json.Mono.dll</HintPath>
+    </Reference>
+    <Reference Include="NowcomUtilities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DCMobile\Nowcom.VersionedLocalDB\bin\iPhoneSimulator\Debug\NowcomUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="NowcomVersionedLocalDB, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DCMobile\Nowcom.VersionedLocalDB\bin\iPhoneSimulator\Debug\NowcomVersionedLocalDB.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

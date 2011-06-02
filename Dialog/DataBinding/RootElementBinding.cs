@@ -32,44 +32,14 @@ namespace MonoMobile.MVVM
 	using System;
 
 	public partial class RootElement
-	{
-		public BindableProperty IndexProperty = BindableProperty.Register("Index");
-		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
-		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
-	
-		private int ItemIndex
-		{
-			get { return Index; }
-			set
-			{
-				if (Index != value)
-				{
-					Index = value;
-				}
-			}
-		}
-		
+	{		
 		public override void BindProperties()
 		{
 			base.BindProperties();
 			
-		//	ValueProperty.BindTo(this, ViewBinding, "View", new ViewFilter());
-			
 			if (DetailTextLabel != null)
-				ValueProperty.BindTo(this, DetailTextLabel, "Text");
-
-			IndexProperty.BindTo(this, this, "ItemIndex");
-			SelectedItemsProperty.BindTo(this, this, "SelectedItems");
-			SelectedItemProperty.BindTo(this, this, "SelectedItem");
+				DataContextProperty.BindTo(this, DetailTextLabel, "Text");
 		}
 	}
-
-//	public class ViewFilter: IValueFilter
-//	{
-//		public bool AcceptValue(object value)
-//		{
-//			return value == null || value.GetType().IsAssignableFrom(typeof(IView));
-//		}
-//	}
 }
 

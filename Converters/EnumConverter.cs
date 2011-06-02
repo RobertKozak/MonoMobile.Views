@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using System.Globalization;
 	using MonoTouch.Foundation;
 	
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
     public class EnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -75,7 +75,6 @@ namespace MonoMobile.MVVM
 				if (value.GetType() == typeof(int))
 				{
 					var values = Enum.GetValues((Type)parameter);
-					var v = values.GetValue((int)value);
 					return values.GetValue((int)value);
 				}
 			}

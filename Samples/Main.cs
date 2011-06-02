@@ -4,9 +4,9 @@ namespace Samples
 	
 	public class Application : MonoMobileApplication
 	{
-		public static void Main(string[] args)
+		public new static void Main(string[] args)
 		{
-			Run("Sample", typeof(TestView), args);
+			Run("Sample", typeof(MovieListView), args);
 		//	Run("AppDelegate", args);
 		}	
 	}

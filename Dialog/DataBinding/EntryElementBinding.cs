@@ -59,7 +59,7 @@ namespace MonoMobile.MVVM
 		
 			if (InputControl != null)
 			{
-				ValueProperty.BindTo(this, InputControl, "Text");
+				DataContextProperty.BindTo(this, InputControl, "Text");
 
 				PlaceholderProperty.BindTo(this,  InputControl, "Placeholder");
 				IsPasswordProperty.BindTo(this, InputControl, "SecureTextEntry");

@@ -66,7 +66,7 @@ namespace MonoMobile.MVVM
 				button = UIButton.FromType(UIButtonType.Custom);
 				button.TouchDown += delegate
 				{
-					parent.Value = !(bool)parent.Value;
+					parent.DataContext = !(bool)parent.DataContext;
 					UpdateImage();
 					if (parent.Tapped != null)
 						parent.Tapped();

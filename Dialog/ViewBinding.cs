@@ -9,6 +9,9 @@ namespace MonoMobile.MVVM
 		public object DataContext { get; set; }
 		public DataContextCode DataContextCode { get; set; }
 		public MemberInfo MemberInfo { get; set; }
+
+		public Type ElementType { get; set; }
+
 		public Type ViewType { get; set; }
 		
 		public UIView View { get; set; }

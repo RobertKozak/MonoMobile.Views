@@ -34,9 +34,11 @@ namespace MonoMobile.MVVM
 
 	public class ViewConverter : IValueConverter
 	{
+		private object _OldValue;
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value; 
+			_OldValue = value;
 			string result = string.Empty;
 
 			var view = value as IView;
@@ -44,14 +46,14 @@ namespace MonoMobile.MVVM
 				result = view.ToString();
 			
 			if (string.IsNullOrEmpty(result))
-				return value;
+				return value.ToString();
 
 			return result;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value;
+			return _OldValue;
 		}
 	}
 }

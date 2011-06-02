@@ -6,6 +6,7 @@ namespace MonoMobile.MVVM
 	{
 		void Load();
 		void Save();
+		void Refresh();
 	}
 }
 

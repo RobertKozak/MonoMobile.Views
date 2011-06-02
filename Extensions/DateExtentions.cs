@@ -36,12 +36,13 @@ namespace MonoMobile.MVVM
 	{
 		public static DateTime ToDateTime(this NSDate date)
 		{
-			return (new DateTime(2001, 1, 1, 0, 0, 0)).AddSeconds(date.SecondsSinceReferenceDate);
+			var datetime = DateTime.SpecifyKind(date, DateTimeKind.Utc);
+			return datetime.ToLocalTime();
 		}
 
 		public static MonoTouch.Foundation.NSDate ToNSDate(this DateTime date)
 		{
-			return MonoTouch.Foundation.NSDate.FromTimeIntervalSinceReferenceDate((date - (new DateTime(2001, 1, 1, 0, 0, 0))).TotalSeconds);
+			return DateTime.SpecifyKind(date, DateTimeKind.Unspecified);
 		}
 	}
 }

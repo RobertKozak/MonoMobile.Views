@@ -6,7 +6,7 @@ using MonoTouch.Foundation;
 
 namespace Samples
 {
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class InterestingView: View
 	{
 		[Bind("CaptionSize", "DetailTextFont", ValueConverterType = typeof(FontConverter))]

@@ -40,8 +40,6 @@ namespace MonoMobile.MVVM
 	/// </summary>
 	public partial class HtmlElement : Element, ISelectable
 	{
-		public Uri Value { get; set; }
-
 		private UIWebView web;
 
 		public HtmlElement(string caption) : base(caption)
@@ -50,7 +48,7 @@ namespace MonoMobile.MVVM
 
 		public HtmlElement(string caption, Uri url) : base(caption)
 		{
-			Value = url;
+			DataContext = url;
 		}
 		
 		public override void InitializeCell(UITableView tableView)
@@ -117,7 +115,7 @@ namespace MonoMobile.MVVM
 			
 			dvc.ActivateController(vc, dvc);
 
-			var url = new NSUrl(Value.AbsoluteUri);
+			var url = new NSUrl(((Uri)DataContext).AbsoluteUri);
 			web.LoadRequest(NSUrlRequest.FromUrl(url));
 		}
 	}

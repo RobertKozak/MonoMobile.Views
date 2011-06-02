@@ -40,12 +40,12 @@ namespace MonoMobile.MVVM
 
 		public BindAttribute()
 		{
-			Binding = new Binding(null, "Value");
+			Binding = new Binding(null, "DataContext");
 		}
 
 		public BindAttribute(string sourcePath)
 		{
-			Binding = new Binding(sourcePath, "Value");
+			Binding = new Binding(sourcePath, "DataContext");
 		}
 
 		public BindAttribute(string sourcePath, string targetPath)

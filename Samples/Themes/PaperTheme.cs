@@ -5,7 +5,7 @@ namespace Samples
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class PaperTheme: Theme
 	{
 		public PaperTheme()

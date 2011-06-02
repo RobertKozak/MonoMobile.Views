@@ -109,7 +109,7 @@ namespace MonoMobile.MVVM
 
 		public RectangleF RecalculateContentFrame(RectangleF frame, bool showCaption)
 		{
-			var screenWidth = UIScreen.MainScreen.Bounds.Width;
+			var screenWidth = UIDevice.CurrentDevice.GetActualWidth();
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
 			var margin = UIDevice.CurrentDevice.GetDeviceMargin();
 			var fixedGap = UIDevice.CurrentDevice.GetFixedGap();

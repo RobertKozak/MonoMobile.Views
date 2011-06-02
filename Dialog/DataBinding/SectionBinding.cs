@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  SectionBinding.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -33,9 +33,29 @@ namespace MonoMobile.MVVM
 
 	public partial class Section
 	{
+		public BindableProperty IndexProperty = BindableProperty.Register("Index");
+		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
+		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
+		
+		public int ItemIndex
+		{
+			get { return Index; }
+			set
+			{
+				if (Index != value)
+				{
+					Index = value;
+				}
+			}
+		}
+
 		public override void BindProperties()
 		{
 			CaptionProperty.BindTo(this, this, "HeaderText");
+
+			IndexProperty.BindTo(this, this, "ItemIndex");
+			SelectedItemsProperty.BindTo(this, this, "SelectedItems");
+			SelectedItemProperty.BindTo(this, this, "SelectedItem");
 		}
 	}
 }

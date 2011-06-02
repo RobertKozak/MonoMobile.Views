@@ -155,7 +155,7 @@ namespace MonoMobile.MVVM
 
 			if (Binding.Converter != null)
 			{
-				try
+//				try
 				{
 					object parameter = Element;
 					if (Binding.ConverterParameter != null)
@@ -163,9 +163,9 @@ namespace MonoMobile.MVVM
 	
 					convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
 				}
-				catch (InvalidCastException) {}
-				catch (NotSupportedException) {}
-				catch (NotImplementedException) {}
+//				catch (InvalidCastException) {}
+//				catch (NotSupportedException) {}
+//				catch (NotImplementedException) {}
 			}
 
 			var typeCode = Convert.GetTypeCode(convertedValue);
@@ -186,7 +186,7 @@ namespace MonoMobile.MVVM
 			{
 			if (Binding.Converter != null)
 			{
-				try
+//				try
 				{
 					object parameter = Element;
 					if (Binding.ConverterParameter != null)
@@ -194,9 +194,9 @@ namespace MonoMobile.MVVM
 					
 					convertedValue = Binding.Converter.ConvertBack(value, member.GetMemberType(), parameter, CultureInfo.CurrentUICulture);
 				}
-				catch (InvalidCastException) {}
-				catch (NotSupportedException) { convertSupported = false; }
-				catch (NotImplementedException) { convertSupported = false; }
+//				catch (InvalidCastException) {}
+//				catch (NotSupportedException) { convertSupported = false; }
+//				catch (NotImplementedException) { convertSupported = false; }
 			}
 			
 			if (convertSupported)
@@ -206,7 +206,7 @@ namespace MonoMobile.MVVM
 					convertedValue = Convert.ChangeType(convertedValue, member.GetMemberType());
 			}
 			}
-			catch(FormatException ex)
+			catch(FormatException)
 			{
 				var message = string.Format("{0} is a {1} but {2} is a {3}. Did you forget to specify an IValueConverter?", convertedValue, convertedValue.GetType(), member.Name, member.GetMemberType());
 				throw new FormatException(message);

@@ -15,7 +15,7 @@ namespace Samples
 	using MonoTouch.UIKit;
 	using System.Linq;
 	
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 //	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
 //	[Theme(typeof(FrostedTheme))]
@@ -100,7 +100,7 @@ namespace Samples
 
 			
 		[Entry]
-		[Bind("TestEntry", "Value")]
+		[Bind("TestEntry", "DataContext")]
 		[DefaultValue("Rocket")]
 		public string TestEntry 
 		{

@@ -39,8 +39,6 @@ namespace MonoMobile.MVVM
 
 	public partial class DateTimeElement : FocusableElement, ISelectable
 	{
-		public NSDate Value { get; set; }  
-
 		public UIDatePicker DatePicker;
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
 
@@ -49,7 +47,7 @@ namespace MonoMobile.MVVM
 		}
 		public DateTimeElement(string caption, DateTime date) : base(caption)
 		{
-			Value = date;
+			DataContext = date;
 		}
 		
 		public override UITableViewElementCell NewCell()
@@ -63,8 +61,6 @@ namespace MonoMobile.MVVM
 
 			Cell.Accessory = UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
-			
-			DetailTextLabel.Text = FormatDate(Value);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -103,7 +99,7 @@ namespace MonoMobile.MVVM
 
 			InputControl.Ended += (s, e) => 
 			{
-				ValueProperty.Update();
+				DataContextProperty.Update();
 				OnValueChanged();
 			};
 		}
@@ -115,19 +111,17 @@ namespace MonoMobile.MVVM
 			var picker = new UIDatePicker(new RectangleF(0, 0, bounds.Width, UIDevice.CurrentDevice.GetKeyboardHeight())) 
 			{ 
 				AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight, 
-				Mode = UIDatePickerMode.Date, Date = (DateTime)Value 
+				Mode = UIDatePickerMode.Date 
 			};
-
+			
+			DataContextProperty.PropertyChangedAction += () => { OnValueChanged(); };
 			return picker;
 		}
 
-		protected virtual void OnValueChanged()
-		{
-			if (DatePicker != null)
-				DatePicker.Date = Value;
-			
+		protected override void OnValueChanged()
+		{			
 			if (DetailTextLabel != null)
-				DetailTextLabel.Text = FormatDate(Value);
+				DetailTextLabel.Text = FormatDate((DateTime)DataContext);
 		}
 	}
 }

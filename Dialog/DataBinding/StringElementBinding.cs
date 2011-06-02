@@ -34,14 +34,12 @@ namespace MonoMobile.MVVM
 {
 	public partial class StringElement : Element
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
-
 		public override void BindProperties()
 		{
 			base.BindProperties();
 			
-			if (DetailTextLabel != null && this is IRoot && !((IRoot)this).IsMultiselect)
-				ValueProperty.BindTo(this, DetailTextLabel, "Text");
+			if (DetailTextLabel != null)// && this is IRoot && !((IRoot)this).IsMultiselect)
+				DataContextProperty.BindTo(this, DetailTextLabel, "Text");
 		}
 	}
 }

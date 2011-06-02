@@ -35,12 +35,12 @@ namespace MonoMobile.MVVM
 	{
 		private bool Checkmark
 		{
-			get { return Value; }
+			get { return (bool)DataContext; }
 			set 
 			{ 
-				if (Value != value)
+				if ((bool)DataContext != value)
 				{
-					Value = Value;
+					DataContext = value;
 					UpdateSelected();
 				}
 			}
@@ -49,7 +49,7 @@ namespace MonoMobile.MVVM
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			ValueProperty.BindTo(this, this, "Checkmark");
+			DataContextProperty.BindTo(this, this, "Checkmark");
 		}
 	}
 }

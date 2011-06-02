@@ -31,6 +31,5 @@ namespace MonoMobile.MVVM
 {
 	public abstract partial class BoolElement
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
 	}
 }

@@ -53,8 +53,6 @@ namespace MonoMobile.MVVM
 			{ DataContextCode.ViewEnumerable, (root) => { return CreateViewEnumerableRoot(root); } }
 		};
 
-		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
-
 		public IRoot Root { get; set; }
 	
 		public BindingContext(UIView view, string title) : this(view, title, null)
@@ -139,11 +137,16 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
+		
 		private static IRoot CreateViewEnumerableRoot(IRoot root)
 		{
 			IRoot newRoot = null;
 
-			newRoot = new RootElement() { Opaque = false };
+			Type elementType = root.ViewBinding.ElementType;
+			if (elementType == null)
+				elementType = typeof(RootElement);
+
+			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding };
 			IElement element = null;
 			
 			var items = (IEnumerable)root.ViewBinding.DataContext;
@@ -158,8 +161,10 @@ namespace MonoMobile.MVVM
 				{
 					caption = MakeCaption(root.ViewBinding.ViewType.Name);
 				}
-
-				element = new RootElement(caption) { Opaque = false };
+				
+				element = Activator.CreateInstance(elementType) as IElement;
+				((RootElement)element).Opaque = false;
+				element.Caption = caption;
 				element.ViewBinding.DataContextCode = DataContextCode.Object;
 				element.ViewBinding.ViewType = root.ViewBinding.ViewType;
 				element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
@@ -167,7 +172,7 @@ namespace MonoMobile.MVVM
 				if (e is UIView)
 					element.ViewBinding.View = e as UIView;
 				else
-					element.ViewBinding.DataContext = e;
+					element.DataContext = e;
 
 				if (element.ViewBinding.ViewType == null)
 					element.ViewBinding.ViewType = e.GetType();
@@ -176,46 +181,49 @@ namespace MonoMobile.MVVM
 			}
 		
 			ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
-			
+
 			return newRoot;
 		}
 		
 		private static IRoot CreateObjectRoot(IRoot root)
 		{
 			IRoot newRoot = null;
-
 			UIView view = null;
-			try
-			{
-				view = root.ViewBinding.CurrentView;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-			}
+			object context = null;
+			object value = null;
 
 			try
-			{
-				if (view == null && root.ViewBinding.ViewType != null)
+			{				
+				if (root.ViewBinding.ViewType != null)
 				{
 					view = Activator.CreateInstance(root.ViewBinding.ViewType) as UIView;
-		
-					var dataContext = view as IDataContext;
-					if (dataContext != null)
+					value = root.DataContext;
+				}
+
+				var dataContext = view as IDataContext;
+				if (dataContext != null)
+				{
+					dataContext.DataContext = value;
+
+					context = dataContext.DataContext;
+				
+					if (context == null)
 					{
-						if (dataContext.DataContext == null)
-						{
-							dataContext.DataContext = root.ViewBinding.DataContext;
-						}
-	
-						var lifetime = dataContext.DataContext as ISupportInitialize;
-						if (lifetime != null)
-							lifetime.BeginInit();
-						
-						lifetime = dataContext as ISupportInitialize;
-						if (lifetime != null)
-							lifetime.BeginInit();
+						var newContext = root.ViewBinding.DataContext as IDataContext;
+
+						if (newContext != null)
+							context = newContext.DataContext;
+						else
+							context = root.ViewBinding.DataContext;
 					}
+
+					var lifetime = context as ISupportInitialize;
+					if (lifetime != null)
+						lifetime.BeginInit();
+					
+					lifetime = dataContext as ISupportInitialize;
+					if (lifetime != null)
+						lifetime.BeginInit();
 				}
 				
 				var bindingContext = new BindingContext(view, root.Caption, root.Theme);

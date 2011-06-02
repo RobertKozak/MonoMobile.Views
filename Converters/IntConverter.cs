@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reflection;
 //
 // IntConverter.cs: 
 //
@@ -46,11 +48,11 @@ namespace MonoMobile.MVVM
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-			if (value != null && value.GetType() == typeof(string))
+			if (value != null && System.Convert.GetTypeCode(value) == TypeCode.String)
 			{
-				return System.Convert.ToInt32(value);
+				var intValue = System.Convert.ToInt64(value);
+				return System.Convert.ChangeType(intValue, targetType);
 			}
-
 			return 0;
         }
     }

@@ -31,17 +31,20 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 
 	public interface IRoot: IThemeable, IDisposable
 	{	
-		string Value { get; set; }
+		object DataContext { get; set; }
+
 		ICommand PullToRefreshCommand { get; set; }
 		string DefaultSettingsKey { get; set; }
 
 		ViewBinding ViewBinding { get; set; }
+
 		DialogViewController Controller { get; set; }
 		
 		List<CommandBarButtonItem> ToolbarButtons { get; set; }
@@ -56,7 +59,7 @@ namespace MonoMobile.MVVM
 		int Index { get; set; }
 		NSIndexPath PathForRadio();
 
-		List<object> SelectedItems { get; }
+		ObservableCollection<object> SelectedItems { get; }
 		object SelectedItem { get; set; }
 		bool IsMultiselect { get; set; }
 

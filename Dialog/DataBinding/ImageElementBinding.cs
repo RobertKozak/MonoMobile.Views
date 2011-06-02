@@ -29,9 +29,13 @@
 //
 namespace MonoMobile.MVVM
 {
-	public partial class ImageElement : Element, ISelectable
+	public partial class ImageElement
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			DataContextProperty.BindTo(this, this, "DataContext");
+		}
 	}
 }
 

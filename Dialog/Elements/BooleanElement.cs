@@ -54,7 +54,7 @@ namespace MonoMobile.MVVM
 			{
 				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1 };
 				
-				Switch.AddTarget(delegate { ValueProperty.Update(); }, UIControlEvent.ValueChanged);
+				Switch.AddTarget(delegate { DataContextProperty.Update(); }, UIControlEvent.ValueChanged);
 			}
 			
 			Cell.AccessoryView = Switch;

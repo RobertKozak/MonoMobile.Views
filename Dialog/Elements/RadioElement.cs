@@ -80,26 +80,25 @@ namespace MonoMobile.MVVM
 					}
 							
 					Root.Index = selectedIndex;					
-					Root.Value = this.Caption;
 					
-					var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
+					var property = BindableProperty.GetBindableProperty(Section, "SelectedItemProperty");
 					if (property != null)
 						property.Update();
 					
-					property = BindableProperty.GetBindableProperty(Root, "SelectedItemsProperty");
+					property = BindableProperty.GetBindableProperty(Section, "SelectedItemsProperty");
 					if (property != null)
 						property.Update();
 
-					property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
-					if (property != null)
-						property.Update();
-
-					property = BindableProperty.GetBindableProperty(Root, "IndexProperty");
+					property = BindableProperty.GetBindableProperty(Section, "IndexProperty");
 					property.Update();
+
+					property = BindableProperty.GetBindableProperty(Root, "DataContextProperty");
+					if (property != null)
+						property.Update(Caption);
 				}
 			}
 			
-			Value = true;
+			DataContext = true;
 			UpdateSelected();
 			
 			if (PopOnSelect)
@@ -110,7 +109,7 @@ namespace MonoMobile.MVVM
 		{
 			if (element != null)
 			{
-				element.Value = selected;
+				element.DataContext = selected;
 				element.UpdateSelected();
 			}
 		}

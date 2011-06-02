@@ -37,11 +37,9 @@ namespace MonoMobile.MVVM
 
 	public partial class MapElement : Element, ISelectable
 	{
-		public CLLocationCoordinate2D Value { get; set; }
-
 		public MapElement(string caption, CLLocationCoordinate2D value) : base(caption)
 		{
-			Value = value;
+			DataContext = value;
 		}
 
 		public override void InitializeCell(UITableView tableView)
@@ -54,7 +52,7 @@ namespace MonoMobile.MVVM
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			var mapViewController = new MapViewController(Value) { Title = Caption };
+			var mapViewController = new MapViewController((CLLocationCoordinate2D)DataContext) { Title = Caption };
 			dvc.ActivateController(mapViewController, dvc);
 		}
 

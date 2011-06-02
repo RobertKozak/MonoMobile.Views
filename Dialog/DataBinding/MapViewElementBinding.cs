@@ -31,6 +31,10 @@ namespace MonoMobile.MVVM
 {
 	public partial class MapElement
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			DataContextProperty.BindTo(this, this, "DataContext");
+		}
 	}
 }

@@ -42,6 +42,7 @@ namespace MonoMobile.MVVM
 
 		public UITableViewCellStyle CellStyle { get; set; }
 		public Type ViewType { get; set; }
+		public Type ElementType { get; set; }
 	}
 }
 

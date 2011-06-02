@@ -35,13 +35,11 @@ namespace MonoMobile.MVVM
 	{
 		private float __Value { get { return Slider.Value; } set { Slider.Value = value; } }
 
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
-
 		public override void BindProperties()
 		{
 			if (Slider != null)
 			{
-				ValueProperty.BindTo(this, Slider, "Value");
+				DataContextProperty.BindTo(this, Slider, "Value");
 			}
 		}
 	}

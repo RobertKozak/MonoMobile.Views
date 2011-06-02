@@ -38,6 +38,8 @@ namespace MonoMobile.MVVM
 
 	public interface IElement : IThemeable, IDisposable, ISupportInitialize
 	{
+		object DataContext { get; set; }
+
 		int Order { get; set; }
 		NSIndexPath IndexPath { get; }
 		IElement Parent { get; set; }

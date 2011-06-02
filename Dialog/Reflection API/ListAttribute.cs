@@ -40,5 +40,6 @@ namespace MonoMobile.MVVM
 		}
 
 		public Type ViewType { get; set; }
+		public Type ElementType { get; set; }
 	}
 }

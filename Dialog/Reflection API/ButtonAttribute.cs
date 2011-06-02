@@ -45,13 +45,13 @@ namespace MonoMobile.MVVM
 		{
 		}
 
-		public ButtonAttribute(string propertyName)
+		public ButtonAttribute(string canExecutePropertyName)
 		{
-			PropertyName = propertyName;
+			CanExecutePropertyName = canExecutePropertyName;
 			CommandOption = CommandOption.Hide;
 		}
 
-		internal string PropertyName;
+		internal string CanExecutePropertyName;
 		public CommandOption CommandOption;
 	}
 }

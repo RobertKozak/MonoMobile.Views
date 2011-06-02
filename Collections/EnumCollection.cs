@@ -50,7 +50,7 @@ namespace MonoMobile.MVVM
             get { return this.Where(binder => binder.IsChecked).ToList(); }
         }
 
-        public ICollection<EnumBinder> Items
+        public new ICollection<EnumBinder> Items
         {
             get { return this.ToList(); }
         }

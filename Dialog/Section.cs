@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Drawing;
 	using MonoTouch.Foundation;
@@ -39,15 +40,18 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	/// Generic base version of Section
 	/// </summary>
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public partial class Section : StringElement, ISection, IEnumerable, ISupportInitialize
 	{
 		private UIView _Header, _Footer;
 
-		public List<IElement> Elements { get; set; }
+		public ObservableCollection<IElement> Elements { get; set; }
 		
 		public new IRoot Root { get { return Parent as IRoot; } }
 		
+		public ObservableCollection<object> SelectedItems { get; private set; }
+		public object SelectedItem { get; set; }
+
 		public bool IsMultiselect { get; set; }
 
 		/// <summary>
@@ -65,7 +69,7 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public Section(string caption) : base(caption)
 		{
-			Elements = new List<IElement>();
+			Elements = new ObservableCollection<IElement>();
 			BindProperties();
 		}
 
@@ -350,7 +354,7 @@ namespace MonoMobile.MVVM
 			if (start + count > Elements.Count)
 				count = Elements.Count - start;
 			
-			Elements.RemoveRange(start, count);
+	//		Elements.RemoveRange(start, count);
 			
 			if (Root == null || Root.TableView == null)
 				return;
@@ -394,7 +398,7 @@ namespace MonoMobile.MVVM
 		{
 			foreach (var e in Elements)
 				e.Dispose();
-			Elements = new List<IElement>();
+			Elements = new ObservableCollection<IElement>();
 			
 			if (Root != null && Root.TableView != null)
 				Root.TableView.ReloadData();
@@ -417,7 +421,7 @@ namespace MonoMobile.MVVM
 
 		public override void BeginInit()
 		{
-			Elements.ForEach((element)=>element.BeginInit());
+			//Elements.ForEach((element)=>element.BeginInit());
 		}
 
 		public override void EndInit()

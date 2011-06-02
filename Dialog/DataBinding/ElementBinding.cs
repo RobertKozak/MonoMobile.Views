@@ -48,6 +48,8 @@ namespace MonoMobile.MVVM
 		private SizeF __DetailTextAlignmentShadowOffset { get { return Cell.DetailTextLabel.ShadowOffset; } set { Cell.DetailTextLabel.ShadowOffset = value; } }
 		private UIColor __TextAlignmentShadowColor { get { return Cell.TextLabel.ShadowColor; } set { Cell.TextLabel.ShadowColor = value; } }
 		private UIColor __DetailTextAlignmentShadowColor { get { return Cell.DetailTextLabel.ShadowColor; } set { Cell.DetailTextLabel.ShadowColor = value; } }
+		
+		public BindableProperty DataContextProperty = BindableProperty.Register("DataContext");
 
 		public BindableProperty ElementInstanceProperty = BindableProperty.Register("ElementInstance");
 		public BindableProperty AccessoryProperty = BindableProperty.Register("Accessory");

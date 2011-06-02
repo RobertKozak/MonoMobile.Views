@@ -6,7 +6,7 @@ using MonoTouch.Foundation;
 
 namespace Samples
 {
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class ThemeSampleView: View
 	{
 		[Bind("Themes", "Index")]

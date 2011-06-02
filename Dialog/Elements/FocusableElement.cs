@@ -71,7 +71,10 @@ namespace MonoMobile.MVVM
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			InputControl.BecomeFirstResponder();
+			if (InputControl != null)
+			{
+				InputControl.InvokeOnMainThread(() => { InputControl.BecomeFirstResponder(); });
+			}
 		}
 
 		public void MoveNext()
@@ -101,11 +104,17 @@ namespace MonoMobile.MVVM
 			var nextElements = elements.SkipWhile(e => e != this);
 			_Focus = nextElements.Skip(1).FirstOrDefault();
 			if (_Focus == null)
+			{
 				_Focus = elements.FirstOrDefault();
-			
-			_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(300), FocusTimer);
-			
-			TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
+				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
+				_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(500), FocusTimer);
+			}
+			else
+			{
+				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
+				_Focus.InputControl.BecomeFirstResponder();
+			}
+
 		}
 
 		private void FocusTimer()

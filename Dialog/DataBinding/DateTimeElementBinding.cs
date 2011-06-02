@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 		{
 			base.BindProperties();
 			
-			ValueProperty.BindTo(this, DatePicker, "Date");
+			DataContextProperty.BindTo(this, DatePicker, "Date");
 		}
 	}
 }

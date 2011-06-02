@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class ClearTheme: Theme
 	{		
 		public ClearTheme()

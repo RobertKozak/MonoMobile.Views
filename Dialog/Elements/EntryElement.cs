@@ -48,8 +48,6 @@ namespace MonoMobile.MVVM
 	public partial class EntryElement : FocusableElement, IFocusable, ISearchable, ISelectable
 	{
 		private UIKeyboardToolbar _KeyboardToolbar;
-		private NSTimer _Timer;
-		private IFocusable _Focus;
  
 		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
@@ -120,7 +118,6 @@ namespace MonoMobile.MVVM
 				InputControl.KeyboardType = KeyboardType;
 				InputControl.TextAlignment = DetailTextAlignment;
 				InputControl.ReturnKeyType = ReturnKeyType;
-				InputControl.Text = Value;
 
 				if (DetailTextColor != null)
 					InputControl.TextColor = DetailTextColor;
@@ -132,7 +129,7 @@ namespace MonoMobile.MVVM
 
 				InputControl.Started += (s, e) =>
 				{
-					ValueProperty.ConvertBack<string>();				
+					//DataContextProperty.ConvertBack<string>();				
 				};
 			
 				InputControl.ShouldReturn = delegate
@@ -144,8 +141,7 @@ namespace MonoMobile.MVVM
 				
 				InputControl.EditingDidEnd += delegate 
 				{
-					ValueProperty.Update();
-					InputControl.Text = Value;
+					DataContextProperty.Update();
 				};
 
 
@@ -154,17 +150,7 @@ namespace MonoMobile.MVVM
 			else
 			{
 				if (DetailTextLabel != null)
-					DetailTextLabel.Text = Value;
-			}
-		}
-
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-			if (InputControl != null)
-			{
-				InputControl.InvokeOnMainThread(()=>{
-					InputControl.BecomeFirstResponder();
-				});
+					DetailTextLabel.Text = (string)DataContext;
 			}
 		}
 

@@ -33,12 +33,11 @@ namespace MonoMobile.MVVM
 
 	public abstract partial class BoolElement : Element
 	{
-		public bool Value { get; set; }
 		public object Item { get; set; }
 
 		public BoolElement(string caption, bool value) : base(caption)
 		{
-			Value = value;
+			DataContext = value;
 		}
 
 		public BoolElement(string caption) : this(caption, false)
@@ -49,14 +48,14 @@ namespace MonoMobile.MVVM
 		{
 			if (Cell != null)
 			{
-				Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+				Cell.Accessory = (bool)DataContext ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Cell.TextLabel.Text = Caption;
 			}
 		}
 
 		public override string ToString()
 		{
-			return (bool)Value ? "On" : "Off";
+			return (bool)DataContext ? "On" : "Off";
 		}
 	}
 }

@@ -30,7 +30,7 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-
+	
 	public interface IDataContext
 	{
 		object DataContext { get; set; }

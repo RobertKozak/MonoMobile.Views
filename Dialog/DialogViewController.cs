@@ -45,8 +45,6 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
-		private UIBarButtonItem doneAddingButton;
-
 		private UISearchBar _Searchbar;
 		private UITableView _TableView;
 		private RefreshTableHeaderView _RefreshView;
@@ -179,8 +177,6 @@ namespace MonoMobile.MVVM
 		/// </summary>
 		public void ReloadComplete()
 		{
-			var inset = 60;
-
 			if (_RefreshView != null)
 				_RefreshView.LastUpdate = DateTime.Now;
 			if (!_Reloading)
@@ -206,13 +202,17 @@ namespace MonoMobile.MVVM
 
 		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
 		{
-			return Autorotate || toInterfaceOrientation == UIInterfaceOrientation.Portrait;
+			return (Autorotate || toInterfaceOrientation == UIInterfaceOrientation.Portrait) && toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown;
 		}
 		
 		public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
 		{
-			if (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown)
-				base.WillRotate(toInterfaceOrientation, duration);
+			var orientation = toInterfaceOrientation;
+
+			if (toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
+				orientation = UIInterfaceOrientation.Portrait;
+
+			base.WillRotate(orientation, duration);
 		}
 
 		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -457,11 +457,6 @@ namespace MonoMobile.MVVM
 				
 				return element.GetCell(tableView) as UITableViewElementCell;
 			}
-			
-			public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-			{
-				var frame = cell.Frame;
-			}
 
 			public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 			{
@@ -695,7 +690,7 @@ namespace MonoMobile.MVVM
 					
 					UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
 				}
-
+				
 				selectable.Selected(this, TableView, indexPath);
 			}
 		}
@@ -1131,13 +1126,12 @@ namespace MonoMobile.MVVM
 						}
 					}
 		
-					var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;
-					
+					var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;					
 					if (detailTextLabel != null)
 					{
-						if (visible)
+						if (visible && oldDetailTextShadowColor != null)
 						{
-							detailTextLabel.ShadowColor = oldTextShadowColor;
+							detailTextLabel.ShadowColor = oldDetailTextShadowColor;
 						}
 						else
 						{

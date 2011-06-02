@@ -11,6 +11,10 @@ namespace MonoMobile.MVVM
 		public virtual void Save()
 		{
 		}
+
+		public virtual void Refresh()
+		{
+		}
 	}
 }
 

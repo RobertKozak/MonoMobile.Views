@@ -31,12 +31,10 @@ namespace MonoMobile.MVVM
 {
 	public partial class HtmlElement 
 	{
-		public BindableProperty ValueProperty = BindableProperty.Register("Value");
-
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			ValueProperty.BindTo(this, this, "Value");
+			DataContextProperty.BindTo(this, this, "DataContext");
 		}
 	}
 }

@@ -31,15 +31,17 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
 	
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public abstract class ViewModel: ObservableObject, IViewModel
 	{
+		public IModel Model { get; set; }
+ 
 		public BindingContext BindingContext { get; set; }
 
 		public ViewModel()
 		{
 		}
-		
+
 		public string Load(string key)
 		{
 			return Load(key, string.Empty);
@@ -62,6 +64,11 @@ namespace MonoMobile.MVVM
 				NSUserDefaults.StandardUserDefaults[key] = new NSString(value);
 				NSUserDefaults.StandardUserDefaults.Synchronize();
 			}
+		}
+
+		public void Refresh()
+		{
+			Model.Refresh();
 		}
 	}
 }

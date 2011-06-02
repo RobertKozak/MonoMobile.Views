@@ -32,18 +32,23 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
 	public interface ISection : IThemeable, IDisposable, ISupportInitialize
 	{
+		object DataContext { get; set; }
+
 		ViewBinding ViewBinding { get; set; }
 
-		List<IElement> Elements { get; set; }
+		ObservableCollection<IElement> Elements { get; set; }
 		string Caption { get; set; }
 		int Order { get; set; }
 		IElement Parent { get; set; }
+		ObservableCollection<object> SelectedItems { get; }
+		object SelectedItem { get; set; }
 		bool IsMultiselect { get; set; }
 
 		string HeaderText { get; set; }

@@ -35,9 +35,23 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
 	{		
+		protected object _DataContext;
+		public object DataContext 
+		{ 
+			get 
+			{
+				return _DataContext;
+			} 
+			set 
+			{ 
+				SetDataContext(value);
+			}
+		}
+
 		private bool _Visible;
 		private int _OldRow;
 		private DisabledCellView _DisabledCellView; 
@@ -48,6 +62,12 @@ namespace MonoMobile.MVVM
 		public int Order { get; set; }
 		public int Index { get; set; }
 		
+		protected virtual void SetDataContext(object value)
+		{
+			if (_DataContext != value)
+				_DataContext = value;
+		}
+
 		/// <summary>
 		///  Returns the IndexPath of a given element.   This is only valid for leaf elements,
 		///  it does not work for a toplevel IRoot or a Section of if the Element has
@@ -409,7 +429,6 @@ namespace MonoMobile.MVVM
 			
 			Theme.Cell = Cell;
 			
-			//RK: These things are sloooooow, Optimize.
 			BindProperties();
 			UpdateTargets();
 			UpdateSources();

@@ -52,7 +52,7 @@
 //		public override void BindProperties()
 //		{
 //			base.BindProperties();
-//			ValueProperty.BindTo(this, () => Checkmark);
+//			DataContextProperty.BindTo(this, () => Checkmark);
 //		}
 //	}
 //}

@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
 
-	[Preserve(AllMembers=true)]
+	[Preserve(AllMembers = true)]
 	public class EnumerableConverter : IValueConverter
 	{
 		//RK: Temporarily not implemented until I decide how to handle this case
@@ -43,7 +43,7 @@ namespace MonoMobile.MVVM
 		{
 			var list = value as ICollection;
 			if (list != null)
-				return list.Count;
+				return list.Count.ToString();
 
 			return value;
 		}

@@ -32,6 +32,7 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Linq;
 	using MonoMobile.MVVM;
@@ -73,7 +74,7 @@ namespace MonoMobile.MVVM
 		
 		public ICommand PullToRefreshCommand { get; set; }
 		public string DefaultSettingsKey { get; set; }
-
+ 
 		public DialogViewController Controller {get; set;}
 		
 		//public string NavbarImage { get; set; }
@@ -85,7 +86,7 @@ namespace MonoMobile.MVVM
 
 		public bool UnevenRows { get; set; }
 		
-		public List<object> SelectedItems { get; private set; }
+		public ObservableCollection<object> SelectedItems { get; private set; }
 		public object SelectedItem { get; set; }
 		public bool IsMultiselect { get; set; }
 
@@ -106,7 +107,7 @@ namespace MonoMobile.MVVM
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
 
-			SelectedItems = new List<object>();
+			SelectedItems = new ObservableCollection<object>();
 		}
 
 		/// <summary>
@@ -491,9 +492,9 @@ namespace MonoMobile.MVVM
 				return ContentView.ToString();
 			}
 
-			if (Value != null)
+			if (DataContext != null)
 			{
-				return Value.ToString();
+				return DataContext.ToString();
 			}
 
 			return string.Empty;

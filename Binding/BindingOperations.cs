@@ -130,7 +130,7 @@ namespace MonoMobile.MVVM
 			var name = string.Concat(targetProperty, "Property");
 			var bindablePropertyInfo = target.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 			
-			name = string.Concat(name, ".Value");			
+			name = string.Concat(name, ".ControlValue");			
 			MemberInfo memberInfo = target.GetType().GetNestedMember(ref nestedTarget, name, false);
 			if (memberInfo != null)
 			{

@@ -50,26 +50,26 @@ namespace MonoMobile.MVVM
 			//There is a visual artifact when using Checkmark and UITableViewCellSelectionStyle.Blue;
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 			
-			Value = (bool)ValueProperty.Value;
-			ValueProperty.Update();
+			//DataContext = (bool)DataContextProperty.Value;
+			DataContextProperty.Update();
 			UpdateSelected();
 		}
 		
 		public override void UpdateSelected()
 		{
 			Cell.AccessoryView = null;
-			Cell.Accessory = (bool)Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+			Cell.Accessory = (bool)DataContext ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
 
 			if (Root != null)
 			{
-				if ((bool)Value && !Root.SelectedItems.Contains(Item))
+				if ((bool)DataContext && !Root.SelectedItems.Contains(Item))
 				{
 					Root.SelectedItems.Add(Item);
 					Root.SelectedItem = Item;
 				}
 				
-				if (!(bool)Value && Root.SelectedItems.Contains(Item))
+				if (!(bool)DataContext && Root.SelectedItems.Contains(Item))
 				{
 					Root.SelectedItems.Remove(Item);
 				}
@@ -77,8 +77,8 @@ namespace MonoMobile.MVVM
 				var enumBinder = Item as EnumBinder;
 				if (enumBinder != null)
 				{
-					enumBinder.IsChecked = Value;
-					Root.Value = Root.SelectedItems.Count.ToString();
+					enumBinder.IsChecked = (bool)DataContext;
+					Root.DataContext = Root.SelectedItems.Count.ToString();
 				}
 
 				var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
@@ -89,7 +89,7 @@ namespace MonoMobile.MVVM
 				if (property != null)
 					property.Update();
 
-				property = BindableProperty.GetBindableProperty(Root, "ValueProperty");
+				property = BindableProperty.GetBindableProperty(Root, "DataContextProperty");
 				if (property != null)
 					property.Update();
 
@@ -106,8 +106,8 @@ namespace MonoMobile.MVVM
 	
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			Value = !Value;
-			ValueProperty.Update();
+			DataContext = !(bool)DataContext;
+			DataContextProperty.Update();
 			UpdateSelected();
 		}
 

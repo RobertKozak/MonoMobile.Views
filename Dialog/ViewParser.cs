@@ -62,6 +62,11 @@ namespace MonoMobile.MVVM
 		{
 			Root = new RootElement(caption) { Opaque = false };
 			Root.ViewBinding.DataContext = view;
+			
+			var dataContext = view as IDataContext;
+			if (dataContext != null)
+				Root.DataContext = dataContext.DataContext;
+
 			var themeable = Root as IThemeable;
 			if (themeable != null)
 				themeable.Theme = Theme.CreateTheme(theme);
@@ -82,7 +87,13 @@ namespace MonoMobile.MVVM
 			
 			Root.ToolbarButtons = CheckForToolbarItems(view);
 			Root.NavbarButtons = CheckForNavbarItems(view);
-		} 
+
+			var notifyDataContextChanged = view as INotifyDataContextChanged;
+			if (notifyDataContextChanged != null)
+			{
+				notifyDataContextChanged.DataContextChanged += HandleNotifyDataContextChangedDataContextChanged;
+			}
+		}
 
 		private List<ISection> CreateSectionList(UIView view, IRoot root)
 		{
@@ -185,7 +196,7 @@ namespace MonoMobile.MVVM
 			foreach (var section in sectionList)
 			{
 				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
-				section.Elements = orderedList;
+				section.Elements = new System.Collections.ObjectModel.ObservableCollection<MonoMobile.MVVM.IElement>(orderedList);
 			}
 
 			var orderedSections = sectionList.Where(s=>s.Elements.Count > 0).OrderBy(section=>section.Order).ToList();
@@ -196,7 +207,6 @@ namespace MonoMobile.MVVM
 		{
 			string caption = GetCaption(member);
 			IElement element = null;
-			ISection section = null;
 
 			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 
@@ -250,6 +260,12 @@ namespace MonoMobile.MVVM
 			
 			if (orderAttribute != null && element != null)
 				element.Order = orderAttribute.Order;
+			
+			var dataContext = view as IDataContext;
+			if (dataContext != null && element.DataContext == null)
+			{
+				element.DataContext = dataContext.DataContext;
+			}
 
 			var bindable = element as IBindable;
 
@@ -259,7 +275,7 @@ namespace MonoMobile.MVVM
 				{
 					if (binding.TargetPath == null)
 					{
-						binding.TargetPath = "Value";
+						binding.TargetPath = "DataContext";
 					}
 
 					BindingOperations.SetBinding(bindable, binding.TargetPath, binding);
@@ -271,12 +287,13 @@ namespace MonoMobile.MVVM
 		
 		private IElement GetRootElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
 		{
-			IElement root = null;
-			Type viewType = null;
-
 			var memberType = GetTypeForMember(member);
 			var caption = GetCaption(member);
 			
+			IElement root = null;
+			Type viewType = memberType;
+			Type elementType = null;
+
 			var genericType = memberType.GetGenericArguments().FirstOrDefault();
 			if (genericType != null)
 				viewType = genericType;
@@ -285,12 +302,14 @@ namespace MonoMobile.MVVM
 			if (listAttribute != null && listAttribute.ViewType != null)
 			{
 				viewType = listAttribute.ViewType;
+				elementType = listAttribute.ElementType;
 			}
 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 			if (rootAttribute != null && rootAttribute.ViewType != null)
 			{
 				viewType = rootAttribute.ViewType;
+				elementType = rootAttribute.ElementType;
 			}
 
 			var isEnum = memberType.IsEnum;
@@ -299,7 +318,7 @@ namespace MonoMobile.MVVM
 			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
 			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
 
-			var isEnumerable = typeof(IEnumerable).IsAssignableFrom(memberType) && !(isView || isUIView);
+			var isEnumerable = (typeof(IEnumerable).IsAssignableFrom(memberType) || typeof(ICollection).IsAssignableFrom(memberType)) && !(isView || isUIView);
 		
 			var isList = member.GetCustomAttribute<ListAttribute>() != null;
 
@@ -336,29 +355,35 @@ namespace MonoMobile.MVVM
 			}
 			else if (isView || isUIView)
 			{
-				var items = member.GetValue(view);
-
-				SetDefaultConverter(view, member, "Value", new ViewConverter(), null, bindings);
+				object dataContext = view;
+				MemberInfo dataContextMember = GetMemberFromDataContext(member, ref dataContext);
+				var items = dataContextMember.GetValue(dataContext);
 
 				var rootElement = new RootElement(caption) { Opaque = false };
 
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
-				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
-				rootElement.ViewBinding.MemberInfo = member;
-				rootElement.ViewBinding.ViewType = memberType;
+				rootElement.ViewBinding.MemberInfo = dataContextMember;
+				rootElement.ViewBinding.ElementType = elementType;
+				rootElement.ViewBinding.ViewType = viewType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-				rootElement.ViewBinding.DataContext = view;
+				rootElement.ViewBinding.DataContext = dataContext;
+				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 
 				if (items != null)
 				{
 					if (items is UIView)
+					{				
 						rootElement.ViewBinding.View = items as UIView;
+					}
 					else
+					{
 						rootElement.ViewBinding.DataContext = items;
+					}
 				}
 
 				if (genericType != null)
 				{
+					SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
 					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
 					rootElement.ViewBinding.ViewType = viewType;
 				}
@@ -375,9 +400,11 @@ namespace MonoMobile.MVVM
 			}
 			else
 			{
-				throw new Exception(string.Format("Unknown Enumerable type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
+				throw new Exception(string.Format("Unknown type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
 			}		
 	
+			SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
+
 			return root;
 		}
 		
@@ -390,7 +417,7 @@ namespace MonoMobile.MVVM
 
 			if (memberType.IsEnum)
 			{
-				SetDefaultConverter(view, member, "Value", new EnumConverter(), memberType, bindings);
+				SetDefaultConverter(view, member, "DataContext", new EnumConverter(), memberType, bindings);
 	
 				var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
 				
@@ -431,7 +458,7 @@ namespace MonoMobile.MVVM
 				var radioElement = new RadioElement(description) { Item = value };
 				radioElement.Index = index;
 				radioElement.PopOnSelect = popOnSelection;
-				radioElement.Value = selected == index;
+				radioElement.DataContext = selected == index;
 				radioElement.Opaque = false;
 
 				csection.Add(radioElement);
@@ -447,7 +474,7 @@ namespace MonoMobile.MVVM
 		{
 			Type memberType = GetTypeForMember(member);
 			
-			SetDefaultConverter(view, member, "Value", new EnumCollectionConverter(), null, bindings);
+			SetDefaultConverter(view, member, "DataContext", new EnumCollectionConverter(), null, bindings);
 			
 			var csection = new Section() { IsMultiselect = true, Opaque = false };
 
@@ -470,7 +497,7 @@ namespace MonoMobile.MVVM
 				{ 
 					Item = item, 
 					Index = index, 
-					Value = item.IsChecked, 
+					DataContext = item.IsChecked, 
 					Group = item.GroupName
 				};
 
@@ -491,11 +518,11 @@ namespace MonoMobile.MVVM
 
 			var index = 0;
 
-			SetDefaultConverter(view, member, "Value", new EnumerableConverter(), null, bindings);
+			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
 		
 			foreach (var item in collection)
 			{
-				var checkboxElement = new CheckboxElement(item.ToString()) { Item = item, Index = index, Value = false};
+				var checkboxElement = new CheckboxElement(item.ToString()) { Item = item, Index = index, DataContext = false};
 				
 				csection.Add(checkboxElement);
 				index++;
@@ -513,7 +540,14 @@ namespace MonoMobile.MVVM
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
 			var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
 
-			SetDefaultConverter(view, member, "Value", new EnumerableConverter(), null, bindings);
+			Type elementType = listAttribute.ElementType;
+			
+			if (elementType == null)
+			{
+				elementType = rootAttribute.ElementType;
+			}
+
+			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
 			
 			var items = (IEnumerable)member.GetValue(view);
 			if (items == null)
@@ -557,7 +591,7 @@ namespace MonoMobile.MVVM
 			
 			return root;
 		}
-		
+
 		private UITableViewCellStyle GetCellStyle(MemberInfo member, UITableViewCellStyle defaultCellStyle)
 		{
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
@@ -570,15 +604,19 @@ namespace MonoMobile.MVVM
 
 		private void SetDefaultConverter(object view, MemberInfo member, string targetPath, IValueConverter converter, object parameter, List<Binding> bindings)
 		{
-			foreach (var binding in bindings)
+			var list = (from binding in bindings
+				where binding.Source == view && 
+					binding.SourcePath == member.Name &&
+					string.IsNullOrEmpty(binding.TargetPath) && 
+					binding.Converter == null
+				select binding).ToList();
+
+			list.ForEach(binding => 
 			{
-				if (binding.SourcePath == member.Name && binding.Source == view && string.IsNullOrEmpty(binding.TargetPath) && binding.Converter == null)
-				{
-					binding.TargetPath = targetPath;
-					binding.Converter = converter;
-					binding.ConverterParameter = parameter;
-				}
-			}
+				binding.TargetPath = targetPath;
+				binding.Converter = converter;
+				binding.ConverterParameter = parameter;
+			});
 		}
 
 		private MemberInfo[] GetFields(object view)
@@ -703,7 +741,7 @@ namespace MonoMobile.MVVM
 			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 			if (buttonAttribute != null)
 			{
-				propertyName = buttonAttribute.PropertyName;
+				propertyName = buttonAttribute.CanExecutePropertyName;
 				commandOption = buttonAttribute.CommandOption;
 			}
 
@@ -742,7 +780,7 @@ namespace MonoMobile.MVVM
 				bindings.Add(bindAttribute.Binding);
 			}
 			
-			var valueBinding = bindings.Where((b)=>b.TargetPath == "Value").FirstOrDefault() != null;
+			var valueBinding = bindings.Where((b)=>b.TargetPath == "DataContext").FirstOrDefault() != null;
 
 			if (!valueBinding)
 			{
@@ -789,6 +827,21 @@ namespace MonoMobile.MVVM
 				return typeof(MethodInfo);
 
 			return null;
+		}
+		
+		private static MemberInfo GetMemberFromDataContext(MemberInfo memberInfo, ref object dataContext)
+		{
+			var context = dataContext as IDataContext;
+			if (context != null)
+			{
+				dataContext = context.DataContext;
+				if (dataContext != null)
+				{
+					memberInfo = dataContext.GetType().GetMember(memberInfo.Name).SingleOrDefault();
+				}
+			}
+
+			return memberInfo;
 		}
 
 		private void BuildElementPropertyMap()
@@ -870,7 +923,7 @@ namespace MonoMobile.MVVM
 					element = new MultilineElement(caption);
 				else if (htmlAttribute != null)
 				{
-					SetDefaultConverter(view, member, "Value", new UriConverter(), null, bindings);
+					SetDefaultConverter(view, member, "DataContext", new UriConverter(), null, bindings);
 					element = new HtmlElement(caption);
 				}
 				else
@@ -883,35 +936,16 @@ namespace MonoMobile.MVVM
 				return element;
 			});
 
-			_ElementPropertyMap.Add(typeof(float), (member, caption, view, bindings)=>
+			_ElementPropertyMap.Add(typeof(Single), (member, caption, view, bindings)=>
 			{
-				IElement element = null;
-				var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
-				if (rangeAttribute != null)
-				{
-					SetDefaultConverter(view, member, "Value", new FloatConverter(), null, bindings);
-					var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, Value = rangeAttribute.Low };
-					element = floatElement;
-				}
-				else 
-				{		
-					var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
-					string placeholder = null;
-					var keyboardType = UIKeyboardType.NumberPad;
-
-					if(entryAttribute != null)
-					{
-						placeholder = entryAttribute.Placeholder;
-						if(entryAttribute.KeyboardType != UIKeyboardType.Default)
-							keyboardType = entryAttribute.KeyboardType;
-					}
-
-					element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
-				}
-
-				return element;
+				return CreateFloatElement(member, caption, view, bindings);
 			});
-			
+
+			_ElementPropertyMap.Add(typeof(Double), (member, caption, view, bindings)=>
+			{
+				return CreateFloatElement(member, caption, view, bindings);
+			});
+
 			_ElementPropertyMap.Add(typeof(Uri), (member, caption, view, bindings)=>
 			{
 				return new HtmlElement(caption, (Uri)member.GetValue(view));  
@@ -934,17 +968,17 @@ namespace MonoMobile.MVVM
 			{
 				IElement element = null;
 
-				SetDefaultConverter(view, member, "Value", new DateTimeConverter(), null, bindings);
+				SetDefaultConverter(view, member, "DataContext", new DateTimeConverter(), null, bindings);
 
 				var dateAttribute = member.GetCustomAttribute<DateAttribute>();
 				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();
 
 				if(dateAttribute != null)
-					element = new DateElement(caption) { Value = (DateTime)member.GetValue(view)};
+					element = new DateElement(caption) { DataContext = (DateTime)member.GetValue(view)};
 				else if (timeAttribute != null)
-					element = new TimeElement(caption) { Value = (DateTime)member.GetValue(view)};
+					element = new TimeElement(caption) { DataContext = (DateTime)member.GetValue(view)};
 				else
-					element = new DateTimeElement(caption) { Value = (DateTime)member.GetValue(view)};
+					element = new DateTimeElement(caption) { DataContext = (DateTime)member.GetValue(view)};
 				
 				return element;
 			});
@@ -954,30 +988,105 @@ namespace MonoMobile.MVVM
 				return new ImageElement((UIImage)member.GetValue(view));
 			});
 
-			_ElementPropertyMap.Add(typeof(int), (member, caption, view, bindings)=>
+			_ElementPropertyMap.Add(typeof(Int32), (member, caption, view, bindings)=>
 			{				
-				IElement element = null;
+				return CreateIntElement(member, caption, view, bindings);
+			});
 
+			_ElementPropertyMap.Add(typeof(Int16), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(Int64), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(UInt32), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(UInt16), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(UInt64), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(Byte), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(SByte), (member, caption, view, bindings)=>
+			{				
+				return CreateIntElement(member, caption, view, bindings);
+			});
+
+			_ElementPropertyMap.Add(typeof(Decimal), (member, caption, view, bindings)=>
+			{				
+				return CreateFloatElement(member, caption, view, bindings);
+			});
+		}
+		
+		private IElement CreateFloatElement(MemberInfo member, string caption, object view, List<Binding> bindings)
+		{
+			IElement element = null;
+			var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
+			if (rangeAttribute != null)
+			{
+				var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, DataContext = rangeAttribute.Low };
+				element = floatElement;
+			}
+			else 
+			{		
 				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
 				string placeholder = null;
-				var keyboardType = UIKeyboardType.NumberPad;
+				var keyboardType = UIKeyboardType.DecimalPad;
 
 				if(entryAttribute != null)
 				{
 					placeholder = entryAttribute.Placeholder;
 					if(entryAttribute.KeyboardType != UIKeyboardType.Default)
 						keyboardType = entryAttribute.KeyboardType;
-
-					element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
-				}
-				else
-				{
-					SetDefaultConverter(view, member, "Value", new IntConverter(), null, bindings);
-					element = new StringElement(caption) { Value = member.GetValue(view).ToString() };
 				}
 
-				return element;
-			});
+				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
+			}
+		
+			SetDefaultConverter(view, member, "DataContext", new FloatConverter(), null, bindings);
+
+			return element;
+		}
+		private IElement CreateIntElement(MemberInfo member, string caption, object view, List<Binding> bindings)
+		{
+			IElement element = null;
+
+			var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
+			string placeholder = null;
+			var keyboardType = UIKeyboardType.NumberPad;
+
+			if(entryAttribute != null)
+			{
+				placeholder = entryAttribute.Placeholder;
+				if(entryAttribute.KeyboardType != UIKeyboardType.Default)
+					keyboardType = entryAttribute.KeyboardType;
+
+				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
+			}
+			else
+			{
+				element = new StringElement(caption) { DataContext = member.GetValue(view).ToString() };
+			}
+
+			SetDefaultConverter(view, member, "DataContext", new IntConverter(), null, bindings);
+
+			return element;
 		}
 
 		public void HandleCanExecuteChanged(object sender, EventArgs e)
@@ -994,6 +1103,11 @@ namespace MonoMobile.MVVM
 					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
 				}
 			}
+		}
+
+		private void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
+		{
+			
 		}
 	}
 }

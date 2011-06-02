@@ -75,6 +75,18 @@ namespace MonoMobile.MVVM
 			
 			return 216;
 		}
+
+		public static float GetActualWidth(this UIDevice device)
+		{
+			var orientation = device.Orientation;
+			
+			var landscape = orientation == UIDeviceOrientation.LandscapeLeft || orientation == UIDeviceOrientation.LandscapeRight;
+
+			if (landscape)
+				return UIScreen.MainScreen.Bounds.Height;
+			else
+				return UIScreen.MainScreen.Bounds.Width;
+		}
 	}
 }
 

@@ -43,7 +43,7 @@ namespace MonoMobile.MVVM
 
 		protected override UIImage GetImage()
 		{
-			if ((bool)Value)
+			if ((bool)DataContext)
 				return onImage;
 			else
 				return offImage;

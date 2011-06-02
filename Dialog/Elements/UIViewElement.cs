@@ -67,10 +67,10 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public UIViewElement(string caption, UIView view, bool transparent) : base(caption)
 		{
-			Value = view.ToString();
+			//Value = view.ToString();
 			ContentView = view;
 			Flags = transparent ? CellFlags.Transparent : 0;
-			Value = null;
+			DataContext = null;
 		}
 
 		public override void InitializeCell(UITableView tableView)

@@ -42,14 +42,6 @@ namespace MonoMobile.MVVM
 	 
 	public partial class StringElement : Element
 	{
-		private string _Value;
-
-		public string Value 
-		{ 
-			get { return _Value; }  
-			set { SetValue(value); } 
-		}
-
 		public StringElement(string caption) : base(caption)
 		{
 		}
@@ -57,7 +49,7 @@ namespace MonoMobile.MVVM
 		public StringElement(string caption, string value) : this(caption)
 		{
 			Theme.CellStyle = UITableViewCellStyle.Value1;
-			Value = value;
+			DataContext = value;
 		}
 
 		public StringElement(string caption, string value, UITableViewCellStyle style) : this(caption, value)
@@ -65,33 +57,14 @@ namespace MonoMobile.MVVM
 			Theme.CellStyle = style;
 		}
 
-		public virtual void SetValue(string value)
-		{
-			if(_Value != value)
-			{
-				_Value = value;
-				OnValueChanged();
-			}
-		}
-
 		public override UITableViewElementCell NewCell()
 		{
 			if (Theme.CellStyle == UITableViewCellStyle.Default)
-				Theme.CellStyle = Value == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
+				Theme.CellStyle = DataContext == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
 			
 			Accessory = UITableViewCellAccessory.None;
 
 			return base.NewCell(); 
-		}
-		
-		public override void InitializeContent()
-		{
-			if (!string.IsNullOrEmpty(Value) && DetailTextLabel != null)
-			{
-				DetailTextLabel.Text = Value;
-			}
-
-			base.InitializeContent();
 		}
 
 		protected virtual void OnValueChanged()

@@ -32,26 +32,40 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.UIKit;
 
-	public class View : UIView, IView, IDataContext
+	public abstract class View : UIView, IView, IDataContext, INotifyDataContextChanged
 	{
 		private object _DataContext;
 		
 		public string Caption { get; set; }
 		public BindingContext BindingContext { get; set; }
 
-		public virtual object DataContext 
+		public event DataContextChangedEvent DataContextChanged;
+
+		public object DataContext 
 		{ 
-			get { return _DataContext; }
-			set 
-			{ 
-				if (_DataContext != value)
+			get { return GetDataContext(); }
+			set { SetDataContext(value); }
+		}
+		
+		public object GetDataContext()
+		{
+			return _DataContext;
+		}
+
+		public void SetDataContext(object dataContext)
+		{
+			if (_DataContext != dataContext)
+			{
+				_DataContext = dataContext;
+				var viewModel = DataContext as IViewModel;
+				if (viewModel != null)
 				{
-					_DataContext = value;
-					var viewModel = DataContext as IViewModel;
-					if (viewModel != null)
-					{
-						viewModel.BindingContext = BindingContext;	
-					}
+					viewModel.BindingContext = BindingContext;
+				}
+
+				if (DataContextChanged != null)
+				{
+					DataContextChanged(this, new DataContextChangedEventArgs(dataContext));
 				}
 			}
 		}
