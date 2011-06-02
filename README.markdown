@@ -108,13 +108,15 @@ Data Binding
 I've made a few changes to MonoTouch.Dialog to support data binding.
 
 First, there is a new abstract Element type and a new property 
-"Value". Value has been reimplemented in descendent elements as the type needed.
+"DataContext".  DataContext holds the main value that will be translated to Control properties via IValueConverter
+
+For example: The EntryElement has a UITextField and in this case the DataContext binds to the Text property of the UITextField.
 
 [Bind] attribute takes a SourcePath and/or TargetPath. Source is assumed to be
 the property it is attached to. Target is the property in the UIElement to bind to.
 
 		[Entry]
-		[Bind("Value")]
+		[Bind("DataContext")]
 		public string MovieName 
 		{
 			get;
@@ -122,9 +124,9 @@ the property it is attached to. Target is the property in the UIElement to bind 
 		}
 
 In the example above, the string value of the property MovieName will be 
-data bound to the Value property of EntryElement.
+data bound to the DataContext property of EntryElement.
 
-Note: Since Value is available by default in each Element type if there is
+Note: Since DataContext is available by default in each Element type if there is
 no [Bind] statement for it it will be done for you. So this is the same as
 above:
 
@@ -152,7 +154,7 @@ Other properties of BindAttribute:
 Value Converters
 ================
 
-Sometimes, you want to bind an integer value to a Entry element which has a Value property
+Sometimes, you want to bind an integer value to a Entry element which has a DataContext property
 of type string or you want to bind a float and you want to display it as $10 rather than 10.0.
 
 You do this with an IValueConverter. IValueConverter has Convert and Convertback methods that
