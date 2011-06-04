@@ -46,8 +46,8 @@ namespace MonoMobile.MVVM
 				return (int)value;
 			}
 			
-			if (value.GetType().IsAssignableFrom(typeof(EnumBinder)))
-				value = ((EnumBinder)value).FieldName;
+			if (value.GetType().IsAssignableFrom(typeof(EnumItem)))
+				value = ((EnumItem)value).FieldName;
 
 			if (value.GetType() == typeof(string))
 			{

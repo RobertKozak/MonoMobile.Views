@@ -30,6 +30,7 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Linq;
@@ -50,10 +51,15 @@ namespace MonoMobile.MVVM
 		protected object Element { get; private set; }
 		protected object Control { get; private set; }
 
-		public Action PropertyChangedAction { get; set; }		
-		public IBindingExpression BindingExpression { get; set; }
+		public Action PropertyChangedAction { get; set; }	
 
-		
+		public IBindingExpression _BindingExpression { get; set; }
+		public IBindingExpression BindingExpression
+		{
+			get { return _BindingExpression; }
+			set { _BindingExpression = value; }
+		}
+
 		public object ElementValue
 		{
 			get

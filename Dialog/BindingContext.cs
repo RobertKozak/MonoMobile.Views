@@ -149,7 +149,7 @@ namespace MonoMobile.MVVM
 			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding };
 			IElement element = null;
 			
-			var items = (IEnumerable)root.ViewBinding.DataContext;
+			var items = (IEnumerable)root.DataContext;
 			var section = new Section() { Opaque = false, ViewBinding = root.ViewBinding, Parent = newRoot as IElement };
 
 			newRoot.Sections.Add(section);
@@ -189,33 +189,19 @@ namespace MonoMobile.MVVM
 		{
 			IRoot newRoot = null;
 			UIView view = null;
-			object context = null;
-			object value = null;
+			object context = root.DataContext;
 
 			try
 			{				
 				if (root.ViewBinding.ViewType != null)
 				{
 					view = Activator.CreateInstance(root.ViewBinding.ViewType) as UIView;
-					value = root.DataContext;
 				}
 
 				var dataContext = view as IDataContext;
 				if (dataContext != null)
 				{
-					dataContext.DataContext = value;
-
-					context = dataContext.DataContext;
-				
-					if (context == null)
-					{
-						var newContext = root.ViewBinding.DataContext as IDataContext;
-
-						if (newContext != null)
-							context = newContext.DataContext;
-						else
-							context = root.ViewBinding.DataContext;
-					}
+					dataContext.DataContext = context;
 
 					var lifetime = context as ISupportInitialize;
 					if (lifetime != null)

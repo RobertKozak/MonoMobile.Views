@@ -59,10 +59,6 @@ namespace MonoMobile.MVVM
 		int Index { get; set; }
 		NSIndexPath PathForRadio();
 
-		ObservableCollection<object> SelectedItems { get; }
-		object SelectedItem { get; set; }
-		bool IsMultiselect { get; set; }
-
 		void Prepare();
 		void Add(IEnumerable<ISection> sections);
 		void Add(ISection section);

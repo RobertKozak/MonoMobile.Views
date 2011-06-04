@@ -1,5 +1,5 @@
 // 
-//  MultiselectAttribute.cs
+//  IContainer.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,13 +30,13 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections.ObjectModel;
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public class MultiselectAttribute : Attribute
+	public interface IContainer
 	{
-		public MultiselectAttribute()
-		{
-		}
+		ObservableCollection<object> SelectedItems { get; }
+		object SelectedItem { get; set; }
+		bool IsMultiselect { get; set; }
 	}
 }
 

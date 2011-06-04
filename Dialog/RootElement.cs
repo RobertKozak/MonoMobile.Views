@@ -64,7 +64,7 @@ namespace MonoMobile.MVVM
 	///    Sections are added by calling the Add method which supports the
 	///    C# 4.0 syntax to initialize a RootElement in one pass.
 	/// </remarks>
-	public partial class RootElement : StringElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
+	public partial class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
 		public bool IsSearchbarHidden { get; set; }
 		public bool EnableSearch { get; set; }
@@ -85,10 +85,6 @@ namespace MonoMobile.MVVM
 		private Func<IRoot, UIViewController> _ViewControllerFactory;
 
 		public bool UnevenRows { get; set; }
-		
-		public ObservableCollection<object> SelectedItems { get; private set; }
-		public object SelectedItem { get; set; }
-		public bool IsMultiselect { get; set; }
 
 		[Preserve]
 		public RootElement(): this(null)
@@ -106,8 +102,6 @@ namespace MonoMobile.MVVM
 			Index = -1;
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
-
-			SelectedItems = new ObservableCollection<object>();
 		}
 
 		/// <summary>
@@ -466,9 +460,9 @@ namespace MonoMobile.MVVM
 			TableView.ReloadRows(new NSIndexPath[] { path }, animation);
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnDataContextChanged()
 		{
-			base.OnValueChanged();
+			base.OnDataContextChanged();
 			
 			if (ContentView is IView && ContentView != null)
 			{

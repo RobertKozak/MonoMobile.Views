@@ -170,6 +170,15 @@ namespace MVVMSample
 			get { return Get(() => InventoryList); }
 			private set { Set(() => InventoryList, value); }
 		}
+		
+		public EnumCollection<TestEnum> TestEnumCollection
+		{
+			get { return Get(() => TestEnumCollection); }
+			private set { Set(() => TestEnumCollection, value); }
+		}
+		
+		private ObservableCollection<EnumItem> TestSelected;
+		private EnumItem TestSelectedItem;
 
 		public TestViewModel()
 		{
@@ -247,7 +256,10 @@ namespace MVVMSample
 			});
 
 			InventoryCollection = new ObservableCollection<InventoryItemViewModel>(InventoryList);
+			
+			TestEnumCollection = new EnumCollection<TestEnum>();
 
+			TestSelected = new ObservableCollection<EnumItem>();
 		}
 	}
 

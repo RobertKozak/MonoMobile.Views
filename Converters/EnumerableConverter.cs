@@ -38,19 +38,25 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class EnumerableConverter : IValueConverter
 	{
+		private object _OldValue;
 		//RK: Temporarily not implemented until I decide how to handle this case
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var list = value as ICollection;
-			if (list != null)
-				return list.Count.ToString();
-
-			return value;
+			_OldValue = value;
+			var container = parameter as IContainer;
+			if (container != null)
+			{
+				var list = container.SelectedItems as ICollection;
+				if (list != null)
+					return list.Count.ToString();
+			}
+			
+			return null;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value;
+			return _OldValue;
 		}
 	}
 }

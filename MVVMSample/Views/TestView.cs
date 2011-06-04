@@ -10,70 +10,78 @@ namespace MVVMSample
 	{
 		private TestViewModel DataContext { get { return (TestViewModel)GetDataContext(); } set { SetDataContext(value); } }
 		
-	[Section]
-		[Entry]
-		//[Bind("UserName", "DataContext")]
-		public string UserName;
+//	[Section]
+//		[Entry]
+//		//[Bind("UserName", "DataContext")]
+//		public string UserName;
+//
+//		public string TestString = "This is a test";
+//		
+//		[Entry]
+//		public bool TestBool;
+//		[Entry]
+//		public double TestDouble;
+//		public Single TestSingle;
+//		public float TestFloat;
+//		
+//		[Entry]
+//		public int TestInt;
+//		public Int16 TestInt16;
+//		public Int32 TestInt32;
+//		public Int64 TestInt64;
+//		
+//		[Entry]
+//		public UInt16 TestUInt16;
+//		public UInt32 TestUInt32;
+//		public UInt64 TestUInt64;
+//		
+//		[Entry]
+//		public Byte TestByte;
+//		public SByte TestSByte;
+//		[Entry]
+//		public Decimal TestDecimal;
+//		
+//	[Section]
+//		[Date]
+//		public DateTime TestDateTime;
+//
+//		[Time]
+//		public DateTime TestTime;
+//
+//		[Date]
+//		public DateTime TestDate;
+//
+//		[Html]
+//		public string TestUri;
+//
+//		[Html]
+//		public Uri TestUri2;
+//		
+//		[Map("Nowcom")]
+//		public CLLocationCoordinate2D TestLocation;
+//		
+//		public UIImage TestImage;
+//
+//	[Section]
+//		public TestEnum TestEnum;
+//		//[List(ViewType = typeof(InventoryView))]
+//		[List(ViewType = typeof(InventoryView))]
+//		public InventoryItemViewModel Inventory;
+//		//[List(ViewType = typeof(InventoryView))]
+//		[Root(ViewType = typeof(InventoryView))]
+//		public ObservableCollection<InventoryItemViewModel> InventoryCollection;
+		//[List(ViewType = typeof(InventoryView))]
+//		[List(ViewType = typeof(InventoryView))]
+//		[Selection]
+//		[Bind("TestSelected", "SelectedItems")]
+//		[Bind("TestSelectedItem", "SelectedItem")]
+//		public List<InventoryItemViewModel> InventoryList;
 
-		public string TestString = "This is a test";
+		[List]
+		[Bind("TestSelected", "SelectedItems")]
+		[Bind("TestSelectedItem", "SelectedItem")]
+		public EnumCollection<TestEnum> TestEnumCollection;
 		
-		[Entry]
-		public bool TestBool;
-		[Entry]
-		public double TestDouble;
-		public Single TestSingle;
-		public float TestFloat;
-		
-		[Entry]
-		public int TestInt;
-		public Int16 TestInt16;
-		public Int32 TestInt32;
-		public Int64 TestInt64;
-		
-		[Entry]
-		public UInt16 TestUInt16;
-		public UInt32 TestUInt32;
-		public UInt64 TestUInt64;
-		
-		[Entry]
-		public Byte TestByte;
-		public SByte TestSByte;
-		[Entry]
-		public Decimal TestDecimal;
-		
-	[Section]
-		[Date]
-		public DateTime TestDateTime;
-
-		[Time]
-		public DateTime TestTime;
-
-		[Date]
-		public DateTime TestDate;
-
-		[Html]
-		public string TestUri;
-
-		[Html]
-		public Uri TestUri2;
-		
-		[Map("Nowcom")]
-		public CLLocationCoordinate2D TestLocation;
-		
-		public UIImage TestImage;
-
-
-		
-	[Section]
-		public TestEnum TestEnum;
-		//Test [List(ViewType = typeof(InventoryView))]
-		[Root(ViewType = typeof(InventoryView))]
-		public InventoryItemViewModel Inventory;
-		[Root(ViewType = typeof(InventoryView))]
-		public ObservableCollection<InventoryItemViewModel> InventoryCollection;
-		[Root(ViewType = typeof(InventoryView))]
-		public List<InventoryItemViewModel> InventoryList;
-
 	[Section]
 		[Button]
 		public void Test()

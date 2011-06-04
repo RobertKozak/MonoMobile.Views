@@ -66,10 +66,6 @@ namespace MonoMobile.MVVM
 
 			return base.NewCell(); 
 		}
-
-		protected virtual void OnValueChanged()
-		{
-		}
 	}
 }
 

@@ -41,16 +41,16 @@ namespace MonoMobile.MVVM
         }
     }
 
-    public class EnumCollection : ObservableCollection<EnumBinder>, IDisposable
+    public class EnumCollection : ObservableCollection<EnumItem>, IDisposable
     {
         public Type EnumType { get; set; }
 
-        public ICollection<EnumBinder> SelectedItems
+        public ICollection<EnumItem> SelectedItems
         {
             get { return this.Where(binder => binder.IsChecked).ToList(); }
         }
 
-        public new ICollection<EnumBinder> Items
+        public new ICollection<EnumItem> Items
         {
             get { return this.ToList(); }
         }
@@ -79,7 +79,7 @@ namespace MonoMobile.MVVM
 
             foreach (var item in enumItems)
             {
-                Add(new EnumBinder()
+                Add(new EnumItem()
                 {
                     GroupName = EnumType.FullName,
                     Index = EnumExtensions.GetValueFromString(EnumType, item),

@@ -14,7 +14,7 @@ namespace Samples
 	{
 		[Bind("Caption", "Caption")]
 		[Root(ViewType = typeof(StandardListView))]
-		[Multiselect]
+		[MultiSelection]
 		public List<string> Items { get; private set; }
 
 		

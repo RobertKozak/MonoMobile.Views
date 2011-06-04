@@ -30,6 +30,8 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections;
+	using System.Linq;
 	using System.Reflection;
 	using System.Globalization;
 	using MonoTouch.UIKit;
@@ -107,7 +109,8 @@ namespace MonoMobile.MVVM
 				try
 				{
 					object convertedTargetValue = ConvertbackValue(targetValue, member);
-
+					
+					convertedTargetValue = CheckAndCoerceToGenericEnumerable(member.GetMemberType(), convertedTargetValue);
 					SetValue(member, obj, convertedTargetValue);	
 				}
 				catch (InvalidCastException)
@@ -141,6 +144,7 @@ namespace MonoMobile.MVVM
 
 				if (Element != null && Element.Cell != null && Element.Cell.Element == Element)
 				{
+					convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
 					SetValue(TargetProperty, Binding.Target, convertedSourceValue);
 				}
 
@@ -269,6 +273,53 @@ namespace MonoMobile.MVVM
 				var message = string.Format("{0} : {1} : {2}", ex.Message, member.Name, value.ToString());
 				Console.WriteLine(message);
 			}
+		}
+
+		private object CheckAndCoerceToGenericEnumerable(Type type, object value)
+		{
+			object result = value;
+			if (result != null)
+			{
+				var isList = typeof(IEnumerable).IsAssignableFrom(type);
+				
+				if (type.IsGenericType && isList)
+				{
+					var genericTypeDefinition = type.GetGenericTypeDefinition();
+					var genericType = type.GetGenericArguments().FirstOrDefault();
+					Type[] generic = { genericType };
+					
+					result = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic));
+					
+					var list = result as IList;
+					if (list != null)
+						foreach (var item in (IList)value)
+							list.Add(item);
+				}
+			}
+			return result;
+		}
+
+		private object CheckAndCoerceToObjectEnumerable(object value)
+		{
+			object result = value;
+			if (result != null)
+			{
+				Type type = value.GetType();			
+				var isList = typeof(IEnumerable).IsAssignableFrom(type);
+							
+				if (type.IsGenericType && isList)
+				{
+					var genericTypeDefinition = type.GetGenericTypeDefinition();
+					Type[] generic = { typeof(object) };
+					result = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic));
+					
+					var list = result as IList;
+					if (list != null)
+						foreach (var item in (IList)value)
+							list.Add(item);
+				}
+			}
+			return result;
 		}
 	}
 }

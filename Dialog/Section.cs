@@ -41,18 +41,14 @@ namespace MonoMobile.MVVM
 	/// Generic base version of Section
 	/// </summary>
 	[Preserve(AllMembers = true)]
-	public partial class Section : StringElement, ISection, IEnumerable, ISupportInitialize
+	public partial class Section : ContainerElement, ISection, IEnumerable, ISupportInitialize
 	{
 		private UIView _Header, _Footer;
 
 		public ObservableCollection<IElement> Elements { get; set; }
 		
 		public new IRoot Root { get { return Parent as IRoot; } }
-		
-		public ObservableCollection<object> SelectedItems { get; private set; }
-		public object SelectedItem { get; set; }
 
-		public bool IsMultiselect { get; set; }
 
 		/// <summary>
 		///  Constructs a Section without header or footers.
@@ -71,6 +67,9 @@ namespace MonoMobile.MVVM
 		{
 			Elements = new ObservableCollection<IElement>();
 			BindProperties();
+			
+			UpdateTargets();
+			UpdateSources();
 		}
 
 		/// <summary>

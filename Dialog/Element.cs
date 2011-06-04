@@ -65,7 +65,11 @@ namespace MonoMobile.MVVM
 		protected virtual void SetDataContext(object value)
 		{
 			if (_DataContext != value)
+			{
 				_DataContext = value;
+			
+				OnDataContextChanged();
+			}
 		}
 
 		/// <summary>
@@ -101,18 +105,6 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
-		public ISection Section { get { return Parent as ISection; } }
-		public IRoot Root 
-		{ 
-			get
-			{ 
-				if (Section == null)
-					return null;
-
-				return Section.Parent as IRoot; 
-			} 
-		}
-
 		public UITableViewElementCell Cell { get; set; }
 
 		private Theme _CellStyleInfo;
@@ -339,6 +331,19 @@ namespace MonoMobile.MVVM
 		/// for the root IRoot.
 		/// </remarks>
 		public IElement Parent { get; set; }
+		public IContainer Container { get { return Parent as IContainer; } }
+		public ISection Section { get { return Parent as ISection; } }
+		public IRoot Root
+		{
+			get
+			{
+				if (Section == null)
+					return null;
+				
+				return Section.Parent as IRoot;
+			}
+		}
+
 		public string Caption { get; set; }
 		public bool ShowCaption { get; set; }
 		
@@ -557,6 +562,10 @@ namespace MonoMobile.MVVM
 				cell.SetNeedsDisplay();
 			}
 		}
+		
+		protected virtual void OnDataContextChanged()
+		{
+		}
 
 		void IImageUpdated.UpdatedImage(Uri uri)
 		{
@@ -568,5 +577,7 @@ namespace MonoMobile.MVVM
 			
 			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
 		}
+
+		
 	}
 }

@@ -61,35 +61,38 @@ namespace MonoMobile.MVVM
 					var section = Root.Sections[indexPath.Section];
 					var selectedIndex = -1;
 					var index = 0;
-
-					Root.SelectedItems.Clear();
-
-					foreach (var e in section.Elements)
+					
+					if (Container != null)
 					{
-						var radioView = e as RadioElement;
-						UpdateSelected(radioView, this == radioView);
-						
-						if (this == radioView)
-						{
-							selectedIndex = index;
+						Container.SelectedItems.Clear();
 
-							Root.SelectedItem = Item;
-							Root.SelectedItems.Add(Item);
+						foreach (var e in section.Elements)
+						{
+							var radioView = e as RadioElement;
+							UpdateSelected(radioView, this == radioView);
+							
+							if (this == radioView)
+							{
+								selectedIndex = index;
+
+								Container.SelectedItem = Item;
+								Container.SelectedItems.Add(Item);
+							}
+							index++;
 						}
-						index++;
 					}
 							
 					Root.Index = selectedIndex;					
 					
-					var property = BindableProperty.GetBindableProperty(Section, "SelectedItemProperty");
+					var property = BindableProperty.GetBindableProperty(Container, "SelectedItemProperty");
 					if (property != null)
 						property.Update();
 					
-					property = BindableProperty.GetBindableProperty(Section, "SelectedItemsProperty");
+					property = BindableProperty.GetBindableProperty(Container, "SelectedItemsProperty");
 					if (property != null)
 						property.Update();
 
-					property = BindableProperty.GetBindableProperty(Section, "IndexProperty");
+					property = BindableProperty.GetBindableProperty(Container, "IndexProperty");
 					property.Update();
 
 					property = BindableProperty.GetBindableProperty(Root, "DataContextProperty");

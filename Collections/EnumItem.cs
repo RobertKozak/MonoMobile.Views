@@ -1,5 +1,5 @@
 //
-// EnumBinder.cs:
+// EnumItem.cs:
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
@@ -29,7 +29,7 @@
 //
 namespace MonoMobile.MVVM
 {
-    public class EnumBinder : ObservableObject
+    public class EnumItem : ObservableObject
     {
         public string GroupName
         {

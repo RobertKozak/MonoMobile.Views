@@ -1,5 +1,5 @@
 // 
-//  EnumCollectionConverter.cs
+//  ContainerElement.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,27 +30,17 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Globalization;
+	using System.Collections.ObjectModel;
 
-	public class EnumCollectionConverter : IValueConverter
+	public partial class ContainerElement : Element, IContainer
 	{
-		private object _OldValue;
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public ObservableCollection<object> SelectedItems { get; private set; }
+		public object SelectedItem { get; set; }
+		public bool IsMultiselect { get; set; }
+		
+		public ContainerElement(string caption) : base(caption)
 		{
-			_OldValue = value;
-
-			var collection = value as EnumCollection;
-			if (collection != null)
-			{
-				return collection.SelectedItems.Count.ToString();
-			}
-
-			return value;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return _OldValue;
+			SelectedItems = new ObservableCollection<object>();
 		}
 	}
 }

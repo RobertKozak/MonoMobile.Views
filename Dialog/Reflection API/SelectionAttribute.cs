@@ -1,5 +1,5 @@
 // 
-//  EnumCollectionConverter.cs
+//  SelectionAttribute.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,28 +30,12 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Globalization;
 
-	public class EnumCollectionConverter : IValueConverter
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	public class SelectionAttribute : Attribute
 	{
-		private object _OldValue;
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public SelectionAttribute()
 		{
-			_OldValue = value;
-
-			var collection = value as EnumCollection;
-			if (collection != null)
-			{
-				return collection.SelectedItems.Count.ToString();
-			}
-
-			return value;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return _OldValue;
 		}
 	}
 }
-

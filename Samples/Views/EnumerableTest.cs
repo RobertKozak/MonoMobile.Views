@@ -15,7 +15,7 @@ namespace Samples
 	//	[Bind("Selected", "SelectedItem")]
 		[Bind("SelectedThemes", "SelectedItems")]
 		[Bind("Element", "ElementInstance")]
-		[Multiselect]
+		[MultiSelection]
 		public List<Theme> MyList = new List<Theme>() { new FrostedTheme(), new NavbarTheme(), new BackgroundImageTheme() }; 
 		
 		public TestEnum Selected;

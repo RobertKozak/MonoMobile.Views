@@ -61,31 +61,35 @@ namespace MonoMobile.MVVM
 			Cell.Accessory = (bool)DataContext ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			Cell.TextLabel.Text = Caption;
 
-			if (Root != null)
+			var containsItem = false;
+			if (Container != null)
 			{
-				if ((bool)DataContext && !Root.SelectedItems.Contains(Item))
+				containsItem = Container.SelectedItems.Contains(Item);
+
+				if ((bool)DataContext && !containsItem)
 				{
-					Root.SelectedItems.Add(Item);
-					Root.SelectedItem = Item;
+					Container.SelectedItems.Add(Item);
+					Container.SelectedItem = Item;
 				}
 				
-				if (!(bool)DataContext && Root.SelectedItems.Contains(Item))
+				if (!(bool)DataContext && containsItem)
 				{
-					Root.SelectedItems.Remove(Item);
+					Container.SelectedItems.Remove(Item);
 				}
-				
-				var enumBinder = Item as EnumBinder;
+			
+			
+				var enumBinder = Item as EnumItem;
 				if (enumBinder != null)
 				{
 					enumBinder.IsChecked = (bool)DataContext;
-					Root.DataContext = Root.SelectedItems.Count.ToString();
+					Root.DataContext = Container.SelectedItems.Count.ToString();
 				}
-
-				var property = BindableProperty.GetBindableProperty(Root, "SelectedItemProperty");
+			
+				var property = BindableProperty.GetBindableProperty(Container, "SelectedItemProperty");
 				if (property != null)
 					property.Update();
-								
-				property = BindableProperty.GetBindableProperty(Root, "SelectedItemsProperty");
+
+				property = BindableProperty.GetBindableProperty(Container, "SelectedItemsProperty");
 				if (property != null)
 					property.Update();
 
@@ -93,7 +97,7 @@ namespace MonoMobile.MVVM
 				if (property != null)
 					property.Update();
 
-				property = BindableProperty.GetBindableProperty(Root, "IndexProperty");
+				property = BindableProperty.GetBindableProperty(Container, "IndexProperty");
 				if (property != null)
 					property.Update();
 			}

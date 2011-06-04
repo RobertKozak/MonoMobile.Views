@@ -162,7 +162,7 @@ namespace Samples
 		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
 		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
 
-		[Multiselect]
+		[MultiSelection]
 		public List<string> MySelectableList = new List<string>() { "Windows", "OS X", "Linux" }; 
 
 		[List(ViewType = typeof(MovieView))]

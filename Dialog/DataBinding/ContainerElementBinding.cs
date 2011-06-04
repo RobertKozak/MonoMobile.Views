@@ -1,5 +1,5 @@
 // 
-//  EnumCollectionConverter.cs
+//  ContainerElementBinding.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,27 +30,32 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Globalization;
 
-	public class EnumCollectionConverter : IValueConverter
+	public partial class ContainerElement
 	{
-		private object _OldValue;
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public BindableProperty IndexProperty = BindableProperty.Register("Index");
+		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
+		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
+
+		public int ItemIndex
 		{
-			_OldValue = value;
-
-			var collection = value as EnumCollection;
-			if (collection != null)
+			get { return Index; }
+			set
 			{
-				return collection.SelectedItems.Count.ToString();
+				if (Index != value)
+				{
+					Index = value;
+				}
 			}
-
-			return value;
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return _OldValue;
+		public override void BindProperties()
+		{			
+			base.BindProperties();
+
+			IndexProperty.BindTo(this, this, "ItemIndex");
+			SelectedItemsProperty.BindTo(this, this, "SelectedItems");
+			SelectedItemProperty.BindTo(this, this, "SelectedItem");
 		}
 	}
 }

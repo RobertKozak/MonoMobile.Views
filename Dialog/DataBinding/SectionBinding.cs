@@ -33,29 +33,11 @@ namespace MonoMobile.MVVM
 
 	public partial class Section
 	{
-		public BindableProperty IndexProperty = BindableProperty.Register("Index");
-		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
-		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
-		
-		public int ItemIndex
-		{
-			get { return Index; }
-			set
-			{
-				if (Index != value)
-				{
-					Index = value;
-				}
-			}
-		}
-
 		public override void BindProperties()
 		{
-			CaptionProperty.BindTo(this, this, "HeaderText");
+			base.BindProperties();
 
-			IndexProperty.BindTo(this, this, "ItemIndex");
-			SelectedItemsProperty.BindTo(this, this, "SelectedItems");
-			SelectedItemProperty.BindTo(this, this, "SelectedItem");
+			CaptionProperty.BindTo(this, this, "HeaderText");
 		}
 	}
 }

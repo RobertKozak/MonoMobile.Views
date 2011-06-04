@@ -131,7 +131,7 @@ namespace Samples
 			} // { Set(()=>DynamicView, value); }
 		}
 		
-		[Multiselect]
+		[MultiSelection]
 		public List<string> MovieClasses { get; set; }
 		
 		[Section]

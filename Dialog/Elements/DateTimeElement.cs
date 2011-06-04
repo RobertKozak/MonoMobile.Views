@@ -100,7 +100,6 @@ namespace MonoMobile.MVVM
 			InputControl.Ended += (s, e) => 
 			{
 				DataContextProperty.Update();
-				OnValueChanged();
 			};
 		}
 
@@ -114,11 +113,10 @@ namespace MonoMobile.MVVM
 				Mode = UIDatePickerMode.Date 
 			};
 			
-			DataContextProperty.PropertyChangedAction += () => { OnValueChanged(); };
 			return picker;
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnDataContextChanged()
 		{			
 			if (DetailTextLabel != null)
 				DetailTextLabel.Text = FormatDate((DateTime)DataContext);
