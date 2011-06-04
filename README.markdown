@@ -1,6 +1,15 @@
 WHAT'S NEW
 ==========
 
+Released Beta 0.8
+
+It is almost done. I have a few more things to look into like: 
+	
+	INotifyDataContextChanged and INotifyCollectionChanged 
+	Add a real sample
+	Add more Documentation
+	and finish up any other bugs I find.
+
 This document has been updated.
 
 NOTE:
@@ -13,7 +22,7 @@ There are many changes and fixes on the way.
 Current Version
 ===============
 
-Beta 0.5
+Beta 0.8
 
 MonoMobile.MVVM
 ================
