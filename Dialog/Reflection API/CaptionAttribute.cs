@@ -31,7 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class, Inherited = false)]
 	public class CaptionAttribute : Attribute
 	{
 		public CaptionAttribute(string caption)

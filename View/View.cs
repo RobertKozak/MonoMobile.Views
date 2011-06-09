@@ -36,6 +36,8 @@ namespace MonoMobile.MVVM
 	{
 		private object _DataContext;
 		
+		public UITableView TableView { get; set; }
+
 		public string Caption { get; set; }
 		public BindingContext BindingContext { get; set; }
 

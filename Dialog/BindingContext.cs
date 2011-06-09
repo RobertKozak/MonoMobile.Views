@@ -82,6 +82,11 @@ namespace MonoMobile.MVVM
 					}
 				}
 			}
+
+			if (view is IView)
+			{
+				((IView)view).TableView = Root.TableView;
+			}
 		}
 		
 		public static IRoot CreateRootedView(IRoot root)
@@ -108,7 +113,8 @@ namespace MonoMobile.MVVM
 					sb.Append(Char.ToUpper(c));
 					nextUp = false;
 
-				} else
+				} 
+				else
 				{
 					if (c == '_')
 					{
@@ -120,6 +126,7 @@ namespace MonoMobile.MVVM
 					sb.Append(c);
 				}
 			}
+
 			return sb.ToString();
 		}
 
@@ -159,7 +166,7 @@ namespace MonoMobile.MVVM
 				var caption = e.ToString();
 				if (string.IsNullOrEmpty(caption))
 				{
-					caption = MakeCaption(root.ViewBinding.ViewType.Name);
+					caption = root.ViewBinding.ViewType.Name.Capitalize();
 				}
 				
 				element = Activator.CreateInstance(elementType) as IElement;

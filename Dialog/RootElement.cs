@@ -360,15 +360,6 @@ namespace MonoMobile.MVVM
 				yield return s;
 		}
 
-		public override UITableViewElementCell NewCell()
-		{
-			var style = Theme.CellStyle;
-			
-			var cell = new UITableViewElementCell(style, Id, this);
-
-			return cell;
-		}
-
 		public override void InitializeCell(UITableView tableView)
 		{
 			DetailTextAlignment = UITextAlignment.Right;

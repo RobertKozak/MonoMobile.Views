@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using System.Globalization;
 	using MonoMobile.MVVM;
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
 	public class BindAttribute : Attribute
 	{
 		internal Binding Binding;

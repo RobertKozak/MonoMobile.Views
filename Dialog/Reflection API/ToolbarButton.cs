@@ -15,6 +15,11 @@ namespace MonoMobile.MVVM
 		{
 			ButtonType = buttonType;
 		}
+		
+		public ToolbarButtonAttribute(Type viewType) : this()
+		{
+			ViewType = viewType;
+		}
 
 		public ToolbarButtonAttribute(string title) : this()
 		{
@@ -25,6 +30,7 @@ namespace MonoMobile.MVVM
 		public UIBarButtonItemStyle Style { get; set; }
 		public string Title { get; set; }
 		public BarButtonLocation Location { get; set; }
+		public Type ViewType { get; set; }
 	}
 }
 

@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMobile.MVVM", "MonoMobi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVMSample", "MVVMSample\MVVMSample.csproj", "{2F3B0329-011A-428D-B897-989078520830}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -29,18 +27,6 @@ Global
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhone.Build.0 = Release|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{2F3B0329-011A-428D-B897-989078520830}.AdHoc|iPhone.ActiveCfg = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.AdHoc|iPhone.Build.0 = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.AppStore|iPhone.ActiveCfg = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.AppStore|iPhone.Build.0 = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.Debug|iPhone.Build.0 = Debug|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{2F3B0329-011A-428D-B897-989078520830}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{2F3B0329-011A-428D-B897-989078520830}.Release|iPhone.ActiveCfg = Release|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.Release|iPhone.Build.0 = Release|iPhone
-		{2F3B0329-011A-428D-B897-989078520830}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{2F3B0329-011A-428D-B897-989078520830}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AdHoc|iPhone.ActiveCfg = AdHoc|iPhone
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AdHoc|iPhone.Build.0 = AdHoc|iPhone
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
@@ -55,7 +41,7 @@ Global
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = MVVMSample\MVVMSample.csproj
+		StartupItem = Samples\Samples.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

@@ -1,5 +1,5 @@
 // 
-//  MonoMobileApp.cs
+//  StringExtensions.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,42 +30,37 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Linq;
-	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
-	using MonoTouch.UIKit;
-	
-	[Register("MonoMobileApplication")]
-	public class MonoMobileApplication: UIApplication
+	using System.Text;
+
+	public static class StringExtensions
 	{
-		public const string Version = "0.5";
-
-		public static Type MainViewType { get; private set; }  
-
-		public static UIWindow Window { get; set; }
-		public static UINavigationController NavigationController { get; set; }
-		public static UIView MainView { get; set; }
-		public static string Title { get; set; }
- 
-		public static void ToggleSearchbar()
+		public static string Capitalize(this string name)
 		{
-			var dvc = (DialogViewController)NavigationController.ViewControllers.FirstOrDefault();
-			if (dvc != null)
+			var sb = new StringBuilder(name.Length);
+			bool nextUp = true;
+			
+			foreach (char c in name)
 			{
-				dvc.ToggleSearchbar();
+				if (nextUp)
+				{
+					sb.Append(Char.ToUpper(c));
+					nextUp = false;
+					
+				} else
+				{
+					if (c == '_')
+					{
+						sb.Append(' ');
+						continue;
+					}
+					if (Char.IsUpper(c))
+						sb.Append(' ');
+					sb.Append(c);
+				}
 			}
-		}
-		
-		public static void Run(string title, Type mainViewType, string[] args)
-		{
-			Title = title;
-			MainViewType = mainViewType;
-			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
-		}
-
-		public static void Run(string delegateName, string[] args)
-		{
-			UIApplication.Main(args, "MonoMobileApplication", delegateName);
+			
+			return sb.ToString();
 		}
 	}
 }
+

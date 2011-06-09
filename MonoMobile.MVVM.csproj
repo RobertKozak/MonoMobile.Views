@@ -264,7 +264,6 @@
     <Compile Include="Dialog\Elements\FocusableElement.cs" />
     <Compile Include="Extensions\UIDevice.cs" />
     <Compile Include="Dialog\Themes\ClearTheme.cs" />
-    <Compile Include="Application\MonoMobileApp.cs" />
     <Compile Include="Dialog\Reflection API\SearchbarAttribute.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
     <Compile Include="Dialog\Reflection API\CheckmarkAttribute.cs" />
@@ -284,6 +283,10 @@
     <Compile Include="Dialog\Reflection API\SelectionAttribute.cs" />
     <Compile Include="Dialog\Reflection API\MultiselectionAttribute.cs" />
     <Compile Include="Collections\EnumItem.cs" />
+    <Compile Include="View\ActionSheetView.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Application\Alert.cs" />
+    <Compile Include="Application\MonoMobileApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

@@ -1,5 +1,5 @@
 // 
-//  PlainTheme.cs
+//  {filename}.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,19 +27,45 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+using System;
+using MonoTouch.UIKit;
 namespace MonoMobile.MVVM
 {
-	using System;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
-	
-	[Preserve(AllMembers = true)]
-	public class PlainTheme : Theme
+	public static class UIViewExtensions
 	{
-		public PlainTheme()
-		{
-			TableViewStyle = UITableViewStyle.Plain;
+		public static void FlipView(this UIView fromView, UIView toView)
+		{			
+			UIView.BeginAnimations("Flipper");
+			UIView.SetAnimationDuration(1.25);
+			UIView.SetAnimationCurve(UIViewAnimationCurve.EaseInOut);
+			if (fromView.Superview == null)
+			{
+				UIView.SetAnimationTransition(UIViewAnimationTransition.FlipFromRight, fromView, true);
+				toView.ViewWillAppear(true);
+				fromView.ViewWillDisappear(true);
+				
+				toView.View.RemoveFromSuperview();
+				this.View.AddSubview(fromView.View);
+				
+				fromView.ViewDidDisappear(true);
+				toView.ViewDidAppear(true);
+			} 
+			else
+			{
+				UIView.SetAnimationTransition(UIViewAnimationTransition.FlipFromLeft, fromView, true);
+				fromView.ViewWillAppear(true);
+				toView.ViewWillDisappear(true);
+				
+				fromView.View.RemoveFromSuperview();
+				this.View.AddSubview(toView.View);
+				
+				toView.ViewDidDisappear(true);
+				fromView.ViewDidAppear(true);
+			}
+			
+			UIView.CommitAnimations();
 		}
+
 	}
 }
 

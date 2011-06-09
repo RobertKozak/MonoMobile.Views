@@ -1,5 +1,5 @@
 // 
-//  PlainTheme.cs
+//  Alert.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,15 +30,16 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	
-	[Preserve(AllMembers = true)]
-	public class PlainTheme : Theme
+
+	public class Alert
 	{
-		public PlainTheme()
+		public static void Show(string title, string message)
 		{
-			TableViewStyle = UITableViewStyle.Plain;
+			using(var alert = new UIAlertView(title, message, null, "OK", null))
+			{
+				alert.Show();  
+			}
 		}
 	}
 }

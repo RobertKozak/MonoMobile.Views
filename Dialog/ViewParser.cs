@@ -60,9 +60,17 @@ namespace MonoMobile.MVVM
 
 		public void Parse(UIView view, string caption, Theme theme)
 		{
+			var vw = view as IView;
+			if (vw != null)
+			{
+				var captionAttribute = view.GetType().GetCustomAttribute<CaptionAttribute>();
+				if (captionAttribute != null)
+					caption = captionAttribute.Caption;
+			}
+
 			Root = new RootElement(caption) { Opaque = false };
 			Root.DataContext = view;
-			
+
 			var dataContext = view as IDataContext;
 			if (dataContext != null)
 				Root.DataContext = dataContext.DataContext;
@@ -700,12 +708,22 @@ namespace MonoMobile.MVVM
 
 				if (buttonAttribute != null)
 				{
+					UIView buttonView = null;
 					var title = caption ?? buttonAttribute.Title;
-					var button = CreateCommandBarButton(view, member, title, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
+					if (buttonAttribute.ViewType != null)
+						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+
+					var button = CreateCommandBarButton(view, member, title, buttonView, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
 					{
+						if (buttonAttribute.Location == BarButtonLocation.Right)
+							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace,  null)); 
+
 						buttonList.Add(button);
+
+						if (buttonAttribute.Location == BarButtonLocation.Left)
+							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace,  null)); 
 					}
 				}
 			}
@@ -732,7 +750,7 @@ namespace MonoMobile.MVVM
 				if (buttonAttribute != null)
 				{
 					var title = caption ?? buttonAttribute.Title;
-					var button = CreateCommandBarButton(view, member, title, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
+					var button = CreateCommandBarButton(view, member, title, null, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
 					{
@@ -750,7 +768,7 @@ namespace MonoMobile.MVVM
 			return null;
 		}
 
-		private CommandBarButtonItem CreateCommandBarButton(object view, MemberInfo member, string title, UIBarButtonItemStyle style, UIBarButtonSystemItem buttonType, BarButtonLocation location )
+		private CommandBarButtonItem CreateCommandBarButton(object view, MemberInfo member, string title, UIView buttonView, UIBarButtonItemStyle style, UIBarButtonSystemItem buttonType, BarButtonLocation location)
 		{
 			CommandBarButtonItem button = null;
 
@@ -763,6 +781,10 @@ namespace MonoMobile.MVVM
 			if(!string.IsNullOrEmpty(title))
 			{
 				button = new CommandBarButtonItem(title, style, delegate {command.Execute(null); });
+			}
+			else if (buttonView != null)
+			{
+				button = new CommandBarButtonItem(buttonView); 
 			}
 			else
 			{
@@ -859,7 +881,7 @@ namespace MonoMobile.MVVM
 			if(captionAttribute != null)
 				caption = captionAttribute.Caption;
 			else
-				caption = BindingContext.MakeCaption(member.Name);
+				caption = member.Name.Capitalize();
 			
 			return caption;
 		}
@@ -881,13 +903,20 @@ namespace MonoMobile.MVVM
 		
 		private static MemberInfo GetMemberFromDataContext(MemberInfo memberInfo, ref object dataContext)
 		{
+			var member = memberInfo;
 			var context = dataContext as IDataContext;
 			if (context != null)
 			{
-				dataContext = context.DataContext;
-				if (dataContext != null)
+				if (context != null && context.DataContext != null)
 				{
-					memberInfo = dataContext.GetType().GetMember(memberInfo.Name).SingleOrDefault();
+					dataContext = context.DataContext;
+					memberInfo = dataContext.GetType().GetMember(member.Name).SingleOrDefault();
+				}
+				
+				if (memberInfo == null)
+				{
+					dataContext = context;
+					memberInfo = dataContext.GetType().GetMember(member.Name).SingleOrDefault();
 				}
 			}
 
@@ -939,8 +968,8 @@ namespace MonoMobile.MVVM
 
 				return element ?? _NoElement;
 			});
-			
-			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings)=>
+
+			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings) =>
 			{
 				IElement element = null;
 		

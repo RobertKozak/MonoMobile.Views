@@ -29,9 +29,12 @@
 //
 namespace MonoMobile.MVVM
 {
+	using MonoTouch.UIKit;
+
 	public interface IView: IBindingContext
 	{
 		string Caption { get; set; }
+		UITableView TableView { get; set; }
 	}
 }
 

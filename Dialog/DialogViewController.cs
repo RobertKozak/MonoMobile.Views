@@ -55,7 +55,8 @@ namespace MonoMobile.MVVM
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
 		private Source _TableSource;
-
+		
+		public bool IsModal { get; set; }  
 		public UIImage BackgroundImage { get; set; }
 		public UIColor BackgroundColor { get; set; }
 
@@ -588,16 +589,24 @@ namespace MonoMobile.MVVM
 
 				var bounds = tableView.Bounds;
 				var footerLabel = new UILabel();
-
+				var width =  bounds.Width - (indentation * 2);				
+				var linefeeds = caption.Count( ch => ch == '\n');
+				
 				footerLabel.Font = UIFont.SystemFontOfSize(15);
 				var size = footerLabel.StringSize(caption, footerLabel.Font);
-				var height = size.Height * (caption.Count((ch)=>ch == '\n') + 1); 
-				caption = caption.Replace("\n","");
-				var rect = new RectangleF(bounds.X + indentation, bounds.Y, bounds.Width - (indentation * 2), height + 10);
+
+				footerLabel.Lines = 1 + ((int)(size.Width / width)) + linefeeds;
+				if (size.Width % width == 0)
+					footerLabel.Lines--;
+
+				var height = size.Height * (footerLabel.Lines);
+
+				var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, height + 10);
 				
 				footerLabel.Bounds = rect;
 				footerLabel.BackgroundColor = UIColor.Clear;
 				footerLabel.TextAlignment = UITextAlignment.Center;
+				footerLabel.LineBreakMode = UILineBreakMode.WordWrap;
 				footerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
 				footerLabel.ShadowColor = UIColor.White;
 				footerLabel.ShadowOffset = new SizeF(0, 1);
@@ -712,7 +721,6 @@ namespace MonoMobile.MVVM
 			}
 
 			_TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
-
 			TableView = _TableView;
 
 			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
@@ -747,9 +755,12 @@ namespace MonoMobile.MVVM
 			base.ViewDidAppear(animated);
 		
 			var searchBar = Root as ISearchBar;
-			if (searchBar != null && searchBar.EnableSearch && !searchBar.IsSearchbarHidden)
+			if (searchBar != null)
 			{
-				StartSearch();
+				if (searchBar.EnableSearch && !searchBar.IsSearchbarHidden)
+				{
+					StartSearch();
+				}
 			}
 		}
 
@@ -804,7 +815,7 @@ namespace MonoMobile.MVVM
 					TableView.BackgroundColor = UIColor.Clear;
 				}
 
-				if (ParentViewController != null)
+				if (ParentViewController != null && !IsModal)
 				{
 					TableView.BackgroundColor = UIColor.Clear;
 					ParentViewController.View.BackgroundColor = BackgroundColor;
@@ -866,7 +877,7 @@ namespace MonoMobile.MVVM
 			_Searchbar.Frame = frame;
 			_Searchbar.Hidden = false;
 		}
-
+		
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
@@ -1008,6 +1019,7 @@ namespace MonoMobile.MVVM
 		{
 			if (binding == null)
 				throw new ArgumentNullException("binding");
+
 			_Pushing = pushing;
 			Style = style;
 			

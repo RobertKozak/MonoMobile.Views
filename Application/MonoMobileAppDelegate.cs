@@ -30,6 +30,8 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Threading;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
@@ -60,7 +62,12 @@ namespace MonoMobile.MVVM
 			
 			MonoMobileApplication.Window = _Window;
 			MonoMobileApplication.NavigationController = _Navigation;
-			MonoMobileApplication.MainView = Activator.CreateInstance(MonoMobileApplication.MainViewType) as UIView;
+			
+			MonoMobileApplication.Views = new List<UIView>();
+			foreach(var viewType in MonoMobileApplication.ViewTypes)
+			{
+				MonoMobileApplication.Views.Add(Activator.CreateInstance(viewType) as UIView);
+			}
 
 			// this method initializes the main NavigationController
 			var startupThread = new Thread(Startup);
@@ -75,8 +82,19 @@ namespace MonoMobile.MVVM
 			{
 				InvokeOnMainThread(delegate 
 				{
-					var binding = new BindingContext(MonoMobileApplication.MainView, MonoMobileApplication.Title);
-					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } };
+					foreach(var view in MonoMobileApplication.Views)
+					{	
+						var title = MonoMobileApplication.Title;
+						if (view is IView)
+							title = ((IView)view).Caption;
+
+						var binding = new BindingContext(view, title);
+						MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } );
+					}
+
+					_Navigation.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
+
+					MonoMobileApplication.CurrentDialogViewController = _Navigation.ViewControllers.First() as DialogViewController;
 
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(0.3f);

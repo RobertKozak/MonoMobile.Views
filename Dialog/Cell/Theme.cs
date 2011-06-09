@@ -273,11 +273,11 @@ namespace MonoMobile.MVVM
 				if (theme.Accessory != Accessory)
 					Accessory = theme.Accessory;
 				
-				if (theme.CellImageIcon != null)
-					CellImageIcon = theme.CellImageIcon;
-				
-				if (theme.CellImageIconUri != null)
-					CellImageIconUri = theme.CellImageIconUri;
+//				if (theme.CellImageIcon != null)
+//					CellImageIcon = theme.CellImageIcon;
+//				
+//				if (theme.CellImageIconUri != null)
+//					CellImageIconUri = theme.CellImageIconUri;
 				
 				if (theme.CellBackgroundColor != null)
 					CellBackgroundColor = theme.CellBackgroundColor;
