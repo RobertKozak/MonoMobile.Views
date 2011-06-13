@@ -177,6 +177,9 @@ namespace MonoMobile.MVVM
 						
 						if (newElement is ISection)
 						{
+							lastSection.Caption = newElement.Caption;
+							lastSection.Order = newElement.Order;
+							
 							lastSection.Add(((ISection)newElement).Elements);
 							bindable = lastSection as IBindable;
 						}
@@ -284,6 +287,11 @@ namespace MonoMobile.MVVM
 				element = GetRootElementForMember(theme, view, member, bindings);
 			}
 			
+			if (element == null)
+			{
+				throw new Exception(string.Format("Unknown type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
+			}	
+			
 			if (orderAttribute != null && element != null)
 				element.Order = orderAttribute.Order;
 			
@@ -298,7 +306,7 @@ namespace MonoMobile.MVVM
 		
 		private IElement GetRootElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
 		{
-			var memberType = GetTypeForMember(member);
+			Type memberType = GetTypeForMember(member);
 			var caption = GetCaption(member);
 			
 			IElement root = null;
@@ -310,17 +318,17 @@ namespace MonoMobile.MVVM
 				viewType = genericType;
 			
 			var listAttribute = member.GetCustomAttribute<ListAttribute>();
-			if (listAttribute != null && listAttribute.ViewType != null)
+			if (listAttribute != null)
 			{
-				viewType = listAttribute.ViewType;
-				elementType = listAttribute.ElementType;
+				viewType = listAttribute.ViewType ?? viewType;
+				elementType = listAttribute.ElementType ?? elementType;
 			}
 
 			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-			if (rootAttribute != null && rootAttribute.ViewType != null)
+			if (rootAttribute != null)
 			{
-				viewType = rootAttribute.ViewType;
-				elementType = rootAttribute.ElementType;
+				viewType = rootAttribute.ViewType ?? viewType;
+				elementType = rootAttribute.ElementType ?? elementType;
 			}
 
 			var isEnum = memberType.IsEnum;
@@ -350,6 +358,12 @@ namespace MonoMobile.MVVM
 				}
 				else
 				{
+					var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+					if (sectionAttribute != null)
+					{
+						section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
+						section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
+					}
 					root = section as IElement;
 				} 
 			}
@@ -365,14 +379,18 @@ namespace MonoMobile.MVVM
 					root = rootElement as IElement;
 				}
 			}
-			else if (isView || isUIView)
+			else if (isView || elementType != null)
 			{
+				elementType = elementType ?? typeof(RootElement);
+
 				object dataContext = view;
 				MemberInfo dataContextMember = GetMemberFromDataContext(member, ref dataContext);
 				var items = dataContextMember.GetValue(dataContext);
 
-				var rootElement = new RootElement(caption) { Opaque = false };
-
+				var rootElement = Activator.CreateInstance(elementType) as IElement;
+				
+				((Element)rootElement).Opaque = false;
+				rootElement.Caption = caption;
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
 				rootElement.ViewBinding.MemberInfo = dataContextMember;
 				rootElement.ViewBinding.ElementType = elementType;
@@ -402,7 +420,7 @@ namespace MonoMobile.MVVM
 
 				if (isList)
 				{
-					var innerRoot = BindingContext.CreateRootedView(rootElement);
+					var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
 					root = innerRoot as IElement;
 				}
 				else
@@ -410,12 +428,26 @@ namespace MonoMobile.MVVM
 					root = rootElement;
 				}
 			}
-			else
+			else if (isUIView)
 			{
-				throw new Exception(string.Format("Unknown type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
-			}		
+				object dataContext = view;
+				MemberInfo dataContextMember = GetMemberFromDataContext(member, ref dataContext);
+				var uiView = dataContextMember.GetValue(dataContext) as UIView;
+				
+				if (uiView == null)
+					uiView = Activator.CreateInstance(memberType) as UIView;
+
+				root = new UIViewElement(caption, uiView, true);
+				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
+			}
+			else if (elementType != null)
+			{
+				root = Activator.CreateInstance(elementType) as IElement;
+				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
+			}
 	
-			SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
+			if (root != null)
+				SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
 
 			return root;
 		}
@@ -711,7 +743,14 @@ namespace MonoMobile.MVVM
 					UIView buttonView = null;
 					var title = caption ?? buttonAttribute.Title;
 					if (buttonAttribute.ViewType != null)
+					{	
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+						var tappable = buttonView as ITappable;
+						if (tappable != null)
+						{
+							tappable.Command = new ReflectiveCommand(view, member as MethodInfo, null); 
+						}
+					}
 
 					var button = CreateCommandBarButton(view, member, title, buttonView, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
@@ -746,10 +785,12 @@ namespace MonoMobile.MVVM
 				var buttonAttribute = member.GetCustomAttribute<NavbarButtonAttribute>();
 				var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
 				var caption = captionAttribute != null ? captionAttribute.Caption : null;
-
+				
 				if (buttonAttribute != null)
 				{
-					var title = caption ?? buttonAttribute.Title;
+					var memberName = buttonAttribute.ButtonType == null ? member.Name.Capitalize() : null;
+
+					var title = caption ?? buttonAttribute.Title ?? memberName;
 					var button = CreateCommandBarButton(view, member, title, null, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
@@ -916,7 +957,7 @@ namespace MonoMobile.MVVM
 				if (memberInfo == null)
 				{
 					dataContext = context;
-					memberInfo = dataContext.GetType().GetMember(member.Name).SingleOrDefault();
+					memberInfo = dataContext.GetType().GetMember(member.Name, BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).SingleOrDefault();
 				}
 			}
 
