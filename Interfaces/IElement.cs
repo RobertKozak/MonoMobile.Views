@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public interface IElement : IThemeable, IDisposable, ISupportInitialize
+	public interface IElement : IThemeable, IDisposable, IInitializable
 	{
 		object DataContext { get; set; }
 

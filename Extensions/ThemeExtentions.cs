@@ -82,7 +82,7 @@ namespace MonoMobile.MVVM
 					ApplyElementTheme(element.Theme, e, null);
 		}
 
-		public static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
+		private static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
 		{
 			var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
 			
@@ -91,7 +91,9 @@ namespace MonoMobile.MVVM
 				var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
 				
 				if (themeAttribute.ThemeUsage == ThemeUsage.Merge)
+				{
 					themeableElement.Theme.MergeTheme(theme);
+				}
 				else
 					themeableElement.Theme = theme;
 			}

@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Threading;
 	using MonoMobile.MVVM;
@@ -53,8 +54,15 @@ namespace MonoMobile.MVVM
             _Window = new UIWindow(UIScreen.MainScreen.Bounds);
 			
 			if (_DefaultImage != null)
-				_Window.BackgroundColor = UIColor.FromPatternImage(_DefaultImage);
-		
+			{
+				var imageView = new UIImageView(_Window.Bounds);
+				imageView.Image = _DefaultImage;
+				_Window.Add(imageView);
+				_Window.BackgroundColor = UIColor.Clear;
+
+//				_Window.BackgroundColor = UIColor.FromPatternImage(_DefaultImage);
+			}
+
 			_Navigation.View.Alpha = 0.0f;
 
 			_Window.AddSubview(_Navigation.View);
@@ -66,7 +74,14 @@ namespace MonoMobile.MVVM
 			MonoMobileApplication.Views = new List<UIView>();
 			foreach(var viewType in MonoMobileApplication.ViewTypes)
 			{
-				MonoMobileApplication.Views.Add(Activator.CreateInstance(viewType) as UIView);
+				var view = Activator.CreateInstance(viewType) as UIView;
+				var initalizable = view as IInitializable;
+				if (initalizable != null)
+				{
+					initalizable.Initialize();
+				}
+				MonoMobileApplication.Views.Add(view);
+				
 			}
 
 			// this method initializes the main NavigationController
@@ -84,17 +99,13 @@ namespace MonoMobile.MVVM
 				{
 					foreach(var view in MonoMobileApplication.Views)
 					{	
-						var title = MonoMobileApplication.Title;
-						if (view is IView)
-							title = ((IView)view).Caption;
-
-						var binding = new BindingContext(view, title);
-						MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true } );
+						MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
 					}
 
 					_Navigation.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
 
 					MonoMobileApplication.CurrentDialogViewController = _Navigation.ViewControllers.First() as DialogViewController;
+					MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
 
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(0.3f);
@@ -102,6 +113,11 @@ namespace MonoMobile.MVVM
 					UIView.CommitAnimations();
 				});
 			}
+		}
+
+		public override void WillEnterForeground(UIApplication application)
+		{
+			MonoMobileApplication.ResumeFromBackgroundAction();
 		}
 
         // This method is allegedly required in iPhoneOS 3.0

@@ -102,7 +102,7 @@ namespace Samples
 		}
 	
 
-		public override void BeginInit()
+		public override void Initialize()
 		{
 			TextColor = UIColor.Red;
 		}

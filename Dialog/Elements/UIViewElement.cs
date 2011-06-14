@@ -42,7 +42,7 @@ namespace MonoMobile.MVVM
 	///   in this case from the UIViewElement to the cell that
 	///   holds our view.
 	/// </remarks>
-	public class UIViewElement : StringElement, ISizeable, ISelectable
+	public class UIViewElement : Element, ISizeable, ISelectable
 	{
 		public CellFlags Flags;
 
@@ -67,20 +67,19 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public UIViewElement(string caption, UIView view, bool transparent) : base(caption)
 		{
-			//Value = view.ToString();
 			ContentView = view;
 			Flags = transparent ? CellFlags.Transparent : 0;
-			DataContext = null;
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
 			if ((Flags & CellFlags.Transparent) != 0)
 			{
-				Cell.BackgroundColor = UIColor.Clear;
+				Cell.BackgroundColor = ((RootElement)Root).BackgroundColor;
+			//	Cell.BackgroundView = new UIView() { Opaque = false, BackgroundColor = UIColor.Clear };
 				Cell.Opaque = false;
 			}
-
+		
 			if ((Flags & CellFlags.DisableSelection) != 0)
 				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 

@@ -55,7 +55,7 @@ namespace MonoMobile.MVVM
 			
 			Cell.ImageView.Image = null;
 		}
-
+		
 		public override string ToString()
 		{
 			return Caption;

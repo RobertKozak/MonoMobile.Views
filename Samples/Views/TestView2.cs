@@ -4,7 +4,7 @@ using MonoTouch.CoreLocation;
 using MonoTouch.UIKit;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-namespace MVVMSample
+namespace DealerCenter
 {
 	public class TestView : View
 	{
@@ -71,16 +71,16 @@ namespace MVVMSample
 //		[Root(ViewType = typeof(InventoryView))]
 //		public ObservableCollection<InventoryItemViewModel> InventoryCollection;
 		//[List(ViewType = typeof(InventoryView))]
-//		[List(ViewType = typeof(InventoryView))]
-//		[Selection]
+//		[Root(ViewType = typeof(InventoryView))]
+		//[Selection]
 //		[Bind("TestSelected", "SelectedItems")]
 //		[Bind("TestSelectedItem", "SelectedItem")]
 //		public List<InventoryItemViewModel> InventoryList;
 
-		[List]
-		[Bind("TestSelected", "SelectedItems")]
-		[Bind("TestSelectedItem", "SelectedItem")]
-		public EnumCollection<TestEnum> TestEnumCollection;
+//		[List]
+//		[Bind("TestSelected", "SelectedItems")]
+//		[Bind("TestSelectedItem", "SelectedItem")]
+//		public EnumCollection<TestEnum> TestEnumCollection;
 		
 	[Section]
 		[Button]
@@ -117,16 +117,16 @@ namespace MVVMSample
 
 			DataContext.TestEnum = TestEnum.Two;
 
-			DataContext.Inventory = new InventoryItemViewModel()
-			{	
-				Id = 2,
-				Year = 2009,
-				Make = "Mercedes",
-				Model = "E Class", 
-				Trim = "E350", 
-				StockNumber = "S2346", 
-				Vin = "B4SXY345E344DF333"
-			};
+//			DataContext.Inventory = new InventoryItemViewModel()
+//			{	
+//				Id = 2,
+//				Year = 2009,
+//				Make = "Mercedes",
+//				Model = "E Class", 
+//				Trim = "E350", 
+//				StockNumber = "S2346", 
+//				Vin = "B4SXY345E344DF333"
+//			};
 
 		}
 		
@@ -142,5 +142,7 @@ namespace MVVMSample
 			DataContext.UserName = "Rkozak";
 		}
 	}
+
+	public class NoTheme : Theme {}
 }
 

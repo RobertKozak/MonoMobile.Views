@@ -1,5 +1,5 @@
 // 
-//  ViewConverter.cs
+//  ReadOnlyAttribute.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,32 +30,12 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Globalization;
-	using MonoTouch.Foundation;
 
-	[Preserve(AllMembers = true)]
-	public class ViewConverter : IValueConverter
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	public class ReadOnlyAttribute : Attribute
 	{
-		private object _OldValue;
-
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public ReadOnlyAttribute()
 		{
-			_OldValue = value;
-			string result = string.Empty;
-
-			var view = value as IView;
-			if (view != null)
-				result = view.ToString();
-			
-			if (value != null && string.IsNullOrEmpty(result))
-				return value.ToString();
-
-			return result;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return _OldValue;
 		}
 	}
 }

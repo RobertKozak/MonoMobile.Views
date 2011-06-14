@@ -32,7 +32,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public abstract class ViewModel: ObservableObject, IViewModel
+	public abstract class ViewModel: ObservableObject, IViewModel, IInitializable
 	{
 		public IModel Model { get; set; }
  
@@ -69,6 +69,10 @@ namespace MonoMobile.MVVM
 		public void Refresh()
 		{
 			Model.Refresh();
+		}
+
+		public virtual void Initialize()
+		{
 		}
 	}
 }

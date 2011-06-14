@@ -32,7 +32,8 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Globalization;
 	using MonoTouch.Foundation;
-
+	
+	[Preserve(AllMembers = true)]
 	public class DateTimeConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -97,7 +97,7 @@ namespace MonoMobile.MVVM
 		{ 
 			if (EditMode != EditMode.ReadOnly)
 			{
-				InputControl = new UICustomTextField() 
+				InputControl = new UICustomTextField(new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height)) 
 				{ 
 					BackgroundColor = UIColor.Clear, 
 					PlaceholderColor = Theme.PlaceholderColor, 

@@ -13,6 +13,7 @@ Global
 		Release|iPhone = Release|iPhone
 		AdHoc|iPhone = AdHoc|iPhone
 		AppStore|iPhone = AppStore|iPhone
+		Pieceable|iPhoneSimulator = Pieceable|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.AdHoc|iPhone.ActiveCfg = Debug|iPhone
@@ -23,6 +24,8 @@ Global
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Debug|iPhone.Build.0 = Debug|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Pieceable|iPhoneSimulator.ActiveCfg = Pieceable|iPhoneSimulator
+		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Pieceable|iPhoneSimulator.Build.0 = Pieceable|iPhoneSimulator
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhone.ActiveCfg = Release|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhone.Build.0 = Release|iPhone
 		{2C326EA9-55E1-44FF-BDCC-38A84DD1E8F6}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
@@ -35,6 +38,8 @@ Global
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhone.Build.0 = Debug|iPhone
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Pieceable|iPhoneSimulator.ActiveCfg = Pieceable|iPhoneSimulator
+		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Pieceable|iPhoneSimulator.Build.0 = Pieceable|iPhoneSimulator
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhone.ActiveCfg = Release|iPhone
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhone.Build.0 = Release|iPhone
 		{BA418E64-6532-4D8B-AD80-EB51C19A9F21}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator

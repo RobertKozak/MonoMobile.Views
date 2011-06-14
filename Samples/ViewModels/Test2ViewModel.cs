@@ -5,7 +5,7 @@ using MonoTouch.UIKit;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-namespace MVVMSample
+namespace DealerCenter
 {
 	public class TestViewModel: ViewModel
 	{
@@ -153,23 +153,23 @@ namespace MVVMSample
 			set { Set(() => TestEnum, value); }
 		}
 
-		public InventoryItemViewModel Inventory
-		{
-			get { return Get(() => Inventory); }
-			set { Set(() => Inventory, value); }
-		}
+//		public InventoryItemViewModel Inventory
+//		{
+//			get { return Get(() => Inventory); }
+//			set { Set(() => Inventory, value); }
+//		}
 		
-		public ObservableCollection<InventoryItemViewModel> InventoryCollection
-		{
-			get { return Get(() => InventoryCollection); }
-			private set { Set(() => InventoryCollection, value); }
-		}
+//		public ObservableCollection<InventoryItemViewModel> InventoryCollection
+//		{
+//			get { return Get(() => InventoryCollection); }
+//			private set { Set(() => InventoryCollection, value); }
+//		}
 		
-		public List<InventoryItemViewModel> InventoryList
-		{
-			get { return Get(() => InventoryList); }
-			private set { Set(() => InventoryList, value); }
-		}
+//		public List<InventoryItemViewModel> InventoryList
+//		{
+//			get { return Get(() => InventoryList); }
+//			private set { Set(() => InventoryList, value); }
+//		}
 		
 		public EnumCollection<TestEnum> TestEnumCollection
 		{
@@ -177,8 +177,8 @@ namespace MVVMSample
 			private set { Set(() => TestEnumCollection, value); }
 		}
 		
-		private ObservableCollection<EnumItem> TestSelected;
-		private EnumItem TestSelectedItem;
+//		private ObservableCollection<InventoryItemViewModel> TestSelected;
+//		private InventoryItemViewModel TestSelectedItem;
 
 		public TestViewModel()
 		{
@@ -199,67 +199,67 @@ namespace MVVMSample
 			TestLocation = new CLLocationCoordinate2D(34.062110, -118.333009);
 
 			TestImage = UIImage.FromBundle("Images/bluesky.jpg");
+//
+//			Inventory = new InventoryItemViewModel()
+//			{
+//				Id = 1,
+//				Year = 2010,
+//				Make = "BMW",
+//				Model = "7 Series", 
+//				Trim = "750 Li", 
+//				StockNumber = "S2345", 
+//				Vin = "S4SDDSFSE344DF333"
+//			};
 
-			Inventory = new InventoryItemViewModel()
-			{
-				Id = 1,
-				Year = 2010,
-				Make = "BMW",
-				Model = "7 Series", 
-				Trim = "750 Li", 
-				StockNumber = "S2345", 
-				Vin = "S4SDDSFSE344DF333"
-			};
+//			InventoryList = new List<InventoryItemViewModel>();
+//			
+//			InventoryList.Add(new InventoryItemViewModel()
+//          	{
+//				Id = 1,
+//				Year = 2010,
+//				Make = "BMW",
+//				Model = "7 Series", 
+//				Trim = "750 Li", 
+//				StockNumber = "S2345", 
+//				Vin = "S4SDDSFSE344DF333"
+//			});
 
-			InventoryList = new List<InventoryItemViewModel>();
-			
-			InventoryList.Add(new InventoryItemViewModel()
-          	{
-				Id = 1,
-				Year = 2010,
-				Make = "BMW",
-				Model = "7 Series", 
-				Trim = "750 Li", 
-				StockNumber = "S2345", 
-				Vin = "S4SDDSFSE344DF333"
-			});
+//			InventoryList.Add(new InventoryItemViewModel()
+//          	{
+//				Id = 2,
+//				Year = 2009,
+//				Make = "Mercedes",
+//				Model = "E Class", 
+//				Trim = "E350", 
+//				StockNumber = "S2346", 
+//				Vin = "B4SXY345E344DF333"
+//			});
+//			InventoryList.Add(new InventoryItemViewModel()
+//          	{
+//				Id = 3,
+//				Year = 2010,
+//				Make = "Toyota",
+//				Model = "Camry", 
+//				Trim = "XE", 
+//				StockNumber = "S2348", 
+//				Vin = "W4UVRKQHI323AB821"
+//			});
+//			InventoryList.Add(new InventoryItemViewModel()
+//	      	{
+//				Id = 4,
+//				Year = 2008,
+//				Make = "Honda",
+//				Model = "Accord", 
+//				Trim = "VE", 
+//				StockNumber = "S2349", 
+//				Vin = "S024GPATN836DF834"
+//			});
 
-			InventoryList.Add(new InventoryItemViewModel()
-          	{
-				Id = 2,
-				Year = 2009,
-				Make = "Mercedes",
-				Model = "E Class", 
-				Trim = "E350", 
-				StockNumber = "S2346", 
-				Vin = "B4SXY345E344DF333"
-			});
-			InventoryList.Add(new InventoryItemViewModel()
-          	{
-				Id = 3,
-				Year = 2010,
-				Make = "Toyota",
-				Model = "Camry", 
-				Trim = "XE", 
-				StockNumber = "S2348", 
-				Vin = "W4UVRKQHI323AB821"
-			});
-			InventoryList.Add(new InventoryItemViewModel()
-	      	{
-				Id = 4,
-				Year = 2008,
-				Make = "Honda",
-				Model = "Accord", 
-				Trim = "VE", 
-				StockNumber = "S2349", 
-				Vin = "S024GPATN836DF834"
-			});
-
-			InventoryCollection = new ObservableCollection<InventoryItemViewModel>(InventoryList);
-			
-			TestEnumCollection = new EnumCollection<TestEnum>();
-
-			TestSelected = new ObservableCollection<EnumItem>();
+//			InventoryCollection = new ObservableCollection<InventoryItemViewModel>(InventoryList);
+//			
+//			TestEnumCollection = new EnumCollection<TestEnum>();
+//
+//			TestSelected = new ObservableCollection<InventoryItemViewModel>();
 		}
 	}
 

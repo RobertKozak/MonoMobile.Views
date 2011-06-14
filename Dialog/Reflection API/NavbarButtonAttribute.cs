@@ -22,7 +22,7 @@ namespace MonoMobile.MVVM
 			Title = title;
 		}
 
-		public UIBarButtonSystemItem ButtonType { get; set; }
+		public UIBarButtonSystemItem? ButtonType { get; set; }
 		public UIBarButtonItemStyle Style { get; set; }
 		public string Title { get; set; }
 		public BarButtonLocation Location { get; set; }

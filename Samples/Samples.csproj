@@ -89,6 +89,18 @@
     <MtouchI18n />
     <MtouchExtraArgs>-aot "nimt-trampolines=2048"</MtouchExtraArgs>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Pieceable|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Pieceable</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>False</MtouchDebug>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchArch>ARMv6</MtouchArch>
+    <MtouchUseSGen>false</MtouchUseSGen>
+    <MtouchUseThumb>false</MtouchUseThumb>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -139,6 +151,8 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Views\EnumerableTest.cs" />
     <Compile Include="Views\HoneyDoListView.cs" />
+    <Compile Include="Views\TestView2.cs" />
+    <Compile Include="ViewModels\Test2ViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable
+	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
 	{		
 		protected object _DataContext;
 		public object DataContext 
@@ -107,23 +107,23 @@ namespace MonoMobile.MVVM
 		
 		public UITableViewElementCell Cell { get; set; }
 
-		private Theme _CellStyleInfo;
+		private Theme _Theme;
 		public Theme Theme 
 		{
 			get 
 			{
-				if (_CellStyleInfo == null)
+				if (_Theme == null)
 				{
-					_CellStyleInfo = new Theme();
+					_Theme = new Theme();
 				}
 
-				return _CellStyleInfo;
+				return _Theme;
 			}
 			set 
 			{ 
-				if (_CellStyleInfo != value)
+				if (_Theme != value)
 				{
-					_CellStyleInfo = value;
+					_Theme = value;
 					ThemeChanged();
 				}
 			}
@@ -253,8 +253,10 @@ namespace MonoMobile.MVVM
 				
 				if (TextShadowColor != null)
 					TextLabel.ShadowColor = TextShadowColor;
+
 				if (TextShadowOffset != SizeF.Empty)
 					TextLabel.ShadowOffset = TextShadowOffset;
+
 				if (Theme.TextHighlightColor != null)
 					TextLabel.HighlightedTextColor = Theme.TextHighlightColor;
 			}
@@ -269,13 +271,15 @@ namespace MonoMobile.MVVM
 				
 				if (DetailTextShadowColor != null)
 					DetailTextLabel.ShadowColor = DetailTextShadowColor;
+
 				if (DetailTextShadowOffset != SizeF.Empty)
 					DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
+
 				if (Theme.DetailTextHighlightColor != null)
 					DetailTextLabel.HighlightedTextColor = Theme.DetailTextHighlightColor;
 			}
 			
-			if (_CellStyleInfo != null && Cell != null)
+			if (Cell != null)
 			{
 				if (BackgroundColor != null)
 				{
@@ -316,7 +320,7 @@ namespace MonoMobile.MVVM
 				if (Accessory.HasValue)
 					Cell.Accessory = Accessory.Value;
 				
-				_CellStyleInfo.ClearBackground();
+				Theme.ClearBackground();
 			}
 			
 			SetNeedsDisplay();
@@ -380,10 +384,16 @@ namespace MonoMobile.MVVM
 		
 		public virtual bool Matches(string text)
 		{
-			if (Caption == null)
-				return false;
-			
-			return Caption.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
+			var captionMatch = false;
+			var detailTextMatch = false;
+
+			if (!string.IsNullOrEmpty(Caption))
+				captionMatch = Caption.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
+
+			if (DetailTextLabel != null && !string.IsNullOrEmpty(DetailTextLabel.Text))
+				detailTextMatch = DetailTextLabel.Text.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
+
+			return captionMatch || detailTextMatch;
 		}
 		
 		protected override void Dispose(bool disposing)
@@ -401,11 +411,7 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
-		public virtual void BeginInit()
-		{
-		}
-
-		public virtual void EndInit()
+		public virtual void Initialize()
 		{
 		}
 
@@ -424,9 +430,11 @@ namespace MonoMobile.MVVM
 			
 			TextLabel = Cell.TextLabel;
 			DetailTextLabel = Cell.DetailTextLabel;
-
+			
 			if (DetailTextLabel != null)
+			{
 				DetailTextLabel.Text = string.Empty;
+			}
 
 			InitializeTheme();
 			
@@ -569,7 +577,7 @@ namespace MonoMobile.MVVM
 
 		void IImageUpdated.UpdatedImage(Uri uri)
 		{
-			if (uri == null || _CellStyleInfo == null)
+			if (uri == null)
 				return;
 
 			if (Root == null || Root.TableView == null)
@@ -578,6 +586,12 @@ namespace MonoMobile.MVVM
 			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
 		}
 
-		
+		public float GetHeight (UITableView tableView, NSIndexPath indexPath)
+		{
+			if (Theme.CellHeight != 0)
+				return Theme.CellHeight;
+
+			return tableView.RowHeight;
+		}	
 	}
 }

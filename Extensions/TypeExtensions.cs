@@ -42,11 +42,15 @@ namespace MonoMobile.MVVM
 
 		public static T GetCustomAttribute<T>(this MemberInfo member, bool inherited) where T: Attribute
 		{
+			Attribute attribute = default(T);
 			var attributes = Attribute.GetCustomAttributes(member, typeof(T), inherited);
 			if (attributes.Length > 0)
-				return attributes.FirstOrDefault() as T;
-
-			return default(T);
+			{
+				attribute = attributes.Where(a=>a.GetType() == typeof(T)).FirstOrDefault();
+				if (attribute == null)
+					attribute = attributes.FirstOrDefault() as T;
+			}
+			return (T)attribute;
 		}
 
 		public static MemberInfo GetNestedMember(this Type sourceType, ref object obj, string path, bool allowPrivateMembers)

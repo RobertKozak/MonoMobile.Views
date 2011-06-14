@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 	/// Generic base version of Section
 	/// </summary>
 	[Preserve(AllMembers = true)]
-	public partial class Section : ContainerElement, ISection, IEnumerable, ISupportInitialize
+	public partial class Section : ContainerElement, ISection, IEnumerable, IInitializable
 	{
 		private UIView _Header, _Footer;
 
@@ -418,14 +418,11 @@ namespace MonoMobile.MVVM
 			Cell.TextLabel.Text = "Section was used for Element";
 		}
 
-		public override void BeginInit()
+		public override void Initialize()
 		{
 			//Elements.ForEach((element)=>element.BeginInit());
 		}
 
-		public override void EndInit()
-		{
-		}
 	}
 }
 

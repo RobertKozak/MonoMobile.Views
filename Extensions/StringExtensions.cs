@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Text;
+	using MonoTouch.UIKit;
 
 	public static class StringExtensions
 	{

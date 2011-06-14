@@ -75,6 +75,7 @@ namespace MonoMobile.MVVM
 	
 		public UITableViewCellStyle CellStyle { get; set; }
 		public UITableViewCellAccessory? Accessory { get; set; }
+		public float CellHeight { get; set; }
 
 		public UIImage CellImageIcon
 		{
@@ -269,7 +270,10 @@ namespace MonoMobile.MVVM
 
 				if (theme.CellStyle != UITableViewCellStyle.Default && CellStyle != theme.CellStyle)
 					CellStyle = theme.CellStyle;
-				
+
+				if (theme.CellHeight != 0 && CellHeight != theme.CellHeight)
+					CellHeight = theme.CellHeight;
+
 				if (theme.Accessory != Accessory)
 					Accessory = theme.Accessory;
 				

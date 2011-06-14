@@ -64,6 +64,7 @@ namespace MonoMobile.MVVM
 	///    Sections are added by calling the Add method which supports the
 	///    C# 4.0 syntax to initialize a RootElement in one pass.
 	/// </remarks>
+	[Preserve(AllMembers = true)]
 	public partial class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
 		public bool IsSearchbarHidden { get; set; }

@@ -51,7 +51,7 @@ namespace MonoMobile.MVVM
 		}
 
 		public string Caption, Footer;
-		public int Order;
+		public int Order = -1;
 		public Type ThemeType { get; set; }
 	}
 }

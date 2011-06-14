@@ -347,7 +347,8 @@ namespace MonoMobile.MVVM
 				if (dims.Width <= (frame.Size.Width - 2 * MARGIN))
 				{
 					lWidth = dims.Width;
-				} else
+				} 
+				else
 				{
 					lWidth = frame.Size.Width - 4 * MARGIN;
 				}
@@ -356,6 +357,7 @@ namespace MonoMobile.MVVM
 				_Label.Font = TitleFont;
 				_Label.AdjustsFontSizeToFitWidth = false;
 				_Label.TextAlignment = UITextAlignment.Center;
+				_Label.LineBreakMode = UILineBreakMode.WordWrap;
 				_Label.Opaque = false;
 				_Label.BackgroundColor = UIColor.Clear;
 				_Label.TextColor = UIColor.White;
@@ -366,7 +368,13 @@ namespace MonoMobile.MVVM
 				{
 					_Width = lWidth + 2 * MARGIN;
 				}
-				_Height = _Height + lHeight + PADDING;
+				
+				//Set number of lines for the amount of text and re-adjust height
+				_Label.Lines = (int)(dims.Width / lWidth) + 1;
+				if (dims.Width % lWidth == 0)
+					_Label.Lines--;
+				
+				lHeight = lHeight * _Label.Lines;
 				
 				// Move indicator to make room for the label
 				indFrame = new RectangleF(indFrame.Location.X, indFrame.Location.Y - (float)(Math.Floor(lHeight / 2 + PADDING / 2)), indFrame.Width, indFrame.Height);
@@ -376,6 +384,8 @@ namespace MonoMobile.MVVM
 				RectangleF lFrame = new RectangleF((float)Math.Floor((frame.Size.Width - lWidth) / 2) + _XOffset, (float)Math.Floor(indFrame.Location.Y + indFrame.Size.Height + PADDING), lWidth, lHeight);
 				_Label.Frame = lFrame;
 				
+				_Height = _Height + lHeight + PADDING;
+
 				AddSubview(_Label);
 				
 				// Add details label delatils text was set
@@ -398,6 +408,7 @@ namespace MonoMobile.MVVM
 					_DetailsLabel.Font = DetailFont;
 					_DetailsLabel.AdjustsFontSizeToFitWidth = false;
 					_DetailsLabel.TextAlignment = UITextAlignment.Center;
+					_DetailsLabel.LineBreakMode = UILineBreakMode.WordWrap;
 					_DetailsLabel.Opaque = false;
 					_DetailsLabel.BackgroundColor = UIColor.Clear;
 					_DetailsLabel.TextColor = UIColor.White;
@@ -408,8 +419,13 @@ namespace MonoMobile.MVVM
 					{
 						_Width = lWidth + 2 * MARGIN;
 					}
-					_Height = _Height + lHeight + PADDING;
 					
+					//Set number of lines for the amount of text and re-adjust height
+					_DetailsLabel.Lines = (int)(dims.Width / lWidth) + 1;
+					if (dims.Width % lWidth== 0)
+						_DetailsLabel.Lines--;
+					lHeight = lHeight * _DetailsLabel.Lines;
+
 					// Move indicator to make room for the new label
 					indFrame = new RectangleF(indFrame.Location.X, indFrame.Location.Y - ((float)Math.Floor(lHeight / 2 + PADDING / 2)), indFrame.Width, indFrame.Height);
 					_Indicator.Frame = indFrame;
@@ -422,6 +438,8 @@ namespace MonoMobile.MVVM
 					RectangleF lFrameD = new RectangleF((float)Math.Floor((frame.Size.Width - lWidth) / 2) + _XOffset, lFrame.Location.Y + lFrame.Size.Height + PADDING, lWidth, lHeight);
 					_DetailsLabel.Frame = lFrameD;
 					
+					_Height = _Height + lHeight + PADDING;
+
 					AddSubview(_DetailsLabel);
 				}
 			}
@@ -461,10 +479,10 @@ namespace MonoMobile.MVVM
 			if (_GraceTime > 0.0)
 			{
 				_GraceTimer = NSTimer.CreateScheduledTimer(_GraceTime, HandleGraceTimer);
-				// ... otherwise show the HUD imediately 
 			} 
 			else
 			{
+				// ... otherwise show the HUD imediately 
 				SetNeedsDisplay();
 				ShowUsingAnimation(_UseAnimation);
 			}
@@ -494,12 +512,13 @@ namespace MonoMobile.MVVM
 		{			
 			// Launch execution in new thread
 			_TaskInProgress = true;
+			
 			// Show HUD view
 			Show(animated);
 
-			using (NSAutoreleasePool pool = new NSAutoreleasePool())
+			var thread = new System.Threading.Thread(() =>
 			{
-				var thread = new System.Threading.Thread(() =>
+				using (NSAutoreleasePool pool = new NSAutoreleasePool())
 				{
 					execute();
 
@@ -507,10 +526,10 @@ namespace MonoMobile.MVVM
 					{	
 						CleanUp();
 					});
-				});
-
-				thread.Start();
-			}
+				}
+			});
+				
+			thread.Start();
 		}
 
 		public void ShowCompleted(bool animated)

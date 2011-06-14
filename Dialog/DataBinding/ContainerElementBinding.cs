@@ -33,6 +33,8 @@ namespace MonoMobile.MVVM
 
 	public partial class ContainerElement
 	{
+		public BindableProperty DetailTextProperty = BindableProperty.Register("Text");
+
 		public BindableProperty IndexProperty = BindableProperty.Register("Index");
 		public BindableProperty SelectedItemsProperty = BindableProperty.Register("SelectedItems");
 		public BindableProperty SelectedItemProperty = BindableProperty.Register("SelectedItem");
@@ -52,6 +54,9 @@ namespace MonoMobile.MVVM
 		public override void BindProperties()
 		{			
 			base.BindProperties();
+			
+			if (DetailTextLabel != null)
+				DetailTextProperty.BindTo(this, DetailTextLabel, "Text");
 
 			IndexProperty.BindTo(this, this, "ItemIndex");
 			SelectedItemsProperty.BindTo(this, this, "SelectedItems");

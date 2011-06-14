@@ -40,6 +40,8 @@ namespace MonoMobile.MVVM
 		public ClearTheme()
 		{
 			CellBackgroundColor = UIColor.Clear;
+			SeparatorColor = UIColor.Clear;
+
 			DrawContentViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
 			TextColor = UIColor.DarkTextColor;
 		}

@@ -45,6 +45,7 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
+		private bool _NavbarInitialized;
 		private UISearchBar _Searchbar;
 		private UITableView _TableView;
 		private RefreshTableHeaderView _RefreshView;
@@ -400,7 +401,12 @@ namespace MonoMobile.MVVM
 			public override void CancelButtonClicked(UISearchBar _Searchbar)
 			{
 				_Searchbar.ShowsCancelButton = false;
-				_Container.FinishSearch(false);
+				_Searchbar.ResignFirstResponder();
+				var wait = new Wait(new TimeSpan(0,0,0,0,300), ()=> 
+				{
+					_Container.FinishSearch(false); 
+					_Container.ToggleSearchbar();
+				});
 			}
 
 			public override void SearchButtonClicked(UISearchBar _Searchbar)
@@ -869,6 +875,8 @@ namespace MonoMobile.MVVM
 
 					if (!string.IsNullOrEmpty(searchable.SearchPlaceholder))
 						_Searchbar.Placeholder = searchable.SearchPlaceholder;
+					else 
+						_Searchbar.Placeholder = "Search";
 				}
 			}
 
@@ -898,45 +906,48 @@ namespace MonoMobile.MVVM
 				_Dirty = false;
 			}
 
-			var parent = ParentViewController;
-			var nav = parent as UINavigationController;
+			var nav = ParentViewController as UINavigationController;
 			if (nav != null)
 			{
 				nav.SetToolbarHidden(ToolbarItems == null, true);
 				
-				if (Root.NavbarButtons != null)
+				if (!_NavbarInitialized)
 				{
-					foreach (var button in Root.NavbarButtons)
+					if (Root.NavbarButtons != null)
 					{
-						if (button.Location == BarButtonLocation.Right)
-							NavigationItem.RightBarButtonItem = button;
-						else
-							NavigationItem.LeftBarButtonItem = button;
+						foreach (var button in Root.NavbarButtons)
+						{
+							if (button.Location == BarButtonLocation.Right)
+								NavigationItem.RightBarButtonItem = button;
+							else
+								NavigationItem.LeftBarButtonItem = button;
+						}
 					}
-				}
-
-				nav.NavigationBar.Opaque = false;
-
-				var themeable = Root as IThemeable;
-				if (themeable != null)
-				{
-					if (themeable.Theme.BarStyle.HasValue)
+	
+					_NavbarInitialized = true;
+					nav.NavigationBar.Opaque = false;
+	
+					var themeable = Root as IThemeable;
+					if (themeable != null)
 					{
-						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
-					}
-
-//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-//				{
-//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-//					nav.NavigationBar.InsertSubview(view, 0);
-//				}
-//				else
-					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-				//	if (themeable.Theme.BarTintColor != UIColor.Clear)
-					{
-						nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+						if (themeable.Theme.BarStyle.HasValue)
+						{
+							nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
+						}
+	
+	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
+	//				{
+	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
+	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
+	//					nav.NavigationBar.InsertSubview(view, 0);
+	//				}
+	//				else
+						nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
+					//	if (themeable.Theme.BarTintColor != UIColor.Clear)
+						{
+							nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
+							nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+						}
 					}
 				}
 			}
@@ -971,6 +982,7 @@ namespace MonoMobile.MVVM
 
 		public void ReloadData()
 		{
+			//Flip();
 			if (Root == null)
 				return;
 			
@@ -982,6 +994,28 @@ namespace MonoMobile.MVVM
 			}
 
 			_Dirty = false;
+		}
+		
+		public void Flip()
+		{
+			var oldTB = TableView;
+			var parent = TableView.Superview;
+			
+			if (parent == null) 
+				return;
+
+			UIView.BeginAnimations("Flipper");
+			UIView.SetAnimationDuration(1.25);
+			UIView.SetAnimationCurve(UIViewAnimationCurve.EaseInOut);
+			
+			UIView.Transition(parent, 1, UIViewAnimationOptions.TransitionFlipFromRight, delegate 
+			{
+				TableView.RemoveFromSuperview();
+				TableView = oldTB;
+				parent.AddSubview(TableView);
+				
+			}, null);
+			UIView.CommitAnimations();
 		}
 
 		public event EventHandler ViewDissapearing;
@@ -1003,41 +1037,31 @@ namespace MonoMobile.MVVM
 			if (Root != null)
 				Root.Prepare();
 		}
-
-		protected DialogViewController(bool pushing) : base(UITableViewStyle.Grouped)
+		
+		public DialogViewController(string title, UIView view, UITableViewStyle style, bool pushing) : base(style)
 		{
+			var bindingContext = new BindingContext(view, title);
 			_Pushing = pushing;
+			PrepareRoot(bindingContext.Root);
 		}
-
-		protected DialogViewController(UITableViewStyle style, bool pushing) : base(style)
+		
+		public DialogViewController(string title, UIView view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
+			var bindingContext = new BindingContext(view, title);
 			_Pushing = pushing;
-			Style = style;
+			PrepareRoot(bindingContext.Root);
 		}
 
-		public DialogViewController(UITableViewStyle style, BindingContext binding, bool pushing) : base(style)
+		public DialogViewController(UIView view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
-			if (binding == null)
-				throw new ArgumentNullException("binding");
+			var title = string.Empty;
+			var vw = view as IView;
+			if (vw != null)
+				title = vw.Caption;
 
+			var bindingContext = new BindingContext(view, title);
 			_Pushing = pushing;
-			Style = style;
-			
-			PrepareRoot(binding.Root);
-		}
-
-		public DialogViewController(BindingContext binding, bool pushing) : this(UITableViewStyle.Grouped, binding, pushing)
-		{
-		}
-
-		public DialogViewController(IRoot root) : base(UITableViewStyle.Grouped)
-		{
-			PrepareRoot(root);
-		}
-
-		public DialogViewController(UITableViewStyle style, IRoot root) : base(style)
-		{
-			PrepareRoot(root);
+			PrepareRoot(bindingContext.Root);
 		}
 
 		/// <summary>

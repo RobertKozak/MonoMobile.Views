@@ -40,5 +40,6 @@ namespace MonoMobile.MVVM
 
 		public string Placeholder { get; set; }
 		public bool IncrementalSearch { get; set; }
+		public bool ShowImmediately { get; set; }
 	}
 }

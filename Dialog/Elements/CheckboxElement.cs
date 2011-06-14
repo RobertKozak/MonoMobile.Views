@@ -49,7 +49,7 @@ namespace MonoMobile.MVVM
 			base.UpdateCell();
 			//There is a visual artifact when using Checkmark and UITableViewCellSelectionStyle.Blue;
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-			
+
 			//DataContext = (bool)DataContextProperty.Value;
 			DataContextProperty.Update();
 			UpdateSelected();

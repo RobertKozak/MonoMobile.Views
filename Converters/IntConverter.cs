@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Reflection;
 //
 // IntConverter.cs: 
 //
@@ -34,7 +32,7 @@ namespace MonoMobile.MVVM
     using System;
 	using System.Globalization;
 	using MonoTouch.Foundation;
-
+	
 	[Preserve(AllMembers = true)]
     public class IntConverter : IValueConverter
     {

@@ -30,9 +30,10 @@
 namespace MonoMobile.MVVM
 {
 	using System.Drawing;
+	using System.ComponentModel;
 	using MonoTouch.UIKit;
 
-	public abstract class View : UIView, IView, IDataContext, INotifyDataContextChanged
+	public abstract class View : UIView, IView, IDataContext, INotifyDataContextChanged, IInitializable
 	{
 		private object _DataContext;
 		
@@ -88,6 +89,10 @@ namespace MonoMobile.MVVM
 		public override string ToString()
 		{
 			return null;
+		}
+	
+		public virtual void Initialize()
+		{
 		}
 	}
 }

@@ -101,35 +101,6 @@ namespace MonoMobile.MVVM
 			return newRoot;
 		}
 		
-		public static string MakeCaption(string name)
-		{
-			var sb = new StringBuilder(name.Length);
-			bool nextUp = true;
-
-			foreach (char c in name)
-			{
-				if (nextUp)
-				{
-					sb.Append(Char.ToUpper(c));
-					nextUp = false;
-
-				} 
-				else
-				{
-					if (c == '_')
-					{
-						sb.Append(' ');
-						continue;
-					}
-					if (Char.IsUpper(c))
-						sb.Append(' ');
-					sb.Append(c);
-				}
-			}
-
-			return sb.ToString();
-		}
-
 		public void Fetch()
 		{
 			foreach(var section in Root.Sections)
@@ -210,13 +181,13 @@ namespace MonoMobile.MVVM
 				{
 					dataContext.DataContext = context;
 
-					var lifetime = context as ISupportInitialize;
+					var lifetime = context as IInitializable;
 					if (lifetime != null)
-						lifetime.BeginInit();
+						lifetime.Initialize();
 					
-					lifetime = dataContext as ISupportInitialize;
+					lifetime = dataContext as IInitializable;
 					if (lifetime != null)
-						lifetime.BeginInit();
+						lifetime.Initialize();
 				}
 				
 				var bindingContext = new BindingContext(view, root.Caption, root.Theme);

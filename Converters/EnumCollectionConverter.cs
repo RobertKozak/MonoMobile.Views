@@ -31,7 +31,9 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Globalization;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers = true)]
 	public class EnumCollectionConverter : IValueConverter
 	{
 		private object _OldValue;

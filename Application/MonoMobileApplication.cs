@@ -52,6 +52,7 @@ namespace MonoMobile.MVVM
 
 		public static string Title { get; set; }
  
+		public static Action ResumeFromBackgroundAction { get; set; }
 
 		static MonoMobileApplication()
 		{
@@ -65,12 +66,6 @@ namespace MonoMobile.MVVM
 				CurrentDialogViewController.ToggleSearchbar();
 			}
 		}
-
-		public static void PresentModelView(UIView view)
-		{
-			NavigationController.PopToRootViewController(false);
-			PresentModelView(view, UIModalTransitionStyle.CoverVertical);
-		}
 		
 		public static DialogViewController CreateDialogViewController(UIView view)
 		{
@@ -81,29 +76,28 @@ namespace MonoMobile.MVVM
 				theme = CurrentDialogViewController.Root.Theme;
 				theme.TableViewStyle = UITableViewStyle.Grouped;
 			}
-			
-			var title = MonoMobileApplication.Title;
-			if (view is IView)
-				title = ((IView)view).Caption;
-			
-			var binding = new BindingContext(view, title, theme);
-			var dvc = new DialogViewController(UITableViewStyle.Grouped, binding, true) { Autorotate = true };
+		
+			var dvc = new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true };
 			dvc.IsModal = true;
 
 			return dvc;
 		}
 
-		private static int X = 1;
+		public static void PushView(UIView view)
+		{
+			PushView(view, true);
+		}
 
-		public static void PushView(UIView view, UIViewAnimationTransition transistion)
+		public static void PushView(UIView view, bool animated)
 		{
 			var controller = CreateDialogViewController(view);
-			NavigationController.PushViewController(controller, false);
+			NavigationController.PushViewController(controller, animated);
+		}
 
-			UIView.BeginAnimations(null, IntPtr.Zero);
-			UIView.SetAnimationDuration(1); 
-			UIView.SetAnimationTransition(transistion, NavigationController.View, true);
-			UIView.CommitAnimations();
+		public static void PresentModelView(UIView view)
+		{
+			//NavigationController.PopToRootViewController(false);
+			PresentModelView(view, UIModalTransitionStyle.CoverVertical);
 		}
 
 		public static void PresentModelView(UIView view, UIModalTransitionStyle transistionStyle)

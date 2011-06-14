@@ -120,25 +120,35 @@ namespace MonoMobile.MVVM
 				indentedSides = 2;
 			}
 			
-			SizeF captionSize = new SizeF(indentation, Bounds.Height);
+			float x = 0;
+			float height = Bounds.Height;
+
+			var sizeable = Element as ISizeable;
+			if (sizeable != null)
+			{
+				height = sizeable.GetHeight(TableView, Element.IndexPath);
+			}
+			SizeF captionSize = new SizeF(-1, height);
 			var caption = TextLabel.Text;
 			if (!string.IsNullOrEmpty(caption) && showCaption)
 			{
 				captionSize = TextLabel.StringSize(caption, UIFont.FromName(TextLabel.Font.Name, UIFont.LabelFontSize));
 				captionSize.Width += ((margin * 2) * indentedSides);
+				x = captionSize.Width + fixedGap;
 			}
+			else
+				x = captionSize.Width;
 			
-			float x = captionSize.Width + fixedGap;
-			float y = ((float)Math.Round((double)Bounds.Height - (double)captionSize.Height) / 2) - 1;
+			float y = ((float)Math.Round((double)height - (double)captionSize.Height) / 2) - 1;
 			float width = screenWidth - captionSize.Width - (indentation * 2f) - (margin * 3) - fixedGap;
-
+			
 			RectangleF actualFrame;
 			
 			if (frame == RectangleF.Empty)
-				actualFrame = new RectangleF(x, y, width, captionSize.Height);
+				actualFrame = new RectangleF(x, y, width + indentation + 1 + fixedGap, captionSize.Height + 1);
 			else
-				actualFrame = new RectangleF(x, y, frame.Width, frame.Height);
-			
+				actualFrame = new RectangleF(x, y, width + 1, height - y);
+			 
 			return actualFrame;
 		}
 

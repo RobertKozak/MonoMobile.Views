@@ -1,5 +1,5 @@
 // 
-//  ViewConverter.cs
+//  Wait.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,32 +30,26 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using System.Globalization;
 	using MonoTouch.Foundation;
 
-	[Preserve(AllMembers = true)]
-	public class ViewConverter : IValueConverter
+	public class Wait
 	{
-		private object _OldValue;
+		private NSTimer _Timer;
+		private Action _Action;
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public Wait(TimeSpan when, Action action)
 		{
-			_OldValue = value;
-			string result = string.Empty;
-
-			var view = value as IView;
-			if (view != null)
-				result = view.ToString();
-			
-			if (value != null && string.IsNullOrEmpty(result))
-				return value.ToString();
-
-			return result;
+			_Action = action;
+			_Timer = NSTimer.CreateScheduledTimer(when, ExecuteTimer);
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		private void ExecuteTimer()
 		{
-			return _OldValue;
+			_Timer.Invalidate();
+			_Timer.Dispose();		
+			_Timer = null;
+
+			_Action();
 		}
 	}
 }
