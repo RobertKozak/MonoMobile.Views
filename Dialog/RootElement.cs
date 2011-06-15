@@ -2,7 +2,7 @@
 // RootElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -40,29 +40,29 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	/// <summary>
-	///    RootElements are responsible for showing a full configuration page.
+	///   RootElements are responsible for showing a full configuration page.
 	/// </summary>
 	/// <remarks>
-	///    At least one RootElement is required to start the MonoTouch.Dialogs
-	///    process.   
+	///   At least one RootElement is required to start the MonoTouch.Dialogs
+	///   process.   
 	/// 
-	///    RootElements can also be used inside Sections to trigger
-	///    loading a new nested configuration page.   When used in this mode
-	///    the caption provided is used while rendered inside a section and
-	///    is also used as the Title for the subpage.
+	///   RootElements can also be used inside Sections to trigger
+	///   loading a new nested configuration page.   When used in this mode
+	///   the caption provided is used while rendered inside a section and
+	///   is also used as the Title for the subpage.
 	/// 
-	///    If a RootElement is initialized with a section/element value then
-	///    this value is used to locate a child Element that will provide
-	///    a summary of the configuration which is rendered on the right-side
-	///    of the display.
+	///   If a RootElement is initialized with a section/element value then
+	///   this value is used to locate a child Element that will provide
+	///   a summary of the configuration which is rendered on the right-side
+	///   of the display.
 	/// 
-	///    RootElements are also used to coordinate radio elements.  The
-	///    RadioElement members can span multiple Sections (for example to
-	///    implement something similar to the ring tone selector and separate
-	///    custom ring tones from system ringtones).
+	///   RootElements are also used to coordinate radio elements.  The
+	///   RadioElement members can span multiple Sections (for example to
+	///   implement something similar to the ring tone selector and separate
+	///   custom ring tones from system ringtones).
 	/// 
-	///    Sections are added by calling the Add method which supports the
-	///    C# 4.0 syntax to initialize a RootElement in one pass.
+	///   Sections are added by calling the Add method which supports the
+	///   C# 4.0 syntax to initialize a RootElement in one pass.
 	/// </remarks>
 	[Preserve(AllMembers = true)]
 	public partial class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
@@ -93,10 +93,10 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///  Initializes a RootSection with a caption
+		/// Initializes a RootSection with a caption
 		/// </summary>
 		/// <param name="caption">
-		///  The caption to render.
+		/// The caption to render.
 		/// </param>
 		public RootElement(string caption) : base(caption)
 		{
@@ -111,7 +111,7 @@ namespace MonoMobile.MVVM
 		/// taps on the element.
 		/// </summary>
 		/// <param name="caption">
-		///  The caption to render.
+		/// The caption to render.
 		/// </param>
 		public RootElement(string caption, Func<IRoot, UIViewController> viewControllerFactory) : this(caption)
 		{
@@ -202,8 +202,8 @@ namespace MonoMobile.MVVM
 		// This makes things LINQ friendly;  You can now create RootElements
 		// with an embedded LINQ expression, like this:
 		// new RootElement ("Title") {
-		//     from x in names
-		//         select new Section (x) { new StringElement ("Sample") }
+		//    from x in names
+		//        select new Section (x) { new StringElement ("Sample") }
 		//
 		public void Add(IEnumerable<ISection> sections)
 		{
@@ -232,8 +232,8 @@ namespace MonoMobile.MVVM
 		/// A <see cref="Section[]"/> list of sections to insert
 		/// </param>
 		/// <remarks>
-		///    This inserts the specified list of sections (a params argument) into the
-		///    root using the specified animation.
+		///   This inserts the specified list of sections (a params argument) into the
+		///   root using the specified animation.
 		/// </remarks>
 		public void Insert(int idx, UITableViewRowAnimation anim, params ISection[] newSections)
 		{
@@ -269,8 +269,8 @@ namespace MonoMobile.MVVM
 		/// A <see cref="Section[]"/> list of sections to insert
 		/// </param>
 		/// <remarks>
-		///    This inserts the specified list of sections (a params argument) into the
-		///    root using the Fade animation.
+		///   This inserts the specified list of sections (a params argument) into the
+		///   root using the Fade animation.
 		/// </remarks>
 		public void Insert(int idx, ISection section)
 		{
@@ -373,8 +373,8 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///    This method does nothing by default, but gives a chance to subclasses to
-		///    customize the UIViewController before it is presented
+		///   This method does nothing by default, but gives a chance to subclasses to
+		///   customize the UIViewController before it is presented
 		/// </summary>
 		protected virtual void PrepareDialogViewController(UIViewController dvc)
 		{

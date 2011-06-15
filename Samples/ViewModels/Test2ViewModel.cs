@@ -214,7 +214,7 @@ namespace DealerCenter
 //			InventoryList = new List<InventoryItemViewModel>();
 //			
 //			InventoryList.Add(new InventoryItemViewModel()
-//          	{
+//         	{
 //				Id = 1,
 //				Year = 2010,
 //				Make = "BMW",
@@ -225,7 +225,7 @@ namespace DealerCenter
 //			});
 
 //			InventoryList.Add(new InventoryItemViewModel()
-//          	{
+//         	{
 //				Id = 2,
 //				Year = 2009,
 //				Make = "Mercedes",
@@ -235,7 +235,7 @@ namespace DealerCenter
 //				Vin = "B4SXY345E344DF333"
 //			});
 //			InventoryList.Add(new InventoryItemViewModel()
-//          	{
+//         	{
 //				Id = 3,
 //				Year = 2010,
 //				Make = "Toyota",

@@ -2,7 +2,7 @@
 // BaseBooleanImageElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	/// <summary>
-	///  This class is used to render a string + a state in the form
+	/// This class is used to render a string + a state in the form
 	/// of an image.  
 	/// </summary>
 	/// <remarks>

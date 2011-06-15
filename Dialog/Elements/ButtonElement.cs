@@ -2,7 +2,7 @@
 // ButtonElement.cs
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //
@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	/// <summary>
-	///   The button element can be used to render a cell as a button that responds to Tap events
+	///  The button element can be used to render a cell as a button that responds to Tap events
 	/// </summary>
 	public class ButtonElement : Element, ITappable, ISelectable
 	{

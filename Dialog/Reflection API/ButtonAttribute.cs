@@ -2,7 +2,7 @@
 // ButtonAttribute.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corportation
 //

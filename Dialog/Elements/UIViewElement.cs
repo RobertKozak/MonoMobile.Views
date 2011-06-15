@@ -2,7 +2,7 @@
 // UIViewElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -35,12 +35,12 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	/// <summary>
-	///   This element can be used to insert an arbitrary UIView
+	///  This element can be used to insert an arbitrary UIView
 	/// </summary>
 	/// <remarks>
-	///   There is no cell reuse here as we have a 1:1 mapping
-	///   in this case from the UIViewElement to the cell that
-	///   holds our view.
+	///  There is no cell reuse here as we have a 1:1 mapping
+	///  in this case from the UIViewElement to the cell that
+	///  holds our view.
 	/// </remarks>
 	public class UIViewElement : Element, ISizeable, ISelectable
 	{
@@ -53,7 +53,7 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///   Constructor
+		///  Constructor
 		/// </summary>
 		/// <param name="caption">
 		/// The caption, only used for IRoot that might want to summarize results

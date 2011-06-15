@@ -117,9 +117,9 @@ namespace Samples
 		public TestView()
 		{
 //
-//            var enumItems = from field in typeof(TestEnum).GetFields()
-//                            where field.IsLiteral
-//                            select field.Name;
+//           var enumItems = from field in typeof(TestEnum).GetFields()
+//                           where field.IsLiteral
+//                           select field.Name;
 //
 //			EnumNames = new List<string>(enumItems) { };
 //

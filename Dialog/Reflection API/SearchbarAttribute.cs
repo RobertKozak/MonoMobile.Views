@@ -2,7 +2,7 @@
 // SearchbarAttribute.cs
 //
 // Author:
-//   Robert Kozak (rkozak@nowcom.com)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 //
 // Copyright 2011, Nowcom Corporation
 //

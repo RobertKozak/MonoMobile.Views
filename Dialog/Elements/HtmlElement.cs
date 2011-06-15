@@ -3,7 +3,7 @@ using System.IO;
 // HtmlElement.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 
 	/// <summary>
-	///  Used to display a cell that will launch a web browser when selected.
+	/// Used to display a cell that will launch a web browser when selected.
 	/// </summary>
 	public partial class HtmlElement : Element, ISelectable
 	{

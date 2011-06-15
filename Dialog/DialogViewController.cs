@@ -2,8 +2,8 @@
 // DialogViewController.cs: drives MonoMobile.MVVM
 //
 // Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Miguel de Icaza
+//  With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
 //
 // Code to support pull-to-refresh based on Martin Bowling's TweetTableView
 // which is based in turn in EGOTableViewPullRefresh code which was created
@@ -1063,9 +1063,26 @@ namespace MonoMobile.MVVM
 			_Pushing = pushing;
 			PrepareRoot(bindingContext.Root);
 		}
+		
+//
+//		public DialogViewController(string title, Type viewType, UITableViewStyle style, bool pushing) : base(style)
+//		{
+//			object view = Activator.CreateInstance(viewType);
+//			DialogViewController(title, view, style, pushing);
+//		}
+//		
+//		public DialogViewController(string title, Type viewType, bool pushing) : base(UITableViewStyle.Grouped)
+//		{
+//
+//		}
+//
+//		public DialogViewController(Type viewType, bool pushing) : base(UITableViewStyle.Grouped)
+//		{
+//
+//		}
 
 		/// <summary>
-		///     Creates a new DialogViewController from a IRoot and sets the push status
+		///    Creates a new DialogViewController from a IRoot and sets the push status
 		/// </summary>
 		/// <param name="_Root">
 		/// The <see cref="IRoot"/> containing the information to render.

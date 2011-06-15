@@ -2,7 +2,7 @@
 // Section.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -51,14 +51,14 @@ namespace MonoMobile.MVVM
 
 
 		/// <summary>
-		///  Constructs a Section without header or footers.
+		/// Constructs a Section without header or footers.
 		/// </summary>
 		public Section() : this((string)null)
 		{
 		}
 
 		/// <summary>
-		///  Constructs a Section with the specified header
+		/// Constructs a Section with the specified header
 		/// </summary>
 		/// <param name="caption">
 		/// The header to display
@@ -98,7 +98,7 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///    The section header, as a string
+		///   The section header, as a string
 		/// </summary>
 		public string HeaderText { get; set; }
 
@@ -182,11 +182,11 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///    Add version that can be used with LINQ
+		///   Add version that can be used with LINQ
 		/// </summary>
 		/// <param name="elements">
 		/// An enumerable list that can be produced by something like:
-		///    from x in ... select (Element) new MyElement (...)
+		///   from x in ... select (Element) new MyElement (...)
 		/// </param>
 		public int Add(IEnumerable<IElement> elements)
 		{
@@ -210,11 +210,11 @@ namespace MonoMobile.MVVM
 //		}
 //
 //		/// <summary>
-//		///   Adds the UIViews to the section.
+//		///  Adds the UIViews to the section.
 //		/// </summary>fparent
 //		/// <param name="views">
 //		/// An enumarable list that can be produced by something like:
-//		///    from x in ... select (UIView) new UIFoo ();
+//		///   from x in ... select (UIView) new UIFoo ();
 //		/// </param>
 //		public void Add(IEnumerable<UIView> views)
 //		{

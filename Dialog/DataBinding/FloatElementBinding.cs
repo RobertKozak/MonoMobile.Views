@@ -2,9 +2,9 @@
 // FloatView.cs
 //
 // Author:
-//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+// Copyright 2011, Nowcom Corporation.
 //
 // Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //

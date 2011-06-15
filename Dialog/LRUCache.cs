@@ -2,7 +2,7 @@
 // A simple LRU cache used for tracking the images
 //
 // Authors:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010 Miguel de Icaza
 //

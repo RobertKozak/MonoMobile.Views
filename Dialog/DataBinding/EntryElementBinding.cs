@@ -2,9 +2,9 @@
 // EntryElement.cs
 //
 // Author:
-//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.ll, Inc.
+// Copyright 2011, Nowcom Corporation.ll, Inc.
 //
 // Code licensed under the MIT X11 license
 //

@@ -2,7 +2,7 @@
 // BindAttribute.cs: Bind Attribute for creating a data Binding to Elements
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com) Twitter:@robertkozak
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
 // Copyright 2011, Nowcom Corporation
 //

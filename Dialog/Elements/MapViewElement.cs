@@ -2,7 +2,7 @@
 // MapElements.cs: Used to render a Google Map
 //
 // Author:
-//   Eduardo Scoz (contact@escoz.com)
+//  Eduardo Scoz (contact@escoz.com)
 //
 // Copyright 2010, Eduardo Scoz
 //

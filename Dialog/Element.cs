@@ -2,7 +2,7 @@
 // Element.cs: 
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -73,9 +73,9 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///  Returns the IndexPath of a given element.   This is only valid for leaf elements,
-		///  it does not work for a toplevel IRoot or a Section of if the Element has
-		///  not been attached yet.
+		/// Returns the IndexPath of a given element.   This is only valid for leaf elements,
+		/// it does not work for a toplevel IRoot or a Section of if the Element has
+		/// not been attached yet.
 		/// </summary>
 		public NSIndexPath IndexPath
 		{
@@ -327,7 +327,7 @@ namespace MonoMobile.MVVM
 		}
 
 		/// <summary>
-		///  Handle to the container object.
+		/// Handle to the container object.
 		/// </summary>
 		/// <remarks>
 		/// For sections this points to a IRoot, for every

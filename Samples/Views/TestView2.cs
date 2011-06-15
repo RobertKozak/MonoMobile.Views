@@ -139,7 +139,6 @@ namespace DealerCenter
 		public TestView()
 		{
 			DataContext = new TestViewModel();
-			DataContext.UserName = "Rkozak";
 		}
 	}
 

@@ -2,9 +2,9 @@
 // StringElement.cs
 //
 // Author:
-//  Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+// Copyright 2011, Nowcom Corporation.
 // 
 // This code is based on StyledStringElement and StringElement by
 // Miguel de Icaza (miguel@gnome.org) Copyright 2010, Novell, Inc.

@@ -3,7 +3,7 @@ using MonoTouch.UIKit;
 // PasswordAttribute.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@gnome.org)
+//  Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright 2010, Novell, Inc.
 //

@@ -37,10 +37,10 @@ using System.Security.Cryptography;
 namespace MonoMobile.MVVM.Utilities
 {
 	/// <summary>
-	///    This interface needs to be implemented to be notified when an image
-	///    has been downloaded.   The notification will happen on the UI thread.
-	///    Upon notification, the code should call RequestImage again, this time
-	///    the image will be loaded from the on-disk cache or the in-memory cache.
+	///   This interface needs to be implemented to be notified when an image
+	///   has been downloaded.   The notification will happen on the UI thread.
+	///   Upon notification, the code should call RequestImage again, this time
+	///   the image will be loaded from the on-disk cache or the in-memory cache.
 	/// </summary>
 	public interface IImageUpdated
 	{
@@ -48,23 +48,23 @@ namespace MonoMobile.MVVM.Utilities
 	}
 
 	/// <summary>
-	///   Network image loader, with local file system cache and in-memory cache
+	///  Network image loader, with local file system cache and in-memory cache
 	/// </summary>
 	/// <remarks>
-	///   By default, using the static public methods will use an in-memory cache
-	///   for 50 images and 4 megs total.   The behavior of the static methods 
-	///   can be modified by setting the public DefaultLoader property to a value
-	///   that the user configured.
+	///  By default, using the static public methods will use an in-memory cache
+	///  for 50 images and 4 megs total.   The behavior of the static methods 
+	///  can be modified by setting the public DefaultLoader property to a value
+	///  that the user configured.
 	/// 
-	///   The instance methods can be used to create different imageloader with 
-	///   different properties.
-	///  
-	///   Keep in mind that the phone does not have a lot of memory, and using
-	///   the cache with the unlimited value (0) even with a number of items in
-	///   the cache can consume memory very quickly.
+	///  The instance methods can be used to create different imageloader with 
+	///  different properties.
 	/// 
-	///   Use the Purge method to release all the memory kept in the caches on
-	///   low memory conditions, or when the application is sent to the background.
+	///  Keep in mind that the phone does not have a lot of memory, and using
+	///  the cache with the unlimited value (0) even with a number of items in
+	///  the cache can consume memory very quickly.
+	/// 
+	///  Use the Purge method to release all the memory kept in the caches on
+	///  low memory conditions, or when the application is sent to the background.
 	/// </remarks>
 
 	public class ImageLoader
@@ -90,10 +90,10 @@ namespace MonoMobile.MVVM.Utilities
 		static MD5CryptoServiceProvider checksum = new MD5CryptoServiceProvider();
 
 		/// <summary>
-		///    This contains the default loader which is configured to be 50 images
-		///    up to 4 megs of memory.   Assigning to this property a new value will
-		///    change the behavior.   This property is lazyly computed, the first time
-		///    an image is requested.
+		///   This contains the default loader which is configured to be 50 images
+		///   up to 4 megs of memory.   Assigning to this property a new value will
+		///   change the behavior.   This property is lazyly computed, the first time
+		///   an image is requested.
 		/// </summary>
 		public static ImageLoader DefaultLoader;
 
@@ -110,7 +110,7 @@ namespace MonoMobile.MVVM.Utilities
 		}
 
 		/// <summary>
-		///   Creates a new instance of the image loader
+		///  Creates a new instance of the image loader
 		/// </summary>
 		/// <param name="cacheSize">
 		/// The maximum number of entries in the LRU cache
@@ -130,7 +130,7 @@ namespace MonoMobile.MVVM.Utilities
 		}
 
 		/// <summary>
-		///    Purges the contents of the DefaultLoader
+		///   Purges the contents of the DefaultLoader
 		/// </summary>
 		public static void Purge()
 		{
@@ -139,8 +139,8 @@ namespace MonoMobile.MVVM.Utilities
 		}
 
 		/// <summary>
-		///    Purges the cache of this instance of the ImageLoader, releasing 
-		///    all the memory used by the images in the caches.
+		///   Purges the cache of this instance of the ImageLoader, releasing 
+		///   all the memory used by the images in the caches.
 		/// </summary>
 		public void PurgeCache()
 		{
@@ -167,7 +167,7 @@ namespace MonoMobile.MVVM.Utilities
 		}
 
 		/// <summary>
-		///   Requests an image to be loaded using the default image loader
+		///  Requests an image to be loaded using the default image loader
 		/// </summary>
 		/// <param name="uri">
 		/// The URI for the image to load
@@ -187,7 +187,7 @@ namespace MonoMobile.MVVM.Utilities
 		
 
 		/// <summary>
-		///   Requests an image to be loaded from the network
+		///  Requests an image to be loaded from the network
 		/// </summary>
 		/// <param name="uri">
 		/// The URI for the image to load

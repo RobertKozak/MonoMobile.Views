@@ -2,7 +2,7 @@
 // RefreshTableHeaderView.cs:
 //
 // Author:
-//   Miguel de Icaza
+//  Miguel de Icaza
 //
 // Code to support pull-to-refresh based on Martin Bowling's TweetTableView
 // which is based in turn in EGOTableViewPullRefresh code which was created
