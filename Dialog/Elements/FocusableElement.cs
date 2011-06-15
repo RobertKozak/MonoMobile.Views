@@ -56,14 +56,14 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeContent()
 		{
-			_Dummy = new UICustomTextField(Bounds);
+			_Dummy = new UICustomTextField(Cell.Bounds);
 			_Dummy.ShouldBeginEditing = tf =>
 			{
 				InputControl.BecomeFirstResponder();
 				return false;
 			};
 			
-			InputControl = new UICustomTextField(Bounds) { BackgroundColor = UIColor.Clear, Tag = 1, Hidden = true };
+			InputControl = new UICustomTextField(Cell.Bounds) { BackgroundColor = UIColor.Clear, Tag = 1, Hidden = true };
 			
 			ContentView = _Dummy;
 			ContentView.AddSubview(InputControl);

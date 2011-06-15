@@ -64,7 +64,7 @@ namespace MonoMobile.MVVM
 		public override void InitializeContent()
 		{
 			Slider = new UISlider() { BackgroundColor = UIColor.Clear, Continuous = true, Tag = 1 };
-			Slider.Frame = RectangleF.Empty;
+			Slider.Frame = new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height);
 			Slider.ValueChanged += delegate 
 			{
 				DataContextProperty.Update();
