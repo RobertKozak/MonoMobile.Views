@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public partial class ActivityElement : UIViewElement, ISizeable
+	public partial class ActivityElement : UIViewElement
 	{
 		public bool Animating { get; set; }
 

@@ -40,7 +40,8 @@ namespace MonoMobile.MVVM
 	public class ActionSheetView : UIActionSheet
 	{
 		protected Dictionary<int, ICommand> CommandMap = new Dictionary<int, ICommand>();
-
+	
+		//Descendents cannot have a parameterless constructor. // Bug in MonoTouch? iOS?
 		public ActionSheetView(string title) : base(title, new ActionSheetDelegate())
 		{
 			Prepare();

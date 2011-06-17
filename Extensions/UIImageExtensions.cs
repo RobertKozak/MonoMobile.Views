@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 		public static UIImage RemoveSharpEdges(this UIImage image, int radius)
 		{
 			var width = image.Size.Width;
-			UIGraphics.BeginImageContext(new SizeF(width, width));
+			UIGraphics.BeginImageContextWithOptions(new SizeF(width, width), false, 0f);
 			var context = UIGraphics.GetCurrentContext();
 			
 			context.BeginPath();

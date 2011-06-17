@@ -509,7 +509,7 @@ namespace MonoMobile.MVVM
 		}
 
 		public void ShowWhileExecuting(Action execute, bool animated)
-		{			
+		{		
 			// Launch execution in new thread
 			_TaskInProgress = true;
 			
@@ -523,7 +523,7 @@ namespace MonoMobile.MVVM
 					execute();
 
 					EnsureInvokedOnMainThread(() =>
-					{	
+					{
 						CleanUp();
 					});
 				}
@@ -558,10 +558,8 @@ namespace MonoMobile.MVVM
 		}
 
 		private void Done()
-		{			
+		{	
 			// If delegate was set make the callback
-			Alpha = 0.0f;
-			
 			if (HudWasHidden != null)
 			{
 				HudWasHidden(this, EventArgs.Empty);
@@ -602,16 +600,16 @@ namespace MonoMobile.MVVM
 			if (animated)
 			{
 				UIView.BeginAnimations(null);
-				UIView.SetAnimationDuration(0.40);
-				Alpha = .02f;
-				NSTimer.CreateScheduledTimer(.4, Done);
+				UIView.SetAnimationDuration(0.4f);
+				Alpha = 0.0f;
 				UIView.CommitAnimations();
 			} 
 			else
 			{
 				Alpha = 0.0f;
-				Done();
 			}
+			
+			Done();
 		}
 		#endregion
 	

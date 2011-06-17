@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class MultilineElement : StringElement, ISizeable
+	public class MultilineElement : StringElement
 	{
 		public MultilineElement(string caption) : base(caption)
 		{
@@ -49,7 +49,7 @@ namespace MonoMobile.MVVM
 			Cell.TextLabel.Lines = 0;
 		}
 
-		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
 			SizeF size = new SizeF(280, float.MaxValue);
 			using (var font = UIFont.FromName("Helvetica", 17f))

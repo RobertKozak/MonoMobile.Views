@@ -75,7 +75,7 @@ namespace MonoMobile.MVVM
 		
 		public ICommand PullToRefreshCommand { get; set; }
 		public string DefaultSettingsKey { get; set; }
- 
+
 		public DialogViewController Controller {get; set;}
 		
 		//public string NavbarImage { get; set; }
@@ -103,6 +103,7 @@ namespace MonoMobile.MVVM
 			Index = -1;
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
+			EditingStyle = UITableViewCellEditingStyle.None;
 		}
 
 		/// <summary>

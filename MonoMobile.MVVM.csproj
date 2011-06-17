@@ -166,7 +166,6 @@
     <Compile Include="ViewModel\ViewModel.cs" />
     <Compile Include="ViewModel\IViewModel.cs" />
     <Compile Include="Application\DisposableObject.cs" />
-    <Compile Include="Dialog\DialogViewController.cs" />
     <Compile Include="Binding\IBindingExpression.cs" />
     <Compile Include="Dialog\Group.cs" />
     <Compile Include="Dialog\RadioGroup.cs" />
@@ -315,6 +314,14 @@
     <Compile Include="Dialog\Reflection API\ReadOnlyAttribute.cs" />
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Application\Wait.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewController.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewDataSource.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewTable.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewSearchDelegate.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewSizingSource.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
+    <Compile Include="Dialog\Elements\GridElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -337,6 +344,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Dialog\Themes\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Dialog\DialogViewController\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

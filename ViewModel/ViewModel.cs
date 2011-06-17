@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public abstract class ViewModel: ObservableObject, IViewModel, IInitializable
 	{
-		public IModel Model { get; set; }
+		public IModel DataModel { get; set; }
  
 		public BindingContext BindingContext { get; set; }
 
@@ -68,7 +68,7 @@ namespace MonoMobile.MVVM
 
 		public void Refresh()
 		{
-			Model.Refresh();
+			DataModel.Refresh();
 		}
 
 		public virtual void Initialize()

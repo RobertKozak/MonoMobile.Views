@@ -37,6 +37,9 @@ namespace MonoMobile.MVVM
 	{
 		public static string Capitalize(this string name)
 		{
+			if (string.IsNullOrEmpty(name))
+				return string.Empty;
+
 			var sb = new StringBuilder(name.Length);
 			bool nextUp = true;
 			

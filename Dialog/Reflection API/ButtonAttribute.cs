@@ -43,9 +43,10 @@ namespace MonoMobile.MVVM
 	{
 		public ButtonAttribute()
 		{
+			ElementType = typeof(ButtonElement);
 		}
 
-		public ButtonAttribute(string canExecutePropertyName)
+		public ButtonAttribute(string canExecutePropertyName): this()
 		{
 			CanExecutePropertyName = canExecutePropertyName;
 			CommandOption = CommandOption.Hide;
@@ -53,6 +54,8 @@ namespace MonoMobile.MVVM
 
 		internal string CanExecutePropertyName;
 		public CommandOption CommandOption;
+
+		public Type ElementType { get; set; } 
 	}
 }
 

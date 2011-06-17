@@ -36,14 +36,10 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoMobile.MVVM;
 
-	public interface IRoot: IThemeable, IDisposable
+	public interface IRoot: IElement, IThemeable, IDisposable
 	{	
-		object DataContext { get; set; }
-
 		ICommand PullToRefreshCommand { get; set; }
 		string DefaultSettingsKey { get; set; }
-
-		ViewBinding ViewBinding { get; set; }
 
 		DialogViewController Controller { get; set; }
 		
@@ -52,9 +48,7 @@ namespace MonoMobile.MVVM
  
 		List<ISection> Sections { get; set; }
 		bool UnevenRows { get; set;}
-		string Caption { get; set; }
 
-		UITableView TableView { get; set; }
 		int Count { get; }
 		int Index { get; set; }
 		NSIndexPath PathForRadio();

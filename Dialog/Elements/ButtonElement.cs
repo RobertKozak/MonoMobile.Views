@@ -41,6 +41,10 @@ namespace MonoMobile.MVVM
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
 
+		public ButtonElement() : base(string.Empty)
+		{
+		}
+
 		public ButtonElement(string caption) : base(caption)
 		{
 		}

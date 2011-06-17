@@ -54,7 +54,9 @@ namespace MonoMobile.MVVM
 		ViewBinding ViewBinding { get; set; }
 		UIView ContentView { get; set; }
 
-		UITableView TableView { get; }
+		UITableView TableView { get; set; }
+
+		UITableViewCellEditingStyle? EditingStyle { get; set; }
 
 		UITableViewElementCell Cell { get; set; }
 		UITableViewElementCell GetCell(UITableView tableView);

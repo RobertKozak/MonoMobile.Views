@@ -102,17 +102,6 @@ namespace MonoMobile.MVVM
 			_StatusLabel.Text = s;
 		}
 		
-		public override void Draw(RectangleF rect)
-		{
-			var context = UIGraphics.GetCurrentContext();
-			context.DrawPath(CGPathDrawingMode.FillStroke);
-			_StatusLabel.TextColor.SetStroke();
-			context.BeginPath();
-			context.MoveTo(0, Bounds.Height-1);
-			context.AddLineToPoint(Bounds.Width, Bounds.Height-1);
-			context.StrokePath();
-		}		
-		
 		public void Flip(bool animate)
 		{
 			UIView.BeginAnimations(null);

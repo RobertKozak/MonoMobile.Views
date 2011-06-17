@@ -8,7 +8,7 @@ namespace DealerCenter
 {
 	public class TestView : View
 	{
-		private TestViewModel DataContext { get { return (TestViewModel)GetDataContext(); } set { SetDataContext(value); } }
+		private new TestViewModel DataContext { get { return (TestViewModel)GetDataContext(); } set { SetDataContext(value); } }
 		
 //	[Section]
 //		[Entry]

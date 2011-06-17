@@ -20,7 +20,7 @@ namespace MonoMobile.MVVM
 			Style = style;
 		}
 
-		public float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
 			return Height(tableView.Bounds);
 		}

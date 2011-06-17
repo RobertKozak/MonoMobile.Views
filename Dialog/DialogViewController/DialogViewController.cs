@@ -2,8 +2,8 @@
 // DialogViewController.cs: drives MonoMobile.MVVM
 //
 // Author:
-//  Miguel de Icaza
-//  With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//   Miguel de Icaza
+//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
 //
 // Code to support pull-to-refresh based on Martin Bowling's TweetTableView
 // which is based in turn in EGOTableViewPullRefresh code which was created
@@ -34,32 +34,34 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
-	using System.IO;
 	using System.Linq;
 	using System.Threading;
+	using MonoMobile.MVVM;
 	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
 	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
 
 	public class DialogViewController : UITableViewController
 	{
 		private bool _NavbarInitialized;
-		private UISearchBar _Searchbar;
 		private UITableView _TableView;
-		private RefreshTableHeaderView _RefreshView;
+
 		private IRoot _Root;
 		private bool _Pushing;
 		private bool _Dirty;
-		private bool _Reloading;
+		
+		private UISearchBar _Searchbar;
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
-		private Source _TableSource;
+		private DialogViewDataSource _TableSource;
 		
+		public RefreshTableHeaderView RefreshView { get; set; }
+		public bool Reloading { get; set; }
 		public bool IsModal { get; set; }  
 		public UIImage BackgroundImage { get; set; }
 		public UIColor BackgroundColor { get; set; }
+		public bool CanDeleteCells { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
 
@@ -84,7 +86,7 @@ namespace MonoMobile.MVVM
 
 		public bool ReloadCompleted
 		{
-			get { return !_Reloading; }
+			get { return !Reloading; }
 			set 
 			{
 				if (value)
@@ -96,25 +98,25 @@ namespace MonoMobile.MVVM
 
 		public bool EnablePullToRefresh 
 		{ 
-			get { return _RefreshView != null; } 
+			get { return RefreshView != null; } 
 			set 
 			{
-				if (value && _RefreshView == null)
+				if (value && RefreshView == null)
 				{
 					var bounds = View.Bounds;
-					_RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), Root.DefaultSettingsKey);
+					RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), Root.DefaultSettingsKey);
 
-					if (_Reloading)
-						_RefreshView.SetActivity(true);
+					if (Reloading)
+						RefreshView.SetActivity(true);
 
-					TableView.AddSubview(_RefreshView);				
+					TableView.AddSubview(RefreshView);				
 				}
 				else
 				{
-					if(_RefreshView != null)
+					if(RefreshView != null)
 					{
-						_RefreshView.Dispose();
-						_RefreshView = null;
+						RefreshView.Dispose();
+						RefreshView = null;
 					}
 				}
 			} 
@@ -133,17 +135,17 @@ namespace MonoMobile.MVVM
 			TriggerRefresh(false);
 		}
 
-		private void TriggerRefresh(bool showStatus)
+		public void TriggerRefresh(bool showStatus)
 		{
 			if (Root == null && Root.PullToRefreshCommand == null)
 				return;
 			
-			if (_Reloading)
+			if (Reloading)
 				return;
 			
-			_Reloading = true;
+			Reloading = true;
 
-			if (_Reloading && showStatus && _RefreshView != null)
+			if (Reloading && showStatus && RefreshView != null)
 			{
 				UIView.BeginAnimations("reloadingData");
 				UIView.SetAnimationDuration(0.2);
@@ -151,8 +153,8 @@ namespace MonoMobile.MVVM
 				UIView.CommitAnimations();
 			}
 			
-			if (_RefreshView != null)
-				_RefreshView.SetActivity(true);
+			if (RefreshView != null)
+				RefreshView.SetActivity(true);
 			
 			Thread.Sleep(250);
 
@@ -179,21 +181,24 @@ namespace MonoMobile.MVVM
 		/// </summary>
 		public void ReloadComplete()
 		{
-			if (_RefreshView != null)
-				_RefreshView.LastUpdate = DateTime.Now;
-			if (!_Reloading)
+			if (RefreshView != null)
+				RefreshView.LastUpdate = DateTime.Now;
+			if (!Reloading)
 				return;
 			
-			_Reloading = false;
-			if (_RefreshView == null)
+			Reloading = false;
+			if (RefreshView == null)
 				return;
 			
-			_RefreshView.SetActivity(false);
-			_RefreshView.Flip(false);
+			RefreshView.SetActivity(false);
+			RefreshView.Flip(false);
+
 			UIView.BeginAnimations("doneReloading");
 			UIView.SetAnimationDuration(0.3f);
 			TableView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
-			_RefreshView.SetStatus(RefreshStatus.PullToReload);
+			
+			RefreshView.SetStatus(RefreshStatus.PullToReload);
+			
 			UIView.CommitAnimations();
 		}
 
@@ -358,294 +363,6 @@ namespace MonoMobile.MVVM
 		{
 		}
 
-		private class SearchDelegate : UISearchBarDelegate
-		{
-			private DialogViewController _Container;
-
-			public SearchDelegate(DialogViewController container)
-			{
-				_Container = container;
-			}
-
-			public override void OnEditingStarted(UISearchBar _Searchbar)
-			{
-				_Searchbar.ShowsCancelButton = true;
-				
-				var searchable = _Container.Root as ISearchBar;
-				if (searchable != null && searchable.IncrementalSearch)
-				{
-					var textField = _Searchbar.Subviews.FirstOrDefault((v)=>v.GetType() == typeof(UITextField)) as UITextField;
-					if (textField != null)
-						textField.ReturnKeyType = UIReturnKeyType.Done;	
-				}
-
-				_Container.StartSearch();
-			}
-
-			public override void OnEditingStopped(UISearchBar _Searchbar)
-			{
-				var searchable = _Container.Root as ISearchBar;
-				if (searchable != null && searchable.IncrementalSearch)
-				{
-					_Searchbar.ShowsCancelButton = false;
-					_Container.FinishSearch(false);
-				}
-			}
-			public override void TextChanged(UISearchBar _Searchbar, string searchText)
-			{
-				var searchable = _Container.Root as ISearchBar;
-				if (searchable != null && searchable.IncrementalSearch)
-					_Container.PerformFilter(searchText ?? "");
-			}
-
-			public override void CancelButtonClicked(UISearchBar _Searchbar)
-			{
-				_Searchbar.ShowsCancelButton = false;
-				_Searchbar.ResignFirstResponder();
-				var wait = new Wait(new TimeSpan(0,0,0,0,300), ()=> 
-				{
-					_Container.FinishSearch(false); 
-					_Container.ToggleSearchbar();
-				});
-			}
-
-			public override void SearchButtonClicked(UISearchBar _Searchbar)
-			{
-				_Container.SearchButtonClicked(_Searchbar.Text);
-				var searchable = _Container.Root as ISearchBar;
-
-				if (searchable != null && searchable.IncrementalSearch)
-					_Container.FinishSearch(false);
-				else
-					_Container.PerformFilter(_Searchbar.Text);
-			}
-		}
-
-		public class Source : UITableViewSource
-		{
-			private const float _SnapBoundary = 65;
-			protected DialogViewController Container;
-			protected IRoot Root;
-			private bool _CheckForRefresh;
-
-			public Source(DialogViewController container)
-			{
-				Container = container;
-				Root = container.Root;
-			}
-
-			public override int RowsInSection(UITableView tableview, int section)
-			{
-				var s = Root.Sections[section];
-				var count = s.Elements.Count;
-				
-				return count;
-			}
-
-			public override int NumberOfSections(UITableView tableView)
-			{
-				return Root.Sections.Count;
-			}
-
-			public override string TitleForHeader(UITableView tableView, int section)
-			{
-				return Root.Sections[section].Caption;
-			}
-
-			public override string TitleForFooter(UITableView tableView, int section)
-			{
-				return Root.Sections[section].FooterText;
-			}
-
-			public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-			{
-				var section = Root.Sections[indexPath.Section];
-				var element = section.Elements[indexPath.Row]; 
-				
-				return element.GetCell(tableView) as UITableViewElementCell;
-			}
-
-			public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-			{
-				Container.Selected(indexPath);
-			}
-
-			public override UIView GetViewForHeader(UITableView tableView, int sectionIdx)
-			{
-				var section = Root.Sections[sectionIdx];
-				if (section.HeaderView == null && !string.IsNullOrEmpty(section.Caption))
-				{
-					section.HeaderView = CreateHeaderView(tableView, section.Caption);
-					var themeable = section as IThemeable;
-					if (themeable != null)
-						themeable.ThemeChanged();
-				}
-				return section.HeaderView;
-			}
-
-			public override float GetHeightForHeader(UITableView tableView, int sectionIdx)
-			{
-				var section = Root.Sections[sectionIdx];
-				if (section.HeaderView == null)
-					return -1;
-				return section.HeaderView.Frame.Height;
-			}
-
-			public override UIView GetViewForFooter(UITableView tableView, int sectionIdx)
-			{
-				var section = Root.Sections[sectionIdx];
-				if (section.FooterView == null && !string.IsNullOrEmpty(section.FooterText))
-				{
-					section.FooterView = CreateFooterView(tableView, section.FooterText);
-					var themeable = section as IThemeable;
-					if (themeable != null)
-						themeable.ThemeChanged();
-				}
-				return section.FooterView;
-			}
-
-			public override float GetHeightForFooter(UITableView tableView, int sectionIdx)
-			{
-				var section = Root.Sections[sectionIdx];
-				if (section.FooterView == null)
-					return -1;
-				return section.FooterView.Frame.Height;
-			}
-
-			#region Pull to Refresh support
-			public override void Scrolled(UIScrollView scrollView)
-			{
-				if (!_CheckForRefresh)
-					return;
-				if (Container._Reloading)
-					return;
-				var view = Container._RefreshView;
-				if (view == null)
-					return;
-				
-				var point = Container.TableView.ContentOffset;
-				
-				if (view.IsFlipped && point.Y > -_SnapBoundary && point.Y < 0)
-				{
-					view.Flip(true);
-					view.SetStatus(RefreshStatus.PullToReload);
-				}
-				else if (!view.IsFlipped && point.Y < -_SnapBoundary)
-				{
-					view.Flip(true);
-					view.SetStatus(RefreshStatus.ReleaseToReload);
-				}
-			}
-
-			public override void DraggingStarted(UIScrollView scrollView)
-			{
-				_CheckForRefresh = true;
-			}
-
-			public override void DraggingEnded(UIScrollView scrollView, bool willDecelerate)
-			{
-				if (Container._RefreshView == null)
-					return;
-
-				_CheckForRefresh = false;
-				if (Container.TableView.ContentOffset.Y > -_SnapBoundary)
-					return;
-
-				Container.TriggerRefresh(true);
-			}
-			#endregion
-
-			private UIView CreateHeaderView(UITableView tableView, string caption)
-			{
-				var indentation = UIDevice.CurrentDevice.GetIndentation();
-
-				var headerLabel = new UILabel();
-
-				headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
-				var size = headerLabel.StringSize(caption, headerLabel.Font);
-				
-				var bounds = new RectangleF(tableView.Bounds.X, tableView.Bounds.Y, tableView.Bounds.Width, size.Height + 10);
-				var frame = new RectangleF(bounds.X + indentation + 10, bounds.Y, bounds.Width - (indentation + 10), size.Height + 10);
-	
-				headerLabel.Bounds = bounds;
-				headerLabel.Frame = frame;
-				
-				headerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
-				headerLabel.ShadowColor = UIColor.White;
-				headerLabel.ShadowOffset = new SizeF(0, 1);
-				headerLabel.Text = caption;
-				
-				var view = new UIView(bounds) { BackgroundColor = tableView.BackgroundColor };
-
-				if (tableView.Style == UITableViewStyle.Grouped)
-				{
-					headerLabel.BackgroundColor = UIColor.Clear;
-					view.Opaque = false;
-					view.BackgroundColor = UIColor.Clear;
-				}
-
-				view.AddSubview(headerLabel);
-
-				return view;
-			}
-			
-			private UIView CreateFooterView(UITableView tableView, string caption)
-			{
-				var indentation = UIDevice.CurrentDevice.GetIndentation();
-
-				var bounds = tableView.Bounds;
-				var footerLabel = new UILabel();
-				var width =  bounds.Width - (indentation * 2);				
-				var linefeeds = caption.Count( ch => ch == '\n');
-				
-				footerLabel.Font = UIFont.SystemFontOfSize(15);
-				var size = footerLabel.StringSize(caption, footerLabel.Font);
-
-				footerLabel.Lines = 1 + ((int)(size.Width / width)) + linefeeds;
-				if (size.Width % width == 0)
-					footerLabel.Lines--;
-
-				var height = size.Height * (footerLabel.Lines);
-
-				var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, height + 10);
-				
-				footerLabel.Bounds = rect;
-				footerLabel.BackgroundColor = UIColor.Clear;
-				footerLabel.TextAlignment = UITextAlignment.Center;
-				footerLabel.LineBreakMode = UILineBreakMode.WordWrap;
-				footerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
-				footerLabel.ShadowColor = UIColor.White;
-				footerLabel.ShadowOffset = new SizeF(0, 1);
-				footerLabel.Text = caption;
-
-				return footerLabel;
-			}
-		}
-
-		//
-		// Performance trick, if we expose GetHeightForRow, the UITableView will
-		// probe *every* row for its size;   Avoid this by creating a separate
-		// model that is used only when we have items that require resizing
-		//
-		public class SizingSource : Source
-		{
-			public SizingSource(DialogViewController controller) : base(controller)
-			{
-			}
-
-			public override float GetHeightForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-			{
-				var section = Root.Sections[indexPath.Section];
-				var element = section.Elements[indexPath.Row];
-				
-				var sizable = element as ISizeable;
-				if (sizable != null)
-					return sizable.GetHeight(tableView, indexPath);
-		
-				return tableView.RowHeight;
-			}
-		}
-
 		/// <summary>
 		/// Activates a nested view controller from the DialogViewController.   
 		/// If the view controller is hosted in a UINavigationController it
@@ -712,7 +429,7 @@ namespace MonoMobile.MVVM
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
 		{
-			return new CustomTableView(bounds, style) { Controller = this };
+			return new DialogViewTable(bounds, style) { Controller = this };
 		}
 
 		public override void LoadView()
@@ -869,7 +586,7 @@ namespace MonoMobile.MVVM
 				{
 					_Searchbar = new UISearchBar(new RectangleF(0, 0, TableView.Bounds.Width, 45)) 
 					{ 
-						Delegate = new SearchDelegate(this),
+						Delegate = new DialogViewSearchDelegate(this),
 						TintColor = Root.Theme.BarTintColor,
 					};	
 
@@ -966,9 +683,9 @@ namespace MonoMobile.MVVM
 			ConfigureBackgroundImage();
 		}
 
-		public virtual Source CreateSizingSource(bool unevenRows)
+		public virtual DialogViewDataSource CreateSizingSource(bool unevenRows)
 		{
-			return unevenRows ? new SizingSource(this) : new Source(this);
+			return unevenRows ? new DialogViewSizingSource(this) : new DialogViewDataSource(this);
 		}
 
 		private void UpdateSource()
@@ -1063,23 +780,6 @@ namespace MonoMobile.MVVM
 			_Pushing = pushing;
 			PrepareRoot(bindingContext.Root);
 		}
-		
-//
-//		public DialogViewController(string title, Type viewType, UITableViewStyle style, bool pushing) : base(style)
-//		{
-//			object view = Activator.CreateInstance(viewType);
-//			DialogViewController(title, view, style, pushing);
-//		}
-//		
-//		public DialogViewController(string title, Type viewType, bool pushing) : base(UITableViewStyle.Grouped)
-//		{
-//
-//		}
-//
-//		public DialogViewController(Type viewType, bool pushing) : base(UITableViewStyle.Grouped)
-//		{
-//
-//		}
 
 		/// <summary>
 		///    Creates a new DialogViewController from a IRoot and sets the push status
@@ -1103,97 +803,6 @@ namespace MonoMobile.MVVM
 			_Pushing = pushing;
 			Style = style;
 			PrepareRoot(root);
-		}
-	}
-
-	public class CustomTableView : UITableView
-	{		
-		private UIColor oldTextShadowColor = UIColor.Clear;
-		private UIColor oldDetailTextShadowColor = UIColor.Clear;
-
-		public DialogViewController Controller { get; set; }
-		
-		public CustomTableView(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
-		{
-		}
-
-		public override void TouchesBegan(NSSet touches, UIEvent evt)
-		{
-			ResetTextShadow(false, touches);
-		
-			base.TouchesBegan(touches, evt);
-		}
-		
-		public override void TouchesCancelled (NSSet touches, UIEvent evt)
-		{
-			base.TouchesCancelled (touches, evt);
-						
-			ResetTextShadow(true, touches);
-		}
-
-		public override void TouchesEnded(NSSet touches, UIEvent evt)
-		{
-			base.TouchesEnded(touches, evt);
-
-			if (Controller != null)
-			{
-				foreach (var section in Controller.Root.Sections) 
-				{
-					foreach(var element in section.Elements)
-					{
-						var selected = element as IFocusable;
-						if (selected != null && selected.InputControl != null && selected.InputControl.IsFirstResponder) 
-						{
-							selected.InputControl.ResignFirstResponder();
-							break;
-						}
-					}
-				}	
-			}
-
-			ResetTextShadow(true, touches);
-		}
-
-		private void ResetTextShadow(bool visible, NSSet touches)
-		{
-			var touch = touches.AnyObject as UITouch;
-			var view = touch.View;
-
-			if (view != null)
-			{
-				var cell = view.Superview as UITableViewElementCell;
-	
-				if (cell != null && cell.SelectionStyle != UITableViewCellSelectionStyle.None)
-				{
-					var textLabel = view.Subviews.FirstOrDefault() as UILabel;
-					if (textLabel != null)
-					{
-						if (visible && oldTextShadowColor != null)
-						{
-							textLabel.ShadowColor = oldTextShadowColor;
-						}
-						else
-						{
-							oldTextShadowColor = textLabel.ShadowColor;
-							textLabel.ShadowColor = UIColor.Clear;
-						}
-					}
-		
-					var detailTextLabel = view.Subviews.LastOrDefault() as UILabel;					
-					if (detailTextLabel != null)
-					{
-						if (visible && oldDetailTextShadowColor != null)
-						{
-							detailTextLabel.ShadowColor = oldDetailTextShadowColor;
-						}
-						else
-						{
-							oldDetailTextShadowColor = detailTextLabel.ShadowColor;
-							detailTextLabel.ShadowColor = UIColor.Clear;
-						}
-					}
-				}
-			}
 		}
 	}
 }

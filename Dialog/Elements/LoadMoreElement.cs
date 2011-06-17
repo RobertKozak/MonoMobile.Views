@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public class LoadMoreElement : Element, ISizeable, ISelectable, ITappable
+	public class LoadMoreElement : Element, ISelectable, ITappable
 	{
 		public string NormalCaption { get; set; }
 		public string LoadingCaption { get; set; }
@@ -143,7 +143,7 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
-		public float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
 			SizeF size = new SizeF(280, 37);
 			float height = size.Height;

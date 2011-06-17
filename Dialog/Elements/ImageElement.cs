@@ -84,7 +84,7 @@ namespace MonoMobile.MVVM
 
 		private UIImage Scale(UIImage source)
 		{
-			UIGraphics.BeginImageContext(new SizeF(dimx, dimy));
+			UIGraphics.BeginImageContextWithOptions(new SizeF(dimx, dimy), false, 0f);
 			var ctx = UIGraphics.GetCurrentContext();
 			
 			var img = source.CGImage;

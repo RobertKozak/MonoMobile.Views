@@ -42,7 +42,7 @@ namespace MonoMobile.MVVM
 	///  in this case from the UIViewElement to the cell that
 	///  holds our view.
 	/// </remarks>
-	public class UIViewElement : Element, ISizeable, ISelectable
+	public class UIViewElement : Element, ISelectable
 	{
 		public CellFlags Flags;
 
@@ -92,7 +92,7 @@ namespace MonoMobile.MVVM
 
 		}
 
-		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
 			if (ContentView != null)
 				return ContentView.Bounds.Height;

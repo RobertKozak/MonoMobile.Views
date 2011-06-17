@@ -106,6 +106,7 @@ namespace MonoMobile.MVVM
 		}
 		
 		public UITableViewElementCell Cell { get; set; }
+		public UITableViewCellEditingStyle? EditingStyle { get; set; }
 
 		private Theme _Theme;
 		public Theme Theme 
@@ -586,7 +587,7 @@ namespace MonoMobile.MVVM
 			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
 		}
 
-		public float GetHeight (UITableView tableView, NSIndexPath indexPath)
+		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
 			if (Theme.CellHeight != 0)
 				return Theme.CellHeight;

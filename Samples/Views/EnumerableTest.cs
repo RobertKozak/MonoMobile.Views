@@ -5,9 +5,9 @@ namespace Samples
 {
 	public class EnumerableTest: View
 	{
-		private Element Element;
+		protected Element Element;
 
-		private List<object> SelectedThemes = new List<object>();
+		protected List<object> SelectedThemes = new List<object>();
 		
 		[Bind("Selected")]
 		public string MyThemeName;

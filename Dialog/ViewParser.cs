@@ -60,14 +60,16 @@ namespace MonoMobile.MVVM
 
 		public void Parse(UIView view, string caption, Theme theme)
 		{
+			Type viewType = view.GetType();
+
 			var vw = view as IView;
 			if (vw != null)
 			{
-				var captionAttribute = view.GetType().GetCustomAttribute<CaptionAttribute>();
+				var captionAttribute = viewType.GetCustomAttribute<CaptionAttribute>();
 				if (captionAttribute != null)
 					caption = captionAttribute.Caption;
 			}
-
+			
 			Root = new RootElement(caption) { Opaque = false };
 			Root.DataContext = view;
 
@@ -79,7 +81,7 @@ namespace MonoMobile.MVVM
 			if (themeable != null)
 				themeable.Theme = Theme.CreateTheme(theme);
 			
-			var searchbarAttribute = view.GetType().GetCustomAttribute<SearchbarAttribute>();
+			var searchbarAttribute = viewType.GetCustomAttribute<SearchbarAttribute>();
 			var searchbar = Root as ISearchBar;
 			if (searchbarAttribute != null && searchbar != null)
 			{
@@ -87,6 +89,12 @@ namespace MonoMobile.MVVM
 				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
 				searchbar.EnableSearch =  searchbarAttribute.ShowImmediately;
 				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+			}
+
+			var editStyle = viewType.GetCustomAttribute<CellEditingStyleAttribute>();
+			if (editStyle != null)
+			{
+				Root.EditingStyle = editStyle.EditingStyle;
 			}
 			
 			var sectionList = CreateSectionList(view, Root);
@@ -185,6 +193,14 @@ namespace MonoMobile.MVVM
 						}
 						else if (newElement != null)
 						{
+							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
+							if (editStyle != null)
+							{
+								newElement.EditingStyle = editStyle.EditingStyle;
+							}
+							else if (newElement.EditingStyle.HasValue)
+								newElement.EditingStyle = root.EditingStyle;
+
 							bindable = newElement as IBindable;
 
 							if ((isList) && newElement is IRoot)
@@ -502,10 +518,10 @@ namespace MonoMobile.MVVM
 				if (currentValue != null && currentValue.Equals(value))
 					selected = index;
 				
-				var description = value.ToString();
-				
-				if (value.GetType().IsEnum)
-					description = ((Enum)value).GetDescription();
+//				var description = value.ToString();
+//				
+//				if (value.GetType().IsEnum)
+//					description = ((Enum)value).GetDescription();
 				
 				elementType = elementType ?? typeof(RadioElement);
 			
@@ -1030,10 +1046,11 @@ namespace MonoMobile.MVVM
 				var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 				if (buttonAttribute != null)
 				{	
-					var belement = new ButtonElement(caption)
-					{
-						Command = GetCommandForMember(view, member)
-					};
+					var belement = CreateElement(buttonAttribute.ElementType, caption) as ButtonElement; 
+					//var belement = new ButtonElement(caption)
+					//{
+						belement.Command = GetCommandForMember(view, member);
+					//};
 					
 					((ReflectiveCommand)belement.Command).Element = belement;
 
@@ -1188,6 +1205,13 @@ namespace MonoMobile.MVVM
 			});
 		}
 		
+		private IElement CreateElement(Type elementType, string caption)
+		{
+			var element = Activator.CreateInstance(elementType, new object[] { caption }) as IElement;
+
+			return element;
+		}
+
 		private IElement CreateFloatElement(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			IElement element = null;
