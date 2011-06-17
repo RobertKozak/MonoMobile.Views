@@ -56,7 +56,7 @@ namespace MonoMobile.MVVM
 
 		UITableView TableView { get; set; }
 
-		UITableViewCellEditingStyle? EditingStyle { get; set; }
+		UITableViewCellEditingStyle EditingStyle { get; set; }
 
 		UITableViewElementCell Cell { get; set; }
 		UITableViewElementCell GetCell(UITableView tableView);

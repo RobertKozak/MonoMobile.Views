@@ -103,7 +103,6 @@ namespace MonoMobile.MVVM
 			Index = -1;
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
-			EditingStyle = UITableViewCellEditingStyle.None;
 		}
 
 		/// <summary>

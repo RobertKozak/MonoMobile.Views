@@ -106,7 +106,7 @@ namespace MonoMobile.MVVM
 		}
 		
 		public UITableViewElementCell Cell { get; set; }
-		public UITableViewCellEditingStyle? EditingStyle { get; set; }
+		public UITableViewCellEditingStyle EditingStyle { get; set; }
 
 		private Theme _Theme;
 		public Theme Theme 
@@ -372,6 +372,7 @@ namespace MonoMobile.MVVM
 			ViewBinding = new ViewBinding();
 			Visible = true;
 			Enabled = true;
+			EditingStyle = UITableViewCellEditingStyle.None;
 		}
 		
 		public Element(string caption, Binding binding): this(caption)

@@ -249,10 +249,7 @@ namespace MonoMobile.MVVM
 		public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
 		{
 			var element = Container.Root.Sections[indexPath.Section].Elements[indexPath.Row];
-			if (element.EditingStyle.HasValue)
-				return element.EditingStyle.Value;
-			else
-				return UITableViewCellEditingStyle.None;
+			return element.EditingStyle;
 		}
 
 		public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)

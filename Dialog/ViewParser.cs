@@ -196,9 +196,20 @@ namespace MonoMobile.MVVM
 							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
 							if (editStyle != null)
 							{
+								root.EditingStyle = editStyle.EditingStyle;
 								newElement.EditingStyle = editStyle.EditingStyle;
+								if (newElement.Section != null)
+								{
+									foreach(ISection section in newElement.Section)
+									{
+										foreach(var element in section.Elements)
+										{
+											element.EditingStyle = editStyle.EditingStyle;
+										}
+									}
+								}
 							}
-							else if (newElement.EditingStyle.HasValue)
+							else
 								newElement.EditingStyle = root.EditingStyle;
 
 							bindable = newElement as IBindable;
@@ -349,6 +360,8 @@ namespace MonoMobile.MVVM
 				viewType = rootAttribute.ViewType ?? viewType;
 				elementType = rootAttribute.ElementType ?? elementType;
 			}
+			
+			var cellEditingStyle = member.GetCustomAttribute<CellEditingStyleAttribute>(); 
 
 			var isEnum = memberType.IsEnum;
 			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
@@ -417,6 +430,9 @@ namespace MonoMobile.MVVM
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
 				rootElement.DataContext = context;
 				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
+				
+				if (cellEditingStyle != null)
+					rootElement.EditingStyle = cellEditingStyle.EditingStyle;
 
 				if (items != null)
 				{

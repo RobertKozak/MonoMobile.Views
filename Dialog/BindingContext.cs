@@ -124,7 +124,7 @@ namespace MonoMobile.MVVM
 			if (elementType == null)
 				elementType = typeof(RootElement);
 
-			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding };
+			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding, EditingStyle = root.EditingStyle };
 			IElement element = null;
 			
 			var items = (IEnumerable)root.DataContext;
@@ -146,6 +146,7 @@ namespace MonoMobile.MVVM
 				element.ViewBinding.DataContextCode = DataContextCode.Object;
 				element.ViewBinding.ViewType = root.ViewBinding.ViewType;
 				element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
+				element.EditingStyle = root.EditingStyle;
 
 				if (e is UIView)
 					element.ViewBinding.View = e as UIView;
