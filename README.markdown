@@ -1,10 +1,16 @@
 WHAT'S NEW
 ==========
 
-Tavis Smith has  a blog post entitled "MonoMobile.MVVM, Round 1" which is a 
+Travis Smith has  a blog post entitled "MonoMobile.MVVM, Round 1" which is a 
 quick Hello World introduction to MonoMobile.MVVM. 
 
 You can find it here: http://legomaster.net/2011/06/monomobile-mvvm-round-1/
+
+Round 2 is now up:
+
+http://legomaster.net/2011/06/monomobile-mvvm-round-2/
+
+
 
 This looks like it can be a great resource.
 
