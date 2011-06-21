@@ -86,6 +86,8 @@ namespace MonoMobile.MVVM
 				CaptionProperty.BindTo(this, TextLabel, "Text");
 
 			ElementInstanceProperty.BindTo(this, this, "ElementInstance");
+
+			BackgroundColorProperty.BindTo(this, Theme, "BackgroundColor");
 		}
 	
 		protected virtual void UpdateTargets()
