@@ -33,12 +33,34 @@ namespace MonoMobile.MVVM
 
 	public partial class RootElement
 	{		
+		public BindableProperty PullToRefreshCommandProperty = BindableProperty.Register("PullToRefreshCommand");
+		
+		public BindableProperty ToolbarButtonsProperty = BindableProperty.Register("ToolbarButtons");
+		public BindableProperty NavbarButtonsProperty = BindableProperty.Register("NavbarButtons");
+		
+		public BindableProperty EnableSearchProperty = BindableProperty.Register("EnableSearch");
+		public BindableProperty IncrementalSearchProperty = BindableProperty.Register("IncrementalSearch");
+		public BindableProperty SearchPlaceholderProperty = BindableProperty.Register("SearchPlaceholder");
+		public BindableProperty SearchCommandProperty = BindableProperty.Register("SearchCommand");
+
+
 		public override void BindProperties()
 		{
 			base.BindProperties();
 			
 			if (DetailTextLabel != null)
 				DataContextProperty.BindTo(this, DetailTextLabel, "Text");
+			
+			DataContextProperty.BindTo(this, this, "DataContext");
+
+			PullToRefreshCommandProperty.BindTo(this, this, "PullToRefreshCommand");
+			ToolbarButtonsProperty.BindTo(this, this, "ToolbarButtons");
+			NavbarButtonsProperty.BindTo(this, this, "NavbarButtons");
+
+			EnableSearchProperty.BindTo(this, this, "EnableSearch");
+			IncrementalSearchProperty.BindTo(this, this, "IncrementalSearch");
+			SearchPlaceholderProperty.BindTo(this, this, "SearchPlaceholder");
+			SearchCommandProperty.BindTo(this, this, "SearchCommand");
 		}
 	}
 }

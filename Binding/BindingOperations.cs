@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
@@ -137,7 +138,7 @@ namespace MonoMobile.MVVM
 				binding.TargetPath = name;
 				binding.Target = nestedTarget;
 			}
-	
+
 			var targetReady = memberInfo != null && nestedTarget != null;
 
 			if (targetReady)
@@ -166,6 +167,14 @@ namespace MonoMobile.MVVM
 						viewINPC.PropertyChanged -= HandleDataContextPropertyChanged;
 						viewINPC.PropertyChanged += HandleDataContextPropertyChanged;
 					}
+					
+					var sourceValue = bindingExpression.GetSourceValue();
+					 
+					var sourceCollection = sourceValue as INotifyCollectionChanged;
+					if (sourceCollection != null)
+					{	
+						SetNotificationCollectionHandler(bindingExpression, sourceCollection);
+					}	
 				}
 			}
 			else
@@ -186,6 +195,16 @@ namespace MonoMobile.MVVM
 			}
 
 			return bindingExpression;
+		}
+		
+		public static void SetNotificationCollectionHandler(IBindingExpression bindingExpression, INotifyCollectionChanged collection)
+		{
+			NotifyCollectionChangedEventHandler handler = (sender, e) => {
+				bindingExpression.UpdateTarget();
+			};			
+
+			collection.CollectionChanged -= handler;
+			collection.CollectionChanged += handler;
 		}
 
 		private static void UpdateBindings()
@@ -228,7 +247,7 @@ namespace MonoMobile.MVVM
 		}
 
 		private static void HandleDataContextPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		{ 
 			IBindingExpression[] bindingExpressions = GetBindingExpressions(e.PropertyName);
 			foreach (var bindingExpression in bindingExpressions)
 			{

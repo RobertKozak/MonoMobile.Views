@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication : UIApplication
 	{
-		public const string Version = "0.5";
+		public const string Version = "0.9";
 
 		public static Type[] ViewTypes { get; private set;}
 
@@ -77,7 +77,17 @@ namespace MonoMobile.MVVM
 				theme.TableViewStyle = UITableViewStyle.Grouped;
 			}
 		
-			var dvc = new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true };
+			string title = null;
+			var hasCaption = view as IView;
+			if (hasCaption != null)
+			{
+				title = hasCaption.Caption;
+			}
+				
+			if (string.IsNullOrEmpty(title))
+				title = MonoMobileApplication.Title;
+
+			var dvc = new DialogViewController(title, view, true) { Autorotate = true };
 			dvc.IsModal = true;
 
 			return dvc;

@@ -88,6 +88,27 @@ namespace MonoMobile.MVVM
 			ElementInstanceProperty.BindTo(this, this, "ElementInstance");
 
 			BackgroundColorProperty.BindTo(this, Theme, "BackgroundColor");
+		
+			AccessoryProperty.BindTo(this, Theme, "Accessory");
+			ImageIconProperty.BindTo(this, Theme, "CellImageIcon");
+			ImageIconUriProperty.BindTo(this, Theme, "CellImageIconUri");
+			BackgroundImageProperty.BindTo(this, Theme, "CellBackgroundImage");
+			BackgroundUriProperty.BindTo(this, Theme, "CellBackgroundUri");
+			BackgroundColorProperty.BindTo(this, Theme, "CellBackgroundColor");
+
+			TextLabelProperty.BindTo(this, Theme, "TextLabel");
+			TextFontProperty.BindTo(this, Theme, "TextFont");
+			TextColorProperty.BindTo(this, Theme, "TextColor");
+			TextAlignmentProperty.BindTo(this, Theme, "TextAlignment");
+			TextShadowOffsetProperty.BindTo(this, Theme, "TextShadowOffset");
+			TextShadowColorProperty.BindTo(this, Theme, "TextShadowColor");
+
+			DetailTextLabelProperty.BindTo(this, Theme, "DetailTextLabel");
+			DetailTextFontProperty.BindTo(this, Theme, "DetailTextFont");
+			DetailTextColorProperty.BindTo(this, Theme, "DetailTextColor");
+			DetailTextAlignmentProperty.BindTo(this, Theme, "DetailTextAlignment");
+			DetailTextShadowOffsetProperty.BindTo(this, Theme, "DetailTextShadowOffset");
+			DetailTextShadowColorProperty.BindTo(this, Theme, "DetailTextShadowColor");
 		}
 	
 		protected virtual void UpdateTargets()

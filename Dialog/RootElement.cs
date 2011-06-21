@@ -464,11 +464,18 @@ namespace MonoMobile.MVVM
 					Sections = binding.Root.Sections;
 				}
 			}
-
-//			if (DetailTextLabel != null && Value != null)
-//			{
-//				DetailTextLabel.Text = Value.ToString();
-//			}
+			else if (DataContext != null &&ViewBinding.ElementType != null) 
+			{
+				var section = this.Sections.FirstOrDefault() as Section;
+				section = BindingContext.CreateSection(this, section, DataContext, ViewBinding.ElementType, false);
+				if (Sections.Count == 0)
+				{
+					if (section != null)
+						Sections.Add(section);
+				}
+				else
+					Sections[0] = section;
+			}
 		}
 
 		public override string ToString()

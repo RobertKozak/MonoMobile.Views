@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 //
 // BindingExpression.cs:
 //
@@ -133,6 +134,13 @@ namespace MonoMobile.MVVM
 
 		public void UpdateTarget(object sourceValue)
 		{
+			var collection = sourceValue as INotifyCollectionChanged;
+			if (collection != null)
+			{
+				BindingOperations.SetNotificationCollectionHandler(this, collection);
+				SetValue(TargetProperty, Binding.Target, sourceValue);
+			}
+
 			bool canWrite = true;
 			if (TargetProperty is PropertyInfo) canWrite = ((PropertyInfo)TargetProperty).CanWrite;
 			if (TargetProperty != null && canWrite && Binding.Mode == BindingMode.TwoWay)
@@ -142,12 +150,11 @@ namespace MonoMobile.MVVM
 
 				object convertedSourceValue = ConvertValue(sourceValue);
 
-				if (Element != null && Element.Cell != null && Element.Cell.Element == Element)
+				if (Element != null && (Element.Cell != null && Element.Cell.Element == Element) || Element.Cell == null)
 				{
 					convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
 					SetValue(TargetProperty, Binding.Target, convertedSourceValue);
 				}
-
 			}
 		}
 

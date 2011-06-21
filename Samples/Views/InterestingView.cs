@@ -10,7 +10,7 @@ namespace Samples
 	[CellEditingStyle(UITableViewCellEditingStyle.Delete)]
 	public class InterestingView: View
 	{
-		[Bind("CaptionSize", "DetailTextFont", ValueConverterType = typeof(FontConverter))]
+	//	[Bind("CaptionSize", "DetailTextFont", ValueConverterType = typeof(FontConverter))]
 		[Bind("Alignment", "TextAlignment")]
 		[Entry]
 		[Caption("test")]

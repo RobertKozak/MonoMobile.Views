@@ -97,6 +97,12 @@ namespace MonoMobile.MVVM
 				Root.EditingStyle = editStyle.EditingStyle;
 			}
 			
+			var bindable = Root as IBindable;
+			if (bindable != null)
+			{
+				bindable.BindProperties();
+			}
+
 			var sectionList = CreateSectionList(view, Root);
 			sectionList.ForEach((section)=>section.Initialize());
 			Root.Add(sectionList);
@@ -107,6 +113,7 @@ namespace MonoMobile.MVVM
 			var notifyDataContextChanged = view as INotifyDataContextChanged;
 			if (notifyDataContextChanged != null)
 			{
+				notifyDataContextChanged.DataContextChanged -= HandleNotifyDataContextChangedDataContextChanged;
 				notifyDataContextChanged.DataContextChanged += HandleNotifyDataContextChangedDataContextChanged;
 			}
 		}
@@ -217,6 +224,7 @@ namespace MonoMobile.MVVM
 							if ((isList) && newElement is IRoot)
 							{
 								var sections = ((IRoot)newElement).Sections;
+								root.ViewBinding = newElement.ViewBinding;
 
 								var firstSection = sections.FirstOrDefault();
 								if (firstSection.Elements.Count > 0)
@@ -242,7 +250,10 @@ namespace MonoMobile.MVVM
 									binding.TargetPath = "DataContext";
 								}
 			
-								BindingOperations.SetBinding(bindable, binding.TargetPath, binding);
+								if (bindable is IRoot)
+									BindingOperations.SetBinding(Root as IBindable, binding.TargetPath, binding);
+								else
+									BindingOperations.SetBinding(bindable, binding.TargetPath, binding);
 							}
 						}
 					}
@@ -326,7 +337,7 @@ namespace MonoMobile.MVVM
 				element.Order = orderAttribute.Order;
 			
 			var dataContext = view as IDataContext;
-			if (dataContext != null && element.DataContext == null)
+			if (dataContext != null && element.DataContext == null && element.DataContext != dataContext.DataContext)
 			{
 				element.DataContext = dataContext.DataContext;
 			}
@@ -428,7 +439,6 @@ namespace MonoMobile.MVVM
 				rootElement.ViewBinding.ElementType = elementType;
 				rootElement.ViewBinding.ViewType = viewType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-				rootElement.DataContext = context;
 				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 				
 				if (cellEditingStyle != null)
@@ -445,6 +455,8 @@ namespace MonoMobile.MVVM
 						rootElement.DataContext = items;
 					}
 				}
+				else
+					rootElement.DataContext = context;
 
 				if (genericType != null)
 				{
@@ -504,7 +516,7 @@ namespace MonoMobile.MVVM
 				var currentValue = member.GetValue(view);
 				var enumValues = Enum.GetValues(memberType);
 
-				section = CreateEnumSection(theme, member, enumValues, typeof(RadioElement), currentValue, pop, bindings);
+				section = CreateEnumSection(enumValues, typeof(RadioElement), currentValue, pop);
 			}
 			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
 			{
@@ -522,38 +534,31 @@ namespace MonoMobile.MVVM
 			return section;
 		}
 			
-		private ISection CreateEnumSection(Theme theme, MemberInfo member, IEnumerable values, Type elementType, object currentValue, bool popOnSelection, List<Binding> bindings)
+		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection)
 		{
 			var csection = new Section() { Opaque = false };
 
 			int index = 0;
 			int selected = -1; 
-
-			foreach(var value in values)
-			{
-				if (currentValue != null && currentValue.Equals(value))
-					selected = index;
-				
-//				var description = value.ToString();
-//				
-//				if (value.GetType().IsEnum)
-//					description = ((Enum)value).GetDescription();
-				
-				elementType = elementType ?? typeof(RadioElement);
 			
-				var element = Activator.CreateInstance(elementType) as IElement;
-				
-				if (element.GetType() == typeof(RadioElement))
+			csection = BindingContext.CreateSection(null, csection, values, elementType, popOnSelection);
+			
+			foreach(var element in csection.Elements)
+			{
+				var radioElement = element as RadioElement;
+				if (radioElement != null)
 				{
-					((RadioElement)element).Item = value;
-					((RadioElement)element).Index = index;
-					((RadioElement)element).PopOnSelect = popOnSelection;
-					((RadioElement)element).DataContext = selected == index;
-					((RadioElement)element).Opaque = false;
+					radioElement.Item = element.DataContext;
+					radioElement.Index = index;
+					radioElement.PopOnSelect = popOnSelection;
+					index++;
 				}
-				element.DataContext = value;
-				csection.Add(element);
-				index++;
+
+				if (currentValue != null && currentValue.Equals(element.DataContext))
+				{
+					element.DataContext = true;
+				}
+				element.DataContext = false;
 			}
 
 			csection.ViewBinding.DataContextCode = DataContextCode.Enum;
@@ -697,7 +702,7 @@ namespace MonoMobile.MVVM
 
 			var isUIView = typeof(UIView).IsAssignableFrom(genericType);
  
-			var section = CreateEnumSection(theme, member, items, elementType, null, true, bindings);
+			var section = CreateEnumSection(items, elementType, null, true);
 
 			var root = new RootElement(caption) { section };
 			root.Opaque = false;
@@ -953,9 +958,9 @@ namespace MonoMobile.MVVM
 				bindings.Add(bindAttribute.Binding);
 			}
 			
-			var valueBinding = bindings.Where((b)=>b.TargetPath == "DataContext").FirstOrDefault() != null;
+			var dataContextBinding = bindings.Where((b)=>b.TargetPath == "DataContext").FirstOrDefault() != null;
 
-			if (!valueBinding)
+			if (!dataContextBinding)
 			{
 				bindings.Add(new Binding(member.Name, null));
 			}

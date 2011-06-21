@@ -34,10 +34,6 @@ namespace MonoMobile.MVVM
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Linq;
-	using System.Reflection;
-	using System.Text;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
@@ -116,7 +112,60 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
-		private static IRoot CreateViewEnumerableRoot(IRoot root)
+		public static Section CreateSection(IRoot root, Section section, object dataContext, Type elementType, bool popOnSelection)
+		{
+			var items = dataContext as IEnumerable;
+			if (items != null)
+			{
+				if (section == null)
+					section = new Section();
+
+				section.Clear();
+
+				foreach (var item in items)
+				{
+					var caption = item.ToString();
+					if (string.IsNullOrEmpty(caption))
+					{
+						caption = root.ViewBinding.ViewType.Name.Capitalize();
+					}
+					
+					if (elementType == null)
+						elementType = typeof(RadioElement);
+
+					var element = Activator.CreateInstance(elementType) as IElement;
+					element.Caption = caption;
+					element.DataContext = item;
+					element.ViewBinding.DataContextCode = DataContextCode.Object;
+
+					if (root != null)
+					{
+						element.ViewBinding.ViewType = root.ViewBinding.ViewType;
+						element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
+						element.EditingStyle = root.EditingStyle;
+						element.Theme.MergeTheme(root.Theme);
+					}
+
+					var uiView = element as UIView;
+					if (uiView != null)
+						uiView.Opaque = false;
+
+					if (item is UIView)
+						element.ViewBinding.View = item as UIView;
+					else
+						element.DataContext = item;
+	
+					if (element.ViewBinding.ViewType == null)
+						element.ViewBinding.ViewType = item.GetType();
+	
+					section.Add(element);
+				}
+			}
+
+			return section;
+		}
+
+		public static IRoot CreateViewEnumerableRoot(IRoot root)
 		{
 			IRoot newRoot = null;
 
@@ -125,39 +174,12 @@ namespace MonoMobile.MVVM
 				elementType = typeof(RootElement);
 
 			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding, EditingStyle = root.EditingStyle };
-			IElement element = null;
 			
-			var items = (IEnumerable)root.DataContext;
 			var section = new Section() { Opaque = false, ViewBinding = root.ViewBinding, Parent = newRoot as IElement };
 
 			newRoot.Sections.Add(section);
-
-			foreach (var e in items)
-			{
-				var caption = e.ToString();
-				if (string.IsNullOrEmpty(caption))
-				{
-					caption = root.ViewBinding.ViewType.Name.Capitalize();
-				}
-				
-				element = Activator.CreateInstance(elementType) as IElement;
-				((RootElement)element).Opaque = false;
-				element.Caption = caption;
-				element.ViewBinding.DataContextCode = DataContextCode.Object;
-				element.ViewBinding.ViewType = root.ViewBinding.ViewType;
-				element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
-				element.EditingStyle = root.EditingStyle;
-
-				if (e is UIView)
-					element.ViewBinding.View = e as UIView;
-				else
-					element.DataContext = e;
-
-				if (element.ViewBinding.ViewType == null)
-					element.ViewBinding.ViewType = e.GetType();
-
-				section.Add(element);
-			}
+			
+			section = CreateSection(newRoot, section, root.DataContext, elementType, false);
 		
 			ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
 

@@ -80,8 +80,8 @@ namespace MonoMobile.MVVM
 				{
 					initalizable.Initialize();
 				}
-				MonoMobileApplication.Views.Add(view);
-				
+
+				MonoMobileApplication.Views.Add(view);				
 			}
 
 			// this method initializes the main NavigationController

@@ -33,11 +33,24 @@ namespace MonoMobile.MVVM
 
 	public partial class Section
 	{
+		public BindableProperty FooterTextProperty = BindableProperty.Register("FooterText");
+		public BindableProperty HeaderTextProperty = BindableProperty.Register("HeaderText");
+		public BindableProperty FooterViewProperty = BindableProperty.Register("FooterView");
+		public BindableProperty HeaderViewProperty = BindableProperty.Register("HeaderView");
+		
+		public BindableProperty ElementsProperty = BindableProperty.Register("Elements");
+
 		public override void BindProperties()
 		{
 			base.BindProperties();
 
 			CaptionProperty.BindTo(this, this, "HeaderText");
+			
+			HeaderTextProperty.BindTo(this, this, "HeaderText");
+			FooterTextProperty.BindTo(this, this, "FooterText");
+			DataContextProperty.BindTo(this, this, "DataContext");
+
+			ElementsProperty.BindTo(this, this, "Elements");
 		}
 	}
 }

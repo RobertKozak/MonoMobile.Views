@@ -322,6 +322,7 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
     <Compile Include="Dialog\Elements\GridElement.cs" />
+    <Compile Include="View\ObservableView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

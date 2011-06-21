@@ -106,7 +106,6 @@ namespace MonoMobile.MVVM
 				}
             }
 
-
             if (_PropertyMap.ContainsKey(name))
                 return (T)_PropertyMap[name];
 
@@ -159,7 +158,6 @@ namespace MonoMobile.MVVM
 			}
 			
 			NotifyPropertyChanged(propertyName);
-
 		}
 		
         public void Set<T>(Expression<Func<T>> property, T value)

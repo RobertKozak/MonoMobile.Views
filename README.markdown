@@ -10,19 +10,17 @@ Round 2 is now up:
 
 http://legomaster.net/2011/06/monomobile-mvvm-round-2/
 
-
-
 This looks like it can be a great resource.
 
 	
-Released Beta 0.8
+Released Beta 0.9
 
 It is almost done. I have a few more things to look into like: 
 	
-	INotifyDataContextChanged and INotifyCollectionChanged 
 	Add a real sample
 	Add more Documentation
 	and finish up any other bugs I find.
+	Add more bindable properties
 
 This document has been updated.
 
@@ -36,7 +34,7 @@ There are many changes and fixes on the way.
 Current Version
 ===============
 
-Beta 0.8
+Beta 0.9
 
 MonoMobile.MVVM
 ================
@@ -161,6 +159,9 @@ above:
 		}
 
 Note: You can bind to any BindableProperty of Element and descendents. 
+
+THERE ARE 45 BINDABLEPROPERTIES & MORE ON THE WAY.
+
 You can see these in the source.
 
 Other properties of BindAttribute:
