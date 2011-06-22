@@ -51,10 +51,6 @@ namespace MonoMobile.MVVM
 					}
 				}
 			}
-			
-			var root = element as IRoot;
-			if (root != null)
-				root.Theme = element.Theme;
 		}
 
 		public static void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
@@ -69,17 +65,21 @@ namespace MonoMobile.MVVM
 			
 			if (member != null)
 				ApplyMemberTheme(member, element);
-
-			if (element is IRoot)
+			
+			var root = element as IRoot;
+			if (root != null)
 			{
-				foreach(var section in ((IRoot)element).Sections)
-					foreach(var e in section.Elements)
+				foreach(var s in root.Sections)
+					foreach(var e in s.Elements)
 						ApplyElementTheme(element.Theme, e, null);
 			}
-
-			if (element is ISection)
-				foreach(var e in ((ISection)element).Elements)
+			
+			var section = element as ISection;
+			if (section != null)
+			{
+				foreach(var e in section.Elements)
 					ApplyElementTheme(element.Theme, e, null);
+			}
 		}
 
 		private static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
@@ -95,10 +95,9 @@ namespace MonoMobile.MVVM
 					themeableElement.Theme.MergeTheme(theme);
 				}
 				else
-					themeableElement.Theme = theme;
+					themeableElement.Theme = Theme.CreateTheme(theme);
 			}
 		}
-
 	}
 }
 

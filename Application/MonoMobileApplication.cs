@@ -39,6 +39,9 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication : UIApplication
 	{
+		private static DialogViewController _CurrentController;
+		private static UINavigationController _NavigationController;
+
 		public const string Version = "0.9";
 
 		public static Type[] ViewTypes { get; private set;}
@@ -100,8 +103,8 @@ namespace MonoMobile.MVVM
 
 		public static void PushView(UIView view, bool animated)
 		{
-			var controller = CreateDialogViewController(view);
-			NavigationController.PushViewController(controller, animated);
+			_CurrentController = CreateDialogViewController(view);
+			NavigationController.PushViewController(_CurrentController, animated);
 		}
 
 		public static void PresentModelView(UIView view)
@@ -123,14 +126,14 @@ namespace MonoMobile.MVVM
 
 		public static void PresentModelView(UIView view, UIModalTransitionStyle transistionStyle)
 		{			
-			var controller = CreateDialogViewController(view);
+			_CurrentController = CreateDialogViewController(view);
 			
-			controller.ModalTransitionStyle = transistionStyle;
+			_CurrentController.ModalTransitionStyle = transistionStyle;
 
-			var navigation = new UINavigationController();
-			navigation.ViewControllers = new UIViewController[] { controller };
+			_NavigationController = new UINavigationController();
+			_NavigationController.ViewControllers = new UIViewController[] { _CurrentController };
 			
-			NavigationController.PresentModalViewController(navigation, true);
+			NavigationController.PresentModalViewController(_NavigationController, true);
 		}
 
 		public static void DismissModalView(bool animated)

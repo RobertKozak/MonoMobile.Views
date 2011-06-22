@@ -127,6 +127,7 @@ namespace MonoMobile.MVVM
 		
 		public override void ThemeChanged()
 		{
+			base.ThemeChanged();
 			if (Theme != null)
 			{
 				if (HeaderView != null)

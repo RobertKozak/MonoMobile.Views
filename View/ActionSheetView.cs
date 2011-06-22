@@ -42,9 +42,21 @@ namespace MonoMobile.MVVM
 		protected Dictionary<int, ICommand> CommandMap = new Dictionary<int, ICommand>();
 	
 		//Descendents cannot have a parameterless constructor. // Bug in MonoTouch? iOS?
-		public ActionSheetView(string title) : base(title, new ActionSheetDelegate())
+		public ActionSheetView(string title) : base(title)
 		{
 			Prepare();
+			Dismissed += HandleDismissed;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			Dismissed -= HandleDismissed;
+		}
+
+		private void HandleDismissed (object sender, UIButtonEventArgs e)
+		{
+			CommandMap[e.ButtonIndex].Execute(e.ButtonIndex);
 		}
 
 		public virtual void Cancel()
@@ -77,16 +89,6 @@ namespace MonoMobile.MVVM
 			{
 				CancelButtonIndex = AddButton(GetTitle(cancelMethod));
 				CommandMap.Add(CancelButtonIndex, new ReflectiveCommand(this, cancelMethod, null));
-			}
-		}
-
-		public class ActionSheetDelegate : UIActionSheetDelegate
-		{
-			public override void Clicked(UIActionSheet actionSheet, int buttonIndex)
-			{
-				var sheet = actionSheet as ActionSheetView;
-				if (sheet != null)
-					sheet.CommandMap[buttonIndex].Execute(null);
 			}
 		}
 

@@ -97,11 +97,11 @@ namespace MonoMobile.MVVM
 				Root.EditingStyle = editStyle.EditingStyle;
 			}
 			
-			var bindable = Root as IBindable;
-			if (bindable != null)
-			{
-				bindable.BindProperties();
-			}
+//			var bindable = Root as IBindable;
+//			if (bindable != null)
+//			{
+//				bindable.BindProperties();
+//			}
 
 			var sectionList = CreateSectionList(view, Root);
 			sectionList.ForEach((section)=>section.Initialize());
@@ -240,7 +240,7 @@ namespace MonoMobile.MVVM
 								lastSection.Add(newElement);
 							}
 						}
-			
+
 						if (bindable != null && bindable != _NoElement && bindings.Count != 0)
 						{
 							foreach (Binding binding in bindings)
@@ -539,7 +539,6 @@ namespace MonoMobile.MVVM
 			var csection = new Section() { Opaque = false };
 
 			int index = 0;
-			int selected = -1; 
 			
 			csection = BindingContext.CreateSection(null, csection, values, elementType, popOnSelection);
 			

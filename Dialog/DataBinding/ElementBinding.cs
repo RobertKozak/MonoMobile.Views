@@ -78,37 +78,38 @@ namespace MonoMobile.MVVM
 		public BindableProperty ThemeProperty = BindableProperty.Register("Theme");
 
 		public virtual void BindProperties()
-		{
-			TextFontProperty.BindTo(this, TextLabel, "Font");
+		{		
 			ThemeProperty.BindTo(this, this, "Theme");
-			
-			if (TextLabel != null)
-				CaptionProperty.BindTo(this, TextLabel, "Text");
-
+	
 			ElementInstanceProperty.BindTo(this, this, "ElementInstance");
-
-			BackgroundColorProperty.BindTo(this, Theme, "BackgroundColor");
 		
-			AccessoryProperty.BindTo(this, Theme, "Accessory");
-			ImageIconProperty.BindTo(this, Theme, "CellImageIcon");
-			ImageIconUriProperty.BindTo(this, Theme, "CellImageIconUri");
-			BackgroundImageProperty.BindTo(this, Theme, "CellBackgroundImage");
-			BackgroundUriProperty.BindTo(this, Theme, "CellBackgroundUri");
-			BackgroundColorProperty.BindTo(this, Theme, "CellBackgroundColor");
+			AccessoryProperty.BindTo(this, this, "Accessory");
+			ImageIconProperty.BindTo(this, this, "ImageIcon");
+			ImageIconUriProperty.BindTo(this, this, "ImageIconUri");
+			BackgroundImageProperty.BindTo(this, this, "BackgroundImage");
+			BackgroundUriProperty.BindTo(this, this, "BackgroundUri");
+			BackgroundColorProperty.BindTo(this, this, "BackgroundColor");
 
-			TextLabelProperty.BindTo(this, Theme, "TextLabel");
-			TextFontProperty.BindTo(this, Theme, "TextFont");
-			TextColorProperty.BindTo(this, Theme, "TextColor");
-			TextAlignmentProperty.BindTo(this, Theme, "TextAlignment");
-			TextShadowOffsetProperty.BindTo(this, Theme, "TextShadowOffset");
-			TextShadowColorProperty.BindTo(this, Theme, "TextShadowColor");
+			if (TextLabel != null)
+			{
+				CaptionProperty.BindTo(this, this, "Caption");
+				TextLabelProperty.BindTo(this, this, "TextLabel");
+				TextFontProperty.BindTo(this, TextLabel, "Font");
+				TextColorProperty.BindTo(this, TextLabel, "TextColor");
+				TextAlignmentProperty.BindTo(this, TextLabel, "TextAlignment");
+				TextShadowOffsetProperty.BindTo(this, TextLabel, "ShadowOffset");
+				TextShadowColorProperty.BindTo(this, TextLabel, "ShadowColor");
+			}
 
-			DetailTextLabelProperty.BindTo(this, Theme, "DetailTextLabel");
-			DetailTextFontProperty.BindTo(this, Theme, "DetailTextFont");
-			DetailTextColorProperty.BindTo(this, Theme, "DetailTextColor");
-			DetailTextAlignmentProperty.BindTo(this, Theme, "DetailTextAlignment");
-			DetailTextShadowOffsetProperty.BindTo(this, Theme, "DetailTextShadowOffset");
-			DetailTextShadowColorProperty.BindTo(this, Theme, "DetailTextShadowColor");
+			if (DetailTextLabel != null)
+			{
+				DetailTextLabelProperty.BindTo(this, this, "DetailTextLabel");
+				DetailTextFontProperty.BindTo(this, DetailTextLabel, "Font");
+				DetailTextColorProperty.BindTo(this, DetailTextLabel, "TextColor");
+				DetailTextAlignmentProperty.BindTo(this, DetailTextLabel, "TextAlignment");
+				DetailTextShadowOffsetProperty.BindTo(this, DetailTextLabel, "ShadowOffset");
+				DetailTextShadowColorProperty.BindTo(this, DetailTextLabel, "ShadowColor");
+			}
 		}
 	
 		protected virtual void UpdateTargets()

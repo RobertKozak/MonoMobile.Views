@@ -44,12 +44,11 @@ namespace MonoMobile.MVVM
 		private static UIImage _DefaultImage = UIImage.FromBundle("Default.png");
 		
 		private UIWindow _Window;
-		private UINavigationController _Navigation;
 
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-			_Navigation = new UINavigationController();
+			MonoMobileApplication.NavigationController = new UINavigationController();
 
             _Window = new UIWindow(UIScreen.MainScreen.Bounds);
 			
@@ -59,17 +58,14 @@ namespace MonoMobile.MVVM
 				imageView.Image = _DefaultImage;
 				_Window.Add(imageView);
 				_Window.BackgroundColor = UIColor.Clear;
-
-//				_Window.BackgroundColor = UIColor.FromPatternImage(_DefaultImage);
 			}
 
-			_Navigation.View.Alpha = 0.0f;
+			MonoMobileApplication.NavigationController.View.Alpha = 0.0f;
 
-			_Window.AddSubview(_Navigation.View);
+			_Window.AddSubview(MonoMobileApplication.NavigationController.View);
 			_Window.MakeKeyAndVisible();
 			
 			MonoMobileApplication.Window = _Window;
-			MonoMobileApplication.NavigationController = _Navigation;
 			
 			MonoMobileApplication.Views = new List<UIView>();
 			foreach(var viewType in MonoMobileApplication.ViewTypes)
@@ -102,14 +98,14 @@ namespace MonoMobile.MVVM
 						MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
 					}
 
-					_Navigation.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
+					MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
 
-					MonoMobileApplication.CurrentDialogViewController = _Navigation.ViewControllers.First() as DialogViewController;
+					MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
 					MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
 
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(0.3f);
-					_Navigation.View.Alpha = 1.0f;
+					MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
 					UIView.CommitAnimations();
 				});
 			}

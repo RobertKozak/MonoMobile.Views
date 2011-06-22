@@ -279,7 +279,7 @@ namespace MonoMobile.MVVM
 				if (Theme.DetailTextHighlightColor != null)
 					DetailTextLabel.HighlightedTextColor = Theme.DetailTextHighlightColor;
 			}
-			
+						
 			if (Cell != null)
 			{
 				if (BackgroundColor != null)
@@ -432,21 +432,21 @@ namespace MonoMobile.MVVM
 			
 			TextLabel = Cell.TextLabel;
 			TextFont = TextLabel.Font;
-			TextColor = TextLabel.TextColor;
-			TextAlignment = TextLabel.TextAlignment;
-			TextShadowColor = TextLabel.ShadowColor;
-			TextShadowOffset = TextLabel.ShadowOffset;
+//			TextColor = TextLabel.TextColor;
+//			TextAlignment = TextLabel.TextAlignment;
+//			TextShadowColor = TextLabel.ShadowColor;
+//			TextShadowOffset = TextLabel.ShadowOffset;
 			
 			DetailTextLabel = Cell.DetailTextLabel;
-			if (DetailTextLabel != null)
-			{
-				DetailTextLabel.Text = string.Empty;
+//			if (DetailTextLabel != null)
+//			{
+//				DetailTextLabel.Text = string.Empty;
 				DetailTextFont = UIFont.SystemFontOfSize(17);
-				DetailTextColor = DetailTextLabel.TextColor;
-				DetailTextAlignment = DetailTextLabel.TextAlignment;
-				DetailTextShadowColor = DetailTextLabel.ShadowColor;
-				DetailTextShadowOffset = DetailTextLabel.ShadowOffset;
-			}
+//				DetailTextColor = DetailTextLabel.TextColor;
+//				DetailTextAlignment = DetailTextLabel.TextAlignment;
+//				DetailTextShadowColor = DetailTextLabel.ShadowColor;
+//				DetailTextShadowOffset = DetailTextLabel.ShadowOffset;
+//			}
 
 			InitializeTheme();
 			

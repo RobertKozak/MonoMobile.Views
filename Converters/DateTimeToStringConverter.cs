@@ -46,6 +46,9 @@ namespace MonoMobile.MVVM
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (value == null)
+				return null;
+
 			return DateTime.Parse((string)value);
 		}
 	}

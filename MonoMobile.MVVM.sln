@@ -89,5 +89,6 @@ Global
 		$7.MessageStyle = $8
 		$8.LineAlign = 0
 		$7.inheritsSet = Mono
+		version = 0.9
 	EndGlobalSection
 EndGlobal

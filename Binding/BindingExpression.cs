@@ -232,7 +232,10 @@ namespace MonoMobile.MVVM
 			if (member == null)
 				member = _ViewProperty;
 			
-			var convertedValue = ConvertbackValue(value, member);
+			object convertedValue = null;
+
+			if (member != null)
+				convertedValue = ConvertbackValue(value, member);
 
 			return convertedValue;
 		}
