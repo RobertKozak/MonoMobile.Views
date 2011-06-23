@@ -75,7 +75,7 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewElementCell NewCell()
 		{
-			Theme.CellStyle = EditMode == EditMode.ReadOnly ? UITableViewCellStyle.Value1 : UITableViewCellStyle.Default;
+			Theme.CellStyle = EditMode == EditMode.ReadOnly ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
 			
 			return base.NewCell();
 		}
@@ -112,7 +112,7 @@ namespace MonoMobile.MVVM
 					InputControl.Placeholder = Caption;
 				else
 					InputControl.Placeholder = Placeholder;
-
+				
 				InputControl.SecureTextEntry = IsPassword;
 				InputControl.Font = DetailTextFont;
 				InputControl.KeyboardType = KeyboardType;

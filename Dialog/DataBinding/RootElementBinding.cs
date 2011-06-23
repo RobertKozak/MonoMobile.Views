@@ -46,7 +46,7 @@ namespace MonoMobile.MVVM
 
 		public override void BindProperties()
 		{
-			base.BindProperties();
+			//base.BindProperties();
 			
 			if (DetailTextLabel != null)
 				DataContextProperty.BindTo(this, DetailTextLabel, "Text");

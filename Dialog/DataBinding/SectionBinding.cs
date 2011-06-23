@@ -42,7 +42,7 @@ namespace MonoMobile.MVVM
 
 		public override void BindProperties()
 		{
-			base.BindProperties();
+		//	base.BindProperties();
 
 			CaptionProperty.BindTo(this, this, "HeaderText");
 			

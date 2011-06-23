@@ -249,7 +249,7 @@ namespace MonoMobile.MVVM
 			PlaceholderAlignment = UITextAlignment.Right;
 			DetailTextAlignment = UITextAlignment.Right;
 			TextAlignment = UITextAlignment.Left;
-
+			
 			DisabledColor = UIColor.FromWhiteAlpha(0.8f, 0.4f); 
 		}
 		
@@ -422,7 +422,7 @@ namespace MonoMobile.MVVM
 				
 				if (TextLabel != null)
 				{
-					if (TextFont == null)
+					if (TextFont == null && cell.TextLabel.Font.PointSize > 0)
 						TextFont = cell.TextLabel.Font;
 	
 					if (TextColor == null)
@@ -439,7 +439,7 @@ namespace MonoMobile.MVVM
 
 				if (DetailTextLabel != null)
 				{
-					if (DetailTextFont == null)
+					if (DetailTextFont == null && cell.DetailTextLabel.Font.PointSize > 0)
 						DetailTextFont = cell.DetailTextLabel.Font;
 					
 					if (DetailTextColor == null)

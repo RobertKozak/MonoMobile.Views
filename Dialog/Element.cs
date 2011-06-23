@@ -431,22 +431,7 @@ namespace MonoMobile.MVVM
 				Cell.Element = this;
 			
 			TextLabel = Cell.TextLabel;
-			TextFont = TextLabel.Font;
-//			TextColor = TextLabel.TextColor;
-//			TextAlignment = TextLabel.TextAlignment;
-//			TextShadowColor = TextLabel.ShadowColor;
-//			TextShadowOffset = TextLabel.ShadowOffset;
-			
 			DetailTextLabel = Cell.DetailTextLabel;
-//			if (DetailTextLabel != null)
-//			{
-//				DetailTextLabel.Text = string.Empty;
-				DetailTextFont = UIFont.SystemFontOfSize(17);
-//				DetailTextColor = DetailTextLabel.TextColor;
-//				DetailTextAlignment = DetailTextLabel.TextAlignment;
-//				DetailTextShadowColor = DetailTextLabel.ShadowColor;
-//				DetailTextShadowOffset = DetailTextLabel.ShadowOffset;
-//			}
 
 			InitializeTheme();
 			

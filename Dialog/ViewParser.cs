@@ -516,7 +516,7 @@ namespace MonoMobile.MVVM
 				var currentValue = member.GetValue(view);
 				var enumValues = Enum.GetValues(memberType);
 
-				section = CreateEnumSection(enumValues, typeof(RadioElement), currentValue, pop);
+				section = CreateEnumSection(enumValues, typeof(RadioElement), currentValue, pop, false);
 			}
 			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
 			{
@@ -534,7 +534,7 @@ namespace MonoMobile.MVVM
 			return section;
 		}
 			
-		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection)
+		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection, bool readOnly)
 		{
 			var csection = new Section() { Opaque = false };
 
@@ -552,12 +552,15 @@ namespace MonoMobile.MVVM
 					radioElement.PopOnSelect = popOnSelection;
 					index++;
 				}
-
-				if (currentValue != null && currentValue.Equals(element.DataContext))
+				
+				if (!readOnly)
 				{
-					element.DataContext = true;
+					if (currentValue != null && currentValue.Equals(element.DataContext))
+					{
+						element.DataContext = true;
+					}
+					element.DataContext = false;
 				}
-				element.DataContext = false;
 			}
 
 			csection.ViewBinding.DataContextCode = DataContextCode.Enum;
@@ -701,7 +704,9 @@ namespace MonoMobile.MVVM
 
 			var isUIView = typeof(UIView).IsAssignableFrom(genericType);
  
-			var section = CreateEnumSection(items, elementType, null, true);
+			var readOnly = member.GetCustomAttribute<ReadOnlyAttribute>() != null;
+
+			var section = CreateEnumSection(items, elementType, null, true, readOnly);
 
 			var root = new RootElement(caption) { section };
 			root.Opaque = false;

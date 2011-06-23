@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	using System.Reflection;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
 	public class ActionSheetView : UIActionSheet
 	{
 		protected Dictionary<int, ICommand> CommandMap = new Dictionary<int, ICommand>();
@@ -47,14 +47,14 @@ namespace MonoMobile.MVVM
 			Prepare();
 			Dismissed += HandleDismissed;
 		}
-
+		
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 			Dismissed -= HandleDismissed;
 		}
 
-		private void HandleDismissed (object sender, UIButtonEventArgs e)
+		private void HandleDismissed(object sender, UIButtonEventArgs e)
 		{
 			CommandMap[e.ButtonIndex].Execute(e.ButtonIndex);
 		}

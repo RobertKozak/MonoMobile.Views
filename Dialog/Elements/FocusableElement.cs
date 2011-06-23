@@ -51,7 +51,7 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewElementCell NewCell()
 		{
-			return new UITableViewElementCell(UITableViewCellStyle.Default, Id, this);
+			return new UITableViewElementCell(Theme.CellStyle, Id, this);
 		}
 
 		public override void InitializeContent()

@@ -152,8 +152,6 @@ namespace MonoMobile.MVVM
 
 					if (item is UIView)
 						element.ViewBinding.View = item as UIView;
-					else
-						element.DataContext = item;
 	
 					if (element.ViewBinding.ViewType == null)
 						element.ViewBinding.ViewType = item.GetType();
