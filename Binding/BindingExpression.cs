@@ -140,20 +140,23 @@ namespace MonoMobile.MVVM
 				BindingOperations.SetNotificationCollectionHandler(this, collection);
 				SetValue(TargetProperty, Binding.Target, sourceValue);
 			}
-
-			bool canWrite = true;
-			if (TargetProperty is PropertyInfo) canWrite = ((PropertyInfo)TargetProperty).CanWrite;
-			if (TargetProperty != null && canWrite && Binding.Mode == BindingMode.TwoWay)
+			else
 			{
-				if (sourceValue == null)
-					sourceValue = Binding.TargetNullValue;
 
-				object convertedSourceValue = ConvertValue(sourceValue);
-
-				if (Element != null && (Element.Cell != null && Element.Cell.Element == Element) || Element.Cell == null)
+				bool canWrite = true;
+				if (TargetProperty is PropertyInfo) canWrite = ((PropertyInfo)TargetProperty).CanWrite;
+				if (TargetProperty != null && canWrite && Binding.Mode == BindingMode.TwoWay)
 				{
-					convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
-					SetValue(TargetProperty, Binding.Target, convertedSourceValue);
+					if (sourceValue == null)
+						sourceValue = Binding.TargetNullValue;
+	
+					object convertedSourceValue = ConvertValue(sourceValue);
+	
+					if (Element != null && (Element.Cell != null && Element.Cell.Element == Element) || Element.Cell == null)
+					{
+						convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
+						SetValue(TargetProperty, Binding.Target, convertedSourceValue);
+					}
 				}
 			}
 		}
@@ -232,7 +235,7 @@ namespace MonoMobile.MVVM
 			if (member == null)
 				member = _ViewProperty;
 			
-			object convertedValue = null;
+			object convertedValue = value;
 
 			if (member != null)
 				convertedValue = ConvertbackValue(value, member);

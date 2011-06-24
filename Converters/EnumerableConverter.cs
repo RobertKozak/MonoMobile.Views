@@ -56,7 +56,7 @@ namespace MonoMobile.MVVM
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return _OldValue;
+			return value;
 		}
 	}
 }
