@@ -322,8 +322,8 @@
     <Compile Include="Dialog\DialogViewController\DialogViewSizingSource.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
-    <Compile Include="Dialog\Elements\GridElement.cs" />
     <Compile Include="View\ObservableView.cs" />
+    <Compile Include="Dialog\DataBinding\ButtonElementBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

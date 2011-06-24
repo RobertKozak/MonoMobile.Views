@@ -166,120 +166,55 @@ namespace MonoMobile.MVVM
 			set { Theme.CellBackgroundColor = value; ThemeChanged(); }
 		}
 		
-		public UILabel DetailTextLabel
-		{
-			get { return Theme.DetailTextLabel; }
-			set { Theme.DetailTextLabel = value; ThemeChanged(); }
-		}
+		public UILabel TextLabel { get; set; }
+		public UILabel DetailTextLabel { get; set; }
 
-		public UIFont DetailTextFont
-		{
-			get { return Theme.DetailTextFont; }
-			set { Theme.DetailTextFont = value; ThemeChanged(); }
-		}
-
-		public UIColor DetailTextColor
-		{
-			get { return Theme.DetailTextColor; }
-			set { Theme.DetailTextColor = value; ThemeChanged(); }
-		}
-		
-		public UITextAlignment DetailTextAlignment
-		{
-			get { return Theme.DetailTextAlignment; }
-			set { Theme.DetailTextAlignment = value; ThemeChanged(); }
-		}
-		
-		public SizeF DetailTextShadowOffset
-		{
-			get { return Theme.DetailTextShadowOffset; }
-			set { Theme.DetailTextShadowOffset = value; ThemeChanged(); }
-		}
-
-		public UIColor DetailTextShadowColor
-		{
-			get { return Theme.DetailTextShadowColor; }
-			set { Theme.DetailTextShadowColor = value; ThemeChanged(); }
-		}
-
-		public UILabel TextLabel
-		{
-			get { return Theme.TextLabel; }
-			set { Theme.TextLabel = value; ThemeChanged(); }
-		}
-
-		public UIFont TextFont
-		{
-			get { return Theme.TextFont; }
-			set { Theme.TextFont = value; ThemeChanged(); }
-		}
-
-		public UIColor TextColor
-		{
-			get { return Theme.TextColor; }
-			set { Theme.TextColor = value; ThemeChanged(); }
-		}
-			
-		public UITextAlignment TextAlignment
-		{
-			get { return Theme.TextAlignment; }
-			set { Theme.TextAlignment = value; ThemeChanged(); }
-		}
-
-		public SizeF TextShadowOffset
-		{
-			get { return Theme.TextShadowOffset; }
-			set { Theme.TextShadowOffset = value; ThemeChanged(); }
-		}
-
-		public UIColor TextShadowColor
-		{
-			get { return Theme.TextShadowColor; }
-			set { Theme.TextShadowColor = value; ThemeChanged();}
-		}
-		
 		public virtual void InitializeTheme()
 		{
+			TextLabel = Cell.TextLabel;
+			DetailTextLabel = Cell.DetailTextLabel;
+
+			ThemeChanged();
 		}
 		
 		public virtual void ThemeChanged()
 		{
 			if (TextLabel != null)
 			{
-				if (TextFont != null)
-					TextLabel.Font = TextFont;
+				if (Theme.TextFont != null)
+					TextLabel.Font = Theme.TextFont;
 				
-				TextLabel.TextAlignment = TextAlignment;
-				TextLabel.TextColor = TextColor != null ? TextColor : TextLabel.TextColor;
+				TextLabel.TextAlignment = Theme.TextAlignment;
+				TextLabel.TextColor = Theme.TextColor != null ? Theme.TextColor : TextLabel.TextColor;
 				
-				if (TextShadowColor != null)
-					TextLabel.ShadowColor = TextShadowColor;
-
-				if (TextShadowOffset != SizeF.Empty)
-					TextLabel.ShadowOffset = TextShadowOffset;
-
+				if (Theme.TextShadowColor != null)
+					TextLabel.ShadowColor = Theme.TextShadowColor;
+ 
+				if (Theme.TextShadowOffset != SizeF.Empty)
+					TextLabel.ShadowOffset = Theme.TextShadowOffset;
+ 
 				if (Theme.TextHighlightColor != null)
 					TextLabel.HighlightedTextColor = Theme.TextHighlightColor;
-			}
+			}			
 			
 			if (DetailTextLabel != null)
 			{
-				if (DetailTextFont != null)
-					DetailTextLabel.Font = DetailTextFont;
+				if (Theme.DetailTextFont != null)
+					DetailTextLabel.Font = Theme.DetailTextFont;
 				
-				DetailTextLabel.TextAlignment = DetailTextAlignment;
-				DetailTextLabel.TextColor = DetailTextColor != null ? DetailTextColor : DetailTextLabel.TextColor;
+				DetailTextLabel.TextAlignment = Theme.DetailTextAlignment;
+				DetailTextLabel.TextColor = Theme.DetailTextColor != null ? Theme.DetailTextColor : DetailTextLabel.TextColor;
 				
-				if (DetailTextShadowColor != null)
-					DetailTextLabel.ShadowColor = DetailTextShadowColor;
-
-				if (DetailTextShadowOffset != SizeF.Empty)
-					DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
-
+				if (Theme.DetailTextShadowColor != null)
+					DetailTextLabel.ShadowColor = Theme.DetailTextShadowColor;
+				
+				if (Theme.DetailTextShadowOffset != SizeF.Empty)
+					DetailTextLabel.ShadowOffset = Theme.DetailTextShadowOffset;
+				
 				if (Theme.DetailTextHighlightColor != null)
 					DetailTextLabel.HighlightedTextColor = Theme.DetailTextHighlightColor;
 			}
-						
+
 			if (Cell != null)
 			{
 				if (BackgroundColor != null)
@@ -321,7 +256,7 @@ namespace MonoMobile.MVVM
 				if (Accessory.HasValue)
 					Cell.Accessory = Accessory.Value;
 				
-				Theme.ClearBackground();
+				//Theme.ClearBackground();
 			}
 			
 			SetNeedsDisplay();
@@ -336,6 +271,7 @@ namespace MonoMobile.MVVM
 		/// for the root IRoot.
 		/// </remarks>
 		public IElement Parent { get; set; }
+
 		public IContainer Container { get { return Parent as IContainer; } }
 		public ISection Section { get { return Parent as ISection; } }
 		public IRoot Root
@@ -430,14 +366,9 @@ namespace MonoMobile.MVVM
 			else
 				Cell.Element = this;
 			
-			TextLabel = Cell.TextLabel;
-			DetailTextLabel = Cell.DetailTextLabel;
-
 			InitializeTheme();
-			
+
 			InitializeCell(tableView);
-			
-			Theme.Cell = Cell;
 			
 			BindProperties();
 			UpdateTargets();
@@ -464,14 +395,14 @@ namespace MonoMobile.MVVM
 
 			if (ShowCaption)
 			{
-				TextLabel.Text = Caption;
+				Cell.TextLabel.Text = Caption;
 			}
 
 			var selectable = this as ISelectable;
 			Cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;			
-
-			ThemeChanged();
 			
+			Theme.Cell = Cell;
+
 			CreateContentView();
 		}
 

@@ -46,9 +46,6 @@ namespace MonoMobile.MVVM
 		private Uri _CellBackgroundUri;
 		private UIColor _CellBackgroundColor;
 		
-		private UIColor _TextColor;
-		private UIColor _DetailTextColor;
-		
 		private UIImage _BackgroundImage;
 		private Uri _BackgroundUri;
 		private UIColor _BackgroundColor;
@@ -133,7 +130,7 @@ namespace MonoMobile.MVVM
 				_CellBackgroundColor = value;
 				_CellBackgroundUri = null;
 				
-				ClearBackground();
+			//	ClearBackground();
 				
 				if (_CellBackgroundImage != null)
 				{
@@ -142,38 +139,21 @@ namespace MonoMobile.MVVM
 				}
 			}
 		}
-		
-		public UILabel TextLabel { get; set; }
+
 		public UIFont TextFont { get; set; }
+		public UIColor TextColor { get; set; } 
 		public UITextAlignment TextAlignment { get; set; }
 		public SizeF TextShadowOffset { get; set; }
 		public UIColor TextShadowColor { get; set; }
 		public UIColor TextHighlightColor { get; set; }
 
-		public UILabel DetailTextLabel { get; set; }
 		public UIFont DetailTextFont { get; set; }
+		public UIColor DetailTextColor { get; set; }
 		public UITextAlignment DetailTextAlignment { get; set; }
 		public SizeF DetailTextShadowOffset { get; set; }
 		public UIColor DetailTextShadowColor { get; set; }
 		public UIColor DetailTextHighlightColor { get; set; }
 
-		public UIColor TextColor
-		{
-			get { return _TextColor; }
-			set {
-				_TextColor = value;
-				ClearBackground();
-			}
-		}
-		
-		public UIColor DetailTextColor
-		{
-			get { return _DetailTextColor; }
-			set {
-				_DetailTextColor = value;
-				ClearBackground();
-			}
-		}
 		public UIFont HeaderTextFont { get; set; }
 		public UITextAlignment HeaderTextAlignment { get; set; }
 		public UIColor HeaderTextColor { get; set; }
@@ -247,9 +227,6 @@ namespace MonoMobile.MVVM
 			Name = GetType().Name.Replace("Theme", string.Empty);
 
 			PlaceholderAlignment = UITextAlignment.Right;
-			DetailTextAlignment = UITextAlignment.Right;
-			TextAlignment = UITextAlignment.Left;
-			
 			DisabledColor = UIColor.FromWhiteAlpha(0.8f, 0.4f); 
 		}
 		
@@ -291,9 +268,7 @@ namespace MonoMobile.MVVM
 				
 				if (theme.CellBackgroundImage != null)
 					CellBackgroundImage = theme.CellBackgroundImage;
-				
-				if (theme.TextLabel != null)
-					TextLabel = theme.TextLabel;
+
 				
 				if (theme.TextFont != null)
 					TextFont = theme.TextFont;
@@ -306,16 +281,13 @@ namespace MonoMobile.MVVM
 				
 				if (theme.TextShadowColor != null)
 					TextShadowColor = theme.TextShadowColor;
-			
+				
 				if (theme.TextHighlightColor != null)
 					TextHighlightColor = theme.TextHighlightColor;
-
+				
 				TextAlignment = theme.TextAlignment;
-		
 
-				if (theme.DetailTextLabel != null)
-					DetailTextLabel = theme.DetailTextLabel;
-
+				
 				if (theme.DetailTextFont != null)
 					DetailTextFont = theme.DetailTextFont;
 				
@@ -323,17 +295,17 @@ namespace MonoMobile.MVVM
 					DetailTextColor = theme.DetailTextColor;
 				
 				if (theme.DetailTextShadowOffset != SizeF.Empty)
-					TextShadowOffset = theme.DetailTextShadowOffset;
+					DetailTextShadowOffset = theme.DetailTextShadowOffset;
 				
 				if (theme.DetailTextShadowColor != null)
-					TextShadowColor = theme.DetailTextShadowColor;
-
+					DetailTextShadowColor = theme.DetailTextShadowColor;
+				
 				if (theme.DetailTextHighlightColor != null)
 					DetailTextHighlightColor = theme.DetailTextHighlightColor;
-
+				
 				DetailTextAlignment = theme.DetailTextAlignment;
-	
-		
+
+				
 				if (theme.PlaceholderColor != null)
 					PlaceholderColor = theme.PlaceholderColor;
 				
@@ -420,52 +392,48 @@ namespace MonoMobile.MVVM
 				if (Cell.ImageView != null && CellImageIcon == null)
 					CellImageIcon = Cell.ImageView.Image;
 				
-				if (TextLabel != null)
+				if (cell.TextLabel != null)
 				{
-					if (TextFont == null && cell.TextLabel.Font.PointSize > 0)
+					if (cell.TextLabel.Font.PointSize > 0)
 						TextFont = cell.TextLabel.Font;
 	
-					if (TextColor == null)
-						TextColor = cell.TextLabel.TextColor;
-				
-					if (TextShadowOffset == SizeF.Empty)
-						TextShadowOffset = cell.TextLabel.ShadowOffset;
+					TextAlignment = cell.TextLabel.TextAlignment;
 	
-					if (TextShadowColor == null)
+					TextColor = cell.TextLabel.TextColor;
+
+					TextShadowOffset = cell.TextLabel.ShadowOffset;
+	
+					if (cell.TextLabel.ShadowColor != null)
 						TextShadowColor = cell.TextLabel.ShadowColor;
 				}
-				else
-					TextLabel = Cell.TextLabel;
-
-				if (DetailTextLabel != null)
+				
+				if (cell.DetailTextLabel != null)
 				{
-					if (DetailTextFont == null && cell.DetailTextLabel.Font.PointSize > 0)
+					if (cell.DetailTextLabel.Font.PointSize > 0)
 						DetailTextFont = cell.DetailTextLabel.Font;
 					
-					if (DetailTextColor == null)
-						DetailTextColor = cell.DetailTextLabel.TextColor;
+					DetailTextAlignment = cell.DetailTextLabel.TextAlignment;
+	
+					DetailTextColor = cell.DetailTextLabel.TextColor;
+
+					DetailTextShadowOffset = cell.DetailTextLabel.ShadowOffset;
 					
-					if (DetailTextShadowOffset == SizeF.Empty)
-						DetailTextShadowOffset = cell.DetailTextLabel.ShadowOffset;
-					
-					if (DetailTextShadowColor == null)
+					if (cell.DetailTextLabel.ShadowColor != null)
 						DetailTextShadowColor = cell.DetailTextLabel.ShadowColor;
 				}
-				else
-					DetailTextLabel = Cell.DetailTextLabel;
 				
 				Cell.SetNeedsDisplay();
 			}
 		}
 
-		public void ClearBackground()
-		{
-			if (TextLabel != null)
-				TextLabel.BackgroundColor = UIColor.Clear;
-			
-			if (DetailTextLabel != null)
-				DetailTextLabel.BackgroundColor = UIColor.Clear;
-		}
+//		public void ClearBackground()
+//		{
+//			if (TextLabel != null)
+//				TextLabel.BackgroundColor = UIColor.Clear;
+//			
+//			if (DetailTextLabel != null)
+//				DetailTextLabel.BackgroundColor = UIColor.Clear;
+//		}
 
 		public override string ToString()
 		{

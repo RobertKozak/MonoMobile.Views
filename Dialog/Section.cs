@@ -153,7 +153,7 @@ namespace MonoMobile.MVVM
 					footerLabel.Text = FooterText.Replace("\n","");
 					
 					if (Theme.FooterTextFont != null)
-						footerLabel.Font = DetailTextFont;
+						footerLabel.Font = Theme.DetailTextFont;
 					if (Theme.FooterTextColor != null)
 						footerLabel.TextColor = Theme.FooterTextColor;
 					if (Theme.FooterTextShadowColor != null)

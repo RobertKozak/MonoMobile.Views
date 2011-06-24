@@ -82,12 +82,14 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeCell(UITableView tableView)
 		{
+			Cell.DetailTextLabel.TextAlignment = UITextAlignment.Right;
+			
 			ShowCaption = EditMode != EditMode.NoCaption;
 			if (!ShowCaption)
 			{
-				DetailTextAlignment = UITextAlignment.Left;
+				Cell.DetailTextLabel.TextAlignment = UITextAlignment.Left;
 			}
-			
+
 			base.InitializeCell(tableView);
 			
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
@@ -114,13 +116,13 @@ namespace MonoMobile.MVVM
 					InputControl.Placeholder = Placeholder;
 				
 				InputControl.SecureTextEntry = IsPassword;
-				InputControl.Font = DetailTextFont;
+				InputControl.Font = Theme.DetailTextFont;
 				InputControl.KeyboardType = KeyboardType;
-				InputControl.TextAlignment = DetailTextAlignment;
+				InputControl.TextAlignment = Theme.DetailTextAlignment;
 				InputControl.ReturnKeyType = ReturnKeyType;
 
-				if (DetailTextColor != null)
-					InputControl.TextColor = DetailTextColor;
+				if (Theme.DetailTextColor != null)
+					InputControl.TextColor = Theme.DetailTextColor;
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
 				InputControl.InputAccessoryView = _KeyboardToolbar;

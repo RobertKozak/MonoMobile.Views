@@ -39,24 +39,57 @@ namespace MonoMobile.MVVM
 	
 	public class ActionSheetView : UIActionSheet
 	{
+		private UIActionSheet _ActualActionSheet;
+
 		protected Dictionary<int, ICommand> CommandMap = new Dictionary<int, ICommand>();
 	
 		//Descendents cannot have a parameterless constructor. // Bug in MonoTouch? iOS?
 		public ActionSheetView(string title) : base(title)
 		{
-			Prepare();
-			Dismissed += HandleDismissed;
 		}
 		
+		public override void ShowFrom(RectangleF rect, UIView inView, bool animated)
+		{
+			Prepare();
+			_ActualActionSheet.ShowFrom(rect, inView, animated);
+		}
+		
+		public override void ShowFrom(UIBarButtonItem item, bool animated)
+		{
+			Prepare();
+			_ActualActionSheet.ShowFrom(item, animated);
+		}
+
+		public override void ShowFromTabBar(UITabBar view)
+		{
+			Prepare();
+			_ActualActionSheet.ShowFromTabBar(view);
+		}
+
+		public override void ShowFromToolbar(UIToolbar view)
+		{
+			Prepare();
+			_ActualActionSheet.ShowFromToolbar(view);
+		}
+
+		public override void ShowInView(UIView view)
+		{
+			Prepare();
+			_ActualActionSheet.ShowInView(view);
+		}
+
 		protected override void Dispose(bool disposing)
 		{
+			_ActualActionSheet.Dismissed -= HandleDismissed;
+			_ActualActionSheet.Dispose();
+
 			base.Dispose(disposing);
-			Dismissed -= HandleDismissed;
 		}
 
 		private void HandleDismissed(object sender, UIButtonEventArgs e)
 		{
 			CommandMap[e.ButtonIndex].Execute(e.ButtonIndex);
+			DismissWithClickedButtonIndex(e.ButtonIndex, false);
 		}
 
 		public virtual void Cancel()
@@ -69,26 +102,39 @@ namespace MonoMobile.MVVM
 			
 		protected void Prepare()
 		{
+			CommandMap.Clear();
+
+			_ActualActionSheet = new UIActionSheet(Title);
+			_ActualActionSheet.Dismissed += HandleDismissed;
+
 			var methods = GetType().GetMethods().Where((methodInfo) => methodInfo.GetCustomAttribute<ButtonAttribute>(true) != null).ToList();
 			
+			ICommand command = null;
 			var destroyMethod = methods.Where((methodInfo) => methodInfo.Name == "Destroy").SingleOrDefault();
 			if (destroyMethod != null)
 			{
-				DestructiveButtonIndex = AddButton(GetTitle(destroyMethod));
-				CommandMap.Add(DestructiveButtonIndex, new ReflectiveCommand(this, destroyMethod, null));
+				command = ViewParser.GetCommandForMember(this, destroyMethod);
+				var destroyIndex = AddButtonToSheet(GetTitle(destroyMethod), command);
+				if (destroyIndex > -1)
+					_ActualActionSheet.DestructiveButtonIndex = destroyIndex;
 			}
 
 			foreach(var method in methods)
 			{							
 				if (method.Name != "Cancel" && method.Name != "Destroy")
-					CommandMap.Add(AddButton(GetTitle(method)), new ReflectiveCommand(this, method, null));
+				{
+					command = ViewParser.GetCommandForMember(this, method);
+					AddButtonToSheet(GetTitle(method), command);
+				}
 			}
 
 			var cancelMethod = methods.Where((methodInfo) => methodInfo.Name == "Cancel").SingleOrDefault();
 			if (cancelMethod != null)
 			{
-				CancelButtonIndex = AddButton(GetTitle(cancelMethod));
-				CommandMap.Add(CancelButtonIndex, new ReflectiveCommand(this, cancelMethod, null));
+				command = ViewParser.GetCommandForMember(this, cancelMethod);
+				var cancelIndex = AddButtonToSheet(GetTitle(cancelMethod), command);
+				if (cancelIndex > -1)
+					_ActualActionSheet.CancelButtonIndex = cancelIndex;
 			}
 		}
 
@@ -98,6 +144,18 @@ namespace MonoMobile.MVVM
 			var title = captionAttribute != null ? captionAttribute.Caption : method.Name.Capitalize();
 
 			return title;
+		}
+
+		private int AddButtonToSheet(string title, ICommand command)
+		{
+			if (command.CanExecute(null))
+			{
+				var index = _ActualActionSheet.AddButton(title);
+				CommandMap.Add(index, command); 
+				return index;
+			}
+
+			return -1;
 		}
 	}
 }

@@ -57,8 +57,8 @@ namespace MonoMobile.MVVM
 			LoadingCaption = loadingCaption;
 			Command = command;
 			
-			TextFont = UIFont.BoldSystemFontOfSize(15f);
-			TextAlignment = UITextAlignment.Center;
+			Theme.TextFont = UIFont.BoldSystemFontOfSize(15f);
+			Theme.TextAlignment = UITextAlignment.Center;
 
 			_ActivityIndicator = new UIActivityIndicatorView()
 			{
@@ -82,7 +82,7 @@ namespace MonoMobile.MVVM
 				// Doesn't work due to a bug in MonoTouch that should be fixed in 4.0 
 				//float hue, saturation, brightness, alpha;
 				//TextColor.GetHSBA(out hue, out saturation, out brightness, out alpha);
-				var brightness = 1 - TextColor.CGColor.Components.FirstOrDefault();
+				var brightness = 1 - Theme.TextColor.CGColor.Components.FirstOrDefault();
 
 
 				if (brightness > 0.5f)
@@ -110,7 +110,7 @@ namespace MonoMobile.MVVM
 		{
 			base.InitializeCell(tableView);
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-			TextAlignment = UITextAlignment.Center;
+			Theme.TextAlignment = UITextAlignment.Center;
 
 			Cell.ContentView.AddSubview(_ActivityIndicator);
 		}
@@ -148,9 +148,9 @@ namespace MonoMobile.MVVM
 			SizeF size = new SizeF(280, 37);
 			float height = size.Height;
 			
-			if (TextFont != null)
+			if (Theme.TextFont != null)
 			{
-				var fontHeight = tableView.StringSize(NormalCaption, TextFont, size, UILineBreakMode.TailTruncation).Height;
+				var fontHeight = tableView.StringSize(NormalCaption, Theme.TextFont, size, UILineBreakMode.TailTruncation).Height;
 				if (fontHeight == 0) fontHeight = 17;
 				height = fontHeight + (2 * pad);
 			}

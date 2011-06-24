@@ -103,6 +103,7 @@ namespace MonoMobile.MVVM
 			Index = -1;
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
+			BindProperties();
 		}
 
 		/// <summary>
@@ -363,9 +364,11 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			DetailTextAlignment = UITextAlignment.Right;
+			if (DetailTextLabel != null)
+				DetailTextLabel.TextAlignment = UITextAlignment.Right;
+			
 			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-			TextAlignment = UITextAlignment.Left;
+			TextLabel.TextAlignment = UITextAlignment.Left;
 
 			base.InitializeCell(tableView);
 
