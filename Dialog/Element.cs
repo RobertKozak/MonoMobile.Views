@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public abstract partial class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
+	public abstract class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
 	{		
 		protected object _DataContext;
 		public object DataContext 
@@ -52,6 +52,8 @@ namespace MonoMobile.MVVM
 			}
 		}
 
+		public IDataTemplate DataTemplate { get; set; }
+
 		private bool _Visible;
 		private int _OldRow;
 		private DisabledCellView _DisabledCellView; 
@@ -61,7 +63,7 @@ namespace MonoMobile.MVVM
 		public NSString Id { get; set; }
 		public int Order { get; set; }
 		public int Index { get; set; }
-		
+
 		protected virtual void SetDataContext(object value)
 		{
 			if (_DataContext != value)
@@ -105,6 +107,20 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
+		private float _RowHeight;
+		public float RowHeight
+		{
+			get { return _RowHeight == 0 ? 44 : _RowHeight; }
+			set 
+			{ 
+				if (_RowHeight != value) 
+				{ 
+					_RowHeight = value;
+					TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
+				} 
+			}
+		}
+
 		public UITableViewElementCell Cell { get; set; }
 		public UITableViewCellEditingStyle EditingStyle { get; set; }
 
@@ -167,12 +183,20 @@ namespace MonoMobile.MVVM
 		}
 		
 		public UILabel TextLabel { get; set; }
-		public UILabel DetailTextLabel { get; set; }
+		public UILabel DetailTextLabel { get; set; } 
 
 		public virtual void InitializeTheme()
 		{
 			TextLabel = Cell.TextLabel;
 			DetailTextLabel = Cell.DetailTextLabel;
+			
+			if (DetailTextLabel != null)
+			{
+				DetailTextLabel.BackgroundColor = UIColor.Clear;
+				DetailTextLabel.Lines = 0;
+			}
+
+			TextLabel.BackgroundColor = UIColor.Clear;
 
 			ThemeChanged();
 		}
@@ -254,9 +278,7 @@ namespace MonoMobile.MVVM
 					Cell.ImageView.Image = ImageIcon;
 				
 				if (Accessory.HasValue)
-					Cell.Accessory = Accessory.Value;
-				
-				//Theme.ClearBackground();
+					Cell.Accessory = Accessory.Value;	
 			}
 			
 			SetNeedsDisplay();
@@ -297,7 +319,12 @@ namespace MonoMobile.MVVM
 			set { _ViewBinding = value; }
 		}
 		
-		public UITableView TableView { get; set; }
+		private UITableView _TableView;
+		public UITableView TableView 
+		{ 
+			get { return _TableView; } 
+			set { _TableView = value; }
+		}
 
 		public Element(string caption) : base()
 		{
@@ -309,6 +336,8 @@ namespace MonoMobile.MVVM
 			Visible = true;
 			Enabled = true;
 			EditingStyle = UITableViewCellEditingStyle.None;
+			
+			DataTemplate = new ElementDataTemplate(this);
 		}
 		
 		public Element(string caption, Binding binding): this(caption)
@@ -336,6 +365,10 @@ namespace MonoMobile.MVVM
 		
 		protected override void Dispose(bool disposing)
 		{
+			var disposable = DataTemplate as IDisposable;
+			if (disposable != null)
+				disposable.Dispose();
+
 			base.Dispose(disposing);
 			ViewBinding = null;
 		}
@@ -370,10 +403,13 @@ namespace MonoMobile.MVVM
 
 			InitializeCell(tableView);
 			
-			BindProperties();
-			UpdateTargets();
-			UpdateSources();
-			
+			if (DataTemplate != null)
+			{
+				DataTemplate.BindProperties();
+				DataTemplate.UpdateTargets();
+				DataTemplate.UpdateSources();
+			}
+
 			if (!Enabled) 
 				SetDisabled(Cell);
 			
@@ -518,8 +554,8 @@ namespace MonoMobile.MVVM
 		{
 			if (Theme.CellHeight != 0)
 				return Theme.CellHeight;
-
-			return tableView.RowHeight;
+			
+			return RowHeight;
 		}	
 	}
 }

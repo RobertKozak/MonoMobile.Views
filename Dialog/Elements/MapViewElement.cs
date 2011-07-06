@@ -35,11 +35,12 @@ namespace MonoMobile.MVVM
 	using MonoTouch.MapKit;
 	using MonoTouch.UIKit;
 
-	public partial class MapElement : Element, ISelectable
+	public class MapElement : Element, ISelectable
 	{
 		public MapElement(string caption, CLLocationCoordinate2D value) : base(caption)
 		{
 			DataContext = value;
+			DataTemplate = new MapElementDataTemplate(this);
 		}
 
 		public override void InitializeCell(UITableView tableView)

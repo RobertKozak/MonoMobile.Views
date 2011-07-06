@@ -1,3 +1,4 @@
+using System.Reflection;
 //
 // BindingContext.cs
 //
@@ -119,48 +120,55 @@ namespace MonoMobile.MVVM
 			{
 				if (section == null)
 					section = new Section();
-
-				section.Clear();
+				
+				//section.Clear();	
+				section.Parent = root;
 
 				foreach (var item in items)
 				{
-					var caption = item.ToString();
-					if (string.IsNullOrEmpty(caption))
-					{
-						caption = root.ViewBinding.ViewType.Name.Capitalize();
-					}
-					
-					if (elementType == null)
-						elementType = typeof(RadioElement);
-
-					var element = Activator.CreateInstance(elementType) as IElement;
-					element.Caption = caption;
-					element.DataContext = item;
-					element.ViewBinding.DataContextCode = DataContextCode.Object;
-
-					if (root != null)
-					{
-						element.ViewBinding.ViewType = root.ViewBinding.ViewType;
-						element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
-						element.EditingStyle = root.EditingStyle;
-						element.Theme.MergeTheme(root.Theme);
-					}
-
-					var uiView = element as UIView;
-					if (uiView != null)
-						uiView.Opaque = false;
-
-					if (item is UIView)
-						element.ViewBinding.View = item as UIView;
-	
-					if (element.ViewBinding.ViewType == null)
-						element.ViewBinding.ViewType = item.GetType();
-	
+					var element = CreateElementFromObject(item, root, elementType);
 					section.Add(element);
 				}
 			}
 
 			return section;
+		}
+		
+		public static IElement CreateElementFromObject(object item, IRoot root, Type elementType)
+		{
+			var caption = item.ToString();
+			if (string.IsNullOrEmpty(caption))
+			{
+				caption = root.ViewBinding.ViewType.Name.Capitalize();
+			}
+			
+			if (elementType == null)
+				elementType = typeof(RadioElement);
+
+			var element = Activator.CreateInstance(elementType) as IElement;
+			element.Caption = caption;
+			element.DataContext = item;
+			element.ViewBinding.DataContextCode = DataContextCode.Object;
+
+			if (root != null)
+			{
+				element.ViewBinding.ViewType = root.ViewBinding.ViewType;
+				element.ViewBinding.MemberInfo = root.ViewBinding.MemberInfo;
+				element.EditingStyle = root.EditingStyle;
+				element.Theme.MergeTheme(root.Theme);
+			}
+
+			var uiView = element as UIView;
+			if (uiView != null)
+				uiView.Opaque = false;
+
+			if (item is UIView)
+				element.ViewBinding.View = item as UIView;
+
+			if (element.ViewBinding.ViewType == null)
+				element.ViewBinding.ViewType = item.GetType();
+
+			return element;
 		}
 
 		public static IRoot CreateViewEnumerableRoot(IRoot root)
@@ -183,6 +191,60 @@ namespace MonoMobile.MVVM
 
 			return newRoot;
 		}
+
+//		public static IRoot CreateRootElementFromObject(Type elementType, object obj)
+//		{
+//			elementType = elementType ?? typeof(RootElement);
+//
+//			object context = obj;
+//			MemberInfo dataContextMember = GetMemberFromDataContext(member, ref context);
+//			var items = dataContextMember.GetValue(context);
+//
+//			var rootElement = Activator.CreateInstance(elementType) as IElement;
+//			
+//			((Element)rootElement).Opaque = false;
+//			rootElement.Caption = caption;
+//			rootElement.Theme = Theme.CreateTheme(Root.Theme); 
+//			rootElement.ViewBinding.MemberInfo = dataContextMember;
+//			rootElement.ViewBinding.ElementType = elementType;
+//			rootElement.ViewBinding.ViewType = viewType;
+//			rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
+//			rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
+//
+//			if (cellEditingStyle != null)
+//				rootElement.EditingStyle = cellEditingStyle.EditingStyle;
+//
+//			if (items != null)
+//			{
+//				if (items is UIView)
+//				{				
+//					rootElement.ViewBinding.View = items as UIView;
+//				}
+//				else
+//				{
+//					rootElement.DataContext = items;
+//				}
+//			}
+//			else
+//				rootElement.DataContext = context;
+//
+//			if (genericType != null)
+//			{
+//				SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
+//				rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
+//				rootElement.ViewBinding.ViewType = viewType;
+//			}
+//
+//			if (isList)
+//			{
+//				var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
+//				root = innerRoot as IElement;
+//			}
+//			else
+//			{
+//				root = rootElement;
+//			}
+//		}
 		
 		private static IRoot CreateObjectRoot(IRoot root)
 		{

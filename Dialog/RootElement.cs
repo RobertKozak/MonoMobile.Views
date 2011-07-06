@@ -33,7 +33,9 @@ namespace MonoMobile.MVVM
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
+	using System.Drawing;
 	using System.Linq;
 	using MonoMobile.MVVM;
 	using MonoTouch.Foundation;
@@ -65,8 +67,11 @@ namespace MonoMobile.MVVM
 	///   C# 4.0 syntax to initialize a RootElement in one pass.
 	/// </remarks>
 	[Preserve(AllMembers = true)]
-	public partial class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
+	public class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
+		public Guid DebugId = Guid.NewGuid();
+		public UIImageView ImageView { get; set; }
+
 		public bool IsSearchbarHidden { get; set; }
 		public bool EnableSearch { get; set; }
 		public bool IncrementalSearch { get; set; }
@@ -103,7 +108,9 @@ namespace MonoMobile.MVVM
 			Index = -1;
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
-			BindProperties();
+			
+			DataTemplate = new RootElementDataTemplate(this);
+			DataTemplate.BindProperties();
 		}
 
 		/// <summary>
@@ -253,11 +260,11 @@ namespace MonoMobile.MVVM
 				Sections.Insert(pos++, s);
 			}
 			
-			if (TableView == null)
-				return;
-			
-			TableView.InsertSections(MakeIndexSet(idx, newSections.Length), anim);
-			TableView.EndUpdates();
+			if (TableView != null)
+			{
+				TableView.InsertSections(MakeIndexSet(idx, newSections.Length), anim);
+				TableView.EndUpdates();
+			}
 		}
 
 		/// <summary>
@@ -365,7 +372,9 @@ namespace MonoMobile.MVVM
 		public override void InitializeCell(UITableView tableView)
 		{
 			if (DetailTextLabel != null)
-				DetailTextLabel.TextAlignment = UITextAlignment.Right;
+			{
+				DetailTextLabel.TextAlignment = UITextAlignment.Right;	
+			}
 			
 			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			TextLabel.TextAlignment = UITextAlignment.Left;
@@ -469,7 +478,7 @@ namespace MonoMobile.MVVM
 			}
 			else if (DataContext != null &&ViewBinding.ElementType != null) 
 			{
-				var section = this.Sections.FirstOrDefault() as Section;
+				var section = Sections.FirstOrDefault() as Section;
 				section = BindingContext.CreateSection(this, section, DataContext, ViewBinding.ElementType, false);
 				if (Sections.Count == 0)
 				{
@@ -477,7 +486,11 @@ namespace MonoMobile.MVVM
 						Sections.Add(section);
 				}
 				else
-					Sections[0] = section;
+				{
+					Sections[Sections.Count-1] = section;
+
+					Reload(Sections[Sections.Count -1], UITableViewRowAnimation.None);
+				}
 			}
 		}
 

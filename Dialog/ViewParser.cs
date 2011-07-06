@@ -48,6 +48,13 @@ namespace MonoMobile.MVVM
 			}
 		}
 
+		private List<Func<object, MemberInfo[]>> _MemberFuncMap = new List<Func<object, MemberInfo[]>>() 
+		{
+			(T)=>GetFields(T),
+			(T)=>GetProperties(T),
+			(T)=>GetMethods(T)
+		};
+
 		private readonly NoElement _NoElement = new NoElement();
 		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
 		
@@ -96,12 +103,6 @@ namespace MonoMobile.MVVM
 			{
 				Root.EditingStyle = editStyle.EditingStyle;
 			}
-			
-//			var bindable = Root as IBindable;
-//			if (bindable != null)
-//			{
-//				bindable.BindProperties();
-//			}
 
 			var sectionList = CreateSectionList(view, Root);
 			sectionList.ForEach((section)=>section.Initialize());
@@ -158,13 +159,6 @@ namespace MonoMobile.MVVM
 
 		private List<ISection> CreateSectionList(UIView view, IRoot root)
 		{
-			var memberFuncMap = new List<Func<object, MemberInfo[]>>() 
-			{
-				(T)=>GetFields(T),
-				(T)=>GetProperties(T),
-				(T)=>GetMethods(T)
-			};
-
 			ISection lastSection = new Section() { Order = -1, Parent = root as IElement };
 
 			var sectionList = new List<ISection>() { lastSection };
@@ -186,7 +180,7 @@ namespace MonoMobile.MVVM
 			}
 			else
 			{
-				foreach(var memberFunc in memberFuncMap)
+				foreach(var memberFunc in _MemberFuncMap)
 				{
 					var members = memberFunc(view);
 		
@@ -261,17 +255,17 @@ namespace MonoMobile.MVVM
 
 							if ((isList) && newElement is IRoot)
 							{
-								var sections = ((IRoot)newElement).Sections;
-								root.ViewBinding = newElement.ViewBinding;
-
-								var firstSection = sections.FirstOrDefault();
-								if (firstSection.Elements.Count > 0)
-									lastSection.Add(firstSection.Elements);
-
-								for(var index=1; index < sections.Count; index++)
-								{
-									sectionList.Add(sections[index]);
-								}
+//								var sections = ((IRoot)newElement).Sections;
+//								root.ViewBinding = newElement.ViewBinding;
+//
+//								var firstSection = sections.FirstOrDefault();
+//								if (firstSection.Elements.Count > 0)
+//									lastSection.Add(firstSection.Elements);
+//
+//								for(var index=1; index < sections.Count; index++)
+//								{
+//									sectionList.Add(sections[index]);
+//								}
 							}
 							else
 							{
@@ -285,13 +279,22 @@ namespace MonoMobile.MVVM
 							{
 								if (binding.TargetPath == null)
 								{
-									binding.TargetPath = "DataContext";
+									binding.TargetPath = "DataContext";	
 								}
 			
-								if (bindable is IRoot)
-									BindingOperations.SetBinding(Root as IBindable, binding.TargetPath, binding);
-								else
-									BindingOperations.SetBinding(bindable, binding.TargetPath, binding);
+								var bindingRoot = bindable as IRoot;
+								if (bindingRoot != null && binding.TargetPath == "DataContext")
+								{
+									foreach(var section in bindingRoot.Sections)
+									{
+										section.Parent = bindingRoot;
+										BindingOperations.SetBinding(section as IBindable, binding);
+									}
+
+									BindingOperations.SetBinding(Root as IBindable, binding);
+								}
+
+								BindingOperations.SetBinding(bindable, binding);	
 							}
 						}
 					}
@@ -374,11 +377,11 @@ namespace MonoMobile.MVVM
 			if (orderAttribute != null && element != null)
 				element.Order = orderAttribute.Order;
 			
-			var dataContext = view as IDataContext;
-			if (dataContext != null && element.DataContext == null && element.DataContext != dataContext.DataContext)
-			{
-				element.DataContext = dataContext.DataContext;
-			}
+//			var dataContext = view as IDataContext;
+//			if (dataContext != null && element.DataContext == null && element.DataContext != dataContext.DataContext)
+//			{
+//				element.DataContext = dataContext.DataContext;
+//			}
 
 			return element;
 		}
@@ -478,7 +481,7 @@ namespace MonoMobile.MVVM
 				rootElement.ViewBinding.ViewType = viewType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
 				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
-				
+
 				if (cellEditingStyle != null)
 					rootElement.EditingStyle = cellEditingStyle.EditingStyle;
 
@@ -505,8 +508,11 @@ namespace MonoMobile.MVVM
 
 				if (isList)
 				{
-					var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
-					root = innerRoot as IElement;
+					//var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
+					//root = innerRoot as IElement;
+					Root.Sections = ((IRoot)rootElement).Sections;
+					root = Root;
+					root.ViewBinding = rootElement.ViewBinding;
 				}
 				else
 				{
@@ -527,12 +533,12 @@ namespace MonoMobile.MVVM
 			}
 			else if (elementType != null)
 			{
-				root = Activator.CreateInstance(elementType) as IElement;
+				root = CreateElement(elementType, "") as IElement;
 				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
 			}
 
-			if (root != null)
-				SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
+		//	if (root != null)
+		//		SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
 
 			return root;
 		}
@@ -813,17 +819,17 @@ namespace MonoMobile.MVVM
 			});
 		}
 
-		private MemberInfo[] GetFields(object view)
+		private static MemberInfo[] GetFields(object view)
 		{
 			return view.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 
-		private MemberInfo[] GetProperties(object view)
+		private static MemberInfo[] GetProperties(object view)
 		{
 			return view.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 
-		private MemberInfo[] GetMethods(object view)
+		private static MemberInfo[] GetMethods(object view)
 		{
 			return view.GetType().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Where(m =>
 			{
@@ -845,7 +851,7 @@ namespace MonoMobile.MVVM
 				if (buttonAttribute != null)
 				{
 					UIView buttonView = null;
-					var title = caption ?? buttonAttribute.Title;
+					var title = caption ?? buttonAttribute.Title;// ?? member.Name.Capitalize();
 					if (buttonAttribute.ViewType != null)
 					{	
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
@@ -923,7 +929,7 @@ namespace MonoMobile.MVVM
 			if(methodInfo != null)
 				command = new ReflectiveCommand(view, member as MethodInfo, null);
 
-			if(!string.IsNullOrEmpty(title))
+			if (!string.IsNullOrEmpty(title))
 			{
 				button = new CommandBarButtonItem(title, style, delegate {command.Execute(null); });
 			}
@@ -1116,7 +1122,10 @@ namespace MonoMobile.MVVM
 					element = new EntryElement(caption) { Placeholder = entryAttribute.Placeholder, KeyboardType = entryAttribute.KeyboardType, EditMode = entryAttribute.EditMode,  AutoCorrectionType = entryAttribute.AutoCorrectionType, AutoCapitalizationType = entryAttribute.AutoCapitalizationType };
 				}
 				else if (multilineAttribute != null)
-					element = new MultilineElement(caption);
+				{
+					element = new MultilineElement(caption) { Lines = multilineAttribute.Lines };
+					element.Theme.TextAlignment = UITextAlignment.Left;
+				}
 				else if (htmlAttribute != null)
 				{
 					SetDefaultConverter(view, member, "DataContext", new UriConverter(), null, bindings);
@@ -1170,11 +1179,11 @@ namespace MonoMobile.MVVM
 				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();
 
 				if(dateAttribute != null)
-					element = new DateElement(caption) { DataContext = (DateTime)member.GetValue(view)};
+					element = new DateElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
 				else if (timeAttribute != null)
-					element = new TimeElement(caption) { DataContext = (DateTime)member.GetValue(view)};
+					element = new TimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
 				else
-					element = new DateTimeElement(caption) { DataContext = (DateTime)member.GetValue(view)};
+					element = new DateTimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
 				
 				return element;
 			});

@@ -37,18 +37,18 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	///  The button element can be used to render a cell as a button that responds to Tap events
 	/// </summary>
-	public partial class ButtonElement : Element, ITappable, ISelectable
+	public class ButtonElement : Element, ITappable, ISelectable
 	{
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
-		public UIImageView ImageView { get; set; }
 
-		public ButtonElement() : base(string.Empty)
+		public ButtonElement() : this(string.Empty)
 		{
 		}
 
 		public ButtonElement(string caption) : base(caption)
 		{
+			DataTemplate = new ElementDataTemplate(this);
 		}
 
 		public override void InitializeCell(UITableView tableView)
@@ -56,17 +56,8 @@ namespace MonoMobile.MVVM
 			base.InitializeCell(tableView);
 			
 			Cell.Accessory = UITableViewCellAccessory.None;
-			Cell.TextLabel.TextAlignment = UITextAlignment.Center;
 			Cell.TextLabel.BackgroundColor = UIColor.Clear;
-		}
-		
-		public override void InitializeContent()
-		{
-			var imageLocation = new PointF(10, 10);
-			var imageSize = new SizeF(24, 24);
-
-			ImageView = new UIImageView(new RectangleF(imageLocation, imageSize)) { Tag = 1 };
-			Cell.ContentView.Add(ImageView);
+			Cell.TextLabel.TextAlignment = UITextAlignment.Center;
 		}
 
 		public override string ToString()

@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public partial class ImageElement : Element, ISelectable
+	public class ImageElement : Element, ISelectable
 	{		
 		protected override void SetDataContext(object value)
 		{
@@ -103,11 +103,13 @@ namespace MonoMobile.MVVM
 
 		public ImageElement() : base("")
 		{
+			DataTemplate = new ImageElementDataTemplate(this);
 		}
 
 		public ImageElement(UIImage image) : base("")
 		{
 			DataContext = image;
+			DataTemplate = new ImageElementDataTemplate(this);
 		}
 
 		public override void UpdateCell()

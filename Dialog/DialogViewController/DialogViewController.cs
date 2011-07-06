@@ -448,6 +448,8 @@ namespace MonoMobile.MVVM
 
 			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
 			TableView.AutosizesSubviews = true;
+		
+			Root.TableView = TableView;
 
 			UpdateSource();
 			View = TableView;
@@ -456,8 +458,6 @@ namespace MonoMobile.MVVM
 				return;
 			
 			ConfigureToolbarItems();
-
-			Root.TableView = TableView;
 			
 			if (themeable != null)
 			{
@@ -476,7 +476,7 @@ namespace MonoMobile.MVVM
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-		
+
 			var searchBar = Root as ISearchBar;
 			if (searchBar != null)
 			{
@@ -688,7 +688,7 @@ namespace MonoMobile.MVVM
 			return unevenRows ? new DialogViewSizingSource(this) : new DialogViewDataSource(this);
 		}
 
-		private void UpdateSource()
+		public void UpdateSource()
 		{
 			if (Root == null)
 				return;
@@ -699,7 +699,6 @@ namespace MonoMobile.MVVM
 
 		public void ReloadData()
 		{
-			//Flip();
 			if (Root == null)
 				return;
 			
@@ -746,6 +745,20 @@ namespace MonoMobile.MVVM
 			base.ViewWillDisappear(animated);
 			if (ViewDissapearing != null)
 				ViewDissapearing(this, EventArgs.Empty);
+		}
+		
+		public override void ViewDidDisappear(bool animated)
+		{
+			foreach(var section in Root.Sections)
+			{
+				foreach(var element in section.Elements)
+				{
+				//	if (!(element is IRoot))
+				//		BindingOperations.ClearBindings(element);
+				}
+			}
+
+			base.ViewDidDisappear(animated);
 		}
 
 		protected void PrepareRoot(IRoot root)

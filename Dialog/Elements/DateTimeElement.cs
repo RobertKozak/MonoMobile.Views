@@ -37,15 +37,17 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public partial class DateTimeElement : FocusableElement, ISelectable
+	public class DateTimeElement : FocusableElement, ISelectable
 	{
-		public UIDatePicker DatePicker;
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
-
+	
+		public UIDatePicker DatePicker;
+		
 		public DateTimeElement(string caption) : base(caption)
 		{
+			DataTemplate = new DateTimeElementDataTemplate(this);
 		}
-		public DateTimeElement(string caption, DateTime date) : base(caption)
+		public DateTimeElement(string caption, DateTime date) : this(caption)
 		{
 			DataContext = date;
 		}
@@ -93,14 +95,8 @@ namespace MonoMobile.MVVM
 		
 			Control = DatePicker;
 
-			InputControl.InputView = view;
-			InputControl.InputAccessoryView = new UIDatePickerToolbar(this) { };
-
-
-			InputControl.Ended += (s, e) => 
-			{
-				DataContextProperty.Update();
-			};
+			((UIPlaceholderTextField)ContentView).InputView = view;
+			((UIPlaceholderTextField)ContentView).InputAccessoryView = new UIDatePickerToolbar(this) { };
 		}
 
 		public virtual UIDatePicker CreatePicker()

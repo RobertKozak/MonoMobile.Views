@@ -39,6 +39,10 @@ namespace MonoMobile.MVVM
 		{
 		}
 
+		public Binding(string targetPath) : this(null, targetPath)
+		{
+		}
+
 		public Binding(string sourcePath, string targetPath)
 		{
 			SourcePath = sourcePath;

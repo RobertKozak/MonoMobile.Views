@@ -47,8 +47,9 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public partial class EntryElement : FocusableElement, IFocusable, ISearchable, ISelectable
 	{
-		private UIKeyboardToolbar _KeyboardToolbar;
- 
+		private UIKeyboardToolbar _KeyboardToolbar; 
+		private UIPlaceholderTextField _InputControl;
+
 		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
@@ -62,6 +63,8 @@ namespace MonoMobile.MVVM
 		{
 			KeyboardType = UIKeyboardType.Default;
 			EditMode = EditMode.WithCaption;
+
+			DataTemplate = new EntryElementDataTemplate(this);
 		}
 
 		public EntryElement() : this("")
@@ -75,19 +78,19 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewElementCell NewCell()
 		{
-			Theme.CellStyle = EditMode == EditMode.ReadOnly ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
+			Theme.CellStyle = UITableViewCellStyle.Default;
 			
 			return base.NewCell();
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
-			Cell.DetailTextLabel.TextAlignment = UITextAlignment.Right;
+			Theme.DetailTextAlignment = UITextAlignment.Right;
 			
 			ShowCaption = EditMode != EditMode.NoCaption;
 			if (!ShowCaption)
 			{
-				Cell.DetailTextLabel.TextAlignment = UITextAlignment.Left;
+				Theme.DetailTextAlignment = UITextAlignment.Left;
 			}
 
 			base.InitializeCell(tableView);
@@ -99,7 +102,7 @@ namespace MonoMobile.MVVM
 		{ 
 			if (EditMode != EditMode.ReadOnly)
 			{
-				InputControl = new UICustomTextField(new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height)) 
+				_InputControl = new UIPlaceholderTextField(new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height)) 
 				{ 
 					BackgroundColor = UIColor.Clear, 
 					PlaceholderColor = Theme.PlaceholderColor, 
@@ -111,57 +114,56 @@ namespace MonoMobile.MVVM
 				};
 		
 				if (EditMode == EditMode.NoCaption)
-					InputControl.Placeholder = Caption;
+					_InputControl.Placeholder = Caption;
 				else
-					InputControl.Placeholder = Placeholder;
+					_InputControl.Placeholder = Placeholder;
 				
-				InputControl.SecureTextEntry = IsPassword;
-				InputControl.Font = Theme.DetailTextFont;
-				InputControl.KeyboardType = KeyboardType;
-				InputControl.TextAlignment = Theme.DetailTextAlignment;
-				InputControl.ReturnKeyType = ReturnKeyType;
+				_InputControl.SecureTextEntry = IsPassword;
+				_InputControl.Font = Theme.DetailTextFont;
+				_InputControl.KeyboardType = KeyboardType;
+				_InputControl.TextAlignment = Theme.DetailTextAlignment;
+				_InputControl.ReturnKeyType = ReturnKeyType;
 
 				if (Theme.DetailTextColor != null)
-					InputControl.TextColor = Theme.DetailTextColor;
+					_InputControl.TextColor = Theme.DetailTextColor;
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
-				InputControl.InputAccessoryView = _KeyboardToolbar;
+				_InputControl.InputAccessoryView = _KeyboardToolbar;
 
-				InputControl.ReturnKeyType = UIReturnKeyType.Default;
+				_InputControl.ReturnKeyType = UIReturnKeyType.Default;
 
-				InputControl.Started += (s, e) =>
+				_InputControl.Started += (s, e) =>
 				{
 					//DataContextProperty.ConvertBack<string>();				
 				};
 			
-				InputControl.ShouldReturn = delegate
+				_InputControl.ShouldReturn = delegate
 				{
-					InputControl.ResignFirstResponder();
+					_InputControl.ResignFirstResponder();
 
 					return true;
 				};
 				
-				InputControl.EditingDidEnd += delegate 
+				_InputControl.EditingDidEnd += delegate 
 				{
-					DataContextProperty.Update();
+					DataTemplate.UpdateDataContext();
 				};
 
-
-				ContentView = InputControl;
-			}
-			else
-			{
-				if (DetailTextLabel != null)
-					DetailTextLabel.Text = (string)DataContext;
+				ContentView = _InputControl;
 			}
 		}
-
+		
+		public override void UpdateCell()
+		{
+			base.UpdateCell ();
+		}
+		
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && InputControl != null)
+			if (disposing && _InputControl != null)
 			{
-				InputControl.Dispose();
-				InputControl = null;
+				_InputControl.Dispose();
+				_InputControl = null;
 			}
 			
 			base.Dispose(disposing);

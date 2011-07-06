@@ -40,10 +40,11 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	 
-	public partial class StringElement : Element
+	public class StringElement : Element
 	{
 		public StringElement(string caption) : base(caption)
 		{
+			DataTemplate = new StringElementDataTemplate(this);
 		}
 
 		public StringElement(string caption, string value) : this(caption)

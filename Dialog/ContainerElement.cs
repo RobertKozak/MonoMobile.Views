@@ -31,8 +31,9 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 
-	public partial class ContainerElement : Element, IContainer
+	public class ContainerElement : Element, IContainer
 	{
 		public ObservableCollection<object> SelectedItems { get; private set; }
 		public object SelectedItem { get; set; }

@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public partial class FloatElement : Element
+	public class FloatElement : Element
 	{
 		public UISlider Slider { get; set; }
 	
@@ -46,6 +46,8 @@ namespace MonoMobile.MVVM
 		{
 			MinValue = 0;
 			MaxValue = 1;
+
+			DataTemplate = new FloatElementDataTemplate(this);
 		}
 
 		public FloatElement(RectangleF frame) : this("")
@@ -67,7 +69,7 @@ namespace MonoMobile.MVVM
 			Slider.Frame = new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height);
 			Slider.ValueChanged += delegate 
 			{
-				DataContextProperty.Update();
+				DataTemplate.UpdateDataContext();
 			};
 
 			Slider.MaxValue = MaxValue;

@@ -33,12 +33,14 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
 
-	public partial class ActivityElement : UIViewElement
+	public class ActivityElement : UIViewElement
 	{
 		public bool Animating { get; set; }
 
 		public ActivityElement() : base ("", new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray), false)
 		{
+			DataTemplate = new ActivityElementDataTemplate(this);
+
 			var sbounds = UIScreen.MainScreen.Bounds;			
 			var uia = ContentView as UIActivityIndicatorView;
 			

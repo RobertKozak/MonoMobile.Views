@@ -43,9 +43,9 @@ namespace MonoMobile.MVVM
 			Binding = new Binding(null, "DataContext");
 		}
 
-		public BindAttribute(string sourcePath)
+		public BindAttribute(string targetPath)
 		{
-			Binding = new Binding(sourcePath, "DataContext");
+			Binding = new Binding(targetPath);
 		}
 
 		public BindAttribute(string sourcePath, string targetPath)

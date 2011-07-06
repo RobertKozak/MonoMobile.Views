@@ -33,6 +33,7 @@ namespace MonoMobile.MVVM
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
@@ -68,6 +69,8 @@ namespace MonoMobile.MVVM
 		void Remove(int idx);
 		void RemoveRange(int start, int count);
 		void RemoveRange(int start, int count, UITableViewRowAnimation anim);
+
+		void CollectionChanged(NotifyCollectionChangedEventArgs e);
 
 		IEnumerator GetEnumerator();
 

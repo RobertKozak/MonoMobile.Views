@@ -34,5 +34,11 @@ namespace MonoMobile.MVVM
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public class MultilineAttribute : Attribute
 	{
+		public MultilineAttribute()
+		{
+			Lines = 0;
+		}
+
+		public int Lines { get; set; }
 	}
 }

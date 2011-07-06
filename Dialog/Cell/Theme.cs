@@ -130,8 +130,6 @@ namespace MonoMobile.MVVM
 				_CellBackgroundColor = value;
 				_CellBackgroundUri = null;
 				
-			//	ClearBackground();
-				
 				if (_CellBackgroundImage != null)
 				{
 					_CellBackgroundImage.Dispose();
@@ -425,15 +423,6 @@ namespace MonoMobile.MVVM
 				Cell.SetNeedsDisplay();
 			}
 		}
-
-//		public void ClearBackground()
-//		{
-//			if (TextLabel != null)
-//				TextLabel.BackgroundColor = UIColor.Clear;
-//			
-//			if (DetailTextLabel != null)
-//				DetailTextLabel.BackgroundColor = UIColor.Clear;
-//		}
 
 		public override string ToString()
 		{

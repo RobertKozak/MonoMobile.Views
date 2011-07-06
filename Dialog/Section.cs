@@ -32,6 +32,7 @@ namespace MonoMobile.MVVM
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Drawing;
 	using MonoTouch.Foundation;
@@ -41,7 +42,7 @@ namespace MonoMobile.MVVM
 	/// Generic base version of Section
 	/// </summary>
 	[Preserve(AllMembers = true)]
-	public partial class Section : ContainerElement, ISection, IEnumerable, IInitializable
+	public class Section : ContainerElement, ISection, IEnumerable, IInitializable
 	{
 		private UIView _Header, _Footer;
 
@@ -66,10 +67,14 @@ namespace MonoMobile.MVVM
 		public Section(string caption) : base(caption)
 		{
 			Elements = new ObservableCollection<IElement>();
-			BindProperties();
 			
-			UpdateTargets();
-			UpdateSources();
+//			if (DataTemplate != null)
+//			{
+//				DataTemplate.BindProperties();
+//			
+//				DataTemplate.UpdateTargets();
+//				DataTemplate.UpdateSources();
+//			}
 		}
 
 		/// <summary>
@@ -402,6 +407,60 @@ namespace MonoMobile.MVVM
 			
 			if (Root != null && Root.TableView != null)
 				Root.TableView.ReloadData();
+		}
+		
+		public virtual void CollectionChanged(NotifyCollectionChangedEventArgs e)
+		{	
+			var elementType = Root.ViewBinding.ElementType;
+			if (elementType == null)
+				elementType = typeof(RootElement);
+
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (var item in e.NewItems)
+				{
+					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+					
+					Add(element);
+				}
+			}
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				foreach (var item in e.OldItems)
+				{
+					Remove(e.OldStartingIndex);
+				}
+			}
+			if (e.Action == NotifyCollectionChangedAction.Reset)
+			{
+				Clear();
+				foreach (var item in e.NewItems)
+				{
+					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+					Add(element);
+				}
+			}
+			if (e.Action == NotifyCollectionChangedAction.Move)
+			{
+				var index = 0;
+				foreach (var item in e.NewItems)
+				{
+					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+					Elements.RemoveAt(e.OldStartingIndex);
+					Elements.Insert(e.NewStartingIndex + index, element);
+					index++;
+				}
+				
+			}
+			if (e.Action == NotifyCollectionChangedAction.Replace)
+			{
+				var index = 0;
+				foreach (var item in e.NewItems)
+				{
+					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
+					index++;
+				}
+			}
 		}
 
 		protected override void Dispose(bool disposing)

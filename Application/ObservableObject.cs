@@ -54,7 +54,7 @@ namespace MonoMobile.MVVM
 
         public void NotifyPropertyChanged(string propertyName)
         {
-			if(!_SuspendNotifications)
+			if (!_SuspendNotifications)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			else
 			{

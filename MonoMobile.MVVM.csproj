@@ -227,7 +227,6 @@
     <Compile Include="Dialog\RootElement.cs" />
     <Compile Include="Dialog\Section.cs" />
     <Compile Include="Dialog\Reflection API\PullToRefreshAttribute.cs" />
-    <Compile Include="Dialog\Views\StandardListView.cs" />
     <Compile Include="Dialog\SearchChangedEventArgs.cs" />
     <Compile Include="Dialog\ImageLoader.cs" />
     <Compile Include="Dialog\LRUCache.cs" />
@@ -247,17 +246,6 @@
     <Compile Include="Dialog\Reflection API\ViewAttribute.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
     <Compile Include="Application\UrlConnection.cs" />
-    <Compile Include="Dialog\DataBinding\EntryElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\ElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\StringElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\ActivityElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\HtmlElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\BooleanElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\FloatElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\BoolElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\DateTimeElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\MapViewElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\ImageElementBinding.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Interfaces\IElement.cs" />
     <Compile Include="Interfaces\IFocusable.cs" />
@@ -275,10 +263,6 @@
     <Compile Include="Interfaces\IBindingContext.cs" />
     <Compile Include="Application\ObservableObject.cs" />
     <Compile Include="Application\IObservableObject.cs" />
-    <Compile Include="Dialog\DataBinding\CheckboxElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\RootElementBinding.cs" />
-    <Compile Include="Dialog\DataBinding\SectionBinding.cs" />
-    <Compile Include="Dialog\DataBinding\RadioElementBinding.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
     <Compile Include="Extensions\ThemeExtentions.cs" />
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
@@ -301,7 +285,6 @@
     <Compile Include="Interfaces\INotifyDataContextChanged.cs" />
     <Compile Include="Dialog\ContainerElement.cs" />
     <Compile Include="Interfaces\IContainer.cs" />
-    <Compile Include="Dialog\DataBinding\ContainerElementBinding.cs" />
     <Compile Include="Dialog\Reflection API\SectionAttribute.cs" />
     <Compile Include="Dialog\Reflection API\SelectionAttribute.cs" />
     <Compile Include="Dialog\Reflection API\MultiselectionAttribute.cs" />
@@ -323,7 +306,21 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
     <Compile Include="View\ObservableView.cs" />
-    <Compile Include="Dialog\DataBinding\ButtonElementBinding.cs" />
+    <Compile Include="Dialog\DataTemplates\EntryElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\StringElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\ActivityElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\HtmlElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\BooleanElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\FloatElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\DateTimeElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\MapElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\ImageElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\CheckboxElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\RootElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\SectionDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\RadioElementBinding.cs" />
+    <Compile Include="Dialog\DataTemplates\ContainerElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\ElementDataTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -340,13 +337,12 @@
     <Folder Include="Model\" />
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Elements\" />
-    <Folder Include="Dialog\Views\" />
     <Folder Include="Dialog\Cell\" />
-    <Folder Include="Dialog\DataBinding\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Dialog\Themes\" />
     <Folder Include="Controllers\" />
     <Folder Include="Dialog\DialogViewController\" />
+    <Folder Include="Dialog\DataTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

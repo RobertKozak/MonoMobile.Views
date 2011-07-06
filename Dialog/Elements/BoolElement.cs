@@ -31,7 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
 
-	public abstract partial class BoolElement : Element
+	public abstract class BoolElement : Element
 	{
 		public object Item { get; set; }
 

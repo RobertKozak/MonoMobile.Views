@@ -35,12 +35,13 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 
-	public partial class BooleanElement : BoolElement
+	public class BooleanElement : BoolElement
 	{
 		private UISwitch Switch { get; set; }
 
 		public BooleanElement(string caption) : base(caption)
 		{			
+			DataTemplate= new BooleanElementDataTemplate(this);
 		}
 
 		public BooleanElement(RectangleF frame) : this("")
@@ -54,7 +55,7 @@ namespace MonoMobile.MVVM
 			{
 				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1 };
 				
-				Switch.AddTarget(delegate { DataContextProperty.Update(); }, UIControlEvent.ValueChanged);
+				Switch.AddTarget(delegate { DataTemplate.UpdateDataContext(); }, UIControlEvent.ValueChanged);
 			}
 			
 			Cell.AccessoryView = Switch;

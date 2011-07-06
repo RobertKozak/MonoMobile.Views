@@ -40,9 +40,8 @@ namespace MonoMobile.MVVM
 	{
 		protected IFocusable _Focus;
 		protected NSTimer _Timer;
-		protected UICustomTextField _Dummy { get; set; }
+		protected UITextField _Dummy { get; set; }
 
-		public UICustomTextField InputControl { get; set; }
 		public UIControl Control { get; set; }
 
 		public FocusableElement(string caption) : base(caption)
@@ -56,24 +55,33 @@ namespace MonoMobile.MVVM
 
 		public override void InitializeContent()
 		{
-			_Dummy = new UICustomTextField(Cell.Bounds);
-			_Dummy.ShouldBeginEditing = tf =>
-			{
-				InputControl.BecomeFirstResponder();
-				return false;
+//			_Dummy = new UITextField(Cell.Bounds);
+//			_Dummy.ShouldBeginEditing = tf =>
+//			{
+//				ContentView.BecomeFirstResponder();
+//				return false;
+//			};
+			
+			ContentView = new UIPlaceholderTextField(Cell.Bounds) 
+			{ 
+			//	DataTemplate = DataTemplate,
+				BackgroundColor = UIColor.Clear, 
+				Tag = 1, 
+				Hidden = true
 			};
 			
-			InputControl = new UICustomTextField(Cell.Bounds) { BackgroundColor = UIColor.Clear, Tag = 1, Hidden = true };
-			
-			ContentView = _Dummy;
-			ContentView.AddSubview(InputControl);
+			//ContentView = _Dummy;
+			//ContentView.AddSubview(InputControl);
 		}
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			if (InputControl != null)
+			if (ContentView != null)
 			{
-				InputControl.InvokeOnMainThread(() => { InputControl.BecomeFirstResponder(); });
+				ContentView.InvokeOnMainThread(() => 
+				{ 
+					ContentView.BecomeFirstResponder(); 
+				});
 			}
 		}
 
@@ -112,17 +120,20 @@ namespace MonoMobile.MVVM
 			else
 			{
 				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-				_Focus.InputControl.BecomeFirstResponder();
+				_Focus.ContentView.BecomeFirstResponder();
 			}
 
 		}
 
 		private void FocusTimer()
 		{
-			_Timer.Invalidate();
-			_Timer = null;
+			if (_Timer != null)
+			{
+				_Timer.Invalidate();
+				_Timer = null;
+			}
 			
-			_Focus.InputControl.BecomeFirstResponder();
+			_Focus.ContentView.BecomeFirstResponder();
 		}
 	}
 }

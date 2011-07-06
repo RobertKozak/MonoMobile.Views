@@ -35,8 +35,15 @@ namespace MonoMobile.MVVM
 
 	public interface IDataTemplate
 	{
-		List<object> CustomAttributes { get; set;}
-		IEnumerable Items { get; set; }
+//		List<object> CustomAttributes { get; set;}
+//		IEnumerable Items { get; set; }
+
+		void BindProperties();
+		void UpdateTargets();
+		void UpdateSources();
+
+		void UpdateDataContext();
+		void UpdateDataContext(object value);
 	}
 }
 

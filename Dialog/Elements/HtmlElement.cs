@@ -1,4 +1,3 @@
-using System.IO;
 //
 // HtmlElement.cs
 //
@@ -31,6 +30,7 @@ using System.IO;
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.IO;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
@@ -38,17 +38,20 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	/// Used to display a cell that will launch a web browser when selected.
 	/// </summary>
-	public partial class HtmlElement : Element, ISelectable
+	public class HtmlElement : Element, ISelectable
 	{
 		private UIWebView web;
+		
+		public Uri Uri { get; set; }
 
 		public HtmlElement(string caption) : base(caption)
 		{
+			DataTemplate = new HtmlElementDataTemplate(this);
 		}
 
-		public HtmlElement(string caption, Uri url) : base(caption)
+		public HtmlElement(string caption, Uri url) : this(caption)
 		{
-			DataContext = url;
+			Uri = url;
 		}
 		
 		public override void InitializeCell(UITableView tableView)
@@ -115,7 +118,7 @@ namespace MonoMobile.MVVM
 			
 			dvc.ActivateController(vc, dvc);
 
-			var url = new NSUrl(((Uri)DataContext).AbsoluteUri);
+			var url = new NSUrl(Uri.AbsoluteUri);
 			web.LoadRequest(NSUrlRequest.FromUrl(url));
 		}
 	}

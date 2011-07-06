@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 
 	public interface IContainer
 	{

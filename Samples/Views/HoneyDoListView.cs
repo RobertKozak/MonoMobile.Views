@@ -13,7 +13,7 @@ namespace Samples
 	public class HoneyDoListView: View
 	{
 		[Bind("Caption", "Caption")]
-		[Root(ViewType = typeof(StandardListView))]
+		//[Root(ViewType = typeof(StandardListView))]
 		[MultiSelection]
 		public List<string> Items { get; private set; }
 

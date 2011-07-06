@@ -38,11 +38,11 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class EnumerableConverter : IValueConverter
 	{
-		private object _OldValue;
+		//private object _OldValue;
 		//RK: Temporarily not implemented until I decide how to handle this case
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			_OldValue = value;
+			//_OldValue = value;
 			var container = parameter as IContainer;
 			if (container != null)
 			{

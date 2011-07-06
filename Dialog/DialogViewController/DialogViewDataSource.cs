@@ -48,7 +48,7 @@ namespace MonoMobile.MVVM
 			Container = container;
 			Root = container.Root;
 		}
-
+		
 		public override int RowsInSection(UITableView tableview, int section)
 		{
 			var s = Root.Sections[section];

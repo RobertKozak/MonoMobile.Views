@@ -53,9 +53,9 @@ namespace Samples
 	//	[Theme(typeof(GraniteStyle))]
 		public DateTime Time {get; set;}
 
-		[Entry]
+		[Multiline]
 	//	[Theme(typeof(CorkStyle))]
-		public string TestEntry2 = "Test Entry";
+		public string TestEntry2 = "Test Entry. This is a sample of some very long text.";
 
 		[Password("Enter passsword")]
 		[DefaultValue("Test String")]
@@ -87,12 +87,21 @@ namespace Samples
 		{
 		get; set;
 		}
-//				
+		
+		private float _CellSize = 44f; 
+		private float CellSize 
+		{ 
+			get { return _CellSize; } 
+			set { _CellSize = value; if (PropertyChanged != null) 
+					PropertyChanged(this, new PropertyChangedEventArgs("CellSize")); }
+		}
+
 		[NavbarButton("Add")]
 		public void AddMovie()
 		{
-			CanChangeStyle = !CanChangeStyle;
-			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
+			CellSize += 100;
+//			CanChangeStyle = !CanChangeStyle;
+//			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
 		}
 
 		[Map("A Map")]

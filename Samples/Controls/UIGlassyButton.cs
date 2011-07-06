@@ -103,7 +103,7 @@ namespace Samples.Controls
 		{
 			base.Draw(rect);
 
-			if(!_Initialized)
+			if (!_Initialized)
 				Init(rect);
 
 			var highlightLayer = Layer.Sublayers[1] as CAGradientLayer;

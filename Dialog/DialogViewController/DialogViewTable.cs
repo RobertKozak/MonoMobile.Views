@@ -71,9 +71,9 @@ namespace MonoMobile.MVVM
 					foreach (var element in section.Elements)
 					{
 						var selected = element as IFocusable;
-						if (selected != null && selected.InputControl != null && selected.InputControl.IsFirstResponder)
+						if (selected != null && selected.ContentView != null && selected.ContentView.IsFirstResponder)
 						{
-							selected.InputControl.ResignFirstResponder();
+							selected.ContentView.ResignFirstResponder();
 							break;
 						}
 					}
@@ -82,7 +82,7 @@ namespace MonoMobile.MVVM
 			
 			ResetTextShadow(true, touches);
 		}
-
+		
 		private void ResetTextShadow(bool visible, NSSet touches)
 		{
 			var touch = touches.AnyObject as UITouch;

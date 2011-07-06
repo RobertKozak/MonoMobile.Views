@@ -57,7 +57,7 @@ namespace MonoMobile.MVVM
 
 		public RefreshTableHeaderView(RectangleF rect, string settingsKey) : base(rect)
 		{
-			if(!string.IsNullOrEmpty(settingsKey))
+			if (!string.IsNullOrEmpty(settingsKey))
 			{
 				_DefaultSettingsKey = settingsKey;
 			}

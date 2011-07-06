@@ -43,13 +43,10 @@ namespace MonoMobile.MVVM
 	public class BindableProperty
 	{
 		private bool _Updating { get; set; }
-		private string _ElementPropertyName { get; set; }
-		private Type _ElementType { get; set; }
 
-		protected PropertyInfo ElementProperty { get; private set; }
 		protected PropertyInfo ControlProperty { get; private set; }
-		protected object Element { get; private set; }
 		protected object Control { get; private set; }
+		protected string ControlPropertyName { get; private set; }
 
 		public Action PropertyChangedAction { get; set; }	
 
@@ -58,33 +55,6 @@ namespace MonoMobile.MVVM
 		{
 			get { return _BindingExpression; }
 			set { _BindingExpression = value; }
-		}
-
-		public object ElementValue
-		{
-			get
-			{ 
-				if (ElementProperty != null && Element != null)
-					return ElementProperty.GetValue(Element); 
-				
-				return null;
-			}
-
-			set
-			{
-				if (ElementProperty != null)
-				{
-					if (ElementProperty != ControlProperty && ElementProperty.CanWrite)
-					{
-						ElementProperty.SetValue(Element, value, null);
-					}
-					
-					if (BindingExpression != null)
-					{
-						BindingExpression.UpdateSource();
-					}
-				}
-			}
 		}
 
 		public object ControlValue 
@@ -128,31 +98,48 @@ namespace MonoMobile.MVVM
 		{
 		}
 
-		public static BindableProperty Register(string sourcePropertyName)
+		public static BindableProperty Register(string controlPropertyName)
 		{
 			var bindableProperty = new BindableProperty();
-			bindableProperty._ElementPropertyName = sourcePropertyName;
+			bindableProperty.ControlPropertyName = controlPropertyName;
 			
 			return bindableProperty;
 		}
-
-		public void BindTo(object source, object target, string propertyName)
+		
+		public void BindTo(object target)
 		{
-			if (Element == null)
-			{
-				Element = source;
-				
-				_ElementType = Element.GetType();
-				ElementProperty = _ElementType.GetProperty(_ElementPropertyName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-			}
+			BindTo(target, ControlPropertyName);
+		}
 
+		public void BindTo(object target, object source)
+		{
+			BindTo(target, ControlPropertyName, source);
+		}
+
+		public void BindTo(object target, string propertyName)
+		{
+			BindTo(target, propertyName, null);
+		}
+
+		public void BindTo(object target, string propertyName, object source)
+		{
 			if (Control != target)
 			{
 				Control = target;
 
+//				var property = propertyName;
+//				if (BindingExpression == null)
+//					property = ControlPropertyName;
+				
 				ControlProperty = Control.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 				if (ControlProperty == null)
 					throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, Control.GetType().Name));
+			}
+
+			if (source != null && BindingExpression == null)
+			{
+				var bindable = target as IBindable;
+				//BindingExpression = BindingOperations.SetBinding(bindable, propertyName, source);
 			}
 		}
 
@@ -168,42 +155,10 @@ namespace MonoMobile.MVVM
 			if (BindingExpression != null)
 			{
 				value = BindingExpression.ConvertbackValue(value);
-				
-				ElementValue = value;
+
+				BindingExpression.UpdateSource();
 			}
 		}
-
-//		public T Convert<T>()
-//		{
-//			object sourceValue = ElementValue;
-//			sourceValue = BindingExpression.ConvertValue(sourceValue);
-//			
-//			return (T)sourceValue;
-//		}
-//
-//		public object Convert()
-//		{
-//			object sourceValue = ElementValue;
-//			sourceValue = BindingExpression.ConvertValue(sourceValue);
-//			
-//			return sourceValue;
-//		}
-//
-//		public T ConvertBack<T>()
-//		{
-//			object sourceValue = ElementValue;
-//			sourceValue = BindingExpression.ConvertbackValue(sourceValue);
-//
-//			return (T)sourceValue;
-//		}
-//
-//		public object ConvertBack(object value, Type convertType)
-//		{
-//			object sourceValue = value;
-//			sourceValue = BindingExpression.ConvertbackValue(sourceValue);
-//
-//			return sourceValue;
-//		}
 
 		public static BindableProperty GetBindableProperty(object obj, string bindablePropertyName)
 		{

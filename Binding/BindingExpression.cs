@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 //
 // BindingExpression.cs:
 //
@@ -32,12 +31,11 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Collections;
+	using System.Collections.Specialized;
+	using System.Globalization;
 	using System.Linq;
 	using System.Reflection;
-	using System.Globalization;
-	using MonoTouch.UIKit;
-	using System.Collections.Generic;
-	using MonoMobile.MVVM;
+	using MonoMobile.MVVM;	
 
 	public class BindingExpression : IBindingExpression
 	{
@@ -52,7 +50,13 @@ namespace MonoMobile.MVVM
 
 		public MemberInfo SourceProperty { get; set; }
 		public MemberInfo TargetProperty { get; set; }
-		public IElement Element { get; set; }
+
+		private IElement _Element;
+		public IElement Element 
+		{ 
+			get {return _Element; } 
+			set { _Element = value; } 
+		}
 
 		public Binding Binding { get; private set; }
 
@@ -105,7 +109,7 @@ namespace MonoMobile.MVVM
 			bool canWrite = true;
 			if (member is PropertyInfo) canWrite = ((PropertyInfo)member).CanWrite;
 
-			if (member != null && canWrite && Binding.Mode != BindingMode.OneTime)
+			if (member != null && canWrite && Binding.Mode == BindingMode.TwoWay)
 			{
 				try
 				{
@@ -145,7 +149,7 @@ namespace MonoMobile.MVVM
 
 				bool canWrite = true;
 				if (TargetProperty is PropertyInfo) canWrite = ((PropertyInfo)TargetProperty).CanWrite;
-				if (TargetProperty != null && canWrite && Binding.Mode == BindingMode.TwoWay)
+				if (TargetProperty != null && canWrite && Binding.Mode != BindingMode.OneTime)
 				{
 					if (sourceValue == null)
 						sourceValue = Binding.TargetNullValue;
@@ -283,7 +287,7 @@ namespace MonoMobile.MVVM
 			}
 			catch (Exception ex)
 			{
-				var message = string.Format("{0} : {1} : {2}", ex.Message, member.Name, value.ToString());
+				var message = string.Format("{0} : {1} : {2}", ex.Message, member.Name, value);
 				Console.WriteLine(message);
 			}
 		}
@@ -291,7 +295,7 @@ namespace MonoMobile.MVVM
 		private object CheckAndCoerceToGenericEnumerable(Type type, object value)
 		{
 			object result = value;
-			if (result != null)
+			if (type != null && result != null)
 			{
 				var isList = typeof(IEnumerable).IsAssignableFrom(type);
 				
