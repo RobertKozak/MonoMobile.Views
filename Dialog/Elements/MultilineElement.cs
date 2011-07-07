@@ -54,6 +54,11 @@ namespace MonoMobile.MVVM
 		{
 			KeyboardType = UIKeyboardType.Default;
 			EditMode = EditMode.WithCaption;
+			AutoCapitalizationType = UITextAutocapitalizationType.Sentences;
+			AutoCorrectionType = UITextAutocorrectionType.Yes;
+			Lines = 0;
+
+			DataTemplate = new MultilineElementDataTemplate(this);
 		}
 
 		public MultilineElement(RectangleF frame) : this()
@@ -63,25 +68,24 @@ namespace MonoMobile.MVVM
 		
 		public override UITableViewElementCell NewCell()
 		{
-			Theme.CellStyle = UITableViewCellStyle.Value1;
+			Theme.CellStyle = UITableViewCellStyle.Default;
 			return base.NewCell();
 		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
 			Theme.DetailTextAlignment = UITextAlignment.Left;
-			ShowCaption = EditMode != EditMode.NoCaption;
-			DetailTextLabel.AdjustsFontSizeToFitWidth = false;
 
 			base.InitializeCell(tableView);
+
+			ShowCaption = ShowCaption && EditMode != EditMode.NoCaption;
+
+			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+			Cell.Accessory = UITableViewCellAccessory.None;
 		}
 		
 		public override void InitializeContent()
 		{ 
-			DetailTextLabel.Lines = 0;
-			DetailTextLabel.LineBreakMode = UILineBreakMode.WordWrap;
-			var detailTextColor = DetailTextLabel.TextColor;
-
 			if (EditMode != EditMode.ReadOnly)
 			{
 				_InputControl = new UICustomTextView(new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height)) 
@@ -92,7 +96,8 @@ namespace MonoMobile.MVVM
 					AlwaysBounceVertical = false,
 					AlwaysBounceHorizontal = false,
 					ScrollEnabled = true,
-					Font = DetailTextLabel.Font,
+					Font = UIFont.SystemFontOfSize(UIFont.LabelFontSize),
+					TextColor = UIColor.DarkTextColor,
 					Tag = 1,	
 				};
 				
@@ -100,76 +105,31 @@ namespace MonoMobile.MVVM
 
 				if (Theme.DetailTextFont != null)
 					_InputControl.Font = Theme.DetailTextFont;
+	
+				if (Theme.DetailTextColor != null)
+					_InputControl.TextColor = Theme.DetailTextColor;
 
 				_InputControl.KeyboardType = KeyboardType;
 				_InputControl.TextAlignment = Theme.DetailTextAlignment;
 				_InputControl.ReturnKeyType = ReturnKeyType;
-
-				if (Theme.DetailTextColor != null)
-					detailTextColor = Theme.DetailTextColor;
 				
 				_KeyboardToolbar = new UIKeyboardToolbar(this);
 				 _InputControl.InputAccessoryView = _KeyboardToolbar;
 
 				_InputControl.Started += (s, e) =>
 				{
-					_InputControl.Font = DetailTextLabel.Font;
-					_InputControl.TextColor = detailTextColor;
-					DetailTextLabel.TextColor = UIColor.Clear;
-					
-					_InputControl.Text = DetailTextLabel.Text;
-					_InputControl.Bounds = DetailTextLabel.Bounds;
-					_InputControl.Frame = DetailTextLabel.Frame;
-					
 					//DataContextProperty.ConvertBack<string>();	
-					
-//					if (Lines > 0)
-//					{
-//						var length = _InputControl.Text.Length;
-//						//_InputControl.ScrollRangeToVisible(new NSRange(length, 0));
-//						_InputControl.SelectedRange = new NSRange(0, length); 
-//						_InputControl.SelectedRange = new NSRange(length, 0);
-//					}
 				};
 				
-				_InputControl.Changed += delegate
-				{					
-					NSRange range = new NSRange(_InputControl.Text.Length - 1, 1);
-					_InputControl.ScrollRangeToVisible(range);
-
-					var size = new SizeF(GetWidth(), float.MaxValue);
-					
-					var height = GetHeight(TableView);
-					var indentation = UIDevice.CurrentDevice.GetIndentation();
-
- 					var frame = Cell.RecalculateContentFrame(new RectangleF(0, 0, size.Width, height), ShowCaption);
-					
-					if (height > frame.Height + (_InputControl.Font.LineHeight) - (indentation / 2))
-					{
-						_InputControl.Frame = new RectangleF(new PointF(frame.X + 15, frame.Y), frame.Size);
-					
-						TableView.BeginUpdates();
-						TableView.EndUpdates();
-					} 
-
-					TextLabel.Frame = new RectangleF(new PointF(10, 15), TextLabel.Frame.Size);
-				};
+				_InputControl.Changed += InputControlTextChanged;
 
 				_InputControl.Ended += delegate 
 				{ 			
-					DetailTextLabel.Frame = new RectangleF(_InputControl.Frame.X, _InputControl.Frame.Y - 8, _InputControl.Frame.Width - 8, _InputControl.Frame.Height - 4);
-
-					DetailTextLabel.Text = _InputControl.Text;
-
-					DetailTextLabel.TextColor = detailTextColor;
-					_InputControl.TextColor = UIColor.Clear;
-					_InputControl.Text = null;
-
 					DataTemplate.UpdateDataContext();
+
+					_InputControl.ContentOffset = new PointF(0, 8);
+
 				};
-				
-				_InputControl.TextColor = UIColor.Clear;
-				DetailTextLabel.Frame = new RectangleF(_InputControl.Frame.X, _InputControl.Frame.Y - 8, _InputControl.Frame.Width - 8, _InputControl.Frame.Height - 4);
 
 				ContentView = _InputControl;
 			}
@@ -178,12 +138,14 @@ namespace MonoMobile.MVVM
 		public override void UpdateCell()
 		{
 			base.UpdateCell();	
-			DetailTextLabel.Lines = Lines;
-
-//			TableView.BeginUpdates();
-//			TableView.EndUpdates();
+			
+			new Wait(TimeSpan.FromMilliseconds(300), ()=> 
+			{
+				InputControlTextChanged(this, EventArgs.Empty);
+				_InputControl.ContentOffset = new PointF(0, 8);
+			});
 		}
-
+		
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && ContentView != null)
@@ -220,6 +182,13 @@ namespace MonoMobile.MVVM
 			
 			return width;
 		}
+		
+		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		{
+			var newHeight = GetHeight(tableView);
+			
+			return Math.Max((float)Math.Truncate(newHeight), tableView.RowHeight);
+		}
 
 		private float GetHeight(UITableView tableView)
 		{
@@ -242,18 +211,46 @@ namespace MonoMobile.MVVM
 				}
 				else
 				{
-					newHeight = (DetailTextLabel.Lines * _InputControl.Font.LineHeight) + (indentation * 2) + margin;
+					newHeight = (Lines * _InputControl.Font.LineHeight) + (indentation * 2) + margin;
 				}
 			}	
+			else
+				newHeight = (Lines * 21f) + (indentation * 2) + margin;
 
 			return newHeight;
 		}
-
-		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
+		
+		private void InputControlTextChanged(object sender, EventArgs e)
 		{
-			var newHeight = GetHeight(tableView);
+			NSRange range = new NSRange(_InputControl.Text.Length - 1, 1);
+			_InputControl.ScrollRangeToVisible(range);
+
+			var size = new SizeF(GetWidth(), float.MaxValue);
 			
-			return Math.Max((float)Math.Truncate(newHeight), tableView.RowHeight);
+			var height = GetHeight(TableView);
+			var indentation = UIDevice.CurrentDevice.GetIndentation();
+
+			var frame = Cell.RecalculateContentFrame(new RectangleF(0, 0, size.Width, height), ShowCaption);
+			
+			if (height > frame.Height + (_InputControl.Font.LineHeight) - (indentation / 2))
+			{
+				_InputControl.Frame = frame;
+
+			//	if (TableView.Bounds.Height + _InputControl.Frame.Height - TableView.RowHeight < UIScreen.MainScreen.Bounds.Height)
+				{
+					TableView.BeginUpdates();
+					TableView.EndUpdates();
+				} 
+//				else
+//				{
+//					TableView.BeginUpdates();
+//					TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
+//					
+//
+//					_InputControl.BecomeFirstResponder();
+//					TableView.EndUpdates();
+//				}
+			}
 		}
 	}
 
@@ -279,8 +276,7 @@ namespace MonoMobile.MVVM
 				if (value.Bottom > 8)
 				{
 					value.Bottom = 0;
-					value.Left = -8;
-					value.Top = -4;
+					value.Top = -8;
 				}
 				base.ContentInset = value;
 			}
@@ -307,13 +303,13 @@ namespace MonoMobile.MVVM
 					float bottomOffset = (ContentSize.Height - Frame.Size.Height + ContentInset.Bottom);
 					if (contentOffset.Y < bottomOffset && ScrollEnabled)
 					{
-						contentOffset = PointF.Empty;
+						//contentOffset = PointF.Empty;
 						//maybe use scrollRangeToVisible?
 					}
 					
 				}
-	
-				base.SetContentOffset(contentOffset, animated);
+
+				base.SetContentOffset(contentOffset, false);
 			}
 		}
 	}

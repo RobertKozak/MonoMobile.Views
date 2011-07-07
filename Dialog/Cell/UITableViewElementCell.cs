@@ -139,16 +139,15 @@ namespace MonoMobile.MVVM
 			else
 				x = captionSize.Width;
 			
-			//float y = ((float)Math.Round((double)height - (double)captionSize.Height) / 2) - 1;
 			float y = indentation + fixedGap + margin -1;
 			float width = screenWidth - captionSize.Width - (indentation * 2) - (margin * 3) - fixedGap;
 			
 			RectangleF actualFrame;
 			
-//			if (frame == RectangleF.Empty)
-//				actualFrame = new RectangleF(x, y, width + indentation + 1 + fixedGap, captionSize.Height + 1);
-//			else
-				actualFrame = new RectangleF(x, y - (margin * 2), width + 1, height - y);
+			if (frame == RectangleF.Empty)
+				actualFrame = new RectangleF(-1, -1, width + indentation + 1 + fixedGap, captionSize.Height + 1);
+			else
+				actualFrame = new RectangleF(x, y - (margin * 2), width + 1, height - y - (margin * 2));
 			 
 			return actualFrame;
 		}

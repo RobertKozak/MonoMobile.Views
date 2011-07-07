@@ -7,7 +7,7 @@ using MonoTouch.Foundation;
 namespace Samples
 {
 	[Preserve(AllMembers = true)]
-	[CellEditingStyle(UITableViewCellEditingStyle.Delete)]
+//	[CellEditingStyle(UITableViewCellEditingStyle.Delete)]
 	public class InterestingView: View
 	{
 	//	[Bind("CaptionSize", "DetailTextFont", ValueConverterType = typeof(FontConverter))]

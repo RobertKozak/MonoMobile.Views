@@ -40,7 +40,12 @@ namespace Samples
 
 		private View1 _View1 = new View1();
 		private View2 _View2 = new View2();
-		
+
+		[Multiline]
+		[DefaultValue("Test Entry. This is a sample of some very long text.")]
+		//	[Theme(typeof(CorkStyle))]
+		public string TestEntry2 { get; set; }
+
 		[DefaultValue(true)]
 		//[Checkbox]
 		public bool TestBool { get; set; }
@@ -52,10 +57,6 @@ namespace Samples
 		[Time]
 	//	[Theme(typeof(GraniteStyle))]
 		public DateTime Time {get; set;}
-
-		[Multiline]
-	//	[Theme(typeof(CorkStyle))]
-		public string TestEntry2 = "Test Entry. This is a sample of some very long text.";
 
 		[Password("Enter passsword")]
 		[DefaultValue("Test String")]

@@ -321,6 +321,7 @@
     <Compile Include="Dialog\DataTemplates\RadioElementBinding.cs" />
     <Compile Include="Dialog\DataTemplates\ContainerElementDataTemplate.cs" />
     <Compile Include="Dialog\DataTemplates\ElementDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplates\MultilineElementDataTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
