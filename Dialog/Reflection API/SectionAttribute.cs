@@ -53,5 +53,7 @@ namespace MonoMobile.MVVM
 		public string Caption, Footer;
 		public int Order = -1;
 		public Type ThemeType { get; set; }
+		public bool IsExpandable { get; set;}
+		public ExpandState ExpandState { get; set; }
 	}
 }

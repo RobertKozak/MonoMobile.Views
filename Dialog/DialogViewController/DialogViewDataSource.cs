@@ -1,3 +1,4 @@
+using MonoTouch.ObjCRuntime;
 // 
 //  DialogViewDataSource.cs
 // 
@@ -38,6 +39,8 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewDataSource : UITableViewSource
 	{
+		private HeaderTapGestureRecognizer tapRecognizer;
+
 		private const float _SnapBoundary = 65;
 		protected DialogViewController Container;
 		protected IRoot Root;
@@ -54,7 +57,7 @@ namespace MonoMobile.MVVM
 			var s = Root.Sections[section];
 			var count = s.Elements.Count;
 			
-			return count;
+			return s.ExpandState == ExpandState.Opened ? count : 0;
 		}
 
 		public override int NumberOfSections(UITableView tableView)
@@ -66,7 +69,7 @@ namespace MonoMobile.MVVM
 		{
 			var section = Root.Sections[indexPath.Section];
 			var element = section.Elements[indexPath.Row];
-			
+
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
 
@@ -138,7 +141,29 @@ namespace MonoMobile.MVVM
 				if (themeable != null)
 					themeable.ThemeChanged();
 			}
+
+			if (section.HeaderView != null)
+			{
+				tapRecognizer = new HeaderTapGestureRecognizer(section, this, new Selector("headerTap"));
+			
+				section.HeaderView.AddGestureRecognizer(tapRecognizer);
+			}
 			return section.HeaderView;
+		}
+
+		[Export("headerTap")]
+		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
+		{
+			var section = recognizer.Section;
+			var state = section.ExpandState;
+			
+			if (section.IsExpandable)
+			{
+				if (state == ExpandState.Opened)
+					section.ExpandState = ExpandState.Closed;
+				else
+					section.ExpandState = ExpandState.Opened;
+			}
 		}
 
 		public override float GetHeightForHeader(UITableView tableView, int sectionIdx)
@@ -161,7 +186,7 @@ namespace MonoMobile.MVVM
 			}
 			
 			// Use an empty UIView to Eliminate Extra separators for blank items
-			if (section.FooterView == null)
+			if (section.FooterView == null || section.ExpandState == ExpandState.Closed)
 				return new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
 			
 			return section.FooterView;
@@ -259,6 +284,16 @@ namespace MonoMobile.MVVM
 				Container.Root.Sections[indexPath.Section].Elements.RemoveAt(indexPath.Row);
 				tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
 			}
+		}
+	}
+
+	public class HeaderTapGestureRecognizer : UITapGestureRecognizer
+	{
+		public ISection Section { get; set; }
+ 
+		public HeaderTapGestureRecognizer(ISection section, NSObject target, Selector selector): base(target, selector) 
+		{
+			Section = section;
 		}
 	}
 }

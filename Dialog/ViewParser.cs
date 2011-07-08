@@ -205,7 +205,12 @@ namespace MonoMobile.MVVM
 							if (sectionAttribute.ThemeType != null)
 								 sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
 							
-							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) { Order = sectionAttribute.Order };
+							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
+							{ 
+								Order = sectionAttribute.Order,
+								IsExpandable = sectionAttribute.IsExpandable,
+								ExpandState = sectionAttribute.ExpandState,
+							};
 							lastSection.Parent = root as IElement;
 
 							ThemeHelper.ApplyElementTheme(root.Theme, lastSection, null); 
@@ -447,6 +452,8 @@ namespace MonoMobile.MVVM
 					{
 						section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
 						section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
+						section.IsExpandable = sectionAttribute.IsExpandable;
+						section.ExpandState = sectionAttribute.ExpandState;
 					}
 					root = section as IElement;
 				} 
@@ -782,6 +789,8 @@ namespace MonoMobile.MVVM
 				{
 					section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
 					section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
+					section.IsExpandable = sectionAttribute.IsExpandable;
+					section.ExpandState = sectionAttribute.ExpandState;
 				}
 
 				root.ViewBinding.ViewType = listAttribute.ViewType ?? root.ViewBinding.ViewType;

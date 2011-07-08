@@ -35,8 +35,15 @@ namespace MonoMobile.MVVM
 	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Drawing;
+	using System.Linq;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	
+	public enum ExpandState
+	{
+		Opened, 
+		Closed
+	}
 
 	/// <summary>
 	/// Generic base version of Section
@@ -44,10 +51,19 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class Section : ContainerElement, ISection, IEnumerable, IInitializable
 	{
+		private ExpandState _ExpandState;
+
 		private UIView _Header, _Footer;
+		private List<IElement> _HiddenElements;
 
 		public ObservableCollection<IElement> Elements { get; set; }
-		
+		public ExpandState ExpandState 
+		{
+			get { return _ExpandState; } 
+			set { SetExpandState(value); }
+		}
+		public bool IsExpandable { get; set; }
+
 		public new IRoot Root { get { return Parent as IRoot; } }
 
 
@@ -228,6 +244,37 @@ namespace MonoMobile.MVVM
 //				Add(v);
 //		}
 
+		public void SetExpandState(ExpandState state)
+		{
+			if (_ExpandState != state)
+			{
+				_ExpandState = state;
+
+				if (Root != null && IsExpandable)
+				{
+					if (_HiddenElements == null)
+						_HiddenElements = Elements.ToList();
+
+					Root.TableView.BeginUpdates();
+					
+					if (_ExpandState == ExpandState.Opened)
+					{
+						Elements.Clear();
+						Insert(0, UITableViewRowAnimation.Bottom, _HiddenElements.ToArray());
+					}
+					else
+					{
+						_HiddenElements = Elements.ToList();
+						RemoveRange(0, Elements.Count, UITableViewRowAnimation.Top);
+					}
+	
+			
+					Root.TableView.ReloadSections(new NSIndexSet((uint)Index), UITableViewRowAnimation.Fade);
+					Root.TableView.EndUpdates();
+				}
+			}
+		}
+
 		/// <summary>
 		/// Inserts a series of elements into the Section using the specified animation
 		/// </summary>
@@ -359,8 +406,9 @@ namespace MonoMobile.MVVM
 			if (start + count > Elements.Count)
 				count = Elements.Count - start;
 			
-	//		Elements.RemoveRange(start, count);
-			
+			//Elements.RemoveRange(start, count);
+			Elements.Clear();
+
 			if (Root == null || Root.TableView == null)
 				return;
 			
@@ -391,7 +439,7 @@ namespace MonoMobile.MVVM
 
 		public int Count
 		{
-			get { return Elements.Count; }
+			get { return ExpandState == ExpandState.Opened ? Elements.Count : 0; }
 		}
 
 		public IElement this[int idx]

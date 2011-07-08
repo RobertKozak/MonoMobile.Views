@@ -22,66 +22,66 @@ namespace Samples
 //	[EnableSearch(true, IncrementalSearch = true)]
 	public class MovieListView: View, INotifyPropertyChanged
 	{	
-		[Section(Order = 2)]
-//		[EnableSearch(true, IncrementalSearch = false)]
-//		public List<ISection> Search(ISection[] sections, string searchText)
+//		[Section(Order = 2)]
+////		[EnableSearch(true, IncrementalSearch = false)]
+////		public List<ISection> Search(ISection[] sections, string searchText)
+////		{
+////			var result = new List<ISection>();
+////
+////			foreach(var section in sections)
+////				foreach(var element in section.Elements)
+////			{
+////				if (element.Caption.Contains(searchText))
+////					result.Add(new Section() { element });		
+////			}
+////
+////			return result;
+////		}
+//
+//		private View1 _View1 = new View1();
+//		private View2 _View2 = new View2();
+//
+//		[Multiline]
+//		[DefaultValue("Test Entry. This is a sample of some very long text.")]
+//		//	[Theme(typeof(CorkStyle))]
+//		public string TestEntry2 { get; set; }
+//
+//		[DefaultValue(true)]
+//		//[Checkbox]
+//		public bool TestBool { get; set; }
+//
+//		[Date]
+//	//	[Theme(typeof(MarbledTheme))]
+//		public DateTime Date {get; set;}
+//		
+//		[Time]
+//	//	[Theme(typeof(GraniteStyle))]
+//		public DateTime Time {get; set;}
+//
+//		[Password("Enter passsword")]
+//		[DefaultValue("Test String")]
+//		public string MyString
 //		{
-//			var result = new List<ISection>();
+//			get;
+//			set;
+//		}
 //
-//			foreach(var section in sections)
-//				foreach(var element in section.Elements)
-//			{
-//				if (element.Caption.Contains(searchText))
-//					result.Add(new Section() { element });		
-//			}
-//
-//			return result;
+//		[Section]
+//		[Root(ViewType = typeof(MovieView))]
+//	//	[List(ViewType = typeof(MovieView))]//, ThemeType = typeof(WoodenTheme))]
+//		public ObservableCollection<MovieViewModel> Movies 
+//		{
+//			get;
+//			set;
+//		}
+//		
+//		[LoadMore]
+//		public void Activity()
+//		{
+//			Thread.Sleep(1500);
 //		}
 
-		private View1 _View1 = new View1();
-		private View2 _View2 = new View2();
-
-		[Multiline]
-		[DefaultValue("Test Entry. This is a sample of some very long text.")]
-		//	[Theme(typeof(CorkStyle))]
-		public string TestEntry2 { get; set; }
-
-		[DefaultValue(true)]
-		//[Checkbox]
-		public bool TestBool { get; set; }
-
-		[Date]
-	//	[Theme(typeof(MarbledTheme))]
-		public DateTime Date {get; set;}
-		
-		[Time]
-	//	[Theme(typeof(GraniteStyle))]
-		public DateTime Time {get; set;}
-
-		[Password("Enter passsword")]
-		[DefaultValue("Test String")]
-		public string MyString
-		{
-			get;
-			set;
-		}
-
-		[Section]
-		[Root(ViewType = typeof(MovieView))]
-	//	[List(ViewType = typeof(MovieView))]//, ThemeType = typeof(WoodenTheme))]
-		public ObservableCollection<MovieViewModel> Movies 
-		{
-			get;
-			set;
-		}
-		
-		[LoadMore]
-		public void Activity()
-		{
-			Thread.Sleep(1500);
-		}
-
-		[Section("Using a DataTemplate", "This is a footer")]
+		[Section("Using a DataTemplate", "This is a footer", IsExpandable = true, ExpandState = ExpandState.Closed)]
 		[Root(ViewType = typeof(MovieView))]
 		[NavbarButton(UIBarButtonSystemItem.Add)]
 		public ObservableCollection<MovieViewModel> Movies2 
@@ -118,96 +118,96 @@ namespace Samples
 			set;// { Set(()=>TestEntry, value); }
 		} 
 
-		[Section]
-		[Root(CellStyle = UITableViewCellStyle.Subtitle)]
-		[Caption("Root Address")]
-		public AddressView AddressView
-		{
-			get;// { return Get(()=>AddressView, new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" }); } 
-			set;// { Set(()=>AddressView, value); } 
-		}
-		
-		private IView _DynamicView;
-		[Section(Order = 10)]
-		[Root]
-		public IView DynamicView
-		{
-			get { return _DynamicView; }
-			set 
-			{ 
-				_DynamicView = value;
-				if (PropertyChanged != null) 
-					PropertyChanged(this, new PropertyChangedEventArgs("DynamicView")); 
-			} // { Set(()=>DynamicView, value); }
-		}
-		
-		[MultiSelection]
-		public List<string> MovieClasses { get; set; }
-		
-		[Section]
-	//	[CellStyle(typeof(ClearStyle))]
-	//[CellStyle(typeof(ButtonCellStyle))]
-		public View WebSamples
-		{
-			get;// { return Get(()=>WebSamples, new WebSamples()); }
-			set;// { Set(()=>WebSamples, value); }
-		}
-		
-		private bool _CanChangeStyle;
-		[Checkmark]
-		public bool CanChangeStyle 
-		{ 
-			get { return _CanChangeStyle; } 
-			set 
-			{
-				if (_CanChangeStyle != value)
-				{
-					_CanChangeStyle = value; 
-					if (PropertyChanged != null) 
-						PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); 
-				}
-			}
-		}
-
-		[Button]
-		[Section(Order = 11)]
-		public void ChangeDynamicView()
-		{
-			if(DynamicView.GetType() == typeof(View1))
-				DynamicView = _View2;
-			else
-				DynamicView = _View1;
-		}
-		
-		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
-		public void ChangeStyle()
-		{
-			
-		}
-//		[List]
-//		[Section("", "This Address is the same as Root Address above")]
-//		public AddressView InlineAddress 
+//		[Section]
+//		[Root(CellStyle = UITableViewCellStyle.Subtitle)]
+//		[Caption("Root Address")]
+//		public AddressView AddressView
 //		{
-//			get { return Get(()=>AddressView); } 
-//			set { Set(()=>AddressView, value); } 
+//			get;// { return Get(()=>AddressView, new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" }); } 
+//			set;// { Set(()=>AddressView, value); } 
 //		}
-		
-		[Section]
-		[Root]
-		public InterestingView InterestingStuff
-		{
-			get;// { return Get(()=>InterestingStuff, new InterestingView()); }
-			set;// { Set(()=>InterestingStuff, value); }
-		}
-		
-	//	[PullToRefresh]
-		public void RefreshData()
-		{
-			for(var index = 0; index < 100; index++)
-				System.Threading.Thread.Sleep(50);
-		}
-
-		public HoneyDoListView HoneyDoList { get; set; }
+//		
+//		private IView _DynamicView;
+//		[Section(Order = 10)]
+//		[Root]
+//		public IView DynamicView
+//		{
+//			get { return _DynamicView; }
+//			set 
+//			{ 
+//				_DynamicView = value;
+//				if (PropertyChanged != null) 
+//					PropertyChanged(this, new PropertyChangedEventArgs("DynamicView")); 
+//			} // { Set(()=>DynamicView, value); }
+//		}
+//		
+//		[MultiSelection]
+//		public List<string> MovieClasses { get; set; }
+//		
+//		[Section]
+//	//	[CellStyle(typeof(ClearStyle))]
+//	//[CellStyle(typeof(ButtonCellStyle))]
+//		public View WebSamples
+//		{
+//			get;// { return Get(()=>WebSamples, new WebSamples()); }
+//			set;// { Set(()=>WebSamples, value); }
+//		}
+//		
+//		private bool _CanChangeStyle;
+//		[Checkmark]
+//		public bool CanChangeStyle 
+//		{ 
+//			get { return _CanChangeStyle; } 
+//			set 
+//			{
+//				if (_CanChangeStyle != value)
+//				{
+//					_CanChangeStyle = value; 
+//					if (PropertyChanged != null) 
+//						PropertyChanged(this, new PropertyChangedEventArgs("CanChangeStyle")); 
+//				}
+//			}
+//		}
+//
+//		[Button]
+//		[Section(Order = 11)]
+//		public void ChangeDynamicView()
+//		{
+//			if(DynamicView.GetType() == typeof(View1))
+//				DynamicView = _View2;
+//			else
+//				DynamicView = _View1;
+//		}
+//		
+//		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
+//		public void ChangeStyle()
+//		{
+//			
+//		}
+////		[List]
+////		[Section("", "This Address is the same as Root Address above")]
+////		public AddressView InlineAddress 
+////		{
+////			get { return Get(()=>AddressView); } 
+////			set { Set(()=>AddressView, value); } 
+////		}
+//		
+//		[Section]
+//		[Root]
+//		public InterestingView InterestingStuff
+//		{
+//			get;// { return Get(()=>InterestingStuff, new InterestingView()); }
+//			set;// { Set(()=>InterestingStuff, value); }
+//		}
+//		
+//	//	[PullToRefresh]
+//		public void RefreshData()
+//		{
+//			for(var index = 0; index < 100; index++)
+//				System.Threading.Thread.Sleep(50);
+//		}
+//
+//		public HoneyDoListView HoneyDoList { get; set; }
 //		[List]
 //		public Genre Genre { get; set; }
 
@@ -216,40 +216,40 @@ namespace Samples
 			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
 			
 
-			HoneyDoList = new HoneyDoListView();
-
-			var enumType = typeof(Genre);
-            var enumItems = from field in enumType.GetFields()
-                            where field.IsLiteral
-                            select EnumExtensions.GetDescriptionValue(field.Name, enumType);
-
-			MovieClasses = new List<string>(enumItems.ToList());
-
-			Movies = new ObservableCollection<MovieViewModel>();
-			var dataModel = new MovieDataModel();
-			dataModel.Load();
-			Movies =dataModel.Movies;
-			MyString = "Test string";
-
-InterestingStuff = new InterestingView();
-			
-			Location = new CLLocationCoordinate2D(-33.867139,151.207114);
-
-DynamicView = new View1();
-			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
-			WebSamples = new WebSamples();
-
-////			foreach(var movie in dataModel.Movies)
-////			{
-////				Movies.Add(new MovieView() { DataContext = movie });
-////			}
+//			HoneyDoList = new HoneyDoListView();
 //
-//Movies2 = Movies;
-		
-			Time = DateTime.Now;
-			Date = DateTime.Now;
-			
-			CanChangeStyle = true;
+//			var enumType = typeof(Genre);
+//            var enumItems = from field in enumType.GetFields()
+//                            where field.IsLiteral
+//                            select EnumExtensions.GetDescriptionValue(field.Name, enumType);
+//
+//			MovieClasses = new List<string>(enumItems.ToList());
+//
+//			Movies = new ObservableCollection<MovieViewModel>();
+//			var dataModel = new MovieDataModel();
+//			dataModel.Load();
+//			Movies =dataModel.Movies;
+//			MyString = "Test string";
+//
+//InterestingStuff = new InterestingView();
+//			
+//			Location = new CLLocationCoordinate2D(-33.867139,151.207114);
+//
+//DynamicView = new View1();
+//			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
+//			WebSamples = new WebSamples();
+//
+//////			foreach(var movie in dataModel.Movies)
+//////			{
+//////				Movies.Add(new MovieView() { DataContext = movie });
+//////			}
+////
+////Movies2 = Movies;
+//		
+//			Time = DateTime.Now;
+//			Date = DateTime.Now;
+//			
+//			CanChangeStyle = true;
 		}
 	
 

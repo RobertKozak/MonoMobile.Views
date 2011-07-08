@@ -56,6 +56,9 @@ namespace MonoMobile.MVVM
 		string FooterText { get; set; }
 		UIView HeaderView { get; set; }
 		UIView FooterView { get; set; }
+		
+		bool IsExpandable { get; set;}
+		ExpandState ExpandState { get; set; }
 
 		void Add(IElement element );
 		int Add(IEnumerable<IElement> elements);
