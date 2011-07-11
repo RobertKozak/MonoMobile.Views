@@ -56,7 +56,8 @@ namespace MonoMobile.MVVM
 		string FooterText { get; set; }
 		UIView HeaderView { get; set; }
 		UIView FooterView { get; set; }
-		
+		UIImageView ArrowView { get; set; }
+
 		bool IsExpandable { get; set;}
 		ExpandState ExpandState { get; set; }
 

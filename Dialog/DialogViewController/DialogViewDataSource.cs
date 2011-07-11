@@ -1,4 +1,3 @@
-using MonoTouch.ObjCRuntime;
 // 
 //  DialogViewDataSource.cs
 // 
@@ -32,14 +31,17 @@ using MonoTouch.ObjCRuntime;
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoTouch.UIKit;
 	using System.Drawing;
 	using System.Linq;
+	using MonoTouch.CoreAnimation;
 	using MonoTouch.Foundation;
+	using MonoTouch.ObjCRuntime;
+	using MonoTouch.UIKit;
 
 	public class DialogViewDataSource : UITableViewSource
 	{
 		private HeaderTapGestureRecognizer tapRecognizer;
+		private Selector _HeaderSelector = new Selector("headerTap");
 
 		private const float _SnapBoundary = 65;
 		protected DialogViewController Container;
@@ -144,9 +146,17 @@ namespace MonoMobile.MVVM
 
 			if (section.HeaderView != null)
 			{
-				tapRecognizer = new HeaderTapGestureRecognizer(section, this, new Selector("headerTap"));
+				if (section.IsExpandable)
+				{
+					section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
+					section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
+					section.HeaderView.Add(section.ArrowView);
+				
+					tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
 			
-				section.HeaderView.AddGestureRecognizer(tapRecognizer);
+					section.HeaderView.AddGestureRecognizer(tapRecognizer);
+					Flip(section);
+				}
 			}
 			return section.HeaderView;
 		}
@@ -163,7 +173,18 @@ namespace MonoMobile.MVVM
 					section.ExpandState = ExpandState.Closed;
 				else
 					section.ExpandState = ExpandState.Opened;
+			
+				Flip(section);
 			}
+		}
+		
+		private void Flip(ISection section)
+		{
+			UIView.BeginAnimations(null);
+			UIView.SetAnimationDuration(0.18f);
+			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
+			
+			UIView.CommitAnimations();
 		}
 
 		public override float GetHeightForHeader(UITableView tableView, int sectionIdx)

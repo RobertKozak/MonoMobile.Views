@@ -62,7 +62,9 @@ namespace MonoMobile.MVVM
 			get { return _ExpandState; } 
 			set { SetExpandState(value); }
 		}
-		public bool IsExpandable { get; set; }
+		public bool IsExpandable {get; set; }
+
+		public UIImageView ArrowView { get; set; }
 
 		public new IRoot Root { get { return Parent as IRoot; } }
 
@@ -83,7 +85,8 @@ namespace MonoMobile.MVVM
 		public Section(string caption) : base(caption)
 		{
 			Elements = new ObservableCollection<IElement>();
-			
+			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
+
 //			if (DataTemplate != null)
 //			{
 //				DataTemplate.BindProperties();
@@ -249,7 +252,7 @@ namespace MonoMobile.MVVM
 			if (_ExpandState != state)
 			{
 				_ExpandState = state;
-
+				
 				if (Root != null && IsExpandable)
 				{
 					if (_HiddenElements == null)
@@ -269,7 +272,7 @@ namespace MonoMobile.MVVM
 					}
 	
 			
-					Root.TableView.ReloadSections(new NSIndexSet((uint)Index), UITableViewRowAnimation.Fade);
+					Root.TableView.ReloadSections(new NSIndexSet((uint)Index), UITableViewRowAnimation.None);
 					Root.TableView.EndUpdates();
 				}
 			}
