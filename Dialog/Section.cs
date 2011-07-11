@@ -341,11 +341,14 @@ namespace MonoMobile.MVVM
 				return;
 			
 			int sidx = Root.IndexOf(this as ISection);
-			var paths = new NSIndexPath[count];
-			for (int i = 0; i < count; i++)
-				paths[i] = NSIndexPath.FromRowSection(idx + i, sidx);
+			if (sidx != -1)
+			{
+				var paths = new NSIndexPath[count];
+				for (int i = 0; i < count; i++)
+					paths[i] = NSIndexPath.FromRowSection(idx + i, sidx);
 			
-			Root.TableView.InsertRows(paths, anim);
+				Root.TableView.InsertRows(paths, anim);
+			}
 		}
 
 		public void Insert(int index, params IElement[] newElements)

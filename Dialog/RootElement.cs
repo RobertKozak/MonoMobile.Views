@@ -476,21 +476,11 @@ namespace MonoMobile.MVVM
 					Sections = binding.Root.Sections;
 				}
 			}
-			else if (DataContext != null &&ViewBinding.ElementType != null) 
+			else if (DataContext != null && ViewBinding.ElementType != null) 
 			{
-				var section = Sections.FirstOrDefault() as Section;
-				section = BindingContext.CreateSection(this, section, DataContext, ViewBinding.ElementType, false);
-				if (Sections.Count == 0)
-				{
-					if (section != null)
-						Sections.Add(section);
-				}
-				else
-				{
-					Sections[Sections.Count-1] = section;
-
-					Reload(Sections[Sections.Count -1], UITableViewRowAnimation.None);
-				}
+				Sections.Clear();
+				var section = BindingContext.CreateSection(this, null, DataContext, ViewBinding.ElementType, false);
+				Sections.Add(section);
 			}
 		}
 
