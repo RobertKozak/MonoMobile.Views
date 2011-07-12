@@ -93,7 +93,8 @@ namespace MonoMobile.MVVM
 						property.Update();
 
 					property = BindableProperty.GetBindableProperty(Container, "IndexProperty");
-					property.Update();
+					if (property != null)
+						property.Update();
 
 					property = BindableProperty.GetBindableProperty(Root, "DataContextProperty");
 					if (property != null)

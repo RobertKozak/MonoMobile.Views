@@ -244,7 +244,7 @@ DynamicView = new View1();
 ////				Movies.Add(new MovieView() { DataContext = movie });
 ////			}
 //
-//Movies2 = Movies;
+Movies2 = Movies;
 		
 			Time = DateTime.Now;
 			Date = DateTime.Now;

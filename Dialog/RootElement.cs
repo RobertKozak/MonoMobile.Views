@@ -69,7 +69,6 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
-		public Guid DebugId = Guid.NewGuid();
 		public UIImageView ImageView { get; set; }
 
 		public bool IsSearchbarHidden { get; set; }
@@ -476,7 +475,7 @@ namespace MonoMobile.MVVM
 					Sections = binding.Root.Sections;
 				}
 			}
-			else if (DataContext != null && ViewBinding.ElementType != null) 
+			else if (DataContext != null && DataContext is IEnumerable && ViewBinding.ElementType != null) 
 			{
 				Sections.Clear();
 				var section = BindingContext.CreateSection(this, null, DataContext, ViewBinding.ElementType, false);

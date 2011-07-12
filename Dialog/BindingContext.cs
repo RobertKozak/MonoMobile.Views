@@ -251,37 +251,45 @@ namespace MonoMobile.MVVM
 			IRoot newRoot = null;
 			UIView view = null;
 			object context = root.DataContext;
+	
+			if (root.ViewBinding.View != null)
+			{
+				view = root.ViewBinding.View;
+				if (root.ViewBinding.MemberInfo != null && root.ViewBinding.DataContext != null)
+				{
+					var memberValue = root.ViewBinding.MemberInfo.GetValue(root.ViewBinding.DataContext) as UIView;
 
-			try
-			{				
+					if (memberValue != null)
+						view = memberValue;
+				}
+			}
+			else
+			{
 				if (root.ViewBinding.ViewType != null)
 				{
 					view = Activator.CreateInstance(root.ViewBinding.ViewType) as UIView;
 				}
-
-				var dataContext = view as IDataContext;
-				if (dataContext != null)
-				{
-					dataContext.DataContext = context;
-
-					var lifetime = context as IInitializable;
-					if (lifetime != null)
-						lifetime.Initialize();
-					
-					lifetime = dataContext as IInitializable;
-					if (lifetime != null)
-						lifetime.Initialize();
-				}
-				
-				var bindingContext = new BindingContext(view, root.Caption, root.Theme);
-
-				newRoot = (IRoot)bindingContext.Root;
-				newRoot.ViewBinding = root.ViewBinding;
-				newRoot.ViewBinding.View = view;
 			}
-			catch(MissingMethodException)
+
+			var dataContext = view as IDataContext;
+			if (dataContext != null)
 			{
+				dataContext.DataContext = context;
+
+				var lifetime = context as IInitializable;
+				if (lifetime != null)
+					lifetime.Initialize();
+				
+				lifetime = dataContext as IInitializable;
+				if (lifetime != null)
+					lifetime.Initialize();
 			}
+			
+			var bindingContext = new BindingContext(view, root.Caption, root.Theme);
+
+			newRoot = (IRoot)bindingContext.Root;
+			newRoot.ViewBinding = root.ViewBinding;
+			newRoot.ViewBinding.View = view;
 			
 			return newRoot;
 		}

@@ -483,6 +483,7 @@ namespace MonoMobile.MVVM
 				((Element)rootElement).Opaque = false;
 				rootElement.Caption = caption;
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
+				rootElement.ViewBinding.DataContext = context;
 				rootElement.ViewBinding.MemberInfo = dataContextMember;
 				rootElement.ViewBinding.ElementType = elementType;
 				rootElement.ViewBinding.ViewType = viewType;

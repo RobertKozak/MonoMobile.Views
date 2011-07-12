@@ -360,9 +360,8 @@ namespace MonoMobile.MVVM
 		{
 			if (e == null)
 				return;
-			for (int i = Elements.Count; i > 0;)
+			for (int i = Elements.Count - 1; i > 0; i--)
 			{
-				i--;
 				if (Elements[i] == e)
 				{
 					RemoveRange(i, 1);
@@ -413,7 +412,10 @@ namespace MonoMobile.MVVM
 				count = Elements.Count - start;
 			
 			//Elements.RemoveRange(start, count);
-			Elements.Clear();
+			for(var index = start; index <= count; index++)
+			{
+				Elements.RemoveAt(index);
+			}
 
 			if (Root == null || Root.TableView == null)
 				return;

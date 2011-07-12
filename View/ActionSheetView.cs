@@ -80,8 +80,11 @@ namespace MonoMobile.MVVM
 
 		protected override void Dispose(bool disposing)
 		{
-			_ActualActionSheet.Dismissed -= HandleDismissed;
-			_ActualActionSheet.Dispose();
+			if (_ActualActionSheet != null)
+			{
+				_ActualActionSheet.Dismissed -= HandleDismissed;
+				_ActualActionSheet.Dispose();
+			}
 
 			base.Dispose(disposing);
 		}

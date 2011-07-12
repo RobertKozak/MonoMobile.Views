@@ -39,6 +39,8 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public abstract class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
 	{		
+		public Guid DebugId = Guid.NewGuid();
+
 		protected object _DataContext;
 		public object DataContext 
 		{ 
@@ -491,6 +493,7 @@ namespace MonoMobile.MVVM
 							_DisabledCellView.RemoveFromSuperview();
 							_DisabledCellView.Dispose();
 							_DisabledCellView = null;
+							Cell.SetNeedsDisplay();
 						}
 					}
 					else
@@ -529,6 +532,13 @@ namespace MonoMobile.MVVM
 		{
 			if (cell != null)
 			{
+				if (_DisabledCellView != null)
+				{
+					_DisabledCellView.RemoveFromSuperview();
+					_DisabledCellView.Dispose();
+					_DisabledCellView = null;
+				}
+
 				_DisabledCellView = new DisabledCellView(cell);
 				cell.AddSubview(_DisabledCellView);
 				cell.SetNeedsDisplay();
