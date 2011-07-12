@@ -482,7 +482,7 @@ namespace MonoMobile.MVVM
 				Sections.Add(section);
 			}
 		}
-
+		
 		public override string ToString()
 		{
 			if (ContentView != null) 

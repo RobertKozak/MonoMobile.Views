@@ -132,7 +132,11 @@ namespace MonoMobile.MVVM
 		
 		public static IBindingExpression SetBinding(IBindable target, string targetProperty, object dataContext)
 		{
-			var binding = new Binding(targetProperty, "DataContext") { Source = dataContext } ;
+			Binding binding = dataContext as Binding;
+			if (dataContext == null)
+			{
+				binding = new Binding(targetProperty, "DataContext") { Source = dataContext } ;
+			}
 			return SetBinding(target, binding);
 		}
 

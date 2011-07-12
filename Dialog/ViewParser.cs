@@ -498,6 +498,7 @@ namespace MonoMobile.MVVM
 					if (items is UIView)
 					{				
 						rootElement.ViewBinding.View = items as UIView;
+						rootElement.DataContext = items;
 					}
 					else
 					{

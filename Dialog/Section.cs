@@ -364,7 +364,7 @@ namespace MonoMobile.MVVM
 			{
 				if (Elements[i] == e)
 				{
-					RemoveRange(i, 1);
+					Remove(i);
 					return;
 				}
 			}
@@ -411,8 +411,7 @@ namespace MonoMobile.MVVM
 			if (start + count > Elements.Count)
 				count = Elements.Count - start;
 			
-			//Elements.RemoveRange(start, count);
-			for(var index = count - 1; index >= start; index--)
+			for(var index = start + count - 1; index >= start; index--)
 			{
 				Elements.RemoveAt(index);
 			}

@@ -56,7 +56,7 @@ namespace MonoMobile.MVVM
 //			if (DetailTextLabel != null)
 //				DataContextProperty.BindTo(DetailTextLabel, "Text");
 	
-			//DataContextProperty.BindTo(Element);
+			DataContextProperty.BindTo(Element);
 
 			PullToRefreshCommandProperty.BindTo(Element);
 			ToolbarButtonsProperty.BindTo(Element);
