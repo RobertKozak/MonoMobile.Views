@@ -42,6 +42,7 @@ namespace MonoMobile.MVVM
 		public ContainerElement(string caption) : base(caption)
 		{
 			SelectedItems = new ObservableCollection<object>();
+			DataTemplate = new ContainerElementDataTemplate(this);
 		}
 	}
 }

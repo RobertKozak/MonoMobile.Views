@@ -31,6 +31,7 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 
 	public class TimeElement : DateTimeElement
 	{

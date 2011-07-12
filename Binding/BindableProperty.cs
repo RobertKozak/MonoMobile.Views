@@ -127,19 +127,19 @@ namespace MonoMobile.MVVM
 			{
 				Control = target;
 
-//				var property = propertyName;
-//				if (BindingExpression == null)
-//					property = ControlPropertyName;
+				var property = propertyName;
+				if (BindingExpression == null)
+					property = ControlPropertyName;
 				
-				ControlProperty = Control.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+				ControlProperty = Control.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 				if (ControlProperty == null)
-					throw new Exception(string.Format("Property named {0} was not found in class {1}", propertyName, Control.GetType().Name));
+					throw new Exception(string.Format("Property named {0} was not found in class {1}", property, Control.GetType().Name));
 			}
 
 			if (source != null && BindingExpression == null)
 			{
 				var bindable = target as IBindable;
-				//BindingExpression = BindingOperations.SetBinding(bindable, propertyName, source);
+				BindingExpression = BindingOperations.SetBinding(bindable, propertyName, source);
 			}
 		}
 
@@ -162,9 +162,13 @@ namespace MonoMobile.MVVM
 
 		public static BindableProperty GetBindableProperty(object obj, string bindablePropertyName)
 		{
+			var bindable = obj as IBindable;
+			if (bindable != null)
+				obj = bindable.DataTemplate;
+
 			Type type = obj.GetType();
 
-			var fieldInfo = type.GetField(bindablePropertyName);
+			var fieldInfo = type.GetField(bindablePropertyName, BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance);
 
 			if (fieldInfo != null)
 			{
@@ -172,6 +176,34 @@ namespace MonoMobile.MVVM
 			}
 
 			return null;
+		}
+
+		public T Convert<T>()
+		{
+			object sourceValue = ControlValue;
+			sourceValue = BindingExpression.ConvertValue(sourceValue);
+			return (T)sourceValue;
+		 }
+		
+		public object Convert()
+		{
+			object sourceValue = ControlValue;
+			sourceValue = BindingExpression.ConvertValue(sourceValue);
+			return sourceValue;
+		}
+		
+		public T ConvertBack<T>()
+		{
+			object sourceValue = ControlValue;
+			sourceValue = BindingExpression.ConvertbackValue(sourceValue);
+			return (T)sourceValue;
+		}
+		
+		public object ConvertBack(object value, Type convertType)
+		{
+			object sourceValue = value;
+			sourceValue = BindingExpression.ConvertbackValue(sourceValue);
+			return sourceValue;
 		}
 	}
 }

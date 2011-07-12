@@ -71,7 +71,8 @@ namespace MonoMobile.MVVM
 			if (_DataContext != value)
 			{
 				_DataContext = value;
-			
+
+				DataTemplate.UpdateDataContext();
 				OnDataContextChanged();
 			}
 		}

@@ -118,14 +118,17 @@ namespace MonoMobile.MVVM
 					convertedTargetValue = CheckAndCoerceToGenericEnumerable(member.GetMemberType(), convertedTargetValue);
 					SetValue(member, obj, convertedTargetValue);	
 				}
-				catch (InvalidCastException)
+				catch (InvalidCastException ex)
 				{
+					Console.WriteLine(ex.Message);
 				}
-				catch (NotImplementedException)
+				catch (NotImplementedException ex1)
 				{
+					Console.WriteLine(ex1.Message);
 				}
-				catch (NotSupportedException)
+				catch (NotSupportedException ex2)
 				{
+					Console.WriteLine(ex2.Message);
 				}
 			}
 		}

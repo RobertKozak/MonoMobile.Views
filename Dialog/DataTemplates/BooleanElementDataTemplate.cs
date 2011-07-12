@@ -37,6 +37,8 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class BooleanElementDataTemplate : ElementDataTemplate
 	{
+		private bool __On { get { return Switch.On; } set { Switch.On = value; } }
+
 		public UISwitch Switch { get { return (UISwitch)Cell.AccessoryView; } }
 
 		public BooleanElementDataTemplate(IElement element) : base(element)

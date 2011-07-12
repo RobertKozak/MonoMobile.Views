@@ -412,7 +412,7 @@ namespace MonoMobile.MVVM
 				count = Elements.Count - start;
 			
 			//Elements.RemoveRange(start, count);
-			for(var index = start; index <= count; index++)
+			for(var index = count - 1; index >= start; index--)
 			{
 				Elements.RemoveAt(index);
 			}

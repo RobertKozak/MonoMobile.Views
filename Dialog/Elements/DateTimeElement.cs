@@ -47,6 +47,7 @@ namespace MonoMobile.MVVM
 		{
 			DataTemplate = new DateTimeElementDataTemplate(this);
 		}
+
 		public DateTimeElement(string caption, DateTime date) : this(caption)
 		{
 			DataContext = date;
@@ -109,13 +110,22 @@ namespace MonoMobile.MVVM
 				Mode = UIDatePickerMode.Date 
 			};
 			
+			picker.ValueChanged += delegate { DataContext = DatePicker.Date; };
+
 			return picker;
+		}
+		
+		public override void UpdateCell()
+		{
+			base.UpdateCell();
+
+			OnDataContextChanged();
 		}
 
 		protected override void OnDataContextChanged()
 		{			
 			if (DetailTextLabel != null)
-				DetailTextLabel.Text = FormatDate((DateTime)DataContext);
+				DetailTextLabel.Text = FormatDate(DatePicker.Date.ToDateTime());
 		}
 	}
 }
