@@ -1,13 +1,10 @@
 //
-// StringElementDataTemplate.cs
+// IDataBinding.cs: 
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
-// 
-// Copyright 2011, Nowcom Corporation.
-// 
-// This code is based on StyledStringElement and StringElement by
-// Miguel de Icaza (miguel@gnome.org) Copyright 2010, Novell, Inc.
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
+//
+// Copyright 2011, Nowcom Corporation
 //
 // Code licensed under the MIT X11 license
 //
@@ -32,21 +29,18 @@
 //
 namespace MonoMobile.MVVM
 {
-	using MonoTouch.Foundation;
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
 
-	[Preserve(AllMembers = true)]
-	public class StringElementDataTemplate : ElementDataTemplate
+	public interface IDataBinding
 	{
-		public StringElementDataTemplate(IElement element) : base(element)
-		{
-		}
+		void BindProperties();
+		void UpdateTargets();
+		void UpdateSources();
 
-		public override void BindProperties()
-		{
-			base.BindProperties();
-			
-			if (DetailTextLabel != null)// && this is IRoot && !((IRoot)this).IsMultiselect)
-				DataContextProperty.BindTo(DetailTextLabel, "Text");
-		}
+		void UpdateDataContext();
+		void UpdateDataContext(object value);
 	}
 }
+

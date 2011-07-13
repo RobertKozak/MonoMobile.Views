@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 
 		public BooleanElement(string caption) : base(caption)
 		{			
-			DataTemplate= new BooleanElementDataTemplate(this);
+			DataBinding= new BooleanElementDataBinding(this);
 		}
 
 		public BooleanElement(RectangleF frame) : this("")
@@ -55,7 +55,7 @@ namespace MonoMobile.MVVM
 			{
 				Switch = new UISwitch { BackgroundColor = UIColor.Clear, Tag = 1 };
 				
-				Switch.AddTarget(delegate { DataTemplate.UpdateDataContext(); }, UIControlEvent.ValueChanged);
+				Switch.AddTarget(delegate { DataBinding.UpdateDataContext(); }, UIControlEvent.ValueChanged);
 			}
 			
 			Cell.AccessoryView = Switch;

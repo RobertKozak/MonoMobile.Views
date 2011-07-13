@@ -1,5 +1,5 @@
 // 
-// SectionDataTemplate.cs
+// CheckboxElementDataBinding.cs
 // 
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -31,32 +31,35 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.Foundation;
-
+	using MonoTouch.UIKit;
+	
 	[Preserve(AllMembers = true)]
-	public class SectionDataTemplate : ElementDataTemplate
+	public class CheckboxElementDataBinding : ElementDataBinding
 	{
-		public BindableProperty FooterTextProperty = BindableProperty.Register("FooterText");
-		public BindableProperty HeaderTextProperty = BindableProperty.Register("HeaderText");
-		public BindableProperty FooterViewProperty = BindableProperty.Register("FooterView");
-		public BindableProperty HeaderViewProperty = BindableProperty.Register("HeaderView");
-		
-		public BindableProperty ElementsProperty = BindableProperty.Register("Elements");
-		
-		public SectionDataTemplate(IElement element) : base(element)
+		private CheckboxElement _CheckboxElement;
+
+		private bool Checkmark
 		{
+			get { return (bool)_CheckboxElement.DataContext; }
+			set 
+			{ 
+				if ((bool)_CheckboxElement.DataContext != value)
+				{
+					_CheckboxElement.DataContext = value;
+					_CheckboxElement.UpdateSelected();
+				}
+			}
+		}
+		
+		public CheckboxElementDataBinding(IElement element) : base(element)
+		{
+			_CheckboxElement = (CheckboxElement)element;
 		}
 
 		public override void BindProperties()
 		{
-		//	base.BindProperties();
-
-			CaptionProperty.BindTo(Element);
-			
-			HeaderTextProperty.BindTo(Element);
-			FooterTextProperty.BindTo(Element);
-			DataContextProperty.BindTo(Element);
-
-			ElementsProperty.BindTo(Element);
+			base.BindProperties();
+			DataContextProperty.BindTo(this, "Checkmark");
 		}
 	}
 }

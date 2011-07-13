@@ -152,20 +152,20 @@ namespace MonoMobile.MVVM
 
 			IBindingExpression bindingExpression = null;
 			
-			object dataTemplate = target.DataTemplate;
-			object nestedTarget = dataTemplate;
+			object dataBinding = target.DataBinding;
+			object nestedTarget = dataBinding;
 			var element = target as IElement;
 
 			MemberInfo memberInfo = null;
 			FieldInfo bindablePropertyInfo = null;
 
-			if (dataTemplate != null)
+			if (dataBinding != null)
 			{
 				var name = string.Concat(targetProperty, "Property");
-				bindablePropertyInfo = dataTemplate.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+				bindablePropertyInfo = dataBinding.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 				
 				name = string.Concat(name, ".ControlValue");			
-				memberInfo = dataTemplate.GetType().GetNestedMember(ref nestedTarget, name, false);
+				memberInfo = dataBinding.GetType().GetNestedMember(ref nestedTarget, name, false);
 				if (memberInfo != null)
 				{
 					binding.TargetPath = name;
@@ -225,7 +225,7 @@ namespace MonoMobile.MVVM
 			
 			if (bindablePropertyInfo != null)
 			{
-				var bindableProperty = bindablePropertyInfo.GetValue(dataTemplate) as BindableProperty;
+				var bindableProperty = bindablePropertyInfo.GetValue(dataBinding) as BindableProperty;
 				if (bindableProperty != null)
 					bindableProperty.BindingExpression = bindingExpression;
 			}

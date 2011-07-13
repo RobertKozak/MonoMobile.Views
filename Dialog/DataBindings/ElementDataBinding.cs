@@ -1,5 +1,5 @@
 // 
-// ElementDataTemplate.cs
+// ElementDataBinding.cs
 // 
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	[Preserve(AllMembers = true)]
-	public class ElementDataTemplate : IDataTemplate, IDisposable
+	public class ElementDataBinding : IDataBinding, IDisposable
 	{		
 		private UITableViewCellAccessory __Accessory { get { return Cell.Accessory; } set { Cell.Accessory = value; } }
 		private UIImage __ImageIcon { get { return Cell.ImageView.Image; } set { Cell.ImageView.Image = value; } }
@@ -107,7 +107,7 @@ namespace MonoMobile.MVVM
 		public BindableProperty RowHeightProperty = BindableProperty.Register("RowHeight");
 
 
-		public ElementDataTemplate(IElement element)
+		public ElementDataBinding(IElement element)
 		{
 			Element = element;
 		}

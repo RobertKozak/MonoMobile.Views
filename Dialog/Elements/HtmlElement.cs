@@ -46,7 +46,7 @@ namespace MonoMobile.MVVM
 
 		public HtmlElement(string caption) : base(caption)
 		{
-			DataTemplate = new HtmlElementDataTemplate(this);
+			DataBinding = new HtmlElementDataBinding(this);
 		}
 
 		public HtmlElement(string caption, Uri url) : this(caption)

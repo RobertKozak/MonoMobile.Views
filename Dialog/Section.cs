@@ -87,12 +87,12 @@ namespace MonoMobile.MVVM
 			Elements = new ObservableCollection<IElement>();
 			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
 
-//			if (DataTemplate != null)
+//			if (DataBinding != null)
 //			{
-//				DataTemplate.BindProperties();
+//				DataBinding.BindProperties();
 //			
-//				DataTemplate.UpdateTargets();
-//				DataTemplate.UpdateSources();
+//				DataBinding.UpdateTargets();
+//				DataBindingF.UpdateSources();
 //			}
 		}
 

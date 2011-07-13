@@ -164,7 +164,7 @@ namespace MonoMobile.MVVM
 		{
 			var bindable = obj as IBindable;
 			if (bindable != null)
-				obj = bindable.DataTemplate;
+				obj = bindable.DataBinding;
 
 			Type type = obj.GetType();
 

@@ -54,7 +54,7 @@ namespace MonoMobile.MVVM
 			}
 		}
 
-		public IDataTemplate DataTemplate { get; set; }
+		public IDataBinding DataBinding { get; set; }
 
 		private bool _Visible;
 		private int _OldRow;
@@ -72,7 +72,7 @@ namespace MonoMobile.MVVM
 			{
 				_DataContext = value;
 
-				DataTemplate.UpdateDataContext();
+				DataBinding.UpdateDataContext();
 				OnDataContextChanged();
 			}
 		}
@@ -340,7 +340,7 @@ namespace MonoMobile.MVVM
 			Enabled = true;
 			EditingStyle = UITableViewCellEditingStyle.None;
 			
-			DataTemplate = new ElementDataTemplate(this);
+			DataBinding = new ElementDataBinding(this);
 		}
 		
 		public Element(string caption, Binding binding): this(caption)
@@ -368,7 +368,7 @@ namespace MonoMobile.MVVM
 		
 		protected override void Dispose(bool disposing)
 		{
-			var disposable = DataTemplate as IDisposable;
+			var disposable = DataBinding as IDisposable;
 			if (disposable != null)
 				disposable.Dispose();
 
@@ -406,11 +406,11 @@ namespace MonoMobile.MVVM
 
 			InitializeCell(tableView);
 			
-			if (DataTemplate != null)
+			if (DataBinding != null)
 			{
-				DataTemplate.BindProperties();
-				DataTemplate.UpdateTargets();
-				DataTemplate.UpdateSources();
+				DataBinding.BindProperties();
+				DataBinding.UpdateTargets();
+				DataBinding.UpdateSources();
 			}
 
 			if (!Enabled) 

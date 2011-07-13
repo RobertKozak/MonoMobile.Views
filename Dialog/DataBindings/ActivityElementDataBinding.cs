@@ -1,12 +1,10 @@
 //
-// BooleanElementDataTemplate.cs
+// ActivityElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 // Copyright 2011, Nowcom Corporation.
-//
-// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -31,24 +29,40 @@
 //
 namespace MonoMobile.MVVM
 {
+	using System.Diagnostics;
+	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
 	
 	[Preserve(AllMembers = true)]
-	public class BooleanElementDataTemplate : ElementDataTemplate
+	public class ActivityElementDataBinding : ElementDataBinding
 	{
-		private bool __On { get { return Switch.On; } set { Switch.On = value; } }
+		private bool __IsAnimating { get { return ActivityView.IsAnimating; } }
+		
+		private ActivityElement _ActivityElement { get {return (ActivityElement)Element; } }
 
-		public UISwitch Switch { get { return (UISwitch)Cell.AccessoryView; } }
+		public UIActivityIndicatorView ActivityView { get { return (UIActivityIndicatorView)Cell.ContentView; } }
+ 
+		public BindableProperty ActivityProperty = BindableProperty.Register("IsAnimating");
 
-		public BooleanElementDataTemplate(IElement element) : base(element)
+		public ActivityElementDataBinding(IElement element) : base(element) 
 		{
 		}
 
 		public override void BindProperties()
 		{
-			base.BindProperties();
-			DataContextProperty.BindTo(Switch, "On");
+			ActivityProperty.PropertyChangedAction = () =>
+			{
+				if (_ActivityElement.Animating)
+					ActivityView.StartAnimating();
+				else
+					ActivityView.StopAnimating();
+			};
+			
+			if (ActivityView == null)
+				ActivityProperty.BindTo(ActivityView);
 		}
 	}
 }
+

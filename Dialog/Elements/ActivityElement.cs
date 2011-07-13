@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 
 		public ActivityElement() : base ("", new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray), false)
 		{
-			DataTemplate = new ActivityElementDataTemplate(this);
+			DataBinding = new ActivityElementDataBinding(this);
 
 			var sbounds = UIScreen.MainScreen.Bounds;			
 			var uia = ContentView as UIActivityIndicatorView;

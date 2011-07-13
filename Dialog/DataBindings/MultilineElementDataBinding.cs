@@ -1,5 +1,5 @@
 //
-// MultilineElementDataTemplate.cs
+// MultilineElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	[Preserve(AllMembers = true)]
-	public class MultilineElementDataTemplate : ElementDataTemplate
+	public class MultilineElementDataBinding : ElementDataBinding
 	{
 		public UICustomTextView InputControl
 		{
@@ -55,7 +55,7 @@ namespace MonoMobile.MVVM
 		public BindableProperty EditModeProperty = BindableProperty.Register("EditMode");
 		public BindableProperty LinesProperty = BindableProperty.Register("Lines");
 
-		public MultilineElementDataTemplate(IElement element) : base(element)
+		public MultilineElementDataBinding(IElement element) : base(element)
 		{
 		}
 

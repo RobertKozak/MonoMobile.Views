@@ -1,10 +1,10 @@
 //
-// IDataTemplate.cs: 
+// HtmlElementDataBinding.cs
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
-//
-// Copyright 2011, Nowcom Corporation
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+// Copyright 2011, Nowcom Corporation.
 //
 // Code licensed under the MIT X11 license
 //
@@ -29,21 +29,20 @@
 //
 namespace MonoMobile.MVVM
 {
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
+	using MonoTouch.Foundation;
 
-	public interface IDataTemplate
+	[Preserve(AllMembers = true)]
+	public class HtmlElementDataBinding: ElementDataBinding 
 	{
-//		List<object> CustomAttributes { get; set;}
-//		IEnumerable Items { get; set; }
+		public HtmlElementDataBinding(IElement element) : base(element)
+		{
+		}
 
-		void BindProperties();
-		void UpdateTargets();
-		void UpdateSources();
-
-		void UpdateDataContext();
-		void UpdateDataContext(object value);
+		public override void BindProperties()
+		{
+			base.BindProperties();
+			DataContextProperty.BindTo(Element, "Uri");
+		}
 	}
 }
 

@@ -255,7 +255,6 @@
     <Compile Include="Interfaces\ISizeable.cs" />
     <Compile Include="Interfaces\ISearchable.cs" />
     <Compile Include="Interfaces\ISearchBar.cs" />
-    <Compile Include="Interfaces\IDataTemplate.cs" />
     <Compile Include="Interfaces\IThemeable.cs" />
     <Compile Include="Interfaces\ISection.cs" />
     <Compile Include="Interfaces\IReload.cs" />
@@ -306,22 +305,23 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
     <Compile Include="View\ObservableView.cs" />
-    <Compile Include="Dialog\DataTemplates\EntryElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\StringElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\ActivityElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\HtmlElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\BooleanElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\FloatElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\DateTimeElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\MapElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\ImageElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\CheckboxElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\RootElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\SectionDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\RadioElementBinding.cs" />
-    <Compile Include="Dialog\DataTemplates\ContainerElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\ElementDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplates\MultilineElementDataTemplate.cs" />
+    <Compile Include="Interfaces\IDataBinder.cs" />
+    <Compile Include="Dialog\DataBindings\RadioElementBinding.cs" />
+    <Compile Include="Dialog\DataBindings\ActivityElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\BooleanElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\CheckboxElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\ContainerElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\DateTimeElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\ElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\EntryElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\FloatElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\HtmlElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\ImageElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\MapElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\MultilineElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\RootElementDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\SectionDataBinding.cs" />
+    <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -343,7 +343,7 @@
     <Folder Include="Dialog\Themes\" />
     <Folder Include="Controllers\" />
     <Folder Include="Dialog\DialogViewController\" />
-    <Folder Include="Dialog\DataTemplates\" />
+    <Folder Include="Dialog\DataBindings\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

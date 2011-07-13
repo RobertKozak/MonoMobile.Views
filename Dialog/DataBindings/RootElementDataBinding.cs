@@ -1,5 +1,5 @@
 //
-// RootElementDataTemplate.cs
+// RootElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class RootElementDataTemplate : ElementDataTemplate
+	public class RootElementDataBinding : ElementDataBinding
 	{		
 		public BindableProperty PullToRefreshCommandProperty = BindableProperty.Register("PullToRefreshCommand");
 		
@@ -45,7 +45,7 @@ namespace MonoMobile.MVVM
 		public BindableProperty SearchPlaceholderProperty = BindableProperty.Register("SearchPlaceholder");
 		public BindableProperty SearchCommandProperty = BindableProperty.Register("SearchCommand");
 
-		public RootElementDataTemplate(IElement element) : base(element)
+		public RootElementDataBinding(IElement element) : base(element)
 		{
 		}
  

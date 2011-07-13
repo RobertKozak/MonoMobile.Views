@@ -81,7 +81,7 @@ namespace Samples
 			Thread.Sleep(1500);
 		}
 
-		[Section("Using a DataTemplate", "This is a footer")]
+		[Section("Using a DataBinding", "This is a footer")]
 		[Root(ViewType = typeof(MovieView))]
 		[NavbarButton(UIBarButtonSystemItem.Add)]
 		public ObservableCollection<MovieViewModel> Movies2 

@@ -1,5 +1,5 @@
 //
-// EntryElementDataTemplate.cs
+// EntryElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -34,7 +34,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 
 	[Preserve(AllMembers = true)]
-	public class EntryElementDataTemplate : ElementDataTemplate
+	public class EntryElementDataBinding : ElementDataBinding
 	{
 		public UIPlaceholderTextField InputControl { get { return (UIPlaceholderTextField)((EntryElement)Element).ContentView; } }
 
@@ -53,7 +53,7 @@ namespace MonoMobile.MVVM
 		public BindableProperty KeyboardTypeProperty = BindableProperty.Register("KeyboardType");
 		public BindableProperty EditModeProperty = BindableProperty.Register("EditMode");
 
-		public EntryElementDataTemplate(IElement element) : base(element)
+		public EntryElementDataBinding(IElement element) : base(element)
 		{
 		}
 

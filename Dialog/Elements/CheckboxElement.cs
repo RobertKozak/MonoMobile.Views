@@ -42,7 +42,7 @@ namespace MonoMobile.MVVM
 
 		public CheckboxElement(string caption) : base(caption)
 		{
-			DataTemplate = new CheckboxElementDataTemplate(this);
+			DataBinding = new CheckboxElementDataBinding(this);
 		}
 		
 		public override void UpdateCell()
@@ -52,7 +52,7 @@ namespace MonoMobile.MVVM
 			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 
 			//DataContext = (bool)DataContextProperty.Value;
-			DataTemplate.UpdateDataContext();
+			DataBinding.UpdateDataContext();
 
 			UpdateSelected();
 		}
@@ -113,7 +113,7 @@ namespace MonoMobile.MVVM
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
 			DataContext = !(bool)DataContext;
-			DataTemplate.UpdateDataContext();
+			DataBinding.UpdateDataContext();
 			UpdateSelected();
 		}
 

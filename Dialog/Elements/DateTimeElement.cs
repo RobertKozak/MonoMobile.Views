@@ -45,7 +45,7 @@ namespace MonoMobile.MVVM
 		
 		public DateTimeElement(string caption) : base(caption)
 		{
-			DataTemplate = new DateTimeElementDataTemplate(this);
+			DataBinding = new DateTimeElementDataBinding(this);
 		}
 
 		public DateTimeElement(string caption, DateTime date) : this(caption)

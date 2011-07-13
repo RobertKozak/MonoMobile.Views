@@ -1,5 +1,5 @@
 //
-// ActivityElementDataTemplate.cs
+// DateTimeElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -29,39 +29,33 @@
 //
 namespace MonoMobile.MVVM
 {
-	using System.Diagnostics;
-	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	using MonoMobile.MVVM;
 	
 	[Preserve(AllMembers = true)]
-	public class ActivityElementDataTemplate : ElementDataTemplate
+	public class DateTimeElementDataBinding : ElementDataBinding
 	{
-		private bool __IsAnimating { get { return ActivityView.IsAnimating; } }
-		
-		private ActivityElement _ActivityElement { get {return (ActivityElement)Element; } }
+		private UIDatePicker _DatePicker { get { return ((DateTimeElement)Element).DatePicker; } }
 
-		public UIActivityIndicatorView ActivityView { get { return (UIActivityIndicatorView)Cell.ContentView; } }
- 
-		public BindableProperty ActivityProperty = BindableProperty.Register("IsAnimating");
+		private NSDate __Date { get { return _DatePicker.Date; } set { _DatePicker.Date = value; } } 
 
-		public ActivityElementDataTemplate(IElement element) : base(element) 
+		public DateTimeElementDataBinding(IElement element) : base(element)
 		{
 		}
 
 		public override void BindProperties()
 		{
-			ActivityProperty.PropertyChangedAction = () =>
-			{
-				if (_ActivityElement.Animating)
-					ActivityView.StartAnimating();
-				else
-					ActivityView.StopAnimating();
-			};
+			base.BindProperties();
+
+			if (_DatePicker != null)
+				DataContextProperty.BindTo(_DatePicker, "Date");
+
 			
-			if (ActivityView == null)
-				ActivityProperty.BindTo(ActivityView);
+		}
+
+		public override void SetDataContext(object value)
+		{
+			base.SetDataContext(value);
 		}
 	}
 }

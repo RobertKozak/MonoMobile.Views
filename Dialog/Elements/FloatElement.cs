@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 			MinValue = 0;
 			MaxValue = 1;
 
-			DataTemplate = new FloatElementDataTemplate(this);
+			DataBinding = new FloatElementDataBinding(this);
 		}
 
 		public FloatElement(RectangleF frame) : this("")
@@ -69,7 +69,7 @@ namespace MonoMobile.MVVM
 			Slider.Frame = new RectangleF(0, 0, Cell.Bounds.Width, Cell.Bounds.Height);
 			Slider.ValueChanged += delegate 
 			{
-				DataTemplate.UpdateDataContext();
+				DataBinding.UpdateDataContext();
 			};
 
 			Slider.MaxValue = MaxValue;

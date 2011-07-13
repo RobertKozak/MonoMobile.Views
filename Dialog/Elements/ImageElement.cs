@@ -103,13 +103,13 @@ namespace MonoMobile.MVVM
 
 		public ImageElement() : base("")
 		{
-			DataTemplate = new ImageElementDataTemplate(this);
+			DataBinding = new ImageElementDataBinding(this);
 		}
 
 		public ImageElement(UIImage image) : base("")
 		{
 			DataContext = image;
-			DataTemplate = new ImageElementDataTemplate(this);
+			DataBinding = new ImageElementDataBinding(this);
 		}
 
 		public override void UpdateCell()

@@ -58,7 +58,7 @@ namespace MonoMobile.MVVM
 			AutoCorrectionType = UITextAutocorrectionType.Yes;
 			Lines = 0;
 
-			DataTemplate = new MultilineElementDataTemplate(this);
+			DataBinding = new MultilineElementDataBinding(this);
 		}
 
 		public MultilineElement(RectangleF frame) : this()
@@ -125,7 +125,7 @@ namespace MonoMobile.MVVM
 
 				_InputControl.Ended += delegate 
 				{ 			
-					DataTemplate.UpdateDataContext();
+					DataBinding.UpdateDataContext();
 
 					_InputControl.ContentOffset = new PointF(0, 8);
 

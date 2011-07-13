@@ -108,8 +108,8 @@ namespace MonoMobile.MVVM
 			IsSearchbarHidden = true;
 			Sections = new List<ISection>();
 			
-			DataTemplate = new RootElementDataTemplate(this);
-			DataTemplate.BindProperties();
+			DataBinding = new RootElementDataBinding(this);
+			DataBinding.BindProperties();
 		}
 
 		/// <summary>

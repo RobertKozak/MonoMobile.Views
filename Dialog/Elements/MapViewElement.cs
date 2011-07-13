@@ -40,7 +40,7 @@ namespace MonoMobile.MVVM
 		public MapElement(string caption, CLLocationCoordinate2D value) : base(caption)
 		{
 			DataContext = value;
-			DataTemplate = new MapElementDataTemplate(this);
+			DataBinding = new MapElementDataBinding(this);
 		}
 
 		public override void InitializeCell(UITableView tableView)

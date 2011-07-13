@@ -1,5 +1,5 @@
 //
-// HtmlElementDataTemplate.cs
+// MapElementDataBinding.cs: Used to render a Google Map
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,19 +30,19 @@
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
-
+	using MonoTouch.UIKit;
+	
 	[Preserve(AllMembers = true)]
-	public class HtmlElementDataTemplate: ElementDataTemplate 
+	public class MapElementDataBinding : ElementDataBinding
 	{
-		public HtmlElementDataTemplate(IElement element) : base(element)
+		public MapElementDataBinding(IElement element) : base(element)
 		{
 		}
 
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			DataContextProperty.BindTo(Element, "Uri");
+			//DataContextProperty.BindTo(Element);
 		}
 	}
 }
-

@@ -33,7 +33,7 @@ namespace MonoMobile.MVVM
 
 	public interface IBindable
 	{
-		IDataTemplate DataTemplate { get; set; }
+		IDataBinding DataBinding { get; set; }
 	}
 }
 

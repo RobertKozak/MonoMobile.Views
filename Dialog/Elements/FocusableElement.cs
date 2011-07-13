@@ -64,7 +64,7 @@ namespace MonoMobile.MVVM
 			
 			ContentView = new UIPlaceholderTextField(Cell.Bounds) 
 			{ 
-			//	DataTemplate = DataTemplate,
+			//	DataBinding = DataBinding,
 				BackgroundColor = UIColor.Clear, 
 				Tag = 1, 
 				Hidden = true

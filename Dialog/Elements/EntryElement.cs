@@ -64,7 +64,7 @@ namespace MonoMobile.MVVM
 			KeyboardType = UIKeyboardType.Default;
 			EditMode = EditMode.WithCaption;
 
-			DataTemplate = new EntryElementDataTemplate(this);
+			DataBinding = new EntryElementDataBinding(this);
 		}
 
 		public EntryElement() : this("")
@@ -146,7 +146,7 @@ namespace MonoMobile.MVVM
 				
 				_InputControl.EditingDidEnd += delegate 
 				{
-					DataTemplate.UpdateDataContext();
+					DataBinding.UpdateDataContext();
 				};
 
 				ContentView = _InputControl;

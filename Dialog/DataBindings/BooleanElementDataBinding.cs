@@ -1,10 +1,12 @@
 //
-// MapElementDataTemplate.cs: Used to render a Google Map
+// BooleanElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 // Copyright 2011, Nowcom Corporation.
+//
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -33,16 +35,20 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class MapElementDataTemplate : ElementDataTemplate
+	public class BooleanElementDataBinding : ElementDataBinding
 	{
-		public MapElementDataTemplate(IElement element) : base(element)
+		private bool __On { get { return Switch.On; } set { Switch.On = value; } }
+
+		public UISwitch Switch { get { return (UISwitch)Cell.AccessoryView; } }
+
+		public BooleanElementDataBinding(IElement element) : base(element)
 		{
 		}
 
 		public override void BindProperties()
 		{
 			base.BindProperties();
-			//DataContextProperty.BindTo(Element);
+			DataContextProperty.BindTo(Switch, "On");
 		}
 	}
 }

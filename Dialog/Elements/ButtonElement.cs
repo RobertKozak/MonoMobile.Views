@@ -48,7 +48,7 @@ namespace MonoMobile.MVVM
 
 		public ButtonElement(string caption) : base(caption)
 		{
-			DataTemplate = new ElementDataTemplate(this);
+			DataBinding = new ElementDataBinding(this);
 		}
 
 		public override void InitializeCell(UITableView tableView)

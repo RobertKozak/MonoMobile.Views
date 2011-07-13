@@ -44,7 +44,7 @@ namespace MonoMobile.MVVM
 	{
 		public StringElement(string caption) : base(caption)
 		{
-			DataTemplate = new StringElementDataTemplate(this);
+			DataBinding = new StringElementDataBinding(this);
 		}
 
 		public StringElement(string caption, string value) : this(caption)

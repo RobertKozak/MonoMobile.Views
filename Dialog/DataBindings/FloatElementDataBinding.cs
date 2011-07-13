@@ -1,10 +1,12 @@
 //
-// ImageElementDataTemplate.cs
+// FloatElementDataBinding.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 // Copyright 2011, Nowcom Corporation.
+//
+// Based on cdoe from MonoTouch.Dialog by Miguel de Icaza (miguel@gnome.org)
 //
 // Code licensed under the MIT X11 license
 //
@@ -31,18 +33,26 @@ namespace MonoMobile.MVVM
 {
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	
+
 	[Preserve(AllMembers = true)]
-	public class ImageElementDataTemplate : ElementDataTemplate
+	public class FloatElementDataBinding : ElementDataBinding
 	{
-		public ImageElementDataTemplate(IElement element) : base(element)
+		private UISlider _Slider;
+
+		private float __Value { get { return _Slider.Value; } set { _Slider.Value = value; } }
+		
+		public FloatElementDataBinding(IElement element) : base(element)
 		{
 		}
 
 		public override void BindProperties()
 		{
-			base.BindProperties();
-			DataContextProperty.BindTo(Element);
+			_Slider = (UISlider)Element.ContentView;
+
+			if (_Slider != null)
+			{
+				DataContextProperty.BindTo(_Slider, "Value");
+			}
 		}
 	}
 }
