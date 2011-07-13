@@ -96,8 +96,8 @@ namespace MonoMobile.MVVM
 		
 			Control = DatePicker;
 
-			((UIPlaceholderTextField)ContentView).InputView = view;
-			((UIPlaceholderTextField)ContentView).InputAccessoryView = new UIDatePickerToolbar(this) { };
+			((UIPlaceholderTextField)ElementView).InputView = view;
+			((UIPlaceholderTextField)ElementView).InputAccessoryView = new UIDatePickerToolbar(this) { };
 		}
 
 		public virtual UIDatePicker CreatePicker()

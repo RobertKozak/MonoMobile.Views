@@ -36,7 +36,7 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public class EntryElementDataBinding : ElementDataBinding
 	{
-		public UIPlaceholderTextField InputControl { get { return (UIPlaceholderTextField)((EntryElement)Element).ContentView; } }
+		public UIPlaceholderTextField InputControl { get { return (UIPlaceholderTextField)((EntryElement)Element).ElementView; } }
 
 		private string __Text { get {return InputControl.Text; } set { InputControl.Text = value; } }
 		private string __Placeholder { get {return InputControl.Placeholder; } set { InputControl.Placeholder = value; } }

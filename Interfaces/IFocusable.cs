@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 
 	public interface IFocusable
 	{
-		UIView ContentView { get; }
+		UIView ElementView { get; }
 	//	UITextView InputControl2 { get; }
 
 		NSIndexPath IndexPath { get; }

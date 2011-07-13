@@ -71,9 +71,9 @@ namespace MonoMobile.MVVM
 					foreach (var element in section.Elements)
 					{
 						var selected = element as IFocusable;
-						if (selected != null && selected.ContentView != null && selected.ContentView.IsFirstResponder)
+						if (selected != null && selected.ElementView != null && selected.ElementView.IsFirstResponder)
 						{
-							selected.ContentView.ResignFirstResponder();
+							selected.ElementView.ResignFirstResponder();
 							break;
 						}
 					}

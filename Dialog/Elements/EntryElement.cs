@@ -149,13 +149,13 @@ namespace MonoMobile.MVVM
 					DataBinding.UpdateDataContext();
 				};
 
-				ContentView = _InputControl;
+				ElementView = _InputControl;
 			}
 		}
 		
 		public override void UpdateCell()
 		{
-			base.UpdateCell ();
+			base.UpdateCell();
 		}
 		
 		protected override void Dispose(bool disposing)

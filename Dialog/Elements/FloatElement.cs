@@ -75,7 +75,7 @@ namespace MonoMobile.MVVM
 			Slider.MaxValue = MaxValue;
 			Slider.MinValue = MinValue;
 			
-			ContentView = Slider;
+			ElementView = Slider;
 		}
 
 		protected override void Dispose(bool disposing)

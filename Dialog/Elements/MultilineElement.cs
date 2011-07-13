@@ -131,7 +131,7 @@ namespace MonoMobile.MVVM
 
 				};
 
-				ContentView = _InputControl;
+				ElementView = _InputControl;
 			}
 		}
 
@@ -148,10 +148,10 @@ namespace MonoMobile.MVVM
 		
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && ContentView != null)
+			if (disposing && ElementView != null)
 			{
-				ContentView.Dispose();
-				ContentView = null;
+				ElementView.Dispose();
+				ElementView = null;
 			}
 			
 			base.Dispose(disposing);
@@ -196,8 +196,8 @@ namespace MonoMobile.MVVM
 			var margin = UIDevice.CurrentDevice.GetDeviceMargin();
 
 			var size = new SizeF(GetWidth(), float.MaxValue);
-			if (ContentView != null)
-				size.Width = ContentView.Frame.Width;
+			if (ElementView != null)
+				size.Width = ElementView.Frame.Width;
 
 			float newHeight = 0;
 

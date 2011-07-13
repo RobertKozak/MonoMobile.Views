@@ -62,7 +62,7 @@ namespace MonoMobile.MVVM
 //				return false;
 //			};
 			
-			ContentView = new UIPlaceholderTextField(Cell.Bounds) 
+			ElementView = new UIPlaceholderTextField(Cell.Bounds) 
 			{ 
 			//	DataBinding = DataBinding,
 				BackgroundColor = UIColor.Clear, 
@@ -76,11 +76,11 @@ namespace MonoMobile.MVVM
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			if (ContentView != null)
+			if (ElementView != null)
 			{
-				ContentView.InvokeOnMainThread(() => 
+				ElementView.InvokeOnMainThread(() => 
 				{ 
-					ContentView.BecomeFirstResponder(); 
+					ElementView.BecomeFirstResponder(); 
 				});
 			}
 		}
@@ -120,7 +120,7 @@ namespace MonoMobile.MVVM
 			else
 			{
 				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-				_Focus.ContentView.BecomeFirstResponder();
+				_Focus.ElementView.BecomeFirstResponder();
 			}
 
 		}
@@ -133,7 +133,7 @@ namespace MonoMobile.MVVM
 				_Timer = null;
 			}
 			
-			_Focus.ContentView.BecomeFirstResponder();
+			_Focus.ElementView.BecomeFirstResponder();
 		}
 	}
 }

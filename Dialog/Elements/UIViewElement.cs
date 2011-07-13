@@ -67,7 +67,7 @@ namespace MonoMobile.MVVM
 		/// </param>
 		public UIViewElement(string caption, UIView view, bool transparent) : base(caption)
 		{
-			ContentView = view;
+			ElementView = view;
 			Flags = transparent ? CellFlags.Transparent : 0;
 		}
 
@@ -83,8 +83,8 @@ namespace MonoMobile.MVVM
 			if ((Flags & CellFlags.DisableSelection) != 0)
 				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 
-			if (ContentView != null)
-				Cell.ContentView.AddSubview(ContentView);
+			if (ElementView != null)
+				Cell.ContentView.AddSubview(ElementView);
 		}
 		
 		public virtual void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
@@ -94,8 +94,8 @@ namespace MonoMobile.MVVM
 
 		public override float GetHeight(UITableView tableView, NSIndexPath indexPath)
 		{
-			if (ContentView != null)
-				return ContentView.Bounds.Height;
+			if (ElementView != null)
+				return ElementView.Bounds.Height;
 			
 			return 0;
 		}
@@ -105,8 +105,8 @@ namespace MonoMobile.MVVM
 			base.Dispose(disposing);
 			if (disposing)
 			{
-				ContentView.Dispose();
-				ContentView = null;
+				ElementView.Dispose();
+				ElementView = null;
 			}
 		}
 	}

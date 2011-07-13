@@ -42,11 +42,11 @@ namespace MonoMobile.MVVM
 			CellBackgroundColor = UIColor.Clear;
 			SeparatorColor = UIColor.Clear;
 
-			DrawContentViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
 			TextColor = UIColor.DarkTextColor;
 		}
 
-		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
 		{
 			CellBackgroundColor.SetFill();
 			context.FillRect(rect);

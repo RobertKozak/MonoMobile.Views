@@ -49,6 +49,7 @@ namespace MonoMobile.MVVM
 		
 		protected void Initialize()
 		{
+			Delegate = new UIPlaceholderTextFieldDelegate();
 		}
 
 		public override void DrawPlaceholder(RectangleF rect)
@@ -60,5 +61,9 @@ namespace MonoMobile.MVVM
 
 			DrawString(Placeholder, rect, UIFont.SystemFontOfSize(UIFont.LabelFontSize), UILineBreakMode.Clip, PlaceholderAlignment);
 		}  
+
+		private class UIPlaceholderTextFieldDelegate : UITextFieldDelegate 
+		{  
+		}
 	} 
 }

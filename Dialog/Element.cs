@@ -313,7 +313,7 @@ namespace MonoMobile.MVVM
 		public string Caption { get; set; }
 		public bool ShowCaption { get; set; }
 		
-		public UIView ContentView { get; set; }
+		public UIView ElementView { get; set; }
 		
 		private ViewBinding _ViewBinding;
 		public ViewBinding ViewBinding 
@@ -442,26 +442,26 @@ namespace MonoMobile.MVVM
 			
 			Theme.Cell = Cell;
 
-			CreateContentView();
+			CreateElementView();
 		}
 
-		protected virtual void CreateContentView()
+		protected virtual void CreateElementView()
 		{
-			if (ContentView != null)
-				ContentView.RemoveFromSuperview();
+			if (ElementView != null)
+				ElementView.RemoveFromSuperview();
 
 			InitializeContent();
 
 			if (Cell != null)
 			{	
-				if (ContentView != null)
+				if (ElementView != null)
 				{
-					ContentView.Frame = Cell.RecalculateContentFrame(ContentView.Frame, ShowCaption);
-					Cell.ContentView.AddSubview(ContentView);
+					ElementView.Frame = Cell.RecalculateContentFrame(ElementView.Frame, ShowCaption);
+					Cell.ContentView.AddSubview(ElementView);
 				}
 			}
 			
-			var elementView = ContentView as IElement;
+			var elementView = ElementView as IElement;
 			if (elementView != null && elementView.Caption != Caption)
 			{
 				var title = Caption;

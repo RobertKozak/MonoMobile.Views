@@ -52,7 +52,7 @@ namespace MonoMobile.MVVM
 		bool Enabled { get; set; }
 
 		ViewBinding ViewBinding { get; set; }
-		UIView ContentView { get; set; }
+		UIView ElementView { get; set; }
 
 		UITableView TableView { get; set; }
 

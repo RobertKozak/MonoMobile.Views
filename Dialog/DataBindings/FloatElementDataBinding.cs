@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 
 		public override void BindProperties()
 		{
-			_Slider = (UISlider)Element.ContentView;
+			_Slider = (UISlider)Element.ElementView;
 
 			if (_Slider != null)
 			{

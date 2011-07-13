@@ -218,7 +218,7 @@ namespace MonoMobile.MVVM
 		
 		public UIColor DisabledColor { get; set; }
 
-		public Action<RectangleF, CGContext, UITableViewElementCell> DrawContentViewAction { get; set; }
+		public Action<RectangleF, CGContext, UITableViewElementCell> DrawElementViewAction { get; set; }
 
 		public Theme()
 		{
@@ -362,9 +362,9 @@ namespace MonoMobile.MVVM
 					FooterTextShadowColor = theme.FooterTextShadowColor;
 				
 
-				if (theme.DrawContentViewAction != null)
+				if (theme.DrawElementViewAction != null)
 				{
-					DrawContentViewAction = theme.DrawContentViewAction;
+					DrawElementViewAction = theme.DrawElementViewAction;
 				}
 
 				if (theme.BackgroundColor != null)

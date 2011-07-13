@@ -80,7 +80,7 @@ namespace MonoMobile.MVVM
 
 		public void DismissKeyboard(object sender, EventArgs e)
 		{
-			FocusableElement.ContentView.ResignFirstResponder();
+			FocusableElement.ElementView.ResignFirstResponder();
 		}
 	}
 }

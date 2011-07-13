@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 			
 			gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), new float[] { 0.95f, 0.95f, 0.95f, 1, 0.85f, 0.85f, 0.85f, 1 }, new float[] { 0, 1 });
 			
-			DrawContentViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
 		}
 
 		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)

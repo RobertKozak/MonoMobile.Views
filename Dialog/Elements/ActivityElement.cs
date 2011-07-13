@@ -42,13 +42,13 @@ namespace MonoMobile.MVVM
 			DataBinding = new ActivityElementDataBinding(this);
 
 			var sbounds = UIScreen.MainScreen.Bounds;			
-			var uia = ContentView as UIActivityIndicatorView;
+			var uia = ElementView as UIActivityIndicatorView;
 			
 			uia.StartAnimating();
 			
-			var vbounds = ContentView.Bounds;
-			ContentView.Frame = new RectangleF((sbounds.Width-vbounds.Width)/2, 4, vbounds.Width, vbounds.Height + 0);
-			ContentView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin;
+			var vbounds = ElementView.Bounds;
+			ElementView.Frame = new RectangleF((sbounds.Width-vbounds.Width)/2, 4, vbounds.Width, vbounds.Height + 0);
+			ElementView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin;
 		}
 		
 //		public bool Animating {

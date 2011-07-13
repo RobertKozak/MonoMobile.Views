@@ -467,9 +467,9 @@ namespace MonoMobile.MVVM
 		{
 			base.OnDataContextChanged();
 			
-			if (ContentView is IView && ContentView != null)
+			if (ElementView is IView && ElementView != null)
 			{
-				var binding = new BindingContext(ContentView, Caption, Theme);
+				var binding = new BindingContext(ElementView, Caption, Theme);
 				if (binding.Root != null)
 				{
 					Sections = binding.Root.Sections;
@@ -485,9 +485,9 @@ namespace MonoMobile.MVVM
 		
 		public override string ToString()
 		{
-			if (ContentView != null) 
+			if (ElementView != null) 
 			{
-				return ContentView.ToString();
+				return ElementView.ToString();
 			}
 
 			if (DataContext != null)

@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 			TextShadowColor = UIColor.DarkGray;
 			TextAlignment = UITextAlignment.Center;
 
-			DrawContentViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
 		}
 
 		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)

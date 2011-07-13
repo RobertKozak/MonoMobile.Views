@@ -97,7 +97,7 @@ namespace MonoMobile.MVVM
 			Element = element;
 			if (Element != null && Element.Theme != null)
 			{
-				if (Element.Theme.DrawContentViewAction != null)
+				if (Element.Theme.DrawElementViewAction != null)
 				{
 					_ContentView = new UITableViewCellContentView(this);
 					InsertSubview(_ContentView, 0);
@@ -217,8 +217,8 @@ namespace MonoMobile.MVVM
 	
 				ShouldDrawBorder = false;
 				
-				if (Element.Theme.DrawContentViewAction != null)
-					Element.Theme.DrawContentViewAction(innerRect, context, this);
+				if (Element.Theme.DrawElementViewAction != null)
+					Element.Theme.DrawElementViewAction(innerRect, context, this);
 
 				context.RestoreState();
 		

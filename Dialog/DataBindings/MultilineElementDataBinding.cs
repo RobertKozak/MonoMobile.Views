@@ -38,7 +38,7 @@ namespace MonoMobile.MVVM
 	{
 		public UICustomTextView InputControl
 		{
-			get { return (UICustomTextView)Element.ContentView; }
+			get { return (UICustomTextView)Element.ElementView; }
 		}
 
 		private string __Text { get { return InputControl.Text; } set { InputControl.Text = value; } }
