@@ -43,7 +43,12 @@ namespace MonoMobile.MVVM
 	{
 		public ButtonAttribute()
 		{
-			ElementType = typeof(ButtonElement);
+			ViewType = typeof(ButtonElement);
+		}
+		
+		public ButtonAttribute(Type viewType)
+		{
+			ViewType = viewType;
 		}
 
 		public ButtonAttribute(string canExecutePropertyName): this()
@@ -55,7 +60,7 @@ namespace MonoMobile.MVVM
 		internal string CanExecutePropertyName;
 		public CommandOption CommandOption;
 
-		public Type ElementType { get; set; } 
+		public Type ViewType { get; set; } 
 	}
 }
 

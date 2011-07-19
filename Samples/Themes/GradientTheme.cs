@@ -47,10 +47,10 @@ namespace MonoMobile.MVVM
 			
 			gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), new float[] { 0.95f, 0.95f, 0.95f, 1, 0.85f, 0.85f, 0.85f, 1 }, new float[] { 0, 1 });
 			
-			DrawElementViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
 		}
 
-		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
 		{
 			context.DrawLinearGradient(gradient, new PointF(rect.Left, rect.Top), new PointF(rect.Left, rect.Bottom), CGGradientDrawingOptions.DrawsBeforeStartLocation);
 			cell.ShouldDrawBorder = true;

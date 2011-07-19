@@ -416,6 +416,9 @@ namespace MonoMobile.MVVM
 			if (!Enabled) 
 				SetDisabled(Cell);
 			
+			if (!Visible)
+				SetVisible(Cell);
+
 			UpdateCell();
 
 			return Cell;
@@ -514,17 +517,8 @@ namespace MonoMobile.MVVM
 				if (_Visible != value)
 				{
 					_Visible = value;
-					
-					if (Section != null)
-					{
-						if(_Visible && !Section.Elements.Contains(this))
-							Section.Insert(_OldRow, this);
-						else
-						{
-							_OldRow = IndexPath.Row;
-							Section.Remove(this);
-						}
-					}
+
+					SetVisible(Cell);	
 				}
 			}
 		}
@@ -546,6 +540,25 @@ namespace MonoMobile.MVVM
 			}
 		}
 		
+		protected void SetVisible(UITableViewElementCell cell)
+		{
+			if (cell != null)
+			{
+				if (Section != null)
+				{
+					if (_Visible && !Section.Elements.Contains(this))
+						Section.Insert(_OldRow, this);
+					else
+					{
+						_OldRow = IndexPath.Row;
+						Section.Remove(this);
+					}
+				}
+
+				cell.SetNeedsDisplay();
+			}
+		}
+
 		protected virtual void OnDataContextChanged()
 		{
 		}

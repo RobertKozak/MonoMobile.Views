@@ -61,10 +61,10 @@ namespace MonoMobile.MVVM
 			FooterTextColor = UIColor.FromWhiteAlpha(1f, 0.8f);
 			FooterTextShadowColor = UIColor.FromWhiteAlpha(0f, 0.2f);
 
-			DrawElementViewAction = (rect, context, cell) => DrawContentView(rect, context, cell);
+			DrawElementViewAction = (rect, context, cell) => DrawElementView(rect, context, cell);
 		}
 
-		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
 		{
 			context.SaveState();
 					

@@ -47,10 +47,10 @@ namespace MonoMobile.MVVM
 			TextShadowColor = UIColor.DarkGray;
 			TextAlignment = UITextAlignment.Center;
 
-			DrawElementViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
 		}
 
-		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
 		{
 			var gradientFrame = rect;
 			

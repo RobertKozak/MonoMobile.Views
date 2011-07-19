@@ -450,15 +450,13 @@ namespace MonoMobile.MVVM
 			TableView.AutosizesSubviews = true;
 		
 			Root.TableView = TableView;
-
-			UpdateSource();
 			View = TableView;
 
 			if (Root == null)
 				return;
 			
-			ConfigureToolbarItems();
-			
+			UpdateSource();
+
 			if (themeable != null)
 			{
 				var separatorColor = themeable.Theme.SeparatorColor;
@@ -491,7 +489,63 @@ namespace MonoMobile.MVVM
 		{
 			if (Root != null && Root.ToolbarButtons != null)
 			{
-				SetToolbarItems(Root.ToolbarButtons.ToArray(), true);
+				CommandBarButtonItem[] buttons = Root.ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToArray();
+				SetToolbarItems(buttons, true);
+			}
+		}
+
+		private void ConfigureNavbarItems()
+		{
+			var nav = ParentViewController as UINavigationController;
+			if (nav != null)
+			{
+				nav.SetToolbarHidden(ToolbarItems == null, true);
+				
+				if (Root.NavbarButtons != null)
+				{
+					foreach (var button in Root.NavbarButtons)
+					{
+						if (button.Command.CanExecute(null))
+						{
+							if (button.Location == BarButtonLocation.Right)
+								NavigationItem.RightBarButtonItem = button;
+							else
+								NavigationItem.LeftBarButtonItem = button;
+						}
+						else 
+						{
+							if (button.Location == BarButtonLocation.Right)
+								NavigationItem.RightBarButtonItem = null;
+							else
+								NavigationItem.LeftBarButtonItem = null;
+						}
+					}
+				}
+
+				nav.NavigationBar.Opaque = false;
+
+				var themeable = Root as IThemeable;
+				if (themeable != null)
+				{
+					if (themeable.Theme.BarStyle.HasValue)
+					{
+						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
+					}
+
+//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
+//				{
+//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
+//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
+//					nav.NavigationBar.InsertSubview(view, 0);
+//				}
+//				else
+					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
+				//	if (themeable.Theme.BarTintColor != UIColor.Clear)
+					{
+						nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
+						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+					}
+				}
 			}
 		}
 
@@ -622,52 +676,8 @@ namespace MonoMobile.MVVM
 				TableView.ReloadData();
 				_Dirty = false;
 			}
-
-			var nav = ParentViewController as UINavigationController;
-			if (nav != null)
-			{
-				nav.SetToolbarHidden(ToolbarItems == null, true);
-				
-				if (!_NavbarInitialized)
-				{
-					if (Root.NavbarButtons != null)
-					{
-						foreach (var button in Root.NavbarButtons)
-						{
-							if (button.Location == BarButtonLocation.Right)
-								NavigationItem.RightBarButtonItem = button;
-							else
-								NavigationItem.LeftBarButtonItem = button;
-						}
-					}
-	
-					_NavbarInitialized = true;
-					nav.NavigationBar.Opaque = false;
-	
-					var themeable = Root as IThemeable;
-					if (themeable != null)
-					{
-						if (themeable.Theme.BarStyle.HasValue)
-						{
-							nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
-						}
-	
-	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-	//				{
-	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-	//					nav.NavigationBar.InsertSubview(view, 0);
-	//				}
-	//				else
-						nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-					//	if (themeable.Theme.BarTintColor != UIColor.Clear)
-						{
-							nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-							nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
-						}
-					}
-				}
-			}
+			
+			ConfigureNavbarItems();
 
 			if (Root != null)
 			{
@@ -695,6 +705,9 @@ namespace MonoMobile.MVVM
 			
 			_TableSource = CreateSizingSource(Root.UnevenRows);
 			TableView.Source = _TableSource;
+			
+			ConfigureNavbarItems();
+			ConfigureToolbarItems();
 		}
 
 		public void ReloadData()

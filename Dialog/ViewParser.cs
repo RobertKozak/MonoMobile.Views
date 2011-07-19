@@ -126,10 +126,27 @@ namespace MonoMobile.MVVM
 			var commandOption = CommandOption.Disable;
 
 			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
+			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
+			var caption = captionAttribute != null ? captionAttribute.Caption : null;
+			
 			if (buttonAttribute != null)
 			{
 				propertyName = buttonAttribute.CanExecutePropertyName;
 				commandOption = buttonAttribute.CommandOption;
+			}
+
+			var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
+			if (toolbarButtonAttribute != null)
+			{
+				propertyName = toolbarButtonAttribute.CanExecutePropertyName;
+				commandOption = toolbarButtonAttribute.CommandOption;
+			}
+
+			var navbarButtonAttribute = member.GetCustomAttribute<NavbarButtonAttribute>();
+			if (navbarButtonAttribute != null)
+			{
+				propertyName = navbarButtonAttribute.CanExecutePropertyName;
+				commandOption = navbarButtonAttribute.CommandOption;
 			}
 
 			var methodInfo = member as MethodInfo;
@@ -142,8 +159,7 @@ namespace MonoMobile.MVVM
 				var property = view.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 				if (property != null)
 				{
-					var value =  property.GetValue(view);
-					if (value != null && value.GetType() == typeof(bool))
+					if (property.PropertyType == typeof(bool))
 					{
 						propertyInfo = property;
 					}
@@ -862,14 +878,15 @@ namespace MonoMobile.MVVM
 				if (buttonAttribute != null)
 				{
 					UIView buttonView = null;
-					var title = caption ?? buttonAttribute.Title;// ?? member.Name.Capitalize();
+					var title = caption;
 					if (buttonAttribute.ViewType != null)
 					{	
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+					
 						var tappable = buttonView as ITappable;
 						if (tappable != null)
 						{
-							tappable.Command = new ReflectiveCommand(view, member as MethodInfo, null); 
+							tappable.Command = GetCommandForMember(view, member); 
 						}
 					}
 
@@ -877,13 +894,13 @@ namespace MonoMobile.MVVM
 					
 					if (button != null)
 					{
-						if (buttonAttribute.Location == BarButtonLocation.Right)
-							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace,  null)); 
+						if (buttonAttribute.Location == BarButtonLocation.Center)
+							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)); 
 
 						buttonList.Add(button);
 
-						if (buttonAttribute.Location == BarButtonLocation.Left)
-							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace,  null)); 
+						if (buttonAttribute.Location == BarButtonLocation.Center)
+							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)); 
 					}
 				}
 			}
@@ -911,7 +928,7 @@ namespace MonoMobile.MVVM
 				{
 					var memberName = buttonAttribute.ButtonType.HasValue ? null : member.Name.Capitalize();
 
-					var title = caption ?? buttonAttribute.Title ?? memberName;
+					var title = caption ?? memberName;
 					var button = CreateCommandBarButton(view, member, title, null, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
@@ -938,7 +955,7 @@ namespace MonoMobile.MVVM
 			var methodInfo = member as MethodInfo;
 
 			if(methodInfo != null)
-				command = new ReflectiveCommand(view, member as MethodInfo, null);
+				command = GetCommandForMember(view, member);
 
 			if (!string.IsNullOrEmpty(title))
 			{
@@ -953,12 +970,13 @@ namespace MonoMobile.MVVM
 				if (!buttonType.HasValue)
 					buttonType = UIBarButtonSystemItem.Done;
 
-				button = new CommandBarButtonItem(buttonType.Value,  delegate {command.Execute(null); });
+				button = new CommandBarButtonItem(buttonType.Value,  delegate { command.Execute(null); });
 				button.Style = style;
 			}
 		
 			button.Enabled = true;
 			button.Location = location;
+			button.Command = command;
 
 			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 			if (orderAttribute != null)
@@ -1088,15 +1106,16 @@ namespace MonoMobile.MVVM
 				var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 				if (buttonAttribute != null)
 				{	
-					var belement = CreateElement(buttonAttribute.ElementType, caption) as ButtonElement; 
-					//var belement = new ButtonElement(caption)
-					//{
-						belement.Command = GetCommandForMember(view, member);
-					//};
+					var belement = CreateElement(buttonAttribute.ViewType, caption) as ButtonElement; 
+					var command = GetCommandForMember(view, member) as ReflectiveCommand;
 					
-					((ReflectiveCommand)belement.Command).Element = belement;
+					command.Element = belement;
+					command.CanExecuteChanged += HandleCanExecuteChanged;
 
-					belement.Command.CanExecuteChanged += HandleCanExecuteChanged;
+					belement.Command = command;
+			
+					HandleCanExecuteChanged(command, EventArgs.Empty);
+
 					element = belement;
 				}
 
@@ -1272,7 +1291,7 @@ namespace MonoMobile.MVVM
 				string placeholder = null;
 				var keyboardType = UIKeyboardType.DecimalPad;
 
-				if(entryAttribute != null)
+				if (entryAttribute != null)
 				{
 					placeholder = entryAttribute.Placeholder;
 					if(entryAttribute.KeyboardType != UIKeyboardType.Default)

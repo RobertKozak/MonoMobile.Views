@@ -9,6 +9,7 @@ namespace MonoMobile.MVVM
 		public ToolbarButtonAttribute()
 		{
 			Style = UIBarButtonItemStyle.Bordered;
+			Location = BarButtonLocation.Center;
 		}
 		
 		public ToolbarButtonAttribute(UIBarButtonSystemItem buttonType): this()
@@ -21,14 +22,15 @@ namespace MonoMobile.MVVM
 			ViewType = viewType;
 		}
 
-		public ToolbarButtonAttribute(string title) : this()
+		public ToolbarButtonAttribute(string canExecutePropertyName) : this()
 		{
-			Title = title;
+			CanExecutePropertyName = canExecutePropertyName;
 		}
 
+		public string CanExecutePropertyName;
+		public CommandOption CommandOption;
 		public UIBarButtonSystemItem? ButtonType { get; set; }
 		public UIBarButtonItemStyle Style { get; set; }
-		public string Title { get; set; }
 		public BarButtonLocation Location { get; set; }
 		public Type ViewType { get; set; }
 	}

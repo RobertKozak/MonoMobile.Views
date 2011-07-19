@@ -17,15 +17,22 @@ namespace MonoMobile.MVVM
 			ButtonType = buttonType;
 		}
 
-		public NavbarButtonAttribute(string title) : this()
+		public NavbarButtonAttribute(Type viewType) : this()
 		{
-			Title = title;
+			ViewType = viewType;
 		}
 
+		public NavbarButtonAttribute(string canExecutePropertyName) : this()
+		{
+			CanExecutePropertyName = canExecutePropertyName;
+		}
+
+		public string CanExecutePropertyName;
+		public CommandOption CommandOption;
 		public UIBarButtonSystemItem? ButtonType { get; set; }
 		public UIBarButtonItemStyle Style { get; set; }
-		public string Title { get; set; }
 		public BarButtonLocation Location { get; set; }
+		public Type ViewType { get; set; }
 	}
 }
 

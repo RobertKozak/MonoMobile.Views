@@ -42,10 +42,10 @@ namespace MonoMobile.MVVM
 			TextColor = UIColor.DarkTextColor;
 			SeparatorColor = UIColor.DarkGray;
 
-			DrawElementViewAction = (rect, context, cell) => { DrawContentView(rect, context, cell); };
+			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
 		}
 
-		public void DrawContentView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
 		{
 			context.SaveState();
 			float r = 0;

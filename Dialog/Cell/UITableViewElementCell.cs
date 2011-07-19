@@ -128,26 +128,25 @@ namespace MonoMobile.MVVM
 			{
 				height = sizeable.GetHeight(TableView, Element.IndexPath);
 			}
-			SizeF captionSize = new SizeF(-1, height);
+			SizeF captionSize = new SizeF(0, height);
 			var caption = TextLabel.Text;
+
 			if (!string.IsNullOrEmpty(caption) && showCaption)
 			{
 				captionSize = TextLabel.StringSize(caption, UIFont.FromName(TextLabel.Font.Name, UIFont.LabelFontSize));
 				captionSize.Width += ((margin * 2) * indentedSides);
-				x = captionSize.Width + fixedGap;
 			}
-			else
-				x = captionSize.Width;
 			
-			float y = indentation + fixedGap + margin -1;
-			float width = screenWidth - captionSize.Width - (indentation * 2) - (margin * 3) - fixedGap;
+			x = captionSize.Width + fixedGap;
+			float y = 0;
+			float width = screenWidth - captionSize.Width - (indentation * 2) - (margin * 3);
 			
 			RectangleF actualFrame;
 			
 			if (frame == RectangleF.Empty)
-				actualFrame = new RectangleF(-1, -1, width + indentation + 1 + fixedGap, captionSize.Height + 1);
+				actualFrame = new RectangleF(-1, -1, width + indentation + 1, captionSize.Height + 1);
 			else
-				actualFrame = new RectangleF(x, y - (margin * 2), width + 1, height - y - (margin * 2));
+				actualFrame = new RectangleF(x, y, width, height - y);
 			 
 			return actualFrame;
 		}
