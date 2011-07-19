@@ -31,8 +31,8 @@ namespace MonoMobile.MVVM
 {
 	public enum BarButtonLocation
 	{
+		Center = 0,
 		Left = 1,
-		Center = 2,
-		Right = 3
+		Right = 2
 	}
 }

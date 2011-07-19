@@ -44,6 +44,9 @@ namespace MonoMobile.MVVM
 
 	public class DialogViewController : UITableViewController
 	{
+		private CommandBarButtonItem _LeftFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Left };
+		private CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
+
 		private bool _NavbarInitialized;
 		private UITableView _TableView;
 
@@ -474,6 +477,9 @@ namespace MonoMobile.MVVM
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
+			
+			ConfigureNavbarItems();
+			ConfigureToolbarItems();
 
 			var searchBar = Root as ISearchBar;
 			if (searchBar != null)
@@ -489,8 +495,24 @@ namespace MonoMobile.MVVM
 		{
 			if (Root != null && Root.ToolbarButtons != null)
 			{
-				CommandBarButtonItem[] buttons = Root.ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToArray();
-				SetToolbarItems(buttons, true);
+				var buttonList = Root.ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToList();
+
+				var leftCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Left).Count();
+				var rightCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Right).Count();
+				var centerCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Center).Count();
+				
+				if (rightCount > leftCount)
+					buttonList.Insert(0, _LeftFixedSpace);
+
+				if (leftCount > rightCount)
+				{
+					var buttonWidth = buttonList.First((button)=>button.Location == BarButtonLocation.Left).Width;
+					_RightFixedSpace.Width = buttonWidth == 0 ? 31 : buttonWidth;
+
+					buttonList.Add(_RightFixedSpace);
+				}
+				CommandBarButtonItem[] buttons = buttonList.ToArray();	
+				SetToolbarItems(buttons, false);
 			}
 		}
 
@@ -677,8 +699,6 @@ namespace MonoMobile.MVVM
 				_Dirty = false;
 			}
 			
-			ConfigureNavbarItems();
-
 			if (Root != null)
 			{
 				var index = Root.Index;

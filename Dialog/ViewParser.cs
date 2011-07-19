@@ -55,6 +55,9 @@ namespace MonoMobile.MVVM
 			(T)=>GetMethods(T)
 		};
 
+		private CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
+		private CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
+
 		private readonly NoElement _NoElement = new NoElement();
 		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
 		
@@ -869,6 +872,7 @@ namespace MonoMobile.MVVM
 		{
 			var buttonList = new List<CommandBarButtonItem>();
 			var members = GetMethods(view);
+
 			foreach(var member in members)
 			{
 				var buttonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
@@ -893,21 +897,21 @@ namespace MonoMobile.MVVM
 					var button = CreateCommandBarButton(view, member, title, buttonView, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
-					{
-						if (buttonAttribute.Location == BarButtonLocation.Center)
-							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)); 
+					{		
+						if (button.Location == BarButtonLocation.Center)
+							buttonList.Add(_LeftFlexibleSpace);
 
 						buttonList.Add(button);
 
-						if (buttonAttribute.Location == BarButtonLocation.Center)
-							buttonList.Add(new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)); 
+						if (button.Location == BarButtonLocation.Center)
+							buttonList.Add(_RightFlexibleSpace);
 					}
 				}
 			}
 			
 			if (buttonList.Count > 0)
 			{
-				var sortedList = buttonList.OrderBy(button=>button.Tag).ToList();
+				var sortedList = buttonList.OrderBy(button=>button.Order).Distinct().ToList();
 				return sortedList;
 			}	
 
