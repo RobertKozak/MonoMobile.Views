@@ -33,7 +33,8 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public class MultilineElement : FocusableElement
 	{
 		private UIKeyboardToolbar _KeyboardToolbar;
@@ -61,10 +62,10 @@ namespace MonoMobile.MVVM
 			DataBinding = new MultilineElementDataBinding(this);
 		}
 
-		public MultilineElement(RectangleF frame) : this()
-		{
-			Frame = frame;
-		}
+//		public MultilineElement(RectangleF frame) : this()
+//		{
+//			Frame = frame;
+//		}
 		
 		public override UITableViewElementCell NewCell()
 		{
@@ -170,7 +171,12 @@ namespace MonoMobile.MVVM
 				indentedSides = 2;
 			}
 			
-			SizeF captionSize = new SizeF(-1, Bounds.Height);
+			float elementHeight = 0;
+
+			if (ElementView != null)
+				elementHeight = ElementView.Bounds.Height;
+
+			SizeF captionSize = new SizeF(-1, elementHeight);
 			if (!string.IsNullOrEmpty(Caption) && ShowCaption)
 			{
 				if (TextLabel != null)
@@ -229,27 +235,16 @@ namespace MonoMobile.MVVM
 			
 			var height = GetHeight(TableView);
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			var margin = UIDevice.CurrentDevice.GetDeviceMargin();
 
 			var frame = Cell.RecalculateContentFrame(new RectangleF(0, 0, size.Width, height), ShowCaption);
 			
-			if (height > frame.Height + (_InputControl.Font.LineHeight) - (indentation / 2))
+			if (height > frame.Height)
 			{
 				_InputControl.Frame = frame;
 
-			//	if (TableView.Bounds.Height + _InputControl.Frame.Height - TableView.RowHeight < UIScreen.MainScreen.Bounds.Height)
-				{
-					TableView.BeginUpdates();
-					TableView.EndUpdates();
-				} 
-//				else
-//				{
-//					TableView.BeginUpdates();
-//					TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
-//					
-//
-//					_InputControl.BecomeFirstResponder();
-//					TableView.EndUpdates();
-//				}
+				TableView.BeginUpdates();
+				TableView.EndUpdates();
 			}
 		}
 	}

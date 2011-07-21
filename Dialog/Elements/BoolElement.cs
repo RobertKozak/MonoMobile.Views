@@ -29,8 +29,10 @@
 //
 namespace MonoMobile.MVVM
 {
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public abstract class BoolElement : Element
 	{
 		public object Item { get; set; }

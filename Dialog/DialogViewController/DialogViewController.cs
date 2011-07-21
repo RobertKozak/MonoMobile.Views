@@ -47,7 +47,6 @@ namespace MonoMobile.MVVM
 		private CommandBarButtonItem _LeftFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Left };
 		private CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
 
-		private bool _NavbarInitialized;
 		private UITableView _TableView;
 
 		private IRoot _Root;
@@ -499,10 +498,14 @@ namespace MonoMobile.MVVM
 
 				var leftCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Left).Count();
 				var rightCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Right).Count();
-				var centerCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Center).Count();
 				
 				if (rightCount > leftCount)
-					buttonList.Insert(0, _LeftFixedSpace);
+				{
+					var buttonWidth = buttonList.Last((button)=>button.Location == BarButtonLocation.Right).Width;
+					_LeftFixedSpace.Width = buttonWidth == 0 ? 31 : buttonWidth;
+
+					buttonList.Add(_LeftFixedSpace);
+				}
 
 				if (leftCount > rightCount)
 				{
@@ -511,6 +514,7 @@ namespace MonoMobile.MVVM
 
 					buttonList.Add(_RightFixedSpace);
 				}
+
 				CommandBarButtonItem[] buttons = buttonList.ToArray();	
 				SetToolbarItems(buttons, false);
 			}
@@ -712,7 +716,7 @@ namespace MonoMobile.MVVM
 
 			ConfigureBackgroundImage();
 		}
-
+		
 		public virtual DialogViewDataSource CreateSizingSource(bool unevenRows)
 		{
 			return unevenRows ? new DialogViewSizingSource(this) : new DialogViewDataSource(this);

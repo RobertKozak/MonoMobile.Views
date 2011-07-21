@@ -36,6 +36,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
+	[Preserve(AllMembers = true)]
 	public abstract class FocusableElement : StringElement, ISelectable, IFocusable
 	{
 		protected IFocusable _Focus;

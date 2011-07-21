@@ -32,7 +32,8 @@ namespace MonoMobile.MVVM
 	using System;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
-
+	
+	[Preserve(AllMembers = true)]
 	public class TimeElement : DateTimeElement
 	{
 		public TimeElement(string caption) : base(caption)

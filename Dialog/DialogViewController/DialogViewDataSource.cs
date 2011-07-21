@@ -177,6 +177,17 @@ namespace MonoMobile.MVVM
 				Flip(section);
 			}
 		}
+
+		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
+		{
+			var section = Root.Sections[indexPath.Section];
+			var element = section.Elements[indexPath.Row];
+
+			if (element.AccessoryCommand != null && element.AccessoryCommand.CanExecute(null))
+			{
+				element.AccessoryCommand.Execute(null);
+			}
+		}
 		
 		private void Flip(ISection section)
 		{

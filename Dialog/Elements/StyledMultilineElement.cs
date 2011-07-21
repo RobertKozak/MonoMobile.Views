@@ -32,7 +32,8 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public class MultilineStringElement : StringElement
 	{	
 		public UILineBreakMode LineBreakMode { get; set; }

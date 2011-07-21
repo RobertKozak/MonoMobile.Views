@@ -46,6 +46,8 @@ namespace MonoMobile.MVVM
 	
 	public class UITableViewElementCell : UITableViewCell
 	{
+		private const float StandardAccessoryWidth = 30;
+
 		private UITableViewCellContentView _ContentView { get; set; }
 		
 		private CellPosition CellPosition 
@@ -140,13 +142,14 @@ namespace MonoMobile.MVVM
 			x = captionSize.Width + fixedGap;
 			float y = 0;
 			float width = screenWidth - captionSize.Width - (indentation * 2) - (margin * 3);
-			
+			float accessoryWidth = AccessoryView != null ? AccessoryView.Bounds.Width : Accessory != UITableViewCellAccessory.None ? StandardAccessoryWidth + (margin * 2) : 0; 
+
 			RectangleF actualFrame;
 			
 			if (frame == RectangleF.Empty)
 				actualFrame = new RectangleF(-1, -1, width + indentation + 1, captionSize.Height + 1);
 			else
-				actualFrame = new RectangleF(x, y, width, height - y);
+				actualFrame = new RectangleF(x, y, width - accessoryWidth, height - y);
 			 
 			return actualFrame;
 		}

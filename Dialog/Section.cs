@@ -86,14 +86,6 @@ namespace MonoMobile.MVVM
 		{
 			Elements = new ObservableCollection<IElement>();
 			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
-
-//			if (DataBinding != null)
-//			{
-//				DataBinding.BindProperties();
-//			
-//				DataBinding.UpdateTargets();
-//				DataBindingF.UpdateSources();
-//			}
 		}
 
 		/// <summary>
@@ -438,7 +430,7 @@ namespace MonoMobile.MVVM
 		/// <returns>
 		/// A <see cref="IEnumerator"/>
 		/// </returns>
-		public new IEnumerator GetEnumerator()
+		public IEnumerator GetEnumerator()
 		{
 			foreach (var e in Elements)
 				yield return e;
@@ -535,6 +527,13 @@ namespace MonoMobile.MVVM
 
 		public override void Initialize()
 		{
+			if (DataBinding != null)
+			{
+				DataBinding.BindProperties();
+				
+				DataBinding.UpdateTargets();
+				DataBinding.UpdateSources();
+			}
 			//Elements.ForEach((element)=>element.BeginInit());
 		}
 

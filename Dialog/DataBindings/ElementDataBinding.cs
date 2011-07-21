@@ -80,6 +80,8 @@ namespace MonoMobile.MVVM
 		
 		public BindableProperty ElementInstanceProperty = BindableProperty.Register("ElementInstance");
 		public BindableProperty AccessoryProperty = BindableProperty.Register("Accessory");
+		public BindableProperty AccessoryCommandProperty = BindableProperty.Register("AccessoryCommand");
+
 		public BindableProperty ImageIconProperty = BindableProperty.Register("ImageIcon");
 		public BindableProperty ImageIconUriProperty = BindableProperty.Register("ImageIconUri");
 		public BindableProperty BackgroundImageProperty = BindableProperty.Register("BackgroundImage");
@@ -119,6 +121,8 @@ namespace MonoMobile.MVVM
 			ElementInstanceProperty.BindTo(Element);
 
 			AccessoryProperty.BindTo(Element);
+			AccessoryCommandProperty.BindTo(Element);
+
 			ImageIconProperty.BindTo(Element);
 			ImageIconUriProperty.BindTo(Element);
 			BackgroundImageProperty.BindTo(Element);

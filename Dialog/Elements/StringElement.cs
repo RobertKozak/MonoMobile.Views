@@ -40,6 +40,7 @@ namespace MonoMobile.MVVM
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
 	 
+	[Preserve(AllMembers = true)]
 	public class StringElement : Element
 	{
 		public StringElement(string caption) : base(caption)

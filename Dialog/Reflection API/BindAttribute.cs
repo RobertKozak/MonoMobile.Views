@@ -38,6 +38,11 @@ namespace MonoMobile.MVVM
 	{
 		internal Binding Binding;
 
+		public BindAttribute(Type dataTemplateType)
+		{
+			DataTemplate = Activator.CreateInstance(dataTemplateType) as IDataTemplate;
+		}
+
 		public BindAttribute()
 		{
 			Binding = new Binding(null, "DataContext");
@@ -100,6 +105,8 @@ namespace MonoMobile.MVVM
 			get { return Binding.ConverterCulture; }
 			set { Binding.ConverterCulture = value; }
 		}
+		
+		public IDataTemplate DataTemplate { get; set; }
 
 		internal IValueConverter Converter 
 		{

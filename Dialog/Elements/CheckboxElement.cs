@@ -35,7 +35,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
-
+	
+	[Preserve(AllMembers = true)]
 	public class CheckboxElement : BoolElement, ISelectable
 	{		
 		public string Group { get; set; }

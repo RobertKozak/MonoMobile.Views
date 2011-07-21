@@ -80,7 +80,7 @@ namespace MonoMobile.MVVM
 					caption = captionAttribute.Caption;
 			}
 			
-			Root = new RootElement(caption) { Opaque = false };
+			Root = new RootElement(caption);
 			Root.DataContext = view;
 
 			var dataContext = view as IDataContext;
@@ -129,9 +129,6 @@ namespace MonoMobile.MVVM
 			var commandOption = CommandOption.Disable;
 
 			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
-			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
-			var caption = captionAttribute != null ? captionAttribute.Caption : null;
-			
 			if (buttonAttribute != null)
 			{
 				propertyName = buttonAttribute.CanExecutePropertyName;
@@ -241,7 +238,7 @@ namespace MonoMobile.MVVM
 						var bindings = GetBindings(view, member);
 	
 						newElement = GetElementForMember(root.Theme, view, member, bindings);
-						
+
 						ThemeHelper.ApplyElementTheme(theme, newElement, member);
 						
 						IBindable bindable = null;
@@ -457,7 +454,6 @@ namespace MonoMobile.MVVM
 				{
 					var rootElement = new RootElement() { section };
 					rootElement.Caption = caption;
-					rootElement.Opaque = false;
 					rootElement.Theme = Theme.CreateTheme(Root.Theme); 
 		
 					rootElement.ViewBinding = section.ViewBinding;
@@ -499,7 +495,6 @@ namespace MonoMobile.MVVM
 
 				var rootElement = Activator.CreateInstance(elementType) as IElement;
 				
-				((Element)rootElement).Opaque = false;
 				rootElement.Caption = caption;
 				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
 				rootElement.ViewBinding.DataContext = context;
@@ -608,7 +603,7 @@ namespace MonoMobile.MVVM
 			
 		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection, bool readOnly)
 		{
-			var csection = new Section() { Opaque = false };
+			var csection = new Section();
 
 			int index = 0;
 			
@@ -656,7 +651,7 @@ namespace MonoMobile.MVVM
 
 			member = GetMemberFromDataContext(member, ref context);
 
-			var csection = new Section() { IsMultiselect = true, Opaque = false };
+			var csection = new Section() { IsMultiselect = true };
 
 			var collection = member.GetValue(view);
 			if (collection == null)
@@ -695,7 +690,7 @@ namespace MonoMobile.MVVM
 		{
 			object context = view;
 
-			var csection = new Section() { IsMultiselect = true, Opaque = false };
+			var csection = new Section() { IsMultiselect = true };
 			var index = 0;
 
 			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
@@ -722,7 +717,7 @@ namespace MonoMobile.MVVM
 		{
 			object context = view;
 
-			var csection = new Section() { IsMultiselect = false, Opaque = false };
+			var csection = new Section() { IsMultiselect = false };
 			var index = 0;
 
 			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
@@ -781,7 +776,6 @@ namespace MonoMobile.MVVM
 			var section = CreateEnumSection(items, elementType, null, true, readOnly);
 
 			var root = new RootElement(caption) { section };
-			root.Opaque = false;
 			root.ViewBinding.MemberInfo = member;
 			root.DataContext = items;
 			root.ViewBinding.DataContextCode = DataContextCode.Enumerable;
@@ -998,7 +992,14 @@ namespace MonoMobile.MVVM
 
 			foreach (BindAttribute bindAttribute in bindAttributes)
 			{
-				bindings.Add(bindAttribute.Binding);
+				if (bindAttribute.DataTemplate != null)
+				{
+					bindings.AddRange(bindAttribute.DataTemplate.Bind());
+				}
+				else
+				{
+					bindings.Add(bindAttribute.Binding);
+				}
 			}
 			
 			var dataContextBinding = bindings.Where((b)=>b.TargetPath == "DataContext").FirstOrDefault() != null;

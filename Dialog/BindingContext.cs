@@ -179,9 +179,9 @@ namespace MonoMobile.MVVM
 			if (elementType == null)
 				elementType = typeof(RootElement);
 
-			newRoot = new RootElement() { Opaque = false, ViewBinding = root.ViewBinding, EditingStyle = root.EditingStyle };
+			newRoot = new RootElement() { ViewBinding = root.ViewBinding, EditingStyle = root.EditingStyle };
 			
-			var section = new Section() { Opaque = false, ViewBinding = root.ViewBinding, Parent = newRoot as IElement };
+			var section = new Section() { ViewBinding = root.ViewBinding, Parent = newRoot as IElement };
 
 			newRoot.Sections.Add(section);
 			

@@ -7,6 +7,7 @@ using MonoTouch.Foundation;
 
 namespace MonoMobile.MVVM
 {
+	[Preserve(AllMembers = true)]
 	public abstract class OwnerDrawnElement : Element, ISizeable
 	{
 		public UITableViewCellStyle Style

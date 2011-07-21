@@ -38,6 +38,7 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	/// Used to display a cell that will launch a web browser when selected.
 	/// </summary>
+	[Preserve(AllMembers = true)]
 	public class HtmlElement : Element, ISelectable
 	{
 		private UIWebView web;

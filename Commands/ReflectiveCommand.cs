@@ -45,17 +45,40 @@ namespace MonoMobile.MVVM
 		public CommandOption CommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };
-
-		public ReflectiveCommand(object viewModel, MethodInfo execute, PropertyInfo canExecute)
+		
+		public ReflectiveCommand(object viewModel, string executeMethodName, string canExecutePropertyName) 
 		{
-			if (execute == null)
-				throw new ArgumentNullException("execute");
+			if (string.IsNullOrEmpty(executeMethodName))
+				throw new ArgumentNullException("executeMethodName");
 
+			var execute = viewModel.GetType().GetMethod(executeMethodName);
+			
+			PropertyInfo canExecute = null;
+			if (!string.IsNullOrEmpty(canExecutePropertyName))
+				canExecute = viewModel.GetType().GetProperty(canExecutePropertyName);
+			
 			_ViewModel = viewModel;
 			_Execute = execute;
 			_CanExecute = canExecute;
 
-			var notifier = viewModel as INotifyPropertyChanged;
+			CreateCommand();
+		}
+
+		public ReflectiveCommand(object viewModel, MethodInfo execute, PropertyInfo canExecute)
+		{
+			_ViewModel = viewModel;
+			_Execute = execute;
+			_CanExecute = canExecute;
+
+			CreateCommand();
+		}
+
+		private void CreateCommand()
+		{
+			if (_Execute == null)
+				throw new Exception("The method supplied for the Command does not exist. Check spelling.");
+			
+			var notifier = _ViewModel as INotifyPropertyChanged;
 			if (notifier != null && _CanExecute != null)
 			{
 				notifier.PropertyChanged += (s, e) =>

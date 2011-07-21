@@ -34,7 +34,9 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
 	public class FloatElement : Element
 	{
 		public UISlider Slider { get; set; }
@@ -50,11 +52,6 @@ namespace MonoMobile.MVVM
 			DataBinding = new FloatElementDataBinding(this);
 		}
 
-		public FloatElement(RectangleF frame) : this("")
-		{
-			Frame = frame;
-		}
-		
 		public override UITableViewElementCell NewCell()
 		{
 			var cell = base.NewCell();

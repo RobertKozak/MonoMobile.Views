@@ -71,10 +71,10 @@ namespace MonoMobile.MVVM
 		{
 		}
 
-		public EntryElement(RectangleF frame) : this()
-		{
-			Frame = frame;
-		}
+//		public EntryElement(RectangleF frame) : this()
+//		{
+//			Frame = frame;
+//		}
 
 		public override UITableViewElementCell NewCell()
 		{

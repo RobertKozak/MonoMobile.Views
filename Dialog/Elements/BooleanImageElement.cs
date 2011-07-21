@@ -30,7 +30,9 @@
 namespace MonoMobile.MVVM
 {
 	using MonoTouch.UIKit;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
 	public class BooleanImageElement : BaseBooleanImageElement
 	{
 		UIImage onImage, offImage;

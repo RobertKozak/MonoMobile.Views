@@ -42,6 +42,7 @@ namespace MonoMobile.MVVM
 	///  in this case from the UIViewElement to the cell that
 	///  holds our view.
 	/// </remarks>
+	[Preserve(AllMembers = true)]
 	public class UIViewElement : Element, ISelectable
 	{
 		public CellFlags Flags;

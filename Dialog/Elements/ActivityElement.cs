@@ -32,7 +32,9 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
+	using MonoTouch.Foundation;
 
+	[Preserve(AllMembers = true)]
 	public class ActivityElement : UIViewElement
 	{
 		public bool Animating { get; set; }

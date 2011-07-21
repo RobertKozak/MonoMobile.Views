@@ -34,7 +34,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using System.Linq;
-
+	
+	[Preserve(AllMembers = true)]
 	public class RadioElement : BoolElement, ISelectable
 	{
 		public bool PopOnSelect { get; set; }

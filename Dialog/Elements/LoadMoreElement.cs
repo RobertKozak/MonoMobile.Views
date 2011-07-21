@@ -38,7 +38,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
-
+	
+	[Preserve(AllMembers = true)]
 	public class LoadMoreElement : Element, ISelectable, ITappable
 	{
 		public string NormalCaption { get; set; }
@@ -133,7 +134,7 @@ namespace MonoMobile.MVVM
 		{
 			using (var pool = new NSAutoreleasePool())
 			{
-				InvokeOnMainThread(delegate
+				pool.InvokeOnMainThread(delegate
 				{
 					if (Command.CanExecute(CommandParameter))
 						Command.Execute(CommandParameter);

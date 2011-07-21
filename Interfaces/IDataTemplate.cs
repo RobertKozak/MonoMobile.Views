@@ -1,10 +1,10 @@
 //
-// DateElement.cs
+// IDataTemplate.cs: 
 //
 // Author:
-//  Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corporation
 //
 // Code licensed under the MIT X11 license
 //
@@ -29,33 +29,11 @@
 //
 namespace MonoMobile.MVVM
 {
-	using System;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
+	using System.Collections.Generic;
 
-	[Preserve(AllMembers = true)]
-	public class DateElement : DateTimeElement
+	public interface IDataTemplate
 	{
-		public DateElement(string caption) : base(caption)
-		{
-		}
-
-		public DateElement(string caption, DateTime date) : base(caption, date)
-		{
-			fmt.DateStyle = NSDateFormatterStyle.Medium;
-		}
-
-		public override string FormatDate(DateTime dt)
-		{
-			return fmt.ToString(dt);
-		}
-
-		public override UIDatePicker CreatePicker()
-		{
-			var picker = base.CreatePicker();
-			picker.Mode = UIDatePickerMode.Date;
-			return picker;
-		}
+		List<Binding> Bind();
 	}
 }
 

@@ -37,6 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
+	[Preserve(AllMembers = true)]
 	public class DateTimeElement : FocusableElement, ISelectable
 	{
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };

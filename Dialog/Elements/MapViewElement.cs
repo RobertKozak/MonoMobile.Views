@@ -34,7 +34,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.MapKit;
 	using MonoTouch.UIKit;
-
+	
+	[Preserve(AllMembers = true)]
 	public class MapElement : Element, ISelectable
 	{
 		public MapElement(string caption, CLLocationCoordinate2D value) : base(caption)

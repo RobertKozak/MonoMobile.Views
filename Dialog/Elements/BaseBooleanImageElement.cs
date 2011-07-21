@@ -47,6 +47,7 @@ namespace MonoMobile.MVVM
 	/// 
 	/// A subclass only needs to implement the GetImage method.
 	/// </remarks>
+	[Preserve(AllMembers = true)]
 	public abstract class BaseBooleanImageElement : BoolElement
 	{
 		public class TextWithImageCellView : UITableViewElementCell

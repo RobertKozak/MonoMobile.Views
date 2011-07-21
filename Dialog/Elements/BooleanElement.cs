@@ -34,7 +34,9 @@ namespace MonoMobile.MVVM
 	using System.Drawing;
 	using MonoMobile.MVVM;
 	using MonoTouch.UIKit;
-
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
 	public class BooleanElement : BoolElement
 	{
 		private UISwitch Switch { get; set; }
@@ -44,10 +46,10 @@ namespace MonoMobile.MVVM
 			DataBinding= new BooleanElementDataBinding(this);
 		}
 
-		public BooleanElement(RectangleF frame) : this("")
-		{
-			Frame = frame;
-		}
+//		public BooleanElement(RectangleF frame) : this("")
+//		{
+//			Frame = frame;
+//		}
 		
 		public override void InitializeContent()
 		{

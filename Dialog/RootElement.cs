@@ -362,7 +362,7 @@ namespace MonoMobile.MVVM
 		/// <returns>
 		/// A <see cref="IEnumerator"/>
 		/// </returns>
-		public new IEnumerator GetEnumerator()
+		public IEnumerator GetEnumerator()
 		{
 			foreach (var s in Sections)
 				yield return s;

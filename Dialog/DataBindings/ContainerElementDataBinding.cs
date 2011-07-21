@@ -61,7 +61,7 @@ namespace MonoMobile.MVVM
 
 		public override void BindProperties()
 		{			
-			base.BindProperties();
+//			base.BindProperties();
 
 			IndexProperty.BindTo(Element);
 			SelectedItemsProperty.BindTo(Element);

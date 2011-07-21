@@ -37,6 +37,7 @@ namespace MonoMobile.MVVM
 	/// <summary>
 	///  The button element can be used to render a cell as a button that responds to Tap events
 	/// </summary>
+	[Preserve(AllMembers=true)]
 	public class ButtonElement : Element, ITappable, ISelectable
 	{
 		public ICommand Command { get; set; }

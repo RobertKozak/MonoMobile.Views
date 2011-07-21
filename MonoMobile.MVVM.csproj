@@ -322,7 +322,8 @@
     <Compile Include="Dialog\DataBindings\RootElementDataBinding.cs" />
     <Compile Include="Dialog\DataBindings\SectionDataBinding.cs" />
     <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
-    <Compile Include="Dialog\IDataTemplate.cs" />
+    <Compile Include="Interfaces\IDataTemplate.cs" />
+    <Compile Include="Dialog\DataTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

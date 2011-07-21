@@ -1,5 +1,5 @@
 // 
-//  IDataTemplate.cs
+//  DataTemplate.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,17 +30,17 @@
 namespace MonoMobile.MVVM
 {
 	using System;
+	using System.Collections.Generic;
 
-	public class DataTemplate
+	public abstract class DataTemplate : IDataTemplate
 	{
-		private object _DataContext;
-
-		public BindableProperty TextProprty = BindableProperty.Register("Text");
-		public BindableProperty DetailTextProperty = BindableProperty.Register("DetailText");
-
-		public DataTemplate(object dataContext)
+		public DataTemplate()
 		{
-			_DataContext = dataContext;
+		}
+
+		public virtual List<Binding> Bind()
+		{
+			return new List<Binding>();
 		}
 	}
 }

@@ -36,7 +36,8 @@ namespace MonoMobile.MVVM
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.MVVM;
-
+	
+	[Preserve(AllMembers = true)]
 	public class ImageElement : Element, ISelectable
 	{		
 		protected override void SetDataContext(object value)
@@ -45,7 +46,7 @@ namespace MonoMobile.MVVM
 			{				
 				_DataContext = value;
 				_Scaled = Scale((UIImage)DataContext);
-				SetNeedsDisplay();
+				//SetNeedsDisplay();
 			}
 			else
 			{

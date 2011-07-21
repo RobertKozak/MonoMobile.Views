@@ -37,7 +37,7 @@ namespace MonoMobile.MVVM
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public abstract class Element : UIView, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
+	public abstract class Element : DisposableObject, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
 	{		
 		public Guid DebugId = Guid.NewGuid();
 
@@ -154,6 +154,8 @@ namespace MonoMobile.MVVM
 			get { return Theme.Accessory; }
 			set { Theme.Accessory = value; ThemeChanged(); }
 		}
+		
+		public ICommand AccessoryCommand { get; set; }
 
 		public UIImage ImageIcon
 		{
@@ -179,7 +181,7 @@ namespace MonoMobile.MVVM
 			set { Theme.CellBackgroundUri = value; ThemeChanged(); }
 		}
 		
-		public new UIColor BackgroundColor
+		public UIColor BackgroundColor
 		{
 			get { return Theme.CellBackgroundColor; }
 			set { Theme.CellBackgroundColor = value; ThemeChanged(); }
@@ -282,9 +284,9 @@ namespace MonoMobile.MVVM
 				
 				if (Accessory.HasValue)
 					Cell.Accessory = Accessory.Value;	
+				
+				Cell.SetNeedsDisplay();
 			}
-			
-			SetNeedsDisplay();
 		}
 
 		/// <summary>
@@ -346,10 +348,6 @@ namespace MonoMobile.MVVM
 		public Element(string caption, Binding binding): this(caption)
 		{
 
-		}
-		public RectangleF ContentFrame 
-		{ 
-			get { var frame = base.Frame; frame.Location = new PointF(0, 0); return frame; } 
 		}
 		
 		public virtual bool Matches(string text)
