@@ -35,8 +35,14 @@ namespace MonoMobile.MVVM
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public class ProgressAttribute : Attribute
 	{
-		public ProgressAttribute()
+		public ProgressAttribute(): this(null, null)
 		{
+		}
+
+		public ProgressAttribute(string canExecutePropertyName): this(null, null)
+		{
+			CanExecutePropertyName = canExecutePropertyName;
+			CommandOption = CommandOption.Hide;
 		}
 
 		public ProgressAttribute(string title, string detailText)
@@ -45,6 +51,8 @@ namespace MonoMobile.MVVM
 			DetailText = detailText;
 		}
 
+		internal string CanExecutePropertyName;
+		public CommandOption CommandOption;
 		public string Title { get; set; }
 		public string DetailText { get; set;}
 	}

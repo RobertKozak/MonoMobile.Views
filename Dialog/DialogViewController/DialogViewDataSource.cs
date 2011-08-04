@@ -1,3 +1,4 @@
+using MonoTouch.CoreGraphics;
 // 
 //  DialogViewDataSource.cs
 // 
@@ -264,14 +265,22 @@ namespace MonoMobile.MVVM
 			headerLabel.ShadowOffset = new SizeF(0, 1);
 			headerLabel.Text = caption;
 			
-			var view = new UIView(bounds) { BackgroundColor = tableView.BackgroundColor };
+			var view = new UIView(bounds);
 			
 			if (tableView.Style == UITableViewStyle.Grouped)
 			{
 				headerLabel.BackgroundColor = UIColor.Clear;
 				view.Opaque = false;
-				view.BackgroundColor = UIColor.Clear;
 			}
+			else
+			{
+				var theme = Container.Root.Theme;
+				var background = theme.HeaderBackgroundColor;
+				if (background != null)
+					headerLabel.BackgroundColor = background;
+			}
+
+			view.BackgroundColor = headerLabel.BackgroundColor;
 			
 			view.AddSubview(headerLabel);
 			

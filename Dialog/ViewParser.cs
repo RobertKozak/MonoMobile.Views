@@ -883,7 +883,7 @@ namespace MonoMobile.MVVM
 
 				if (buttonAttribute != null)
 				{
-					var caption = captionAttribute != null ? captionAttribute.Caption : !buttonAttribute.ButtonType.HasValue ? member.Name.Capitalize() : null;
+					var caption = captionAttribute != null ? captionAttribute.Caption : !buttonAttribute.ButtonType.HasValue && buttonAttribute.ViewType == null ? member.Name.Capitalize() : null;
 					
 					UIView buttonView = null;
 					var title = caption;
@@ -1099,8 +1099,8 @@ namespace MonoMobile.MVVM
 				var loadMoreAttribute = member.GetCustomAttribute<LoadMoreAttribute>();
 				if (loadMoreAttribute != null)
 				{
-					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption: "Load More";
-					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption: "Loading...";
+					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption : "Load More";
+					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption : "Loading...";
 
 					element = new LoadMoreElement(normalCaption, loadingCaption, GetCommandForMember(view, member));
 				}
@@ -1108,10 +1108,20 @@ namespace MonoMobile.MVVM
 				var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
 				if (progressAttribute != null)
 				{
-					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title: "Load More";
-					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText: "Loading...";
+					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title : caption;
+					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText : null;
 
-					element = new ProgressElement(title, detailText, GetCommandForMember(view, member));
+					var pelement = new ProgressElement(caption, title, detailText, null);
+					var command = GetCommandForMember(view, member) as ReflectiveCommand;
+					
+					command.Element = pelement;
+					command.CanExecuteChanged += HandleCanExecuteChanged;
+
+					pelement.Command = command;
+			
+					HandleCanExecuteChanged(command, EventArgs.Empty);
+
+					element = pelement;
 				}
 
 				var searchbarAttribute = member.GetCustomAttribute<SearchbarAttribute>();

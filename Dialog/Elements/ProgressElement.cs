@@ -47,7 +47,7 @@ namespace MonoMobile.MVVM
 
 		private ProgressHud _ProgressHud;
 
-		public ProgressElement(string title, string detailsText, ICommand command) : base(title)
+		public ProgressElement(string caption, string title, string detailsText, ICommand command) : base(caption)
 		{
 			Title = title;
 			DetailsText = detailsText;

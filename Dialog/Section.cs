@@ -53,7 +53,9 @@ namespace MonoMobile.MVVM
 	{
 		private ExpandState _ExpandState;
 
-		private UIView _Header, _Footer;
+		private UIView _Header;
+		private UIView _Footer;
+
 		private List<IElement> _HiddenElements;
 
 		public ObservableCollection<IElement> Elements { get; set; }
@@ -116,7 +118,7 @@ namespace MonoMobile.MVVM
 		/// <summary>
 		///   The section header, as a string
 		/// </summary>
-		public string HeaderText { get; set; }
+		public string HeaderText {get; set; }
 
 		/// <summary>
 		/// The section footer, as a string.
@@ -129,7 +131,7 @@ namespace MonoMobile.MVVM
 		public UIView HeaderView
 		{
 			get { return _Header; }
-			set { _Header = value; Theme.ThemeChanged(Cell);}
+			set { _Header = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -138,7 +140,7 @@ namespace MonoMobile.MVVM
 		public UIView FooterView
 		{
 			get { return _Footer; }
-			set { _Footer = value; Theme.ThemeChanged(Cell);}
+			set { _Footer = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -485,9 +487,7 @@ namespace MonoMobile.MVVM
 		}
 		
 		public override void InitializeTheme()
-		{
-			base.InitializeTheme();
-			
+		{	
 			if (Theme != null)
 			{
 				if (HeaderView != null)
@@ -504,13 +504,16 @@ namespace MonoMobile.MVVM
 						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
 					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
 						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
+					if (Theme.HeaderBackgroundColor != null)
+					{
+						headerLabel.BackgroundColor = Theme.HeaderBackgroundColor;
+						HeaderView.BackgroundColor = Theme.HeaderBackgroundColor;
+					}
 				}
 				
 				if (FooterView != null)
 				{
 					var footerLabel = FooterView as UILabel;
-					
-					footerLabel.Text = FooterText.Replace("\n", "");
 					
 					if (Theme.FooterTextFont != null)
 						footerLabel.Font = Theme.DetailTextFont;
@@ -520,6 +523,11 @@ namespace MonoMobile.MVVM
 						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
 					if (Theme.FooterTextShadowOffset != SizeF.Empty)
 						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
+					if (Theme.FooterBackgroundColor != null)
+					{
+						footerLabel.BackgroundColor = Theme.FooterBackgroundColor;
+						FooterView.BackgroundColor = Theme.FooterBackgroundColor;
+					}
 				}
 			}
 		}
@@ -538,6 +546,7 @@ namespace MonoMobile.MVVM
 				DataBinding.UpdateTargets();
 				DataBinding.UpdateSources();
 			}
+
 			//Elements.ForEach((element)=>element.BeginInit());
 		}
 

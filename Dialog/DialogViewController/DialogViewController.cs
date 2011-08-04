@@ -535,6 +535,19 @@ namespace MonoMobile.MVVM
 
 				CommandBarButtonItem[] buttons = buttonList.ToArray();	
 				SetToolbarItems(buttons, false);
+
+ 
+				var nav = ParentViewController as UINavigationController;
+				if (nav != null)
+				{
+					nav.NavigationBar.Opaque = false;
+ 
+					var themeable = Root as IThemeable;
+					if (themeable != null)
+					{
+						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+					}
+				}
 			}
 		}
 
@@ -728,9 +741,7 @@ namespace MonoMobile.MVVM
 	//				}
 	//				else
 					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-
 					nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-					nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
 				}
 			}
 

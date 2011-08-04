@@ -157,12 +157,14 @@ namespace MonoMobile.MVVM
 		public UIColor HeaderTextColor { get; set; }
 		public SizeF HeaderTextShadowOffset { get; set; }
 		public UIColor HeaderTextShadowColor { get; set; }
+		public UIColor HeaderBackgroundColor { get; set; }
 
 		public UIFont FooterTextFont { get; set; }
 		public UITextAlignment FooterTextAlignment { get; set; }
 		public UIColor FooterTextColor { get; set; }
 		public SizeF FooterTextShadowOffset { get; set; }
 		public UIColor FooterTextShadowColor { get; set; }
+		public UIColor FooterBackgroundColor { get; set; }
 		
 		public UIImage BackgroundImage
 		{
@@ -345,7 +347,10 @@ namespace MonoMobile.MVVM
 				
 				if (theme.HeaderTextShadowColor != null)
 					HeaderTextShadowColor = theme.HeaderTextShadowColor;
-
+				
+				if (theme.HeaderBackgroundColor != null)
+					HeaderBackgroundColor = theme.HeaderBackgroundColor;
+				
 
 				FooterTextAlignment = theme.FooterTextAlignment;
 				
@@ -360,7 +365,10 @@ namespace MonoMobile.MVVM
 				
 				if (theme.FooterTextShadowColor != null)
 					FooterTextShadowColor = theme.FooterTextShadowColor;
-				
+			
+				if (theme.FooterBackgroundColor != null)
+					FooterBackgroundColor = theme.FooterBackgroundColor;
+			
 
 				if (theme.DrawElementViewAction != null)
 				{
