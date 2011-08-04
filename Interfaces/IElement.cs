@@ -39,7 +39,7 @@ namespace MonoMobile.MVVM
 	public interface IElement : IThemeable, IDisposable, IInitializable
 	{
 		object DataContext { get; set; }
-		
+
 		ICommand AccessoryCommand { get; set; }
 		
 		int Order { get; set; }

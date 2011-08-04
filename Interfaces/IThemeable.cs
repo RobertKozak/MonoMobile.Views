@@ -34,7 +34,6 @@ namespace MonoMobile.MVVM
 	public interface IThemeable
 	{
 		Theme Theme { get; set; }
-		void ThemeChanged();
 		void InitializeTheme();
 	}
 }

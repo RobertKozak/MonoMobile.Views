@@ -30,9 +30,9 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using System.Drawing;
-	using MonoMobile.MVVM;
+	using System.Reflection;
+	using MonoMobile.MVVM.Utilities;
 	using MonoTouch.CoreGraphics;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
 	public class Theme
@@ -421,6 +421,160 @@ namespace MonoMobile.MVVM
 				}
 				
 				Cell.SetNeedsDisplay();
+			}
+		}
+
+		public void ThemeChanged(UITableViewCell cell)
+		{
+			if (cell == null)
+				return;
+
+			if (cell.TextLabel != null)
+			{
+				if (TextFont != null)
+					cell.TextLabel.Font = TextFont;
+				
+				cell.TextLabel.TextAlignment = TextAlignment;
+				cell.TextLabel.TextColor = TextColor ?? cell.TextLabel.TextColor;
+				
+				if (TextShadowColor != null)
+					cell.TextLabel.ShadowColor = TextShadowColor;
+				
+				if (TextShadowOffset != SizeF.Empty)
+					cell.TextLabel.ShadowOffset = TextShadowOffset;
+				
+				if (TextHighlightColor != null)
+					cell.TextLabel.HighlightedTextColor = TextHighlightColor;
+			}
+			
+			if (cell.DetailTextLabel != null)
+			{
+				if (DetailTextFont != null)
+					cell.DetailTextLabel.Font = DetailTextFont;
+				
+				cell.DetailTextLabel.TextAlignment = DetailTextAlignment;
+				cell.DetailTextLabel.TextColor = DetailTextColor ?? cell.DetailTextLabel.TextColor;
+				
+				if (DetailTextShadowColor != null)
+					cell.DetailTextLabel.ShadowColor = DetailTextShadowColor;
+				
+				if (DetailTextShadowOffset != SizeF.Empty)
+					cell.DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
+				
+				if (DetailTextHighlightColor != null)
+					cell.DetailTextLabel.HighlightedTextColor = DetailTextHighlightColor;
+			}
+			
+			var elementCell = cell as UITableViewElementCell;
+			IImageUpdated element = null;
+			if (elementCell != null)
+				element = elementCell.Element as IImageUpdated;
+
+			if (CellBackgroundColor != null)
+			{
+				cell.BackgroundColor = CellBackgroundColor ?? UIColor.White;
+			}
+			else if (element != null && CellBackgroundUri != null)
+			{
+				var img = ImageLoader.DefaultRequestImage(BackgroundUri, element);
+				cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
+			}
+			else if (CellBackgroundImage != null)
+			{
+				cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
+			} 
+			else
+			{
+				cell.BackgroundColor = UIColor.White;
+			}
+			
+			if (element != null && CellImageIconUri != null)
+			{
+				var img = ImageLoader.DefaultRequestImage(CellImageIconUri, element);
+				
+				if (img != null)
+				{
+					var small = img.Scale(new SizeF(32, 32));
+					small = small.RemoveSharpEdges(5);
+					
+					cell.ImageView.Image = small;
+					cell.ImageView.Layer.MasksToBounds = false;
+					cell.ImageView.Layer.ShadowOffset = new SizeF(2, 2);
+					cell.ImageView.Layer.ShadowRadius = 2f;
+					cell.ImageView.Layer.ShadowOpacity = 0.8f;
+				}
+			}
+			else if (CellImageIcon != null)
+				cell.ImageView.Image = CellImageIcon;
+			
+			if (Accessory.HasValue)
+				cell.Accessory = Accessory.Value;
+			else
+				cell.Accessory = UITableViewCellAccessory.None;
+			
+			cell.SetNeedsDisplay();
+		}
+		
+		public static void ApplyRootTheme(object view, IThemeable element)
+		{
+			Theme theme = null;
+			var themeAttributes = view.GetType().GetCustomAttributes(typeof(ThemeAttribute), true);
+			
+			foreach (ThemeAttribute themeAttribute in themeAttributes)
+			{
+				if (element != null)
+				{
+					if (themeAttribute != null && themeAttribute.ThemeType != null)
+					{
+						theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+						element.Theme.MergeTheme(theme);
+					}
+				}
+			}
+		}
+
+		public static void ApplyElementTheme(Theme theme, IThemeable element, MemberInfo member)
+		{
+			if (theme != null)
+			{
+				var newTheme = Theme.CreateTheme(theme);
+				newTheme.MergeTheme(element.Theme);
+				
+				element.Theme = newTheme;
+			}
+			
+			if (member != null)
+				ApplyMemberTheme(member, element);
+			
+			var root = element as IRoot;
+			if (root != null)
+			{
+				foreach (var s in root.Sections)
+					foreach (var e in s.Elements)
+						ApplyElementTheme(element.Theme, e, null);
+			}
+			
+			var section = element as ISection;
+			if (section != null)
+			{
+				foreach (var e in section.Elements)
+					ApplyElementTheme(element.Theme, e, null);
+			}
+		}
+
+		private static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)
+		{
+			var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
+			
+			if (themeableElement != null && themeAttribute != null && themeAttribute.ThemeType != null)
+			{
+				var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+				
+				if (themeAttribute.ThemeUsage == ThemeUsage.Merge)
+				{
+					themeableElement.Theme.MergeTheme(theme);
+				} else
+					themeableElement.Theme = Theme.CreateTheme(theme);
 			}
 		}
 

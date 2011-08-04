@@ -129,7 +129,7 @@ namespace MonoMobile.MVVM
 		public UIView HeaderView
 		{
 			get { return _Header; }
-			set { _Header = value; }
+			set { _Header = value; Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -138,46 +138,7 @@ namespace MonoMobile.MVVM
 		public UIView FooterView
 		{
 			get { return _Footer; }
-			set { _Footer = value; }
-		}
-		
-		public override void ThemeChanged()
-		{
-			base.ThemeChanged();
-			if (Theme != null)
-			{
-				if (HeaderView != null)
-				{
-					var headerLabel = HeaderView.Subviews[0] as UILabel;
-		
-					headerLabel.Text = Caption;
-		
-					if (Theme.HeaderTextFont != null)
-						headerLabel.Font = Theme.HeaderTextFont;
-					if (Theme.HeaderTextColor != null)
-						headerLabel.TextColor = Theme.HeaderTextColor;
-					if (Theme.HeaderTextShadowColor != null)
-						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
-					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
-						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
-				}
-
-				if (FooterView != null)
-				{
-					var footerLabel = FooterView as UILabel;
-					
-					footerLabel.Text = FooterText.Replace("\n","");
-					
-					if (Theme.FooterTextFont != null)
-						footerLabel.Font = Theme.DetailTextFont;
-					if (Theme.FooterTextColor != null)
-						footerLabel.TextColor = Theme.FooterTextColor;
-					if (Theme.FooterTextShadowColor != null)
-						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
-					if (Theme.FooterTextShadowOffset != SizeF.Empty)
-						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
-				}
-			}
+			set { _Footer = value; Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -481,10 +442,13 @@ namespace MonoMobile.MVVM
 			if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
 				Clear();
-				foreach (var item in e.NewItems)
+				if (e.NewItems != null)
 				{
-					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					Add(element);
+					foreach (var item in e.NewItems)
+					{
+						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+						Add(element);
+					}
 				}
 			}
 			if (e.Action == NotifyCollectionChangedAction.Move)
@@ -517,6 +481,46 @@ namespace MonoMobile.MVVM
 				Parent = null;
 				Clear();
 				Elements = null;
+			}
+		}
+		
+		public override void InitializeTheme()
+		{
+			base.InitializeTheme();
+			
+			if (Theme != null)
+			{
+				if (HeaderView != null)
+				{
+					var headerLabel = HeaderView.Subviews[0] as UILabel;
+					
+					headerLabel.Text = Caption;
+					
+					if (Theme.HeaderTextFont != null)
+						headerLabel.Font = Theme.HeaderTextFont;
+					if (Theme.HeaderTextColor != null)
+						headerLabel.TextColor = Theme.HeaderTextColor;
+					if (Theme.HeaderTextShadowColor != null)
+						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
+					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
+						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
+				}
+				
+				if (FooterView != null)
+				{
+					var footerLabel = FooterView as UILabel;
+					
+					footerLabel.Text = FooterText.Replace("\n", "");
+					
+					if (Theme.FooterTextFont != null)
+						footerLabel.Font = Theme.DetailTextFont;
+					if (Theme.FooterTextColor != null)
+						footerLabel.TextColor = Theme.FooterTextColor;
+					if (Theme.FooterTextShadowColor != null)
+						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
+					if (Theme.FooterTextShadowOffset != SizeF.Empty)
+						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
+				}
 			}
 		}
 

@@ -1,9 +1,8 @@
 // 
-//  DialogViewSizingSource.cs
+//  ProgressAttribute.cs
 // 
-// Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Author:
+//    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 //  Copyright 2011, Nowcom Corporation.
 // 
@@ -32,30 +31,22 @@ namespace MonoMobile.MVVM
 {
 	using System;
 	using MonoTouch.UIKit;
-	using MonoTouch.Foundation;
 
-	//
-	// Performance trick, if we expose GetHeightForRow, the UITableView will
-	// probe *every* row for its size;   Avoid this by creating a separate
-	// model that is used only when we have items that require resizing
-	//
-	public class DialogViewSizingSource : DialogViewDataSource
+	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
+	public class ProgressAttribute : Attribute
 	{
-		public DialogViewSizingSource(DialogViewController controller) : base(controller)
+		public ProgressAttribute()
 		{
 		}
 
-		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		public ProgressAttribute(string title, string detailText)
 		{
-			var element = GetElement(indexPath);
-			
-			var sizable = element as ISizeable;
-			if (sizable != null)
-				return sizable.GetHeight(tableView, indexPath);
-			
-			return tableView.RowHeight;
+			Title = title;
+			DetailText = detailText;
 		}
+
+		public string Title { get; set; }
+		public string DetailText { get; set;}
 	}
-
 }
 

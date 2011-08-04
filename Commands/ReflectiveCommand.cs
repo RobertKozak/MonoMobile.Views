@@ -40,13 +40,18 @@ namespace MonoMobile.MVVM
 		private readonly PropertyInfo _CanExecute;
 		private readonly MethodInfo _Execute;
 		private readonly object _ViewModel;
+		private readonly object _CanExecuteSource;
 		
 		public IElement Element { get; set; }
 		public CommandOption CommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };
+
+		public ReflectiveCommand(object viewModel, string executeMethodName, string canExecutePropertyName) : this(viewModel, executeMethodName, null, canExecutePropertyName)
+		{			
+		}
 		
-		public ReflectiveCommand(object viewModel, string executeMethodName, string canExecutePropertyName) 
+		public ReflectiveCommand(object viewModel, string executeMethodName, object canExecuteSource, string canExecutePropertyName) 
 		{
 			if (string.IsNullOrEmpty(executeMethodName))
 				throw new ArgumentNullException("executeMethodName");
@@ -60,15 +65,21 @@ namespace MonoMobile.MVVM
 			_ViewModel = viewModel;
 			_Execute = execute;
 			_CanExecute = canExecute;
+			_CanExecuteSource = canExecuteSource;
 
 			CreateCommand();
 		}
 
-		public ReflectiveCommand(object viewModel, MethodInfo execute, PropertyInfo canExecute)
+		public ReflectiveCommand(object viewModel, MethodInfo execute, PropertyInfo canExecute) : this(viewModel, execute, null, canExecute)
+		{
+		}
+
+		public ReflectiveCommand(object viewModel, MethodInfo execute, object canExecuteSource, PropertyInfo canExecute)
 		{
 			_ViewModel = viewModel;
 			_Execute = execute;
 			_CanExecute = canExecute;
+			_CanExecuteSource = canExecuteSource;
 
 			CreateCommand();
 		}
@@ -91,8 +102,12 @@ namespace MonoMobile.MVVM
 
 		public bool CanExecute(object parameter)
 		{
+			var source = _CanExecuteSource;
+			if (source == null)
+				source = _ViewModel;
+
 			if (_CanExecute != null)
-				return (bool)_CanExecute.GetValue(_ViewModel, null);
+				return (bool)_CanExecute.GetValue(source, null);
 			
 			return true;
 		}

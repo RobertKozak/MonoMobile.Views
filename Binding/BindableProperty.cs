@@ -152,7 +152,7 @@ namespace MonoMobile.MVVM
 		{			
 			ControlValue = value;
 
-			if (BindingExpression != null)
+			if (BindingExpression != null && BindingExpression.Binding != null && BindingExpression.Binding.Mode == BindingMode.TwoWay)
 			{
 				value = BindingExpression.ConvertbackValue(value);
 

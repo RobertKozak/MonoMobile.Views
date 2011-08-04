@@ -64,6 +64,7 @@ namespace MonoMobile.MVVM
 		public UIImage BackgroundImage { get; set; }
 		public UIColor BackgroundColor { get; set; }
 		public bool CanDeleteCells { get; set; }
+		public UIView RootView { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
 
@@ -82,6 +83,11 @@ namespace MonoMobile.MVVM
 				_Root = value;
 				_Root.Controller = this;
 				_Root.TableView = TableView;
+
+				var view = RootView as IView;
+				if (view != null)
+					view.TableView = TableView;
+
 				ReloadData();
 			}
 		}
@@ -412,20 +418,30 @@ namespace MonoMobile.MVVM
 
 		public void Selected(NSIndexPath indexPath)
 		{
-			var section = Root.Sections[indexPath.Section];
-			var element = section.Elements[indexPath.Row];
-			var selectable = element as ISelectable;
+			var element = _TableSource.GetElement(indexPath);
 
-			if (selectable != null)
+			if (element != null)
 			{
-				if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
+				var selectable = element as ISelectable;
+	
+				if (selectable != null)
 				{
-					TableView.DeselectRow(indexPath, false);
+					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
+					{
+						TableView.DeselectRow(indexPath, false);
+						
+						UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
+					}
 					
-					UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
+					selectable.Selected(this, TableView, indexPath);
 				}
-				
-				selectable.Selected(this, TableView, indexPath);
+			}
+			else
+			{
+				TableView.DeselectRow(indexPath, true);
+				var selectable = RootView as ISelectable;
+				if(selectable != null)
+					selectable.Selected(this, TableView, indexPath);
 			}
 		}
 
@@ -492,6 +508,8 @@ namespace MonoMobile.MVVM
 
 		private void ConfigureToolbarItems()
 		{
+			var standardButtonSize = 31;
+
 			if (Root != null && Root.ToolbarButtons != null)
 			{
 				var buttonList = Root.ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToList();
@@ -502,7 +520,7 @@ namespace MonoMobile.MVVM
 				if (rightCount > leftCount)
 				{
 					var buttonWidth = buttonList.Last((button)=>button.Location == BarButtonLocation.Right).Width;
-					_LeftFixedSpace.Width = buttonWidth == 0 ? 31 : buttonWidth;
+					_LeftFixedSpace.Width = buttonWidth == 0 ? standardButtonSize : buttonWidth;
 
 					buttonList.Add(_LeftFixedSpace);
 				}
@@ -510,7 +528,7 @@ namespace MonoMobile.MVVM
 				if (leftCount > rightCount)
 				{
 					var buttonWidth = buttonList.First((button)=>button.Location == BarButtonLocation.Left).Width;
-					_RightFixedSpace.Width = buttonWidth == 0 ? 31 : buttonWidth;
+					_RightFixedSpace.Width = buttonWidth == 0 ? standardButtonSize : buttonWidth;
 
 					buttonList.Add(_RightFixedSpace);
 				}
@@ -545,31 +563,6 @@ namespace MonoMobile.MVVM
 							else
 								NavigationItem.LeftBarButtonItem = null;
 						}
-					}
-				}
-
-				nav.NavigationBar.Opaque = false;
-
-				var themeable = Root as IThemeable;
-				if (themeable != null)
-				{
-					if (themeable.Theme.BarStyle.HasValue)
-					{
-						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
-					}
-
-//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-//				{
-//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-//					nav.NavigationBar.InsertSubview(view, 0);
-//				}
-//				else
-					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-				//	if (themeable.Theme.BarTintColor != UIColor.Clear)
-					{
-						nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
 					}
 				}
 			}
@@ -713,13 +706,45 @@ namespace MonoMobile.MVVM
 						TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
 				}
 			}
+			
+			var nav = ParentViewController as UINavigationController;
+			if (nav != null)
+			{
+				nav.NavigationBar.Opaque = false;
+	
+				var themeable = Root as IThemeable;
+				if (themeable != null)
+				{
+					if (themeable.Theme.BarStyle.HasValue)
+					{
+						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
+					}
+	
+	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
+	//				{
+	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
+	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
+	//					nav.NavigationBar.InsertSubview(view, 0);
+	//				}
+	//				else
+					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
+
+					nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
+					nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+				}
+			}
 
 			ConfigureBackgroundImage();
 		}
 		
 		public virtual DialogViewDataSource CreateSizingSource(bool unevenRows)
 		{
-			return unevenRows ? new DialogViewSizingSource(this) : new DialogViewDataSource(this);
+//			if (unevenRows)
+//				return new DialogViewListDataSource(this);
+//			else
+//				return new DialogViewListDataSource(this);
+
+			return new DialogViewListDataSource(this);
 		}
 
 		public void UpdateSource()
@@ -727,6 +752,9 @@ namespace MonoMobile.MVVM
 			if (Root == null)
 				return;
 			
+			if (_TableSource != null)
+				_TableSource.Dispose();
+
 			_TableSource = CreateSizingSource(Root.UnevenRows);
 			TableView.Source = _TableSource;
 			
@@ -807,26 +835,33 @@ namespace MonoMobile.MVVM
 		
 		public DialogViewController(string title, UIView view, UITableViewStyle style, bool pushing) : base(style)
 		{
-			var bindingContext = new BindingContext(view, title);
+			RootView = view;
+			
+			var bindingContext = new BindingContext(RootView, title);
 			_Pushing = pushing;
 			PrepareRoot(bindingContext.Root);
 		}
 		
 		public DialogViewController(string title, UIView view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
-			var bindingContext = new BindingContext(view, title);
+			RootView = view;
+
+			var bindingContext = new BindingContext(RootView, title);
 			_Pushing = pushing;
+			
 			PrepareRoot(bindingContext.Root);
 		}
 
 		public DialogViewController(UIView view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
+			RootView = view;
+			
 			var title = string.Empty;
-			var vw = view as IView;
+			var vw = RootView as IView;
 			if (vw != null)
 				title = vw.Caption;
 
-			var bindingContext = new BindingContext(view, title);
+			var bindingContext = new BindingContext(RootView, title);
 			_Pushing = pushing;
 			PrepareRoot(bindingContext.Root);
 		}

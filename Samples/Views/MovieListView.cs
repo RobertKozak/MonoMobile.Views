@@ -80,6 +80,13 @@ namespace Samples
 		{
 			Thread.Sleep(1500);
 		}
+		
+		[Section]
+		[Progress("Test this", "Testing")]
+		public void Test()
+		{
+			System.Threading.Thread.Sleep(3000);
+		}
 
 		[Section("Using a DataBinding", "This is a footer")]
 		[Root(ViewType = typeof(MovieView))]
@@ -227,7 +234,7 @@ namespace Samples
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
-			dataModel.Load();
+			dataModel.Load(25);
 			Movies =dataModel.Movies;
 			MyString = "Test string";
 

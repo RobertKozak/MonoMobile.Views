@@ -190,8 +190,6 @@
     <Compile Include="Converters\EnumerableConverter.cs" />
     <Compile Include="Dialog\Reflection API\RootAttribute.cs" />
     <Compile Include="Dialog\Reflection API\PopOnSelectionAttribute.cs" />
-    <Compile Include="Model\Model.cs" />
-    <Compile Include="Model\IModel.cs" />
     <Compile Include="Dialog\Reflection API\MapAttribute.cs" />
     <Compile Include="Converters\MoneyConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
@@ -263,7 +261,6 @@
     <Compile Include="Application\ObservableObject.cs" />
     <Compile Include="Application\IObservableObject.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
-    <Compile Include="Extensions\ThemeExtentions.cs" />
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
@@ -324,6 +321,11 @@
     <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
     <Compile Include="Interfaces\IDataTemplate.cs" />
     <Compile Include="Dialog\DataTemplate.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewListDataSource.cs" />
+    <Compile Include="View\ListView.cs" />
+    <Compile Include="Interfaces\IUpdateable.cs" />
+    <Compile Include="Dialog\Reflection API\ProgressAttribute.cs" />
+    <Compile Include="Dialog\Elements\ProgressElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -337,7 +339,6 @@
     <Folder Include="Dialog\" />
     <Folder Include="Dialog\Reflection API\" />
     <Folder Include="Converters\" />
-    <Folder Include="Model\" />
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Elements\" />
     <Folder Include="Dialog\Cell\" />

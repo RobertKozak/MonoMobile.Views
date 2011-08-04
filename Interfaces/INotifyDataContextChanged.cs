@@ -33,11 +33,13 @@ namespace MonoMobile.MVVM
 
 	public class DataContextChangedEventArgs: EventArgs
 	{
-		public object DataContext { get; set; }
+		public object OldDataContext { get; set; }
+		public object NewDataContext { get; set; }
 		
-		public DataContextChangedEventArgs(object dataContext)
+		public DataContextChangedEventArgs(object oldDataContext, object newDataContext)
 		{
-			DataContext = dataContext;
+			OldDataContext = oldDataContext;
+			NewDataContext = newDataContext;
 		}
 	}
 

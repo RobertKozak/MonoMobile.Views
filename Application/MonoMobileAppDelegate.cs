@@ -41,7 +41,7 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileAppDelegate")]
 	public class MonoMobileAppDelegate : UIApplicationDelegate
 	{
-		private static UIImage _DefaultImage = UIImage.FromBundle("Default.png");
+		private static UIImage _DefaultImage;
 		
 		private UIWindow _Window;
 
@@ -49,8 +49,13 @@ namespace MonoMobile.MVVM
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			MonoMobileApplication.NavigationController = new UINavigationController();
+			
+			_Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            _Window = new UIWindow(UIScreen.MainScreen.Bounds);
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+				_DefaultImage = UIImage.FromBundle("DefaultiPad.png");
+			else
+				_DefaultImage = UIImage.FromBundle("Default.png");
 			
 			if (_DefaultImage != null)
 			{
@@ -67,48 +72,43 @@ namespace MonoMobile.MVVM
 			
 			MonoMobileApplication.Window = _Window;
 			
-			MonoMobileApplication.Views = new List<UIView>();
-			foreach(var viewType in MonoMobileApplication.ViewTypes)
-			{
-				var view = Activator.CreateInstance(viewType) as UIView;
-				var initalizable = view as IInitializable;
-				if (initalizable != null)
-				{
-					initalizable.Initialize();
-				}
-
-				MonoMobileApplication.Views.Add(view);				
-			}
-
-			// this method initializes the main NavigationController
-			var startupThread = new Thread(Startup);
-			startupThread.Start();
+			BeginInvokeOnMainThread(()=> { Startup(); });
 			
 			return true;
 		}
 
 		private void Startup()
 		{
-			using (var pool = new NSAutoreleasePool()) 
+			MonoMobileApplication.Views = new List<UIView>();
+			foreach (var viewType in MonoMobileApplication.ViewTypes)
 			{
-				InvokeOnMainThread(delegate 
-				{
-					foreach(var view in MonoMobileApplication.Views)
-					{	
-						MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
-					}
-
-					MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
-
-					MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
-					MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
-
-					UIView.BeginAnimations("fadeIn");
-					UIView.SetAnimationDuration(0.3f);
-					MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
-					UIView.CommitAnimations();
-				});
+				var view = Activator.CreateInstance(viewType) as UIView;
+				MonoMobileApplication.Views.Add(view);
 			}
+	
+			foreach(var view in MonoMobileApplication.Views)
+			{	
+				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
+			}
+	
+			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
+	
+			MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
+			MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
+			
+			foreach (var view in MonoMobileApplication.Views)
+			{				
+				var initalizable = view as IInitializable;
+				if (initalizable != null)
+				{
+					initalizable.Initialize();
+				}
+			}
+
+			UIView.BeginAnimations("fadeIn");
+			UIView.SetAnimationDuration(0.3f);
+			MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
+			UIView.CommitAnimations();
 		}
 
 		public override void WillEnterForeground(UIApplication application)
@@ -120,6 +120,11 @@ namespace MonoMobile.MVVM
         public override void OnActivated(UIApplication application)
         {
         }
+
+		public override void ReceiveMemoryWarning(UIApplication application)
+		{
+			Console.WriteLine("Memory warning.");
+		}
 	}
 }
 

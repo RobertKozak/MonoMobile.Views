@@ -1,9 +1,8 @@
 // 
-//  DialogViewSizingSource.cs
+//  ListView.cs
 // 
-// Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Author:
+//    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 //  Copyright 2011, Nowcom Corporation.
 // 
@@ -31,31 +30,33 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoTouch.UIKit;
+	using System.Collections.Specialized;
+	using System.ComponentModel;
+	using System.Drawing;
 	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
 
-	//
-	// Performance trick, if we expose GetHeightForRow, the UITableView will
-	// probe *every* row for its size;   Avoid this by creating a separate
-	// model that is used only when we have items that require resizing
-	//
-	public class DialogViewSizingSource : DialogViewDataSource
+	public class ListView : View, ISelectable, IUpdateable
 	{
-		public DialogViewSizingSource(DialogViewController controller) : base(controller)
+		public ListView(): this(null)
+		{
+		}
+		
+		public ListView(RectangleF frame): base(frame)
 		{
 		}
 
-		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		public ListView(string caption) : base()
 		{
-			var element = GetElement(indexPath);
-			
-			var sizable = element as ISizeable;
-			if (sizable != null)
-				return sizable.GetHeight(tableView, indexPath);
-			
-			return tableView.RowHeight;
 		}
+
+		public virtual void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{	
+		}
+
+		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{	
+
+		}	
 	}
-
 }
-

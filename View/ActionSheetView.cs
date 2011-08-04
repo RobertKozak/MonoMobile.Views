@@ -103,7 +103,7 @@ namespace MonoMobile.MVVM
 		{
 		}
 			
-		protected void Prepare()
+		protected virtual void Prepare()
 		{
 			CommandMap.Clear();
 

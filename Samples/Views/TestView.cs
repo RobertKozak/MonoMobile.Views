@@ -174,7 +174,7 @@ namespace Samples
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
-			dataModel.Load();
+			dataModel.Load(25);
 			Movies =dataModel.Movies;
 		}
 	}

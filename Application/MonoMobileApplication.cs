@@ -39,6 +39,8 @@ namespace MonoMobile.MVVM
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication : UIApplication
 	{
+		private static DialogViewController _PreviousDialogViewController;
+		private static UIViewController _PreviousController;
 		private static UINavigationController _NavigationController;
 
 		public const string Version = "0.9";
@@ -76,7 +78,9 @@ namespace MonoMobile.MVVM
 
 		public static void PushView(UIView view, bool animated)
 		{
-			CurrentViewController = CreateDialogViewController(view, false);
+			CurrentDialogViewController = CreateDialogViewController(view, false);
+			CurrentViewController = CurrentDialogViewController;
+			
 			NavigationController.PushViewController(CurrentViewController, animated);
 		}
 
@@ -99,19 +103,29 @@ namespace MonoMobile.MVVM
 
 		public static void PresentModelView(UIView view, UIModalTransitionStyle transistionStyle)
 		{			
-			CurrentViewController = CreateDialogViewController(view, true);
+			_PreviousController = CurrentViewController;
+			_PreviousDialogViewController = CurrentDialogViewController;
+
+			CurrentDialogViewController = CreateDialogViewController(view, true);
+
+			_NavigationController = new UINavigationController();
+			_NavigationController.ViewControllers = new UIViewController[] { CurrentDialogViewController };
+		
+			CurrentViewController = _NavigationController;
 			
 			CurrentViewController.ModalTransitionStyle = transistionStyle;
 
-			_NavigationController = new UINavigationController();
-			_NavigationController.ViewControllers = new UIViewController[] { CurrentViewController };
-			
 			NavigationController.PresentModalViewController(_NavigationController, true);
 		}
 
 		public static void DismissModalView(bool animated)
 		{
 			NavigationController.DismissModalViewControllerAnimated(animated);
+
+			CurrentViewController = _PreviousController;
+			CurrentDialogViewController = _PreviousDialogViewController;
+
+			_PreviousController = null;
 		}
 
 		public static void Run(string title, Type mainViewType, string[] args)

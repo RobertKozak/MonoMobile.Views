@@ -194,8 +194,9 @@ namespace MonoMobile.MVVM
 		public virtual void ClearBindings()
 		{
 			var bindingExpressions = BindingOperations.GetBindingExpressionsForElement(Element);
-			foreach (var bindingExpression in bindingExpressions)
-				BindingOperations.ClearBinding(bindingExpression.Binding.Target, bindingExpression.Binding.TargetPath);
+			if (bindingExpressions != null)
+				foreach (var bindingExpression in bindingExpressions)
+					BindingOperations.ClearBinding(bindingExpression.Binding.Target, bindingExpression.Binding.TargetPath);
 		}
 	
 		public void Dispose()

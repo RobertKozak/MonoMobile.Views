@@ -324,7 +324,6 @@ namespace MonoMobile.MVVM.Utilities
 			{
 				bool downloaded = false;
 				
-				System.Threading.Thread.Sleep(5000);
 				downloaded = Download(uri, target);
 				if (!downloaded)
 					Console.WriteLine("Error fetching picture for {0} to {1}", uri, target);

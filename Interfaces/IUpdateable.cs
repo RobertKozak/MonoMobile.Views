@@ -1,9 +1,8 @@
 // 
-//  DialogViewSizingSource.cs
+//  IUpdateable.cs
 // 
-// Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Author:
+//    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 //  Copyright 2011, Nowcom Corporation.
 // 
@@ -31,31 +30,12 @@
 namespace MonoMobile.MVVM
 {
 	using System;
-	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
 
-	//
-	// Performance trick, if we expose GetHeightForRow, the UITableView will
-	// probe *every* row for its size;   Avoid this by creating a separate
-	// model that is used only when we have items that require resizing
-	//
-	public class DialogViewSizingSource : DialogViewDataSource
+	public interface IUpdateable 
 	{
-		public DialogViewSizingSource(DialogViewController controller) : base(controller)
-		{
-		}
-
-		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
-		{
-			var element = GetElement(indexPath);
-			
-			var sizable = element as ISizeable;
-			if (sizable != null)
-				return sizable.GetHeight(tableView, indexPath);
-			
-			return tableView.RowHeight;
-		}
+		void UpdateCell(UITableViewCell cell, NSIndexPath indexPath);
 	}
-
 }
 

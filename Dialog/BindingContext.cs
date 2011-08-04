@@ -62,6 +62,7 @@ namespace MonoMobile.MVVM
 				throw new ArgumentNullException("view");
 			
 			var parser = new ViewParser();
+
 			parser.Parse(view, title, currentTheme);
 			Root = parser.Root;
 
@@ -78,11 +79,6 @@ namespace MonoMobile.MVVM
 						vmContext.BindingContext = this;
 					}
 				}
-			}
-
-			if (view is IView)
-			{
-				((IView)view).TableView = Root.TableView;
 			}
 		}
 		
@@ -187,7 +183,7 @@ namespace MonoMobile.MVVM
 			
 			section = CreateSection(newRoot, section, root.DataContext, elementType, false);
 		
-			ThemeHelper.ApplyElementTheme(root.Theme, newRoot, null);
+			Theme.ApplyElementTheme(root.Theme, newRoot, null);
 
 			return newRoot;
 		}

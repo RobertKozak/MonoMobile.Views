@@ -113,13 +113,6 @@ namespace MonoMobile.MVVM
 			
 			Root.ToolbarButtons = CheckForToolbarItems(view);
 			Root.NavbarButtons = CheckForNavbarItems(view);
-
-			var notifyDataContextChanged = view as INotifyDataContextChanged;
-			if (notifyDataContextChanged != null)
-			{
-				notifyDataContextChanged.DataContextChanged -= HandleNotifyDataContextChangedDataContextChanged;
-				notifyDataContextChanged.DataContextChanged += HandleNotifyDataContextChangedDataContextChanged;
-			}
 		}
 		
 	    public static ICommand GetCommandForMember(object view, MemberInfo member)
@@ -152,14 +145,30 @@ namespace MonoMobile.MVVM
 			var methodInfo = member as MethodInfo;
 
 			if (methodInfo == null)
-				throw new Exception(string.Format("Method not found"));
+				throw new Exception(string.Format("Method not found {0}", member.Name));
 			
+			object source = view;
 			if (!string.IsNullOrEmpty(propertyName))
 			{
-				var property = view.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+				PropertyInfo property = source.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+				
+				if (property == null)
+				{
+					var dataContext = view as IDataContext;
+					if (dataContext != null)
+					{
+						var vm = dataContext.DataContext;
+						if (vm != null)
+						{
+							source = vm;
+							property = source.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+						}
+					}
+				}
+
 				if (property != null)
 				{
-					if (property.PropertyType == typeof(bool))
+					if (property.PropertyType == typeof(bool) || property.PropertyType == typeof(bool?))
 					{
 						propertyInfo = property;
 					}
@@ -170,7 +179,7 @@ namespace MonoMobile.MVVM
 				}
 			}
 
-			return new ReflectiveCommand(view, methodInfo, propertyInfo) { CommandOption = commandOption };
+			return new ReflectiveCommand(view, methodInfo, source, propertyInfo) { CommandOption = commandOption };
 		}
 
 		private List<ISection> CreateSectionList(UIView view, IRoot root)
@@ -184,9 +193,9 @@ namespace MonoMobile.MVVM
 			var themeable = root as IThemeable;
 			if (themeable != null)
 			{
-				ThemeHelper.ApplyRootTheme(view, themeable);
+				Theme.ApplyRootTheme(view, themeable);
 				theme = themeable.Theme;
-				ThemeHelper.ApplyElementTheme(theme, lastSection, null);
+				Theme.ApplyElementTheme(theme, lastSection, null);
 			}
 			
 			if (!(view is IView))
@@ -229,8 +238,8 @@ namespace MonoMobile.MVVM
 							};
 							lastSection.Parent = root as IElement;
 
-							ThemeHelper.ApplyElementTheme(root.Theme, lastSection, null); 
-							ThemeHelper.ApplyElementTheme(sectionTheme, lastSection, null);
+							Theme.ApplyElementTheme(root.Theme, lastSection, null); 
+							Theme.ApplyElementTheme(sectionTheme, lastSection, null);
 
 							sectionList.Add(lastSection);
 						}
@@ -239,7 +248,7 @@ namespace MonoMobile.MVVM
 	
 						newElement = GetElementForMember(root.Theme, view, member, bindings);
 
-						ThemeHelper.ApplyElementTheme(theme, newElement, member);
+						Theme.ApplyElementTheme(theme, newElement, member);
 						
 						IBindable bindable = null;
 						
@@ -360,9 +369,9 @@ namespace MonoMobile.MVVM
 				}
 
 			}
-			
+
 			// get a single element
-			if(_ElementPropertyMap.ContainsKey(memberType))
+			if(element == null && _ElementPropertyMap.ContainsKey(memberType))
 			{
 				element = _ElementPropertyMap[memberType](member, caption, view, bindings);
 			}
@@ -763,7 +772,7 @@ namespace MonoMobile.MVVM
 			var items = GetMemberValue<IEnumerable>(ref view, member);
 
 			if (items == null)
-				throw new ArgumentNullException(member.Name, string.Format("Member of class {1} must have a value.", view.GetType().Name));
+				throw new ArgumentNullException(member.Name, string.Format("Member of class {0} must have a value.", view.GetType().Name));
 
 			SetDefaultConverter(view, member, "DetailTextLabel", null, null, bindings);
 
@@ -871,10 +880,11 @@ namespace MonoMobile.MVVM
 			{
 				var buttonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
 				var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
-				var caption = captionAttribute != null ? captionAttribute.Caption : null;
 
 				if (buttonAttribute != null)
 				{
+					var caption = captionAttribute != null ? captionAttribute.Caption : !buttonAttribute.ButtonType.HasValue ? member.Name.Capitalize() : null;
+					
 					UIView buttonView = null;
 					var title = caption;
 					if (buttonAttribute.ViewType != null)
@@ -1092,7 +1102,16 @@ namespace MonoMobile.MVVM
 					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption: "Load More";
 					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption: "Loading...";
 
-					element = new LoadMoreElement(normalCaption, loadingCaption, null) { Command = GetCommandForMember(view, member) };
+					element = new LoadMoreElement(normalCaption, loadingCaption, GetCommandForMember(view, member));
+				}
+				
+				var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
+				if (progressAttribute != null)
+				{
+					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title: "Load More";
+					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText: "Loading...";
+
+					element = new ProgressElement(title, detailText, GetCommandForMember(view, member));
 				}
 
 				var searchbarAttribute = member.GetCustomAttribute<SearchbarAttribute>();
@@ -1350,11 +1369,6 @@ namespace MonoMobile.MVVM
 					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
 				}
 			}
-		}
-		
-		private void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
-		{
-			
 		}
 	}
 }

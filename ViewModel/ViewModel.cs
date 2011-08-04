@@ -34,8 +34,8 @@ namespace MonoMobile.MVVM
 	[Preserve(AllMembers = true)]
 	public abstract class ViewModel: ObservableObject, IViewModel, IInitializable
 	{
-		private IModel _DataModel;
-		public IModel DataModel 
+		private object _DataModel;
+		public object DataModel 
 		{
 			get { return GetModel(); } 
 			set { SetModel(value); }
@@ -47,12 +47,12 @@ namespace MonoMobile.MVVM
 		{
 		}
 		
-		public virtual IModel GetModel()
+		public virtual object GetModel()
 		{
 			return _DataModel;
 		}
 
-		public virtual void SetModel(IModel dataModel)
+		public virtual void SetModel(object dataModel)
 		{
 			if (_DataModel != dataModel)
 				_DataModel = dataModel;

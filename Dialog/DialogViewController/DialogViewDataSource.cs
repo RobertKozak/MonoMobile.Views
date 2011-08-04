@@ -69,8 +69,7 @@ namespace MonoMobile.MVVM
 
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			var section = Root.Sections[indexPath.Section];
-			var element = section.Elements[indexPath.Row];
+			var element = GetElement(indexPath);
 
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
@@ -123,42 +122,52 @@ namespace MonoMobile.MVVM
 		}
 		#endregion
 
-		public override string TitleForHeader(UITableView tableView, int section)
+		public override string TitleForHeader(UITableView tableView, int sectionIndex)
 		{
-			return Root.Sections[section].Caption;
+			var section = GetSection(sectionIndex);
+			if (section != null)
+				return Root.Sections[sectionIndex].Caption;
+
+			return string.Empty;
 		}
 
-		public override string TitleForFooter(UITableView tableView, int section)
+		public override string TitleForFooter(UITableView tableView, int sectionIndex)
 		{
-			return Root.Sections[section].FooterText;
+			var section = GetSection(sectionIndex);
+			if (section != null)
+				return Root.Sections[sectionIndex].FooterText;
+		
+			return string.Empty;
 		}
 
-		public override UIView GetViewForHeader(UITableView tableView, int sectionIdx)
+		public override UIView GetViewForHeader(UITableView tableView, int sectionIndex)
 		{
-			var section = Root.Sections[sectionIdx];
-			if (section.HeaderView == null && !string.IsNullOrEmpty(section.Caption))
+			var section = GetSection(sectionIndex);
+			if (section != null)
 			{
-				section.HeaderView = CreateHeaderView(tableView, section.Caption);
-				var themeable = section as IThemeable;
-				if (themeable != null)
-					themeable.ThemeChanged();
-			}
-
-			if (section.HeaderView != null)
-			{
-				if (section.IsExpandable)
+				if (section.HeaderView == null && !string.IsNullOrEmpty(section.Caption))
 				{
-					section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
-					section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
-					section.HeaderView.Add(section.ArrowView);
-				
-					tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
-			
-					section.HeaderView.AddGestureRecognizer(tapRecognizer);
-					Flip(section);
+					section.HeaderView = CreateHeaderView(tableView, section.Caption);
 				}
+	
+				if (section.HeaderView != null)
+				{
+					if (section.IsExpandable)
+					{
+						section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
+						section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
+						section.HeaderView.Add(section.ArrowView);
+					
+						tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
+				
+						section.HeaderView.AddGestureRecognizer(tapRecognizer);
+						Flip(section);
+					}
+				}
+				return section.HeaderView;
 			}
-			return section.HeaderView;
+
+			return null;
 		}
 
 		[Export("headerTap")]
@@ -180,8 +189,7 @@ namespace MonoMobile.MVVM
 
 		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
 		{
-			var section = Root.Sections[indexPath.Section];
-			var element = section.Elements[indexPath.Row];
+			var element = GetElement(indexPath);
 
 			if (element.AccessoryCommand != null && element.AccessoryCommand.CanExecute(null))
 			{
@@ -198,38 +206,42 @@ namespace MonoMobile.MVVM
 			UIView.CommitAnimations();
 		}
 
-		public override float GetHeightForHeader(UITableView tableView, int sectionIdx)
+		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
 		{
-			var section = Root.Sections[sectionIdx];
-			if (section.HeaderView == null)
+			var section = GetSection(sectionIndex);
+			if (section == null || section.HeaderView == null)
 				return -1;
+
 			return section.HeaderView.Frame.Height;
 		}
 
-		public override UIView GetViewForFooter(UITableView tableView, int sectionIdx)
+		public override UIView GetViewForFooter(UITableView tableView, int sectionIndex)
 		{
-			var section = Root.Sections[sectionIdx];
-			if (section.FooterView == null && !string.IsNullOrEmpty(section.FooterText))
+			var section = GetSection(sectionIndex);
+			if (section != null)
 			{
-				section.FooterView = CreateFooterView(tableView, section.FooterText);
-				var themeable = section as IThemeable;
-				if (themeable != null)
-					themeable.ThemeChanged();
+				if (section.FooterView == null && !string.IsNullOrEmpty(section.FooterText))
+				{
+					section.FooterView = CreateFooterView(tableView, section.FooterText);;
+				}
+				
+				// Use an empty UIView to Eliminate Extra separators for blank items
+				if (section.FooterView == null || section.ExpandState == ExpandState.Closed)
+					return new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
+				
+				return section.FooterView;
 			}
 			
-			// Use an empty UIView to Eliminate Extra separators for blank items
-			if (section.FooterView == null || section.ExpandState == ExpandState.Closed)
-				return new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
-			
-			return section.FooterView;
+			return null;
 		}
 
-		public override float GetHeightForFooter(UITableView tableView, int sectionIdx)
+		public override float GetHeightForFooter(UITableView tableView, int sectionIndex)
 		{
-			var section = Root.Sections[sectionIdx];
-			if (section.FooterView == null)
-				return -1;
-			return section.FooterView.Frame.Height;
+			var section = GetSection(sectionIndex);
+			if (section != null && section.FooterView != null)
+				return section.FooterView.Frame.Height;
+
+			return -1;			
 		}
 
 		private UIView CreateHeaderView(UITableView tableView, string caption)
@@ -300,7 +312,14 @@ namespace MonoMobile.MVVM
 
 		public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			return Container.Root.Sections[indexPath.Section].Elements[indexPath.Row].EditingStyle != UITableViewCellEditingStyle.None;
+			var element = GetElement(indexPath);
+
+			if (element != null)
+			{	
+				return element.EditingStyle != UITableViewCellEditingStyle.None;
+			}
+
+			return false;
 		}
 
 		public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
@@ -316,6 +335,36 @@ namespace MonoMobile.MVVM
 				Container.Root.Sections[indexPath.Section].Elements.RemoveAt(indexPath.Row);
 				tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
 			}
+		}
+
+		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			var element = GetElement(indexPath);
+			
+			var sizable = element as ISizeable;
+			if (sizable != null)
+				return sizable.GetHeight(tableView, indexPath);
+			
+			return tableView.RowHeight;
+		}
+
+		public ISection GetSection(int sectionIndex)
+		{
+			ISection section = null;
+			if (Root.Sections.Count > sectionIndex)
+				section = Root.Sections[sectionIndex];
+			
+			return section;
+		}
+
+		public IElement GetElement(NSIndexPath indexPath)
+		{
+			IElement element = null;
+			var section = GetSection(indexPath.Section);
+			if (section != null && section.Elements != null && section.Elements.Count > indexPath.Row)
+				element = section.Elements[indexPath.Row];
+
+			return element;
 		}
 	}
 

@@ -1,5 +1,5 @@
 //
-// View.cs: Base class for MVVM Views
+// ProgressElement.cs
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
@@ -18,7 +18,7 @@
 //
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,72 +29,48 @@
 //
 namespace MonoMobile.MVVM
 {
+	using System;
 	using System.Drawing;
-	using System.ComponentModel;
+	using System.Linq;
+	using System.Threading;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoMobile.MVVM;
 
-	public abstract class View : UIView, IView, IDataContext, INotifyDataContextChanged, IInitializable
+	[Preserve(AllMembers = true)]
+	public class ProgressElement : Element, ISelectable, ITappable
 	{
-		private object _DataContext;
-		
-		public UITableView TableView { get; set; }
+		public string Title { get; set; }
+		public string DetailsText { get; set; }
+		public ICommand Command { get; set; }
+		public object CommandParameter { get; set; }
 
-		public string Caption { get; set; }
-		public BindingContext BindingContext { get; set; }
+		private ProgressHud _ProgressHud;
 
-		public event DataContextChangedEvent DataContextChanged;
-
-		public object DataContext 
-		{ 
-			get { return GetDataContext(); }
-			set { SetDataContext(value); }
-		}
-		
-		public object GetDataContext()
+		public ProgressElement(string title, string detailsText, ICommand command) : base(title)
 		{
-			return _DataContext;
+			Title = title;
+			DetailsText = detailsText;
+			Command = command;
+			
+			Theme.TextFont = UIFont.BoldSystemFontOfSize(17f);
+			Theme.TextAlignment = UITextAlignment.Center;
 		}
 
-		public void SetDataContext(object dataContext)
+		public override void InitializeCell(UITableView tableView)
 		{
-			if (_DataContext != dataContext)
-			{
-				var oldDataContext = _DataContext;
-				_DataContext = dataContext;
+			base.InitializeCell(tableView);
+			Theme.TextAlignment = UITextAlignment.Center;
+		}
 
-				if (DataContextChanged != null)
-				{
-					DataContextChanged(this, new DataContextChangedEventArgs(oldDataContext, _DataContext));
-				}
-
-				var viewModel = DataContext as IViewModel;
-				if (viewModel != null)
-				{
-					viewModel.BindingContext = BindingContext;
-				}
+		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		{			
+			_ProgressHud = new ProgressHud() { TitleText = Title, DetailText = DetailsText, Mode = HudProgressMode.Indeterminate };
+			
+			if (Command != null && Command.CanExecute(CommandParameter))
+			{	
+				_ProgressHud.ShowWhileExecuting(()=>Command.Execute(CommandParameter), true);
 			}
-		}
-
-		public View(): this(null)
-		{
-		}
-		
-		public View(RectangleF frame): base(frame)
-		{
-
-		}
-
-		public View(string caption) : base()
-		{
-		}
-
-		public override string ToString()
-		{
-			return null;
-		}
-	
-		public virtual void Initialize()
-		{
 		}
 	}
 }

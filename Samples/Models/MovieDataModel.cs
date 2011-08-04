@@ -4,11 +4,11 @@ namespace Samples
 	using System;
 	using System.Collections.ObjectModel;
 
-	public class MovieDataModel : Model
+	public class MovieDataModel
 	{
 		public ObservableCollection<MovieViewModel> Movies { get; set; }
 
-		public override void Load()
+		public void Load(int numberToLoad)
 		{
 			Movies = new ObservableCollection<MovieViewModel>();
 
@@ -24,7 +24,7 @@ namespace Samples
 			Movies.Add(new MovieViewModel() { Name = "The Green Hornet 3D", Genre = Genre.ActionAdventure, Rating = Rating.PG13, TicketPrice = 12f, CriticsRating = 44f, ShownIn3D = true });
 			Movies.Add(new MovieViewModel() { Name = "The Fighter", Genre = Genre.Drama, Rating = Rating.R, TicketPrice = 12f, CriticsRating = 89f });
 		
-			for(int index = 0; index < 3; index++)
+			for(int index = 0; index < numberToLoad; index++)
 			{
 
 				Movies.Add(new MovieViewModel() { Name = "Forrest Gump", Genre = Genre.Drama, Rating = Rating.R, TicketPrice = 10f, CriticsRating = 89f});
