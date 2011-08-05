@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections;
@@ -334,7 +334,7 @@ namespace MonoMobile.MVVM
 			foreach (var section in sectionList)
 			{
 				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
-				section.Elements = new System.Collections.ObjectModel.ObservableCollection<MonoMobile.MVVM.IElement>(orderedList);
+				section.Elements = new System.Collections.ObjectModel.ObservableCollection<MonoMobile.Views.IElement>(orderedList);
 			}
 
 			var orderedSections = sectionList.Where(s=>s.Elements.Count > 0).OrderBy(section=>section.Order).ToList();

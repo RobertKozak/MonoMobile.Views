@@ -27,7 +27,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MonoMobile.MVVM.Utilities
+namespace MonoMobile.Views.Utilities
 {
 
 	public class LRUCache<TKey, TValue> where TValue : class, IDisposable

@@ -29,7 +29,7 @@
 //
 using System;
 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	public enum ThemeUsage
 	{

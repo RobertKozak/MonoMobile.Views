@@ -1,6 +1,6 @@
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 

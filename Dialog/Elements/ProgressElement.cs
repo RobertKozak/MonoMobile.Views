@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
@@ -35,7 +35,7 @@ namespace MonoMobile.MVVM
 	using System.Threading;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 
 	[Preserve(AllMembers = true)]
 	public class ProgressElement : Element, ISelectable, ITappable

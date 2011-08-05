@@ -27,13 +27,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.IO;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 
 	/// <summary>
 	/// Used to display a cell that will launch a web browser when selected.

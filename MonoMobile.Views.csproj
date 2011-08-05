@@ -8,7 +8,7 @@
     <ProjectGuid>{BA418E64-6532-4D8B-AD80-EB51C19A9F21}</ProjectGuid>
     <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoMobile.MVVM</RootNamespace>
+    <RootNamespace>MonoMobile.Views</RootNamespace>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <ReleaseVersion>0.9</ReleaseVersion>
@@ -28,7 +28,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -45,7 +45,7 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <DefineConstants>DATABINDING</DefineConstants>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -63,7 +63,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -80,7 +80,7 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <DefineConstants>DATABINDING</DefineConstants>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AdHoc|iPhone' ">
@@ -95,7 +95,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
@@ -110,7 +110,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Pieceable|iPhoneSimulator' ">
@@ -121,7 +121,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>False</MtouchDebug>
     <MtouchUseLlvm>false</MtouchUseLlvm>
-    <AssemblyName>MonoMobileMVVM</AssemblyName>
+    <AssemblyName>MonoMobileViews</AssemblyName>
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchUseThumb>false</MtouchUseThumb>

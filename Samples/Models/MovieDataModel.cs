@@ -1,6 +1,6 @@
 namespace Samples
 {
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using System;
 	using System.Collections.ObjectModel;
 

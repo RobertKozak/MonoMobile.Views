@@ -2,7 +2,7 @@ using System.Collections.Generic;
 namespace Samples
 {
 	using System;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using System.IO;
 	using MonoTouch.UIKit;

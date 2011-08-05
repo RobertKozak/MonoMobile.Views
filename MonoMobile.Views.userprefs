@@ -1,0 +1,47 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../DealerCenter/Elements/InventoryElement.cs">
+    <Files>
+      <File FileName="../DCMobile/Nowcom.VersionedLocalDB/DbVer/UpgradeBatch.cs" Line="13" Column="3" />
+      <File FileName="Dialog/DialogViewController/DialogViewController.cs" Line="40" Column="24" />
+      <File FileName="Dialog/Cell/Theme.cs" Line="34" Column="24" />
+      <File FileName="Dialog/ImageLoader.cs" Line="102" Column="76" />
+      <File FileName="../DealerCenter/Main.cs" Line="7" Column="24" />
+      <File FileName="../DealerCenter/Elements/InventoryElement.cs" Line="23" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="DealerCenter" selected="True" />
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>bindingContext.Root.Sections[0].Elements.Items</Value>
+          <Value>_Data[0].Count</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Catchpoint exceptionName="System.NullReferenceException" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/ViewModels/Inventory/InventoryItemViewModel.cs" line="280" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Section.cs" line="422" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/ReloginView.cs" line="26" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/ReloginView.cs" line="35" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Reflection API/ProgressAttribute.cs" line="44" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/DialogViewController/DialogViewDataSource.cs" line="351" />
+      <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/Inventory/InventoryMiniView.cs" line="264" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="../MonoMobile.MVVM/Binding/BindingOperations.cs" line="241" offsetX="410" offsetY="2968" expression="e" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+  <MonoDevelop.Ide.ItemProperties.MonoMobile.Views>
+    <IPhoneSimulatorTarget-Debug_27CiPhoneSimulator Device="IPad" SdkVersion="4.3" />
+  </MonoDevelop.Ide.ItemProperties.MonoMobile.Views>
+</Properties>

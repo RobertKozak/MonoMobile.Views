@@ -1,10 +1,10 @@
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 
 	public class SearchCommand
 	{

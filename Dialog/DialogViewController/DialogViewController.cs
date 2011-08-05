@@ -1,5 +1,5 @@
 //
-// DialogViewController.cs: drives MonoMobile.MVVM
+// DialogViewController.cs: drives MonoMobile.Views
 //
 // Author:
 //   Miguel de Icaza
@@ -29,15 +29,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
 	using System.Threading;
-	using MonoMobile.MVVM;
-	using MonoMobile.MVVM.Utilities;
+	using MonoMobile.Views;
+	using MonoMobile.Views.Utilities;
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;

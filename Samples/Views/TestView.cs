@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Samples
 {
 	using System;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]

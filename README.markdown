@@ -1,6 +1,10 @@
 WHAT'S NEW
 ==========
 
+Renamed the Project from MonoMobile.MVVM to MonoMobile.Views
+
+MonoMobile.Views sounds better and shows the importance of Views over Model-Controller-View.
+	
 Fixed INotifyCollectionChanged support.
  
 Changed DataBinding to work with DataTemplates and no longer as partial classes 

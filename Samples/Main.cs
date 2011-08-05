@@ -1,6 +1,6 @@
 namespace Samples
 {
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	
 	public class Application : MonoMobileApplication
 	{

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using MonoMobile.MVVM;
+using MonoMobile.Views;
 using System.Collections.ObjectModel;
 using MonoTouch.Foundation;
 

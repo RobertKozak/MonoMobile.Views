@@ -10,7 +10,7 @@ namespace Samples
 	using System.Threading;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.CoreLocation;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using System.Linq;

@@ -3,7 +3,7 @@ namespace Samples
 {
 	using System;
 	using System.IO;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 
 	public class MetallicTheme: Theme
