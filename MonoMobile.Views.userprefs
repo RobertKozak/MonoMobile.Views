@@ -1,19 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../DealerCenter/Elements/InventoryElement.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="../DCMobile/Nowcom.VersionedLocalDB/DbVer/UpgradeBatch.cs" Line="13" Column="3" />
-      <File FileName="Dialog/DialogViewController/DialogViewController.cs" Line="40" Column="24" />
-      <File FileName="Dialog/Cell/Theme.cs" Line="34" Column="24" />
-      <File FileName="Dialog/ImageLoader.cs" Line="102" Column="76" />
-      <File FileName="../DealerCenter/Main.cs" Line="7" Column="24" />
-      <File FileName="../DealerCenter/Elements/InventoryElement.cs" Line="23" Column="1" />
+      <File FileName="../DealerCenter/Views/LoginView.cs" Line="48" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="DealerCenter" selected="True" />
-        </State>
+        <State expanded="True" selected="True" />
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />
@@ -36,6 +29,7 @@
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Reflection API/ProgressAttribute.cs" line="44" />
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/DialogViewController/DialogViewDataSource.cs" line="351" />
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/Inventory/InventoryMiniView.cs" line="264" />
+      <Breakpoint file="/Users/rkozak/Projects/DealerCenter/Views/LoginView.cs" line="48" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
