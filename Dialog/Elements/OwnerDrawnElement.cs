@@ -5,7 +5,7 @@ using MonoTouch.CoreFoundation;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Foundation;
 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	[Preserve(AllMembers = true)]
 	public abstract class OwnerDrawnElement : Element, ISizeable

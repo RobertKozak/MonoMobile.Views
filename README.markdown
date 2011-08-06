@@ -1,6 +1,10 @@
 WHAT'S NEW
 ==========
 
+Renamed the Project from MonoMobile.MVVM to MonoMobile.Views
+
+MonoMobile.Views sounds better and shows the importance of Views over Model-Controller-View.
+	
 Fixed INotifyCollectionChanged support.
  
 Changed DataBinding to work with DataTemplates and no longer as partial classes 
@@ -8,10 +12,6 @@ to the elements.
 
 Totally rewritten the MultilineElement to grow the Cell as you type (Lines = 0) or 
 restricted to a set number of lines. (Still some redraw issues)
-
-DateTimeElements are no longer working in this release. I am pushing this version up
-so that Travis can get his code working. Don't get this one if you need Date or Time Elements
-
  
 Travis Smith has  a blog post entitled "MonoMobile.MVVM, Round 1" which is a 
 quick Hello World introduction to MonoMobile.MVVM. 

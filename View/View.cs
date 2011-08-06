@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System.Drawing;
 	using System.ComponentModel;
@@ -59,16 +59,18 @@ namespace MonoMobile.MVVM
 		{
 			if (_DataContext != dataContext)
 			{
+				var oldDataContext = _DataContext;
 				_DataContext = dataContext;
+
+				if (DataContextChanged != null)
+				{
+					DataContextChanged(this, new DataContextChangedEventArgs(oldDataContext, _DataContext));
+				}
+
 				var viewModel = DataContext as IViewModel;
 				if (viewModel != null)
 				{
 					viewModel.BindingContext = BindingContext;
-				}
-
-				if (DataContextChanged != null)
-				{
-					DataContextChanged(this, new DataContextChangedEventArgs(dataContext));
 				}
 			}
 		}

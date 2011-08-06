@@ -1,4 +1,4 @@
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 

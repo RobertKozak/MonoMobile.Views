@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
@@ -64,8 +64,6 @@ namespace MonoMobile.MVVM
 		private bool _UseAnimation;
 		private float _YOffset = 0f;
 		private float _XOffset= 0f;
-		private float _GraceTime = 0f;
-		private float _MinShowTime = 0f;
 		private bool _TaskInProgress;
 		private UILabel _Label;
 		private UILabel _DetailsLabel;
@@ -74,6 +72,9 @@ namespace MonoMobile.MVVM
 		private string _TitleText = "Loading";
 
 		public event EventHandler HudWasHidden;
+
+		public float GraceTime = 0f;
+		public float MinimumShowTime = 0f;
 
 		public HudProgressMode Mode
 		{
@@ -476,9 +477,9 @@ namespace MonoMobile.MVVM
 			_UseAnimation = animated;
 			
 			// If the grace time is set postpone the HUD display
-			if (_GraceTime > 0.0)
+			if (GraceTime > 0.0)
 			{
-				_GraceTimer = NSTimer.CreateScheduledTimer(_GraceTime, HandleGraceTimer);
+				_GraceTimer = NSTimer.CreateScheduledTimer(GraceTime, HandleGraceTimer);
 			} 
 			else
 			{
@@ -494,18 +495,47 @@ namespace MonoMobile.MVVM
 			
 			// If the minShow time is set, calculate how long the hud was shown,
 			// and pospone the hiding operation if necessary
-			if (_MinShowTime > 0.0 && _ShowStarted.HasValue)
+			if (MinimumShowTime > 0.0 && _ShowStarted.HasValue)
 			{
 				double interv = (DateTime.Now - _ShowStarted.Value).TotalSeconds;
-				if (interv < _MinShowTime)
+				if (interv < MinimumShowTime)
 				{
-					_MinShowTimer = NSTimer.CreateScheduledTimer((_MinShowTime - interv), HandleMinShowTimer);
+					_MinShowTimer = NSTimer.CreateScheduledTimer((MinimumShowTime - interv), HandleMinShowTimer);
 					return;
 				}
 			}
 			
 			// ... otherwise hide the HUD immediately
 			HideUsingAnimation(_UseAnimation);
+		}
+		
+		public Action ShowWhileAsync(Action execute, bool animated)
+		{
+			// Launch execution in new thread
+			_TaskInProgress = true;
+			
+			// Show HUD view
+			Show(animated);
+
+			var thread = new System.Threading.Thread(() =>
+			{
+				using (NSAutoreleasePool pool = new NSAutoreleasePool())
+				{
+					execute();
+				}
+			});
+				
+			thread.Start();
+
+			return ()=> Completed();
+		}
+
+		private void Completed()
+		{
+			EnsureInvokedOnMainThread(() =>
+			{
+				CleanUp();
+			});
 		}
 
 		public void ShowWhileExecuting(Action execute, bool animated)
@@ -522,10 +552,7 @@ namespace MonoMobile.MVVM
 				{
 					execute();
 
-					EnsureInvokedOnMainThread(() =>
-					{
-						CleanUp();
-					});
+					Completed();
 				}
 			});
 				
@@ -537,7 +564,7 @@ namespace MonoMobile.MVVM
 			Mode = HudProgressMode.Completed;
 
 			TitleText = "Completed";
-			_MinShowTime = 2.0f;
+			MinimumShowTime = 2.0f;
 			Show(animated);
 			Hide(animated);
 		}

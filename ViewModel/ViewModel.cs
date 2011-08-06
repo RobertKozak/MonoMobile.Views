@@ -27,15 +27,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
 	public abstract class ViewModel: ObservableObject, IViewModel, IInitializable
 	{
-		private IModel _DataModel;
-		public IModel DataModel 
+		private object _DataModel;
+		public object DataModel 
 		{
 			get { return GetModel(); } 
 			set { SetModel(value); }
@@ -47,12 +47,12 @@ namespace MonoMobile.MVVM
 		{
 		}
 		
-		public virtual IModel GetModel()
+		public virtual object GetModel()
 		{
 			return _DataModel;
 		}
 
-		public virtual void SetModel(IModel dataModel)
+		public virtual void SetModel(object dataModel)
 		{
 			if (_DataModel != dataModel)
 				_DataModel = dataModel;

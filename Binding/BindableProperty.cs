@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections;
@@ -152,7 +152,7 @@ namespace MonoMobile.MVVM
 		{			
 			ControlValue = value;
 
-			if (BindingExpression != null)
+			if (BindingExpression != null && BindingExpression.Binding != null && BindingExpression.Binding.Mode == BindingMode.TwoWay)
 			{
 				value = BindingExpression.ConvertbackValue(value);
 

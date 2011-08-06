@@ -8,9 +8,10 @@
     <ProjectGuid>{BA418E64-6532-4D8B-AD80-EB51C19A9F21}</ProjectGuid>
     <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoMobile.MVVM</RootNamespace>
-    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+    <RootNamespace>MonoMobile.Views</RootNamespace>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
+    <ReleaseVersion>0.9</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,7 +28,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -44,7 +45,7 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <DefineConstants>DATABINDING</DefineConstants>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -62,7 +63,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -79,7 +80,7 @@
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
     <DefineConstants>DATABINDING</DefineConstants>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AdHoc|iPhone' ">
@@ -94,7 +95,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
@@ -109,7 +110,7 @@
     <MtouchUseThumb>false</MtouchUseThumb>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchArch>ARMv6</MtouchArch>
-    <AssemblyName>MonoMobile.MVVM</AssemblyName>
+    <AssemblyName>MonoMobile.Views</AssemblyName>
     <MtouchSdkVersion>3.0</MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Pieceable|iPhoneSimulator' ">
@@ -120,7 +121,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>False</MtouchDebug>
     <MtouchUseLlvm>false</MtouchUseLlvm>
-    <AssemblyName>MonoMobileMVVM</AssemblyName>
+    <AssemblyName>MonoMobileViews</AssemblyName>
     <MtouchArch>ARMv6</MtouchArch>
     <MtouchUseSGen>false</MtouchUseSGen>
     <MtouchUseThumb>false</MtouchUseThumb>
@@ -134,7 +135,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
-      <Properties>
+      <Properties InternalTargetFrameworkVersion="IPhone">
         <Policies>
           <VersionControlPolicy inheritsSet="Mono">
             <CommitMessageStyle LastFilePostfix=":&#xA;  " />
@@ -142,7 +143,7 @@
           <ChangeLogPolicy UpdateMode="None" inheritsSet="Mono">
             <MessageStyle Indent="" LastFilePostfix=":&#xA;  " />
           </ChangeLogPolicy>
-          <StandardHeader Text="&#xA; {filename}.cs&#xA;&#xA; Author:&#xA;   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)&#xA;&#xA; Copyright 2011, Nowcom Corporation.&#xA;&#xA; Code licensed under the MIT X11 license&#xA;&#xA; Permission is hereby granted, free of charge, to any person obtaining&#xA; a copy of this software and associated documentation files (the&#xA; &quot;Software&quot;), to deal in the Software without restriction, including&#xA; without limitation the rights to use, copy, modify, merge, publish,&#xA; distribute, sublicense, and/or sell copies of the Software, and to&#xA; permit persons to whom the Software is furnished to do so, subject to&#xA; the following conditions:&#xA;&#xA; The above copyright notice and this permission notice shall be&#xA; included in all copies or substantial portions of the Software.&#xA;&#xA; THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,&#xA; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF&#xA; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND&#xA; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE&#xA; LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION&#xA; OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION&#xA; WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#xA;" IncludeInNewFiles="True" />
+          <StandardHeader Text="&#xA; {filename}.cs&#xA;&#xA; Author:&#xA;   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)&#xA;&#xA; Copyright 2011, Nowcom Corporation.&#xA;&#xA; Code licensed under the MIT X11 license&#xA;&#xA; Permission is hereby granted, free of charge, to any person obtaining&#xA; a copy of this software and associated documentation files (the&#xA; &quot;Software&quot;), to deal in the Software without restriction, including&#xA; without limitation the rights to use, copy, modify, merge, publish,&#xA; distribute, sublicense, and/or sell copies of the Software, and to&#xA; permit persons to whom the Software is furnished to do so, subject to&#xA; the following conditions:&#xA;&#xA; The above copyright notice and this permission notice shall be&#xA; included in all copies or substantial portions of the Software.&#xA;&#xA; THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,&#xA; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF&#xA; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND&#xA; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE&#xA; LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION&#xA; OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION&#xA; WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#xA;" inheritsSet="Apache2License" />
         </Policies>
       </Properties>
     </MonoDevelop>
@@ -189,8 +190,6 @@
     <Compile Include="Converters\EnumerableConverter.cs" />
     <Compile Include="Dialog\Reflection API\RootAttribute.cs" />
     <Compile Include="Dialog\Reflection API\PopOnSelectionAttribute.cs" />
-    <Compile Include="Model\Model.cs" />
-    <Compile Include="Model\IModel.cs" />
     <Compile Include="Dialog\Reflection API\MapAttribute.cs" />
     <Compile Include="Converters\MoneyConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
@@ -262,7 +261,6 @@
     <Compile Include="Application\ObservableObject.cs" />
     <Compile Include="Application\IObservableObject.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
-    <Compile Include="Extensions\ThemeExtentions.cs" />
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
@@ -323,6 +321,11 @@
     <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
     <Compile Include="Interfaces\IDataTemplate.cs" />
     <Compile Include="Dialog\DataTemplate.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewListDataSource.cs" />
+    <Compile Include="View\ListView.cs" />
+    <Compile Include="Interfaces\IUpdateable.cs" />
+    <Compile Include="Dialog\Reflection API\ProgressAttribute.cs" />
+    <Compile Include="Dialog\Elements\ProgressElement.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -337,7 +340,6 @@
     <Folder Include="Dialog\" />
     <Folder Include="Dialog\Reflection API\" />
     <Folder Include="Converters\" />
-    <Folder Include="Model\" />
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Elements\" />
     <Folder Include="Dialog\Cell\" />

@@ -1,5 +1,5 @@
 using System;
-using MonoMobile.MVVM;
+using MonoMobile.Views;
 
 namespace Samples
 {

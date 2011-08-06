@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System.Collections;
 	using System.Collections.Generic;
@@ -53,7 +53,9 @@ namespace MonoMobile.MVVM
 	{
 		private ExpandState _ExpandState;
 
-		private UIView _Header, _Footer;
+		private UIView _Header;
+		private UIView _Footer;
+
 		private List<IElement> _HiddenElements;
 
 		public ObservableCollection<IElement> Elements { get; set; }
@@ -116,7 +118,7 @@ namespace MonoMobile.MVVM
 		/// <summary>
 		///   The section header, as a string
 		/// </summary>
-		public string HeaderText { get; set; }
+		public string HeaderText {get; set; }
 
 		/// <summary>
 		/// The section footer, as a string.
@@ -129,7 +131,7 @@ namespace MonoMobile.MVVM
 		public UIView HeaderView
 		{
 			get { return _Header; }
-			set { _Header = value; }
+			set { _Header = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -138,46 +140,7 @@ namespace MonoMobile.MVVM
 		public UIView FooterView
 		{
 			get { return _Footer; }
-			set { _Footer = value; }
-		}
-		
-		public override void ThemeChanged()
-		{
-			base.ThemeChanged();
-			if (Theme != null)
-			{
-				if (HeaderView != null)
-				{
-					var headerLabel = HeaderView.Subviews[0] as UILabel;
-		
-					headerLabel.Text = Caption;
-		
-					if (Theme.HeaderTextFont != null)
-						headerLabel.Font = Theme.HeaderTextFont;
-					if (Theme.HeaderTextColor != null)
-						headerLabel.TextColor = Theme.HeaderTextColor;
-					if (Theme.HeaderTextShadowColor != null)
-						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
-					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
-						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
-				}
-
-				if (FooterView != null)
-				{
-					var footerLabel = FooterView as UILabel;
-					
-					footerLabel.Text = FooterText.Replace("\n","");
-					
-					if (Theme.FooterTextFont != null)
-						footerLabel.Font = Theme.DetailTextFont;
-					if (Theme.FooterTextColor != null)
-						footerLabel.TextColor = Theme.FooterTextColor;
-					if (Theme.FooterTextShadowColor != null)
-						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
-					if (Theme.FooterTextShadowOffset != SizeF.Empty)
-						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
-				}
-			}
+			set { _Footer = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
 		}
 
 		/// <summary>
@@ -481,10 +444,13 @@ namespace MonoMobile.MVVM
 			if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
 				Clear();
-				foreach (var item in e.NewItems)
+				if (e.NewItems != null)
 				{
-					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					Add(element);
+					foreach (var item in e.NewItems)
+					{
+						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+						Add(element);
+					}
 				}
 			}
 			if (e.Action == NotifyCollectionChangedAction.Move)
@@ -519,6 +485,52 @@ namespace MonoMobile.MVVM
 				Elements = null;
 			}
 		}
+		
+		public override void InitializeTheme()
+		{	
+			if (Theme != null)
+			{
+				if (HeaderView != null)
+				{
+					var headerLabel = HeaderView.Subviews[0] as UILabel;
+					
+					headerLabel.Text = Caption;
+					
+					if (Theme.HeaderTextFont != null)
+						headerLabel.Font = Theme.HeaderTextFont;
+					if (Theme.HeaderTextColor != null)
+						headerLabel.TextColor = Theme.HeaderTextColor;
+					if (Theme.HeaderTextShadowColor != null)
+						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
+					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
+						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
+					if (Theme.HeaderBackgroundColor != null)
+					{
+						headerLabel.BackgroundColor = Theme.HeaderBackgroundColor;
+						HeaderView.BackgroundColor = Theme.HeaderBackgroundColor;
+					}
+				}
+				
+				if (FooterView != null)
+				{
+					var footerLabel = FooterView as UILabel;
+					
+					if (Theme.FooterTextFont != null)
+						footerLabel.Font = Theme.DetailTextFont;
+					if (Theme.FooterTextColor != null)
+						footerLabel.TextColor = Theme.FooterTextColor;
+					if (Theme.FooterTextShadowColor != null)
+						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
+					if (Theme.FooterTextShadowOffset != SizeF.Empty)
+						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
+					if (Theme.FooterBackgroundColor != null)
+					{
+						footerLabel.BackgroundColor = Theme.FooterBackgroundColor;
+						FooterView.BackgroundColor = Theme.FooterBackgroundColor;
+					}
+				}
+			}
+		}
 
 		public override void InitializeCell(UITableView tableView)
 		{
@@ -534,6 +546,7 @@ namespace MonoMobile.MVVM
 				DataBinding.UpdateTargets();
 				DataBinding.UpdateSources();
 			}
+
 			//Elements.ForEach((element)=>element.BeginInit());
 		}
 

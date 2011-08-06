@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
@@ -234,8 +234,6 @@ namespace MonoMobile.MVVM
 			var size = new SizeF(GetWidth(), float.MaxValue);
 			
 			var height = GetHeight(TableView);
-			var indentation = UIDevice.CurrentDevice.GetIndentation();
-			var margin = UIDevice.CurrentDevice.GetDeviceMargin();
 
 			var frame = Cell.RecalculateContentFrame(new RectangleF(0, 0, size.Width, height), ShowCaption);
 			

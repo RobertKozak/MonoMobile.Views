@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Samples
 {
 	using System;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 
 	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
@@ -174,7 +174,7 @@ namespace Samples
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
-			dataModel.Load();
+			dataModel.Load(25);
 			Movies =dataModel.Movies;
 		}
 	}

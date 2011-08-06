@@ -1,5 +1,5 @@
 using System;
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
 	public class MapAttribute : Attribute

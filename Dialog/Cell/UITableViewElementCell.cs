@@ -27,11 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
@@ -53,30 +53,32 @@ namespace MonoMobile.MVVM
 		private CellPosition CellPosition 
 		{
 			get
-			{
-				var indexPath = Element.IndexPath;
-				
-				if(indexPath != null)
+			{	
+				if (IndexPath == null && Element != null)
+					IndexPath = Element.IndexPath;
+
+				if (IndexPath != null)
 				{
-					var numRows = TableView.NumberOfRowsInSection(indexPath.Section);
+					var numRows = TableView.NumberOfRowsInSection(IndexPath.Section);
 	
-					if ( indexPath.Row == 0 && indexPath.Row == numRows - 1)
+					if (IndexPath.Row == 0 && IndexPath.Row == numRows - 1)
 					{
 						return CellPosition.Single;
 					}
-					else if (indexPath.Row == numRows -1)
+					else if (IndexPath.Row == numRows -1)
 					{
 						return CellPosition.Bottom;
 					}
-					else if (indexPath.Row == 0)
+					else if (IndexPath.Row == 0)
 					{
 						return CellPosition.Top;
 					}
-					else if (indexPath.Row != numRows - 1)
+					else if (IndexPath.Row != numRows - 1)
 					{
 						return CellPosition.Middle;
 					}
 				}
+
 				return CellPosition.Single;
 			}
 		}
@@ -84,6 +86,7 @@ namespace MonoMobile.MVVM
 		public virtual IElement Element { get; set; }
 
 		public UITableView TableView { get { return Element.TableView; } }
+		public NSIndexPath IndexPath { get; set; }
 
 		public UITableViewElementCell() :base() {}
 		public UITableViewElementCell(NSCoder coder) : base(coder) {}

@@ -10,7 +10,7 @@ namespace Samples
 	using System.Threading;
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.CoreLocation;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using System.Linq;
@@ -79,6 +79,13 @@ namespace Samples
 		public void Activity()
 		{
 			Thread.Sleep(1500);
+		}
+		
+		[Section]
+		[Progress("Test this", "Testing")]
+		public void Test()
+		{
+			System.Threading.Thread.Sleep(3000);
 		}
 
 		[Section("Using a DataBinding", "This is a footer")]
@@ -227,7 +234,7 @@ namespace Samples
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
-			dataModel.Load();
+			dataModel.Load(25);
 			Movies =dataModel.Movies;
 			MyString = "Test string";
 

@@ -31,10 +31,10 @@ using System.Threading;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
-using MonoMobile.MVVM.Utilities;
+using MonoMobile.Views.Utilities;
 using System.Security.Cryptography;
 
-namespace MonoMobile.MVVM.Utilities
+namespace MonoMobile.Views.Utilities
 {
 	/// <summary>
 	///   This interface needs to be implemented to be notified when an image
@@ -99,7 +99,7 @@ namespace MonoMobile.MVVM.Utilities
 
 		static ImageLoader()
 		{
-			PicDir = Path.Combine(BaseDir, "Library/Caches/Pictures.MonoMobile.MVVM/");
+			PicDir = Path.Combine(BaseDir, "Library/Caches/Pictures.MonoMobile.Views/");
 			
 			if (!Directory.Exists(PicDir))
 				Directory.CreateDirectory(PicDir);
@@ -324,7 +324,6 @@ namespace MonoMobile.MVVM.Utilities
 			{
 				bool downloaded = false;
 				
-				System.Threading.Thread.Sleep(5000);
 				downloaded = Download(uri, target);
 				if (!downloaded)
 					Console.WriteLine("Error fetching picture for {0} to {1}", uri, target);

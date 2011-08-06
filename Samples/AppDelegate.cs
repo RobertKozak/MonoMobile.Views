@@ -2,7 +2,7 @@ namespace Samples
 {
 	using System;
 	using System.Threading;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 

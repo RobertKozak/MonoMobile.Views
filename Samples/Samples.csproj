@@ -12,7 +12,7 @@
     <AssemblyName>Samples</AssemblyName>
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <BundleIdentifier>DCMobile</BundleIdentifier>
+    <BundleIdentifier>Sample</BundleIdentifier>
     <BundleVersion>0.1</BundleVersion>
     <BundleDisplayName>MVVM Sample</BundleDisplayName>
     <BundleIconHigh>AppIcon4.png</BundleIconHigh>
@@ -154,6 +154,7 @@
     <Compile Include="Views\HoneyDoListView.cs" />
     <Compile Include="Views\TestView2.cs" />
     <Compile Include="ViewModels\Test2ViewModel.cs" />
+    <Compile Include="Views\ListTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -194,9 +195,9 @@
     <Content Include="Default.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoMobile.MVVM.csproj">
+    <ProjectReference Include="..\MonoMobile.Views.csproj">
       <Project>{BA418E64-6532-4D8B-AD80-EB51C19A9F21}</Project>
-      <Name>MonoMobile.MVVM</Name>
+      <Name>MonoMobile.Views</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

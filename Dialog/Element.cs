@@ -27,17 +27,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
-	using MonoMobile.MVVM.Utilities;
+	using MonoMobile.Views.Utilities;
 	using MonoTouch.Foundation;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public abstract class Element : DisposableObject, IElement, IImageUpdated, IThemeable, IBindable, ISizeable
+	public abstract class Element : DisposableObject, IElement, IImageUpdated, IThemeable, IBindable, ISizeable, INotifyDataContextChanged
 	{		
 		public Guid DebugId = Guid.NewGuid();
 
@@ -65,12 +65,21 @@ namespace MonoMobile.MVVM
 		public NSString Id { get; set; }
 		public int Order { get; set; }
 		public int Index { get; set; }
+		
+		public event DataContextChangedEvent DataContextChanged;
 
 		protected virtual void SetDataContext(object value)
 		{
 			if (_DataContext != value)
 			{
+				var oldDataContext = _DataContext;
 				_DataContext = value;
+
+				var handler = DataContextChanged;
+				if (handler != null)
+				{
+					handler(this, new DataContextChangedEventArgs(oldDataContext, value));
+				}
 
 				DataBinding.UpdateDataContext();
 				OnDataContextChanged();
@@ -144,7 +153,7 @@ namespace MonoMobile.MVVM
 				if (_Theme != value)
 				{
 					_Theme = value;
-					ThemeChanged();
+					Theme.ThemeChanged(Cell);
 				}
 			}
 		}
@@ -152,7 +161,7 @@ namespace MonoMobile.MVVM
 		public UITableViewCellAccessory? Accessory 
 		{
 			get { return Theme.Accessory; }
-			set { Theme.Accessory = value; ThemeChanged(); }
+			set { Theme.Accessory = value; Theme.ThemeChanged(Cell); }
 		}
 		
 		public ICommand AccessoryCommand { get; set; }
@@ -160,31 +169,31 @@ namespace MonoMobile.MVVM
 		public UIImage ImageIcon
 		{
 			get { return Theme.CellImageIcon; }
-			set { Theme.CellImageIcon = value; ThemeChanged(); }
+			set { Theme.CellImageIcon = value; Theme.ThemeChanged(Cell); }
 		}
 
 		public Uri ImageIconUri
 		{
 			get { return Theme.CellImageIconUri; }
-			set { Theme.CellImageIconUri = value; ThemeChanged(); }
+			set { Theme.CellImageIconUri = value; Theme.ThemeChanged(Cell); }
 		}
 
 		public UIImage BackgroundImage
 		{
 			get { return Theme.CellBackgroundImage; }
-			set { Theme.CellBackgroundImage = value; ThemeChanged(); }
+			set { Theme.CellBackgroundImage = value; Theme.ThemeChanged(Cell); }
 		}
 
 		public Uri BackgroundUri
 		{
 			get { return Theme.CellBackgroundUri; }
-			set { Theme.CellBackgroundUri = value; ThemeChanged(); }
+			set { Theme.CellBackgroundUri = value; Theme.ThemeChanged(Cell); }
 		}
 		
 		public UIColor BackgroundColor
 		{
 			get { return Theme.CellBackgroundColor; }
-			set { Theme.CellBackgroundColor = value; ThemeChanged(); }
+			set { Theme.CellBackgroundColor = value; Theme.ThemeChanged(Cell); }
 		}
 		
 		public UILabel TextLabel { get; set; }
@@ -203,90 +212,7 @@ namespace MonoMobile.MVVM
 
 			TextLabel.BackgroundColor = UIColor.Clear;
 
-			ThemeChanged();
-		}
-		
-		public virtual void ThemeChanged()
-		{
-			if (TextLabel != null)
-			{
-				if (Theme.TextFont != null)
-					TextLabel.Font = Theme.TextFont;
-				
-				TextLabel.TextAlignment = Theme.TextAlignment;
-				TextLabel.TextColor = Theme.TextColor != null ? Theme.TextColor : TextLabel.TextColor;
-				
-				if (Theme.TextShadowColor != null)
-					TextLabel.ShadowColor = Theme.TextShadowColor;
- 
-				if (Theme.TextShadowOffset != SizeF.Empty)
-					TextLabel.ShadowOffset = Theme.TextShadowOffset;
- 
-				if (Theme.TextHighlightColor != null)
-					TextLabel.HighlightedTextColor = Theme.TextHighlightColor;
-			}			
-			
-			if (DetailTextLabel != null)
-			{
-				if (Theme.DetailTextFont != null)
-					DetailTextLabel.Font = Theme.DetailTextFont;
-				
-				DetailTextLabel.TextAlignment = Theme.DetailTextAlignment;
-				DetailTextLabel.TextColor = Theme.DetailTextColor != null ? Theme.DetailTextColor : DetailTextLabel.TextColor;
-				
-				if (Theme.DetailTextShadowColor != null)
-					DetailTextLabel.ShadowColor = Theme.DetailTextShadowColor;
-				
-				if (Theme.DetailTextShadowOffset != SizeF.Empty)
-					DetailTextLabel.ShadowOffset = Theme.DetailTextShadowOffset;
-				
-				if (Theme.DetailTextHighlightColor != null)
-					DetailTextLabel.HighlightedTextColor = Theme.DetailTextHighlightColor;
-			}
-
-			if (Cell != null)
-			{
-				if (BackgroundColor != null)
-				{
-					Cell.BackgroundColor = BackgroundColor == null ? UIColor.White : BackgroundColor;
-				}
-				else if (BackgroundUri != null)
-				{
-					var img = ImageLoader.DefaultRequestImage(BackgroundUri, this);
-					Cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
-				}
-				else if (BackgroundImage != null)
-				{
-					Cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
-				} else
-				{
-					Cell.BackgroundColor = UIColor.White;
-				}
-				
-				if (ImageIconUri != null)
-				{
-					var img = ImageLoader.DefaultRequestImage(ImageIconUri, this);
-					
-					if (img != null)
-					{
-						var small = img.Scale(new SizeF(32, 32));
-						small = small.RemoveSharpEdges(5);
-						
-						Cell.ImageView.Image = small;
-						Cell.ImageView.Layer.MasksToBounds = false;
-						Cell.ImageView.Layer.ShadowOffset = new SizeF(2, 2);
-						Cell.ImageView.Layer.ShadowRadius = 2f;
-						Cell.ImageView.Layer.ShadowOpacity = 0.8f;
-					}
-				}
-				else if (ImageIcon != null)
-					Cell.ImageView.Image = ImageIcon;
-				
-				if (Accessory.HasValue)
-					Cell.Accessory = Accessory.Value;	
-				
-				Cell.SetNeedsDisplay();
-			}
+			Theme.ThemeChanged(Cell);
 		}
 
 		/// <summary>
@@ -401,8 +327,8 @@ namespace MonoMobile.MVVM
 				Cell.Element = this;
 			
 			InitializeTheme();
-
-			InitializeCell(tableView);
+			
+			InitializeCell(TableView);
 			
 			if (DataBinding != null)
 			{
@@ -410,13 +336,13 @@ namespace MonoMobile.MVVM
 				DataBinding.UpdateTargets();
 				DataBinding.UpdateSources();
 			}
-
-			if (!Enabled) 
+			
+			if (!Enabled)
 				SetDisabled(Cell);
 			
 			if (!Visible)
 				SetVisible(Cell);
-
+			
 			UpdateCell();
 
 			return Cell;

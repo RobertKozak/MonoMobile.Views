@@ -30,7 +30,7 @@
 
 // not sure if needed yet
 
-//namespace MonoMobile.MVVM
+//namespace MonoMobile.Views
 //{
 //	using System;
 //

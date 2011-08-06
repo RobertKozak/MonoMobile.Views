@@ -2,7 +2,7 @@ using MonoTouch.UIKit;
 namespace Samples
 {
 	using System;
-	using MonoMobile.MVVM;
+	using MonoMobile.Views;
 	using System.ComponentModel;
 	
 	public enum Rating

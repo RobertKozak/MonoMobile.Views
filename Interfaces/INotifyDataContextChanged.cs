@@ -27,17 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 
 	public class DataContextChangedEventArgs: EventArgs
 	{
-		public object DataContext { get; set; }
+		public object OldDataContext { get; set; }
+		public object NewDataContext { get; set; }
 		
-		public DataContextChangedEventArgs(object dataContext)
+		public DataContextChangedEventArgs(object oldDataContext, object newDataContext)
 		{
-			DataContext = dataContext;
+			OldDataContext = oldDataContext;
+			NewDataContext = newDataContext;
 		}
 	}
 

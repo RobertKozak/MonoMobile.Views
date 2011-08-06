@@ -28,7 +28,7 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	using System;
 	using MonoTouch.UIKit;
@@ -47,8 +47,7 @@ namespace MonoMobile.MVVM
 
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			var section = Root.Sections[indexPath.Section];
-			var element = section.Elements[indexPath.Row];
+			var element = GetElement(indexPath);
 			
 			var sizable = element as ISizeable;
 			if (sizable != null)
