@@ -42,7 +42,7 @@ using MonoTouch.CoreLocation;
 using System.Globalization;
 using System.Drawing;
 
-namespace MonoMobile.MVVM
+namespace MonoMobile.Views
 {
 	public static class Util
 	{
