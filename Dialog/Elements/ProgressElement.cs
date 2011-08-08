@@ -72,6 +72,8 @@ namespace MonoMobile.Views
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{			
+			tableView.DeselectRow(path, true);
+
 			if (ShowHud)
 			{
 				_ProgressHud = new ProgressHud() { TitleText = Title, DetailText = DetailsText, Mode = HudProgressMode.Indeterminate };
@@ -98,8 +100,7 @@ namespace MonoMobile.Views
 			};
 			
 			indicatorView.StopAnimating();
-			var caption = Caption;
-			Caption = Title;
+			Cell.TextLabel.Text = Title;
 
 			var thread = new System.Threading.Thread(() =>
 			{
@@ -115,7 +116,7 @@ namespace MonoMobile.Views
 					}
 					finally
 					{
-						Caption = caption;
+						Cell.TextLabel.Text = Caption;
 						indicatorView.StopAnimating();
 						indicatorView.Dispose();
 
