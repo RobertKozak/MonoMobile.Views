@@ -59,7 +59,7 @@ namespace MonoMobile.Views
 			Command = command;
 			
 			Theme.TextFont = UIFont.BoldSystemFontOfSize(17f);
-			Theme.TextAlignment = UITextAlignment.Center;
+			Theme.TextAlignment = UITextAlignment.Left;
 
 			ShowHud = true;
 		}
@@ -93,12 +93,19 @@ namespace MonoMobile.Views
 		{		
 			var accessoryView = Cell.AccessoryView;
 			var accessory = Cell.Accessory;
-			var indicatorView = new UIActivityIndicatorView()
-			{
-				ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray,
-				Frame = new RectangleF(indicatorSize * 2, pad, indicatorSize, indicatorSize)
-			};
+			var indicatorView = new UIActivityIndicatorView(new RectangleF(indicatorSize * 2, pad, indicatorSize, indicatorSize));
 			
+			// Doesn't work due to a bug in MonoTouch that should be fixed in 4.0 
+			//float hue, saturation, brightness, alpha;
+			//TextColor.GetHSBA(out hue, out saturation, out brightness, out alpha);
+			var brightness = 1 - Theme.TextColor.CGColor.Components.FirstOrDefault();
+
+			if (brightness > 0.5f)
+				indicatorView.ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray;
+			else
+				indicatorView.ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.White;
+
+
 			indicatorView.StopAnimating();
 			Cell.TextLabel.Text = Title;
 
