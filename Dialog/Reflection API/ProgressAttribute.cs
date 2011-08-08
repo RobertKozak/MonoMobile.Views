@@ -31,6 +31,12 @@ namespace MonoMobile.Views
 {
 	using System;
 	using MonoTouch.UIKit;
+	
+	public enum IndicatorStyle 
+	{
+		Hud,
+		AccessoryIndicator
+	}
 
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public class ProgressAttribute : Attribute
@@ -49,12 +55,15 @@ namespace MonoMobile.Views
 		{
 			Title = title;
 			DetailText = detailText;
+			
+			IndicatorStyle = IndicatorStyle.Hud;
 		}
 
 		internal string CanExecutePropertyName;
 		public CommandOption CommandOption;
 		public string Title { get; set; }
 		public string DetailText { get; set;}
+		public IndicatorStyle IndicatorStyle { get; set; }
 	}
 }
 

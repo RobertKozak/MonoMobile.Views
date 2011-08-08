@@ -34,16 +34,21 @@ namespace MonoMobile.Views
 	using System.Linq;
 	using System.Threading;
 	using MonoTouch.Foundation;
+	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
 	using MonoMobile.Views;
 
 	[Preserve(AllMembers = true)]
 	public class ProgressElement : Element, ISelectable, ITappable
 	{
+		private const int pad = 10;
+		private const int indicatorSize = 20;
+
 		public string Title { get; set; }
 		public string DetailsText { get; set; }
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
+		public bool ShowHud { get; set;}
 
 		private ProgressHud _ProgressHud;
 
@@ -55,6 +60,8 @@ namespace MonoMobile.Views
 			
 			Theme.TextFont = UIFont.BoldSystemFontOfSize(17f);
 			Theme.TextAlignment = UITextAlignment.Center;
+
+			ShowHud = true;
 		}
 
 		public override void InitializeCell(UITableView tableView)
@@ -65,12 +72,60 @@ namespace MonoMobile.Views
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{			
-			_ProgressHud = new ProgressHud() { TitleText = Title, DetailText = DetailsText, Mode = HudProgressMode.Indeterminate };
-			
-			if (Command != null && Command.CanExecute(CommandParameter))
-			{	
-				_ProgressHud.ShowWhileExecuting(()=>Command.Execute(CommandParameter), true);
+			if (ShowHud)
+			{
+				_ProgressHud = new ProgressHud() { TitleText = Title, DetailText = DetailsText, Mode = HudProgressMode.Indeterminate };
+				
+				if (Command != null && Command.CanExecute(CommandParameter))
+				{	
+					_ProgressHud.ShowWhileExecuting(()=>Command.Execute(CommandParameter), true);
+				}
 			}
+			else
+			{
+				ShowIndicator(()=>Command.Execute(CommandParameter));
+			}
+		}
+
+		private void ShowIndicator(Action execute)
+		{		
+			var accessoryView = Cell.AccessoryView;
+			var accessory = Cell.Accessory;
+			var indicatorView = new UIActivityIndicatorView()
+			{
+				ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray,
+				Frame = new RectangleF(indicatorSize * 2, pad, indicatorSize, indicatorSize)
+			};
+			
+			indicatorView.StopAnimating();
+			var caption = Caption;
+			Caption = Title;
+
+			var thread = new System.Threading.Thread(() =>
+			{
+				using (NSAutoreleasePool pool = new NSAutoreleasePool())
+				{
+					try
+					{	
+						Cell.Accessory = UITableViewCellAccessory.None;
+						Cell.AccessoryView = indicatorView;
+						indicatorView.StartAnimating();
+
+						execute();
+					}
+					finally
+					{
+						Caption = caption;
+						indicatorView.StopAnimating();
+						indicatorView.Dispose();
+
+						Cell.Accessory = accessory;
+						Cell.AccessoryView = accessoryView;
+					}
+				}
+			});
+				
+			thread.Start();
 		}
 	}
 }

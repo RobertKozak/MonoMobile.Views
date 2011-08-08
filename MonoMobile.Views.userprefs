@@ -1,8 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="../DCMobile/Newtonsoft.Json.Mono/JsonTextReader.cs">
     <Files>
       <File FileName="../DealerCenter/Views/LoginView.cs" Line="48" Column="1" />
+      <File FileName="../DealerCenter/ViewModels/Inventory/InventoryItemViewModel.cs" Line="103" Column="4" />
+      <File FileName="../coolstorage/library/Library/MonoTouch/CSDataProviderSQLite.cs" Line="46" Column="1" />
+      <File FileName="../DCMobile/Newtonsoft.Json.Mono/JsonTextReader.cs" Line="556" Column="25" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -12,10 +15,7 @@
         <State expanded="True" selected="True" />
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>bindingContext.Root.Sections[0].Elements.Items</Value>
-          <Value>_Data[0].Count</Value>
-        </State>
+        <State />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
@@ -29,7 +29,6 @@
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/Reflection API/ProgressAttribute.cs" line="44" />
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/Dialog/DialogViewController/DialogViewDataSource.cs" line="351" />
       <Breakpoint file="/Users/rkozak/Projects/MonoMobile.MVVM/DealerCenter/Views/Inventory/InventoryMiniView.cs" line="264" />
-      <Breakpoint file="/Users/rkozak/Projects/DealerCenter/Views/LoginView.cs" line="48" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

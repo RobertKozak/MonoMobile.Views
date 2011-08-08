@@ -82,7 +82,7 @@ namespace Samples
 		}
 		
 		[Section]
-		[Progress("Test this", "Testing")]
+		[Progress("Test this", "Testing", IndicatorStyle = IndicatorStyle.AccessoryIndicator)]
 		public void Test()
 		{
 			System.Threading.Thread.Sleep(3000);
