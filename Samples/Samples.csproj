@@ -155,6 +155,7 @@
     <Compile Include="Views\TestView2.cs" />
     <Compile Include="ViewModels\Test2ViewModel.cs" />
     <Compile Include="Views\ListTest.cs" />
+    <Compile Include="Views\EcteteraView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
