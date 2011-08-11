@@ -59,6 +59,7 @@ namespace Samples
 		public override void UpdateCell()
 		{
 			base.UpdateCell();
+			TableView.ScrollEnabled = false;
 			var location = new PointF(-10, -11);
 			ElementView.Frame = new RectangleF(location, TableView.Frame.Size);
 		}
