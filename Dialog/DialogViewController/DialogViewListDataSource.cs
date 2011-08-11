@@ -101,8 +101,7 @@ namespace MonoMobile.Views
 				if (element == null)
 					element = Root;
 
-				element.Cell = Cell as UITableViewElementCell;
-				element.Cell.Element = element;
+				elementCell.Element = element;
 				element.TableView = tableView;
 
 				element.InitializeTheme();
@@ -117,16 +116,18 @@ namespace MonoMobile.Views
 		}
 
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
-		{			
-			var cell = Cell as UITableViewElementCell;
+		{		
+			var rowHeight = tableView.RowHeight;
+
+			var cell = GetCell(tableView, indexPath) as UITableViewElementCell;
 			if (cell != null && cell.Element != null)
 			{
 				var sizable = cell.Element as ISizeable;
 				if (sizable != null)
-					return sizable.GetHeight(tableView, indexPath);
+					rowHeight = sizable.GetHeight(tableView, indexPath);
 			}
-
-			return tableView.RowHeight;
+			
+			return rowHeight;
 		}
 
 		protected UITableViewCell NewCell(string cellId, NSIndexPath indexPath)

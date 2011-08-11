@@ -5,7 +5,7 @@ namespace Samples
 	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 
-	public class EcteteraElement : RootElement, ISelectable
+	public class EcteteraElement : RootElement, ISelectable, ISizeable
 	{
 
 		private UITextField _TextField;
@@ -29,7 +29,8 @@ namespace Samples
 		
 			_Image = new UIImageView(new RectangleF(10, 10, 25, 25));
 			
-			_Image.BackgroundColor = ViewModel.Color;
+			if (ViewModel != null)
+				_Image.BackgroundColor = ViewModel.Color;
 
 			base.InitializeContent();
 		
@@ -51,6 +52,8 @@ namespace Samples
 				_Image.BackgroundColor = ViewModel.Color;
 			};
 		
+
+			if (ViewModel != null)
 			_TextField.Text = ViewModel.Text;
 		}
 
@@ -64,7 +67,15 @@ namespace Samples
 		{
 			// do nothing
 		}
-	}
+	
+
+		#region ISizeable implementation
+		public float GetHeight (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+		{
+			return tableView.Bounds.Height;
+		}
+		#endregion
+}
 
 	public class EcteteraViewModel : ViewModel
 	{
