@@ -755,7 +755,7 @@ namespace MonoMobile.Views
 //			else
 //				return new DialogViewListDataSource(this);
 
-			return new DialogViewListDataSource(this);
+			return new DialogViewDataSource(this);
 		}
 
 		public void UpdateSource()
