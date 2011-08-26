@@ -32,7 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using MonoTouch.UIKit;
 
-	[Obsolete("No longer supported. Please use ProgressAttribute instead.")]
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public class LoadMoreAttribute : Attribute
 	{

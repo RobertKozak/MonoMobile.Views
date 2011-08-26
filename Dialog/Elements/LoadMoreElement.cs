@@ -38,8 +38,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.Views;
-	
-	[Obsolete("No longer supported. Please use ProgressElement instead.")]
+
 	[Preserve(AllMembers = true)]
 	public class LoadMoreElement : Element, ISelectable, ITappable
 	{
