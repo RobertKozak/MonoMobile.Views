@@ -42,9 +42,8 @@ namespace Samples
 			DataContext.Insert(2, new MovieViewModel(){});	
 		}
 
-		public override void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
-			var x = 10;
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)

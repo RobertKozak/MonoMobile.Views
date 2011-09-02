@@ -326,7 +326,7 @@ namespace MonoMobile.Views
 		public override void LayoutSubviews()
 		{
 			RectangleF frame = Bounds;
-			
+
 			// Compute HUD dimensions based on indicator size (add margin to HUD border)
 			RectangleF indFrame = _Indicator.Bounds;
 			_Width = indFrame.Size.Width + 2 * MARGIN;

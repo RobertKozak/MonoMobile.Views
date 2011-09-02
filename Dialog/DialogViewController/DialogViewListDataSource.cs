@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	using System.Collections.Specialized;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;	
-	
+
 	public class DialogViewListDataSource : DialogViewDataSource
 	{
 		private Dictionary<int, IList> _Data;
@@ -85,29 +85,17 @@ namespace MonoMobile.Views
 
 			return base.NumberOfSections(tableView);
 		}
-
+		
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
 			if (Data != null)
 			{
 				string cellIdentifier = "CellId";
 
-				Cell = tableView.DequeueReusableCell(cellIdentifier) ?? NewCell(cellIdentifier, indexPath);
-				
-				var elementCell = Cell as UITableViewElementCell;
-				elementCell.IndexPath = indexPath;
+				UITableViewElementCell cell = (tableView.DequeueReusableCell(cellIdentifier) ?? NewCell(cellIdentifier, indexPath)) as UITableViewElementCell;
+				cell.IndexPath = indexPath;
+				Cell = cell;
 
-				var element = GetElement(indexPath);
-				if (element == null)
-					element = Root;
-
-				element.Cell = Cell as UITableViewElementCell;
-				element.Cell.Element = element;
-				element.TableView = tableView;
-
-				element.InitializeTheme();
-				element.InitializeCell(tableView);
-				
 				UpdateCell(Cell, indexPath);
 
 				return Cell;
@@ -116,17 +104,28 @@ namespace MonoMobile.Views
 			return base.GetCell(tableView, indexPath);
 		}
 
+		private void HandleTableViewDecelerationEnded (object sender, EventArgs e)
+		{
+			var tableView = (UITableView)sender;
+			foreach (var cell in tableView.VisibleCells) {
+				var indexPath = ((UITableViewElementCell)cell).IndexPath;
+				UpdateCell (cell, indexPath);
+			}
+		}
+
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
-		{			
-			var cell = Cell as UITableViewElementCell;
+		{		
+			var rowHeight = tableView.RowHeight;
+
+			var cell = GetCell(tableView, indexPath) as UITableViewElementCell;
 			if (cell != null && cell.Element != null)
 			{
 				var sizable = cell.Element as ISizeable;
 				if (sizable != null)
-					return sizable.GetHeight(tableView, indexPath);
+					rowHeight = sizable.GetHeight(tableView, indexPath);
 			}
-
-			return tableView.RowHeight;
+			
+			return rowHeight;
 		}
 
 		protected UITableViewCell NewCell(string cellId, NSIndexPath indexPath)
@@ -136,14 +135,34 @@ namespace MonoMobile.Views
 			if (element == null)
 				element = Root;
 
-			var cell = new UITableViewElementCell(Root.Theme.CellStyle, cellId, element) { IndexPath = indexPath };
-			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			var cellStyle = UITableViewCellStyle.Subtitle;
+			var cell = new UITableViewElementCell(cellStyle, cellId, element) { IndexPath = indexPath };
 			
 			return cell;
 		}
 
 		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			var elementCell = Cell as UITableViewElementCell;
+			elementCell.IndexPath = indexPath;
+			
+			if (elementCell.Element == null)
+			{
+				var element = GetElement(indexPath);
+				if (element == null)
+					element = Root;
+				
+				elementCell.Element = element;
+				element.Cell = elementCell;
+			
+				element.InitializeTheme();
+			}
+
+			elementCell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+
+			var selectable = this as ISelectable;
+			Cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
+
 			var updateable = Container.RootView as IUpdateable;
 			if (updateable != null)
 				updateable.UpdateCell(cell, indexPath);

@@ -38,7 +38,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	using MonoMobile.Views;
-	
+
 	[Preserve(AllMembers = true)]
 	public class LoadMoreElement : Element, ISelectable, ITappable
 	{

@@ -57,6 +57,8 @@ namespace Samples
 		[Time]
 	//	[Theme(typeof(GraniteStyle))]
 		public DateTime Time {get; set;}
+		
+		public EntryElement TestEntry { get; set; }
 
 		[Password("Enter passsword")]
 		[DefaultValue("Test String")]
@@ -82,7 +84,7 @@ namespace Samples
 		}
 		
 		[Section]
-		[Progress("Test this", "Testing")]
+		[Progress("Getting values...", "Testing", IndicatorStyle = IndicatorStyle.AccessoryIndicator)]
 		public void Test()
 		{
 			System.Threading.Thread.Sleep(3000);
@@ -119,7 +121,7 @@ namespace Samples
 		[Entry]
 		[Bind("TestEntry", "DataContext")]
 		[DefaultValue("Rocket")]
-		public string TestEntry 
+		public string TestEntry5
 		{
 			get;// { return Get(()=>TestEntry, "Testing"); }
 			set;// { Set(()=>TestEntry, value); }

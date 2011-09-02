@@ -1111,7 +1111,7 @@ namespace MonoMobile.Views
 					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title : caption;
 					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText : null;
 
-					var pelement = new ProgressElement(caption, title, detailText, null);
+					var pelement = new ProgressElement(caption, title, detailText, null) { ShowHud = progressAttribute.IndicatorStyle == IndicatorStyle.Hud };
 					var command = GetCommandForMember(view, member) as ReflectiveCommand;
 					
 					command.Element = pelement;
