@@ -32,12 +32,22 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections.Generic;
 	using MonoTouch.UIKit;
-
+	
 	public static class UIDeviceExtensions
 	{
+		public static bool IsPhone(this UIDevice device)
+		{ 
+			return device.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; 
+		} 
+		
+		public static bool IsPad(this UIDevice device)
+		{ 
+			return device.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad; 
+		}
+	
 		public static float GetIndentation(this UIDevice device)
 		{
-			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			if (device.IsPhone())
 				return 10;
 			else
 				return 40;
@@ -45,7 +55,7 @@ namespace MonoMobile.Views
 
 		public static float GetDeviceMargin(this UIDevice device)
 		{
-			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+			if (device.IsPhone())
 				return 3;
 			else
 				return 7;
@@ -62,7 +72,7 @@ namespace MonoMobile.Views
 
 			var landscape = orientation == UIDeviceOrientation.LandscapeLeft || orientation == UIDeviceOrientation.LandscapeRight;
 
-			if (device.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+			if (device.IsPad())
 			{
 				if (landscape)
 					return 352;

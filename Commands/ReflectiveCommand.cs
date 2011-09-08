@@ -90,6 +90,15 @@ namespace MonoMobile.Views
 				throw new Exception("The method supplied for the Command does not exist. Check spelling.");
 			
 			var notifier = _ViewModel as INotifyPropertyChanged;
+			if (notifier == null)
+			{
+				var dataContext = _ViewModel as IDataContext;
+				if (dataContext != null)
+				{
+					notifier = dataContext.DataContext as INotifyPropertyChanged;
+				}
+			}
+
 			if (notifier != null && _CanExecute != null)
 			{
 				notifier.PropertyChanged += (s, e) =>

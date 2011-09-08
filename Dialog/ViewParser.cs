@@ -1,3 +1,4 @@
+using System.Drawing;
 // 
 // ViewParser.cs
 // 
@@ -121,11 +122,18 @@ namespace MonoMobile.Views
 			PropertyInfo propertyInfo = null;
 			var commandOption = CommandOption.Disable;
 
-			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
+			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute> ();
 			if (buttonAttribute != null)
 			{
 				propertyName = buttonAttribute.CanExecutePropertyName;
 				commandOption = buttonAttribute.CommandOption;
+			}
+
+			var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
+			if (progressAttribute != null)
+			{
+				propertyName = progressAttribute.CanExecutePropertyName;
+				commandOption = progressAttribute.CommandOption;
 			}
 
 			var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();

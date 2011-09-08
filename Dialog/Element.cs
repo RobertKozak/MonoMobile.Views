@@ -468,18 +468,8 @@ namespace MonoMobile.Views
 		{
 			if (cell != null)
 			{
-				if (Section != null)
-				{
-					if (_Visible && !Section.Elements.Contains(this))
-						Section.Insert(_OldRow, this);
-					else
-					{
-						_OldRow = IndexPath.Row;
-						Section.Remove(this);
-					}
-				}
-
-				cell.SetNeedsDisplay();
+				cell.Hidden  = !_Visible;
+				cell.TableView.SetNeedsDisplay();
 			}
 		}
 
