@@ -74,6 +74,8 @@ namespace MonoMobile.Views
 			//ContentView = _Dummy;
 			//ContentView.AddSubview(InputControl);
 		}
+			
+		public EditMode EditMode { get; set; }
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
 		{
@@ -90,7 +92,7 @@ namespace MonoMobile.Views
 		{
 			var elements = from section in Root.Sections 
 				from element in section.Elements 
-					where (element is IFocusable)
+					where (element is IFocusable && ((IFocusable)element).EditMode != EditMode.ReadOnly)
 					select element as IFocusable; 
 					
 			MoveFocus(elements.ToList());
@@ -100,7 +102,7 @@ namespace MonoMobile.Views
 		{
 			var elements = (from section in Root.Sections
 				from element in section.Elements
-				where (element is IFocusable)
+				where (element is IFocusable && ((IFocusable)element).EditMode != EditMode.ReadOnly)
 				select element as IFocusable).Reverse();
 
 			MoveFocus(elements.ToList());

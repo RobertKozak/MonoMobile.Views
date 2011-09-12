@@ -36,6 +36,7 @@ namespace MonoMobile.Views
 	public interface IFocusable
 	{
 		UIView ElementView { get; }
+		EditMode EditMode { get; }
 	//	UITextView InputControl2 { get; }
 
 		NSIndexPath IndexPath { get; }

@@ -50,7 +50,6 @@ namespace MonoMobile.Views
 		private UIKeyboardToolbar _KeyboardToolbar; 
 		private UIPlaceholderTextField _InputControl;
 
-		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
 		public string Text { get; set; }

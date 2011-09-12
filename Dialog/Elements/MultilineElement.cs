@@ -41,7 +41,7 @@ namespace MonoMobile.Views
 		private UICustomTextView _InputControl;
 
 		public int Lines { get; set; }
-		public EditMode EditMode { get; set; }
+
 		public UIKeyboardType KeyboardType { get; set; }
 		public UITextAutocorrectionType AutoCorrectionType { get; set; }
 		public UITextAutocapitalizationType AutoCapitalizationType { get; set; }
