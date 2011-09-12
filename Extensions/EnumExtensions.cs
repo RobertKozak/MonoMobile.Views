@@ -38,6 +38,11 @@ namespace System
         {
             return GetDescriptionValue(value.ToString(), value.GetType());
         }
+		
+		public static string GetName(this Enum value)
+		{
+			return value.ToString().Replace("_", " ");
+		}
 
         public static string GetDescriptionValue(string name, Type enumType)
         {

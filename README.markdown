@@ -101,7 +101,7 @@ you want to display and args.
 
 	namespace Samples
 	{
-		using MonoMobile.MVVM;
+		using MonoMobile.Views;
 		
 		public class Application : MonoMobileApplication
 		{
@@ -117,7 +117,7 @@ the name of your AppDelegate.
 
 	namespace Samples
 	{
-		using MonoMobile.MVVM;
+		using MonoMobile.Views;
 		
 		public class Application : MonoMobileApplication
 		{

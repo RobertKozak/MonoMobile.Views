@@ -140,7 +140,7 @@ namespace MonoMobile.Views
 		{
 			base.UpdateCell();	
 			
-			new Wait(TimeSpan.FromMilliseconds(300), ()=> 
+			new Wait(TimeSpan.FromMilliseconds(150), ()=> 
 			{
 				InputControlTextChanged(this, EventArgs.Empty);
 				_InputControl.ContentOffset = new PointF(0, 8);
