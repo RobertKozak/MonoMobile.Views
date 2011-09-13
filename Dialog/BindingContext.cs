@@ -133,6 +133,10 @@ namespace MonoMobile.Views
 		public static IElement CreateElementFromObject(object item, IRoot root, Type elementType)
 		{
 			var caption = item.ToString();
+
+			if (item.GetType().IsEnum)
+				caption = ((Enum)item).GetDescription();
+				
 			if (string.IsNullOrEmpty(caption))
 			{
 				caption = root.ViewBinding.ViewType.Name.Capitalize();
