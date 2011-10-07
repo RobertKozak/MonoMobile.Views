@@ -113,7 +113,7 @@ namespace MonoMobile.Views
 
 		public override void WillEnterForeground(UIApplication application)
 		{
-			MonoMobileApplication.ResumeFromBackgroundAction();
+			//MonoMobileApplication.ResumeFromBackgroundAction();
 		}
 
         // This method is allegedly required in iPhoneOS 3.0

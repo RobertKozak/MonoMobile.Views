@@ -655,12 +655,14 @@ namespace MonoMobile.Views
 		{
 			float radius = 10.0f;
 			context.BeginPath();
-			context.SetGrayFillColor(0.0f, Opacity);
+			context.SetFillColor(0.0f, Opacity);
+
 			context.MoveTo(rect.GetMinX() + radius, rect.GetMinY());
 			context.AddArc(rect.GetMaxX() - radius, rect.GetMinY() + radius, radius, (float)(3 * Math.PI / 2), 0f, false);
 			context.AddArc(rect.GetMaxX() - radius, rect.GetMaxY() - radius, radius, 0, (float)(Math.PI / 2), false);
 			context.AddArc(rect.GetMinX() + radius, rect.GetMaxY() - radius, radius, (float)(Math.PI / 2), (float)Math.PI, false);
 			context.AddArc(rect.GetMinX() + radius, rect.GetMinY() + radius, radius, (float)Math.PI, (float)(3 * Math.PI / 2), false);
+		
 			context.ClosePath();
 			context.FillPath();
 		}
@@ -682,9 +684,9 @@ namespace MonoMobile.Views
 			CGContext context = UIGraphics.GetCurrentContext();
 			
 			// Draw background
-			context.SetRGBStrokeColor(1.0f, 1.0f, 1.0f, 1.0f);
+			context.SetStrokeColor(1.0f, 1.0f, 1.0f, 1.0f);
 			// white
-			context.SetRGBFillColor(1.0f, 1.0f, 1.0f, 0.1f);
+			context.SetFillColor(1.0f, 1.0f, 1.0f, 0.1f);
 			// translucent white
 			context.SetLineWidth(2.0f);
 			context.FillEllipseInRect(circleRect);
@@ -693,7 +695,7 @@ namespace MonoMobile.Views
 			// Draw progress
 			float x = (allRect.Size.Width / 2);
 			float y = (allRect.Size.Height / 2);
-			context.SetRGBFillColor(1.0f, 1.0f, 1.0f, 1.0f);
+			context.SetFillColor(1.0f, 1.0f, 1.0f, 1.0f);
 			// white
 			context.MoveTo(x, y);
 			context.AddArc(x, y, (allRect.Size.Width - 4) / 2, -(float)(Math.PI / 2), (float)(Progress * 2 * Math.PI) - (float)(Math.PI / 2), false);

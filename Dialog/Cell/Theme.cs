@@ -484,7 +484,7 @@ namespace MonoMobile.Views
 			}
 			else if (element != null && CellBackgroundUri != null)
 			{
-				var img = ImageLoader.DefaultRequestImage(BackgroundUri, element);
+				var img = ImageLoader.DefaultRequestImage(CellBackgroundUri, element);
 				cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
 			}
 			else if (CellBackgroundImage != null)

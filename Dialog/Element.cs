@@ -57,7 +57,6 @@ namespace MonoMobile.Views
 		public IDataBinding DataBinding { get; set; }
 
 		private bool _Visible;
-		private int _OldRow;
 		private DisabledCellView _DisabledCellView; 
 		
 		public Element ElementInstance { get { return this; } }

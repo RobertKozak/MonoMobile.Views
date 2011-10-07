@@ -75,7 +75,7 @@ namespace MonoMobile.Views
 			{
 				using (var bit = new CGBitmapContext(IntPtr.Zero, dimx, dimy, 8, 0, cs, CGImageAlphaInfo.PremultipliedFirst))
 				{
-					bit.SetRGBStrokeColor(1, 0, 0, 0.5f);
+					bit.SetStrokeColor(1, 0, 0, 0.5f);
 					bit.FillRect(new RectangleF(0, 0, dimx, dimy));
 					
 					return UIImage.FromImage(bit.ToImage());

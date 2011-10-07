@@ -7,6 +7,7 @@ using MonoTouch.Foundation;
 namespace Samples
 {
 	[Preserve(AllMembers = true)]
+	[Theme(typeof(WoodenTheme))]
 //	[CellEditingStyle(UITableViewCellEditingStyle.Delete)]
 	public class InterestingView: View
 	{

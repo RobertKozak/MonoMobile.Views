@@ -204,7 +204,7 @@ namespace MonoMobile.Views
 				context.SaveState();
 				
 
-				context.SetFillColorWithColor(backgroundColor.CGColor);
+				context.SetFillColor(backgroundColor.CGColor);
 	
 				if (TableView.Style == UITableViewStyle.Grouped)
 				{
@@ -240,7 +240,7 @@ namespace MonoMobile.Views
 
 		    context.SetLineWidth(1);
 
-			context.SetStrokeColorWithColor(separatorColor.CGColor);
+			context.SetStrokeColor(separatorColor.CGColor);
 			context.SetShadowWithColor(new SizeF(0,0), 0f, UIColor.Clear.CGColor);
 			context.AddPath(path);
 			context.DrawPath(CGPathDrawingMode.Stroke);
