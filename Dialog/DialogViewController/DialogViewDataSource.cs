@@ -210,10 +210,25 @@ namespace MonoMobile.Views
 		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
 		{
 			var section = GetSection(sectionIndex);
-			if (section == null || section.HeaderView == null)
-				return -1;
+			
+			if (section != null && !string.IsNullOrEmpty(section.HeaderText) && section.HeaderView != null)
+			{
+				var indentation = UIDevice.CurrentDevice.GetIndentation();
+				var width = tableView.Bounds.Width - (indentation * 2);
 
-			return section.HeaderView.Frame.Height;
+				var headerLabel = section.HeaderView.Subviews[0] as UILabel;
+				if (headerLabel != null)
+				{
+					headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+					var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
+			
+					var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
+			
+					return height;
+				}
+			}
+			
+			return 0;
 		}
 
 		public override UIView GetViewForFooter(UITableView tableView, int sectionIndex)
@@ -223,7 +238,7 @@ namespace MonoMobile.Views
 			{
 				if (section.FooterView == null && !string.IsNullOrEmpty(section.FooterText))
 				{
-					section.FooterView = CreateFooterView(tableView, section.FooterText);;
+					section.FooterView = CreateFooterView(tableView, section.FooterText);
 				}
 				
 				// Use an empty UIView to Eliminate Extra separators for blank items
@@ -239,34 +254,50 @@ namespace MonoMobile.Views
 		public override float GetHeightForFooter(UITableView tableView, int sectionIndex)
 		{
 			var section = GetSection(sectionIndex);
-			if (section != null && section.FooterView != null)
-				return section.FooterView.Frame.Height;
 
-			return -1;			
+			if (section != null && !string.IsNullOrEmpty(section.FooterText))
+			{
+				var indentation = UIDevice.CurrentDevice.GetIndentation();
+
+				var width = tableView.Bounds.Width - (indentation * 2);
+				var linefeeds = section.FooterText.Count(ch => ch == '\n');
+				var footerLabel = new UILabel();
+			
+				footerLabel.Font = UIFont.SystemFontOfSize(15);
+				var size = footerLabel.StringSize(section.FooterText, footerLabel.Font);
+
+				var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width));
+
+				return height;
+			}
+			
+			return 0;			
 		}
 
 		private UIView CreateHeaderView(UITableView tableView, string caption)
 		{
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
-			
+			var width = tableView.Bounds.Width - (indentation * 2);
+
 			var headerLabel = new UILabel();
-			
 			headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+
 			var size = headerLabel.StringSize(caption, headerLabel.Font);
+			var height = size.Height * (headerLabel.Font.NumberOfLines(caption, width));
+
+			var frame = new RectangleF(tableView.Bounds.X + indentation + 10, 4, tableView.Bounds.Width - (indentation + 10), height);
 			
-			var bounds = new RectangleF(tableView.Bounds.X, tableView.Bounds.Y, tableView.Bounds.Width, size.Height + 10);
-			var frame = new RectangleF(bounds.X + indentation + 10, bounds.Y, bounds.Width - (indentation + 10), size.Height + 10);
-			
-			headerLabel.Bounds = bounds;
 			headerLabel.Frame = frame;
 			
 			headerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
 			headerLabel.ShadowColor = UIColor.White;
+			headerLabel.LineBreakMode = UILineBreakMode.WordWrap;
 			headerLabel.ShadowOffset = new SizeF(0, 1);
 			headerLabel.Text = caption;
+			headerLabel.Lines = headerLabel.Font.NumberOfLines(caption, frame.Width);
 			
-			var view = new UIView(bounds);
-			
+			var view = new UIView(new RectangleF(0,0, frame.Width, height));
+
 			if (tableView.Style == UITableViewStyle.Grouped)
 			{
 				headerLabel.BackgroundColor = UIColor.Clear;
@@ -292,22 +323,15 @@ namespace MonoMobile.Views
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
 			
 			var bounds = tableView.Bounds;
-			var footerLabel = new UILabel();
 			var width = bounds.Width - (indentation * 2);
-			var linefeeds = caption.Count(ch => ch == '\n');
+
+			var footerLabel = new UILabel();		
 			
 			footerLabel.Font = UIFont.SystemFontOfSize(15);
-			var size = footerLabel.StringSize(caption, footerLabel.Font);
 			
-			footerLabel.Lines = 1 + ((int)(size.Width / width)) + linefeeds;
-			if (size.Width % width == 0)
-				footerLabel.Lines--;
-			
-			var height = size.Height * (footerLabel.Lines);
-			
-			var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, height + 10);
-			
-			footerLabel.Bounds = rect;
+			var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, 0);
+					
+			footerLabel.Frame = rect;
 			footerLabel.BackgroundColor = UIColor.Clear;
 			footerLabel.TextAlignment = UITextAlignment.Center;
 			footerLabel.LineBreakMode = UILineBreakMode.WordWrap;
@@ -315,7 +339,8 @@ namespace MonoMobile.Views
 			footerLabel.ShadowColor = UIColor.White;
 			footerLabel.ShadowOffset = new SizeF(0, 1);
 			footerLabel.Text = caption;
-			
+			footerLabel.Lines = footerLabel.Font.NumberOfLines(caption, width);
+
 			return footerLabel;
 		}
 

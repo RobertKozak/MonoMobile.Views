@@ -31,6 +31,7 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Text;
+	using System.Linq;
 	using MonoTouch.UIKit;
 
 	public static class StringExtensions
@@ -64,6 +65,23 @@ namespace MonoMobile.Views
 			}
 			
 			return sb.ToString();
+		}
+
+		public static int NumberOfLines(this UIFont font, string caption, float width)
+		{
+			using (var label = new UILabel())
+			{	
+				var linefeeds = caption.Count(ch => ch == '\n');
+				var size = label.StringSize(caption, font);
+				
+				label.Lines = 1 + ((int)(size.Width / width)) + linefeeds;
+				if (size.Width % width == 0)
+				{
+					label.Lines--;
+				}
+
+				return label.Lines;
+			}
 		}
 	}
 }

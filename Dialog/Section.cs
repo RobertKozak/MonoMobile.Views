@@ -118,7 +118,7 @@ namespace MonoMobile.Views
 		/// <summary>
 		///   The section header, as a string
 		/// </summary>
-		public string HeaderText {get; set; }
+		public string HeaderText {get { return Caption; } set { Caption = value; } }
 
 		/// <summary>
 		/// The section footer, as a string.
