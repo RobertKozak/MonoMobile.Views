@@ -188,11 +188,15 @@ namespace MonoMobile.Views
 			Element = null;
 		}
 
+		public virtual void DrawElementView(RectangleF innerRect, CGContext context)
+		{
+			Element.Theme.DrawElementViewAction(innerRect, context, this);
+		}
+
 		public void DrawContentView()
 		{
 			if (!Highlighted)
 			{
-
 				var borderRect = Bounds;
 
 				var innerRect = CalculateInnerRect(); 
@@ -224,10 +228,12 @@ namespace MonoMobile.Views
 				ShouldDrawBorder = false;
 				
 				if (Element.Theme.DrawElementViewAction != null)
-					Element.Theme.DrawElementViewAction(innerRect, context, this);
+				{
+					DrawElementView(innerRect, context);
+				}
 
 				context.RestoreState();
-		
+
 				if (ShouldDrawBorder)
 				{
 					DrawBorder(context, path);
@@ -262,7 +268,7 @@ namespace MonoMobile.Views
 				indentationOffset = indentation + gap;
 			
 			var frame = TableView.Frame;
-			var rect = new RectangleF(Bounds.X + indentationOffset - borderOffset, Bounds.Y, frame.Width - (indentationOffset * 2) + (borderOffset * 2), Bounds.Height);
+			var rect = new RectangleF(Bounds.X + indentationOffset - borderOffset, Bounds.Y, frame.Width - ((indentationOffset * 2) + (borderOffset * -1)), Bounds.Height);
 			
 			return rect;
 		}
@@ -347,6 +353,33 @@ namespace MonoMobile.Views
 		}
 	}
 	
+	public class UITableViewBitmapCell: UITableViewElementCell
+	{
+		public UITableViewBitmapCell() :base() {}
+		public UITableViewBitmapCell(NSCoder coder) : base(coder) {}
+		public UITableViewBitmapCell(NSObjectFlag t) : base(t) {}
+		public UITableViewBitmapCell(IntPtr handle) : base (handle) {}
+
+		public UITableViewBitmapCell(UITableViewCellStyle style, string reuseIdentifier, IElement element) : this(style, new NSString(reuseIdentifier), element)
+		{
+		}
+
+		public UITableViewBitmapCell(UITableViewCellStyle style, NSString reuseIdentifier, IElement element) : base(style, reuseIdentifier, element)
+		{
+		}
+
+		public override void DrawElementView(RectangleF innerRect, CGContext context)
+		{		
+			UIGraphics.BeginImageContext(Bounds.Size);
+
+			Element.Theme.DrawElementViewAction(innerRect, context, this);
+			UIImage image = UIGraphics.GetImageFromCurrentImageContext();
+			UIGraphics.EndImageContext();
+
+			BackgroundView = new UIImageView(image);
+		}
+	}
+
 	public class UITableViewCellContentView : UIView
 	{
 		protected UITableViewElementCell Cell { get; set; }
@@ -405,6 +438,7 @@ namespace MonoMobile.Views
 			if(cell != null)
 			{
 				_Cell = cell;
+				cell.TextLabel.TextColor = UIColor.Gray;
 				Bounds = _Cell.CalculateInnerRect();
 			}
 		}
