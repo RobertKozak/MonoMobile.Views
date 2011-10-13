@@ -1,4 +1,3 @@
-using MonoTouch.CoreGraphics;
 // 
 //  DialogViewDataSource.cs
 // 
@@ -38,11 +37,12 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
+	using MonoTouch.CoreGraphics;
 
 	public class DialogViewDataSource : UITableViewSource
 	{
-		private HeaderTapGestureRecognizer tapRecognizer;
-		private Selector _HeaderSelector = new Selector("headerTap");
+//		private HeaderTapGestureRecognizer tapRecognizer;
+//		private Selector _HeaderSelector = new Selector("headerTap");
 
 		private const float _SnapBoundary = 65;
 		protected DialogViewController Container;
@@ -151,42 +151,42 @@ namespace MonoMobile.Views
 					section.HeaderView = CreateHeaderView(tableView, section.Caption);
 				}
 	
-				if (section.HeaderView != null)
-				{
-					if (section.IsExpandable)
-					{
-						section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
-						section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
-						section.HeaderView.Add(section.ArrowView);
-					
-						tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
-				
-						section.HeaderView.AddGestureRecognizer(tapRecognizer);
-						Flip(section);
-					}
-				}
+//				if (section.HeaderView != null)
+//				{
+//					if (section.IsExpandable)
+//					{
+//						section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
+//						section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
+//						section.HeaderView.Add(section.ArrowView);
+//					
+//						tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
+//				
+//						section.HeaderView.AddGestureRecognizer(tapRecognizer);
+//						Flip(section);
+//					}
+//				}
 				return section.HeaderView;
 			}
 
 			return null;
 		}
 
-		[Export("headerTap")]
-		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
-		{
-			var section = recognizer.Section;
-			var state = section.ExpandState;
-			
-			if (section.IsExpandable)
-			{
-				if (state == ExpandState.Opened)
-					section.ExpandState = ExpandState.Closed;
-				else
-					section.ExpandState = ExpandState.Opened;
-			
-				Flip(section);
-			}
-		}
+//		[Export("headerTap")]
+//		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
+//		{
+//			var section = recognizer.Section;
+//			var state = section.ExpandState;
+//			
+//			if (section.IsExpandable)
+//			{
+//				if (state == ExpandState.Opened)
+//					section.ExpandState = ExpandState.Closed;
+//				else
+//					section.ExpandState = ExpandState.Opened;
+//			
+//				Flip(section);
+//			}
+//		}
 
 		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
 		{
@@ -198,34 +198,32 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		private void Flip(ISection section)
-		{
-			UIView.BeginAnimations(null);
-			UIView.SetAnimationDuration(0.18f);
-			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
-			
-			UIView.CommitAnimations();
-		}
+//		private void Flip(ISection section)
+//		{
+//			UIView.BeginAnimations(null);
+//			UIView.SetAnimationDuration(0.18f);
+//			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
+//			
+//			UIView.CommitAnimations();
+//		}
 
 		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
 		{
 			var section = GetSection(sectionIndex);
 			
-			if (section != null && !string.IsNullOrEmpty(section.HeaderText) && section.HeaderView != null)
+			if (section != null && !string.IsNullOrEmpty(section.HeaderText))
 			{
 				var indentation = UIDevice.CurrentDevice.GetIndentation();
 				var width = tableView.Bounds.Width - (indentation * 2);
+				
+				var headerLabel = new UILabel();
 
-				var headerLabel = section.HeaderView.Subviews[0] as UILabel;
-				if (headerLabel != null)
-				{
-					headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
-					var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
+				headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+				var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
 			
-					var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
-			
-					return height;
-				}
+				var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
+					
+				return height;
 			}
 			
 			return 0;
@@ -260,7 +258,7 @@ namespace MonoMobile.Views
 				var indentation = UIDevice.CurrentDevice.GetIndentation();
 
 				var width = tableView.Bounds.Width - (indentation * 2);
-				var linefeeds = section.FooterText.Count(ch => ch == '\n');
+
 				var footerLabel = new UILabel();
 			
 				footerLabel.Font = UIFont.SystemFontOfSize(15);
@@ -277,15 +275,15 @@ namespace MonoMobile.Views
 		private UIView CreateHeaderView(UITableView tableView, string caption)
 		{
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
-			var width = tableView.Bounds.Width - (indentation * 2);
+			var width = tableView.Bounds.Width - (indentation - 10);
 
 			var headerLabel = new UILabel();
 			headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
 
 			var size = headerLabel.StringSize(caption, headerLabel.Font);
-			var height = size.Height * (headerLabel.Font.NumberOfLines(caption, width));
+			var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(caption, width) + 0.5));
 
-			var frame = new RectangleF(tableView.Bounds.X + indentation + 10, 4, tableView.Bounds.Width - (indentation + 10), height);
+			var frame = new RectangleF(tableView.Bounds.X + (indentation + 10), 0, width, height);
 			
 			headerLabel.Frame = frame;
 			
@@ -296,7 +294,7 @@ namespace MonoMobile.Views
 			headerLabel.Text = caption;
 			headerLabel.Lines = headerLabel.Font.NumberOfLines(caption, frame.Width);
 			
-			var view = new UIView(new RectangleF(0,0, frame.Width, height));
+			var view = new UIView(new RectangleF(0, 0, frame.Width, height));
 
 			if (tableView.Style == UITableViewStyle.Grouped)
 			{

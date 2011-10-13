@@ -230,12 +230,6 @@ namespace MonoMobile.Views
 	
 	public static class Device
 	{
-		public static string DeviceID ()
-		{
-			return UIDevice.CurrentDevice.UniqueIdentifier;
-			
-		}
-
 		public static string IPAddress ()
 		{
 			IPHostEntry host;

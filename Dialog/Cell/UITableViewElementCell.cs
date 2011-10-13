@@ -141,7 +141,7 @@ namespace MonoMobile.Views
 				captionSize = TextLabel.StringSize(caption, UIFont.FromName(TextLabel.Font.Name, UIFont.LabelFontSize));
 				captionSize.Width += ((margin * 2) * indentedSides);
 			}
-			
+
 			x = captionSize.Width + fixedGap;
 			float y = 0;
 			float width = screenWidth - captionSize.Width - (indentation * 2) - (margin * 3);
@@ -149,8 +149,9 @@ namespace MonoMobile.Views
 
 			RectangleF actualFrame;
 			
+			var innerRect = CalculateInnerRect();
 			if (frame == RectangleF.Empty)
-				actualFrame = new RectangleF(-1, -1, width + indentation + 1, captionSize.Height + 1);
+				actualFrame = new RectangleF(-indentedSides, -indentedSides, innerRect.Width + indentedSides, captionSize.Height + (indentedSides * 2));
 			else
 				actualFrame = new RectangleF(x, y, width - accessoryWidth, height - y);
 			 
@@ -251,7 +252,7 @@ namespace MonoMobile.Views
 		public RectangleF CalculateInnerRect()
 		{
 			var indentationOffset = 0f;
-			var borderOffset = 1;
+			var borderOffset = GetBorderOffset();
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
 			var gap = UIDevice.CurrentDevice.GetFixedGap();
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
@@ -260,18 +261,26 @@ namespace MonoMobile.Views
 			if (TableView.Style == UITableViewStyle.Grouped)
 				indentationOffset = indentation + gap;
 			
-//			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.DoubleLineEtched)
-//				borderOffset = 2;
-//			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.SingleLineEtched)
-//				borderOffset = 1;
-//			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.SingleLine)
-//				borderOffset = 0;
-
-			var rect = new RectangleF(Bounds.X + indentationOffset - borderOffset, Bounds.Y, Bounds.Width - (indentationOffset * 2) + (borderOffset * 2), Bounds.Height);
+			var frame = TableView.Frame;
+			var rect = new RectangleF(Bounds.X + indentationOffset - borderOffset, Bounds.Y, frame.Width - (indentationOffset * 2) + (borderOffset * 2), Bounds.Height);
 			
 			return rect;
 		}
 		
+		public int GetBorderOffset()
+		{
+			var borderOffset = 1;
+			
+			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.DoubleLineEtched)
+				borderOffset = 2;
+			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.SingleLineEtched)
+				borderOffset = 1;
+			if (TableView.SeparatorStyle == UITableViewCellSeparatorStyle.SingleLine)
+				borderOffset = 0;
+
+			return borderOffset;
+		}
+
 		public CGPath GetCellBorderPath(RectangleF rect)
 		{
 			var cornerRadius = 10;
@@ -402,6 +411,9 @@ namespace MonoMobile.Views
 
 		public override void Draw(RectangleF rect)
 		{
+			//temp until I figure out why dthis doesn't work properly on iPad.
+			return;
+
 			if (_Cell != null)
 			{
 				CGContext context = UIGraphics.GetCurrentContext();
@@ -421,7 +433,8 @@ namespace MonoMobile.Views
 				}
 				
 				context.AddPath(path);
-				_Cell.Element.Theme.DisabledColor.SetFill();
+				context.SetFillColor(_Cell.Element.Theme.DisabledColor.CGColor);
+				context.SetBlendMode(CGBlendMode.Overlay);
 				context.DrawPath(CGPathDrawingMode.Fill);
 			}
 		}

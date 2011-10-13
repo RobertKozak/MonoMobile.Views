@@ -311,8 +311,8 @@
     <Compile Include="Interfaces\IUpdateable.cs" />
     <Compile Include="Dialog\Reflection API\ProgressAttribute.cs" />
     <Compile Include="Dialog\Elements\ProgressElement.cs" />
-    <Compile Include="Util.cs" />
     <Compile Include="Application\Reachablity.cs" />
+    <Compile Include="Application\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
