@@ -39,24 +39,34 @@ namespace MonoMobile.Views
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication : UIApplication
 	{
-		private static DialogViewController _PreviousDialogViewController;
-		private static UIViewController _PreviousController;
-		private static UINavigationController _NavigationController;
-
 		public const string Version = "0.9";
 
 		public static Type[] ViewTypes { get; private set;}
 
 		public static UIWindow Window { get; set; }
 		public static UINavigationController NavigationController { get; set; }
-		public static DialogViewController CurrentDialogViewController { get; set; }
-		public static UIViewController CurrentViewController { get; set; }
 		public static List<UIView> Views { get; set; }
 		public static List<DialogViewController> DialogViewControllers { get; private set;}
 
 		public static string Title { get; set; }
- 
 		public static Action ResumeFromBackgroundAction { get; set; }
+
+		public static DialogViewController CurrentDialogViewController 
+		{ 
+			get 
+			{ 
+				return NavigationController.ViewControllers.Count() > 0 ? NavigationController.ViewControllers.Last() as DialogViewController : null; 
+			} 
+		}
+
+		public static UIViewController CurrentViewController  
+		{ 
+			get 
+			{ 
+				return CurrentDialogViewController != null ? CurrentDialogViewController as UIViewController : null;
+			} 
+		}
+
 
 		static MonoMobileApplication()
 		{
@@ -78,10 +88,9 @@ namespace MonoMobile.Views
 
 		public static void PushView(UIView view, bool animated)
 		{
-			CurrentDialogViewController = CreateDialogViewController(view, false);
-			CurrentViewController = CurrentDialogViewController;
-			
-			NavigationController.PushViewController(CurrentViewController, animated);
+			var dvc = CreateDialogViewController(view, false);
+		
+			NavigationController.PushViewController(dvc, animated);
 		}
 
 		public static void PresentModelView(UIView view)
@@ -103,29 +112,15 @@ namespace MonoMobile.Views
 
 		public static void PresentModelView(UIView view, UIModalTransitionStyle transistionStyle)
 		{			
-			_PreviousController = CurrentViewController;
-			_PreviousDialogViewController = CurrentDialogViewController;
-
-			CurrentDialogViewController = CreateDialogViewController(view, true);
-
-			_NavigationController = new UINavigationController();
-			_NavigationController.ViewControllers = new UIViewController[] { CurrentDialogViewController };
-		
-			CurrentViewController = _NavigationController;
+			var dvc = CreateDialogViewController(view, true);			
+			dvc.ModalTransitionStyle = transistionStyle;
 			
-			CurrentViewController.ModalTransitionStyle = transistionStyle;
-
-			NavigationController.PresentModalViewController(_NavigationController, true);
+			NavigationController.PresentModalViewController(dvc, true);
 		}
 
 		public static void DismissModalView(bool animated)
 		{
 			NavigationController.DismissModalViewControllerAnimated(animated);
-
-			CurrentViewController = _PreviousController;
-			CurrentDialogViewController = _PreviousDialogViewController;
-
-			_PreviousController = null;
 		}
 
 		public static void Run(string title, Type mainViewType, string[] args)

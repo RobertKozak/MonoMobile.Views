@@ -93,8 +93,8 @@ namespace MonoMobile.Views
 	
 			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
 	
-			MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
-			MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
+	//		MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
+	//		MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
 			
 			foreach (var view in MonoMobileApplication.Views)
 			{				

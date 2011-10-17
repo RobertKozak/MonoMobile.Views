@@ -188,11 +188,6 @@ namespace MonoMobile.Views
 			Element = null;
 		}
 
-		public virtual void DrawElementView(RectangleF innerRect, CGContext context)
-		{
-			Element.Theme.DrawElementViewAction(innerRect, context, this);
-		}
-
 		public void DrawContentView()
 		{
 			if (!Highlighted)
@@ -229,8 +224,14 @@ namespace MonoMobile.Views
 				
 				if (Element.Theme.DrawElementViewAction != null)
 				{
-					DrawElementView(innerRect, context);
+					Element.Theme.DrawElementViewAction(innerRect, context, this);
 				}
+				
+				UIGraphics.BeginImageContext(Bounds.Size);
+				UIImage image = UIGraphics.GetImageFromCurrentImageContext();
+				UIGraphics.EndImageContext();
+
+				BackgroundView = new UIImageView(image);
 
 				context.RestoreState();
 
@@ -352,33 +353,6 @@ namespace MonoMobile.Views
 			return path;
 		}
 	}
-	
-	public class UITableViewBitmapCell: UITableViewElementCell
-	{
-		public UITableViewBitmapCell() :base() {}
-		public UITableViewBitmapCell(NSCoder coder) : base(coder) {}
-		public UITableViewBitmapCell(NSObjectFlag t) : base(t) {}
-		public UITableViewBitmapCell(IntPtr handle) : base (handle) {}
-
-		public UITableViewBitmapCell(UITableViewCellStyle style, string reuseIdentifier, IElement element) : this(style, new NSString(reuseIdentifier), element)
-		{
-		}
-
-		public UITableViewBitmapCell(UITableViewCellStyle style, NSString reuseIdentifier, IElement element) : base(style, reuseIdentifier, element)
-		{
-		}
-
-		public override void DrawElementView(RectangleF innerRect, CGContext context)
-		{		
-			UIGraphics.BeginImageContext(Bounds.Size);
-
-			Element.Theme.DrawElementViewAction(innerRect, context, this);
-			UIImage image = UIGraphics.GetImageFromCurrentImageContext();
-			UIGraphics.EndImageContext();
-
-			BackgroundView = new UIImageView(image);
-		}
-	}
 
 	public class UITableViewCellContentView : UIView
 	{
@@ -409,6 +383,8 @@ namespace MonoMobile.Views
 			if (Cell != null)
 			{
 				Cell.DrawContentView();
+
+				base.Draw(rect);
 			}
 		}
 	}

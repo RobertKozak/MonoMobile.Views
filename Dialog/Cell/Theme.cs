@@ -480,7 +480,7 @@ namespace MonoMobile.Views
 
 			if (CellBackgroundColor != null)
 			{
-				cell.BackgroundColor = CellBackgroundColor ?? UIColor.White;
+				cell.BackgroundColor = CellBackgroundColor;
 			}
 			else if (element != null && CellBackgroundUri != null)
 			{
