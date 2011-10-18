@@ -114,8 +114,11 @@ namespace MonoMobile.Views
 		{			
 			var dvc = CreateDialogViewController(view, true);			
 			dvc.ModalTransitionStyle = transistionStyle;
-			
-			NavigationController.PresentModalViewController(dvc, true);
+ 
+			var navController = new UINavigationController();
+			navController.ViewControllers = new UIViewController[] { dvc };
+
+			NavigationController.PresentModalViewController(navController, true);
 		}
 
 		public static void DismissModalView(bool animated)
