@@ -47,38 +47,24 @@ namespace MonoMobile.Views
 
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-		{
-			MonoMobileApplication.NavigationController = new UINavigationController();
-			
-			_Window = new UIWindow(UIScreen.MainScreen.Bounds);
-
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
-				_DefaultImage = UIImage.FromBundle("DefaultiPad.png");
-			else
-				_DefaultImage = UIImage.FromBundle("Default.png");
-			
-			if (_DefaultImage != null)
-			{
-				var imageView = new UIImageView(_Window.Bounds);
-				imageView.Image = _DefaultImage;
-				_Window.Add(imageView);
-				_Window.BackgroundColor = UIColor.Clear;
-			}
-
-			MonoMobileApplication.NavigationController.View.Alpha = 0.0f;
-
-			_Window.AddSubview(MonoMobileApplication.NavigationController.View);
-			_Window.MakeKeyAndVisible();
-			
-			MonoMobileApplication.Window = _Window;
-			
-			BeginInvokeOnMainThread(()=> { Startup(); });
+		{			
+			InvokeOnMainThread(()=> { Startup(); });
 			
 			return true;
 		}
 
 		private void Startup()
 		{
+			MonoMobileApplication.NavigationController = new UINavigationController();
+			
+			_Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+			_Window.AddSubview(MonoMobileApplication.NavigationController.View);
+			_Window.MakeKeyAndVisible();
+
+			MonoMobileApplication.Window = _Window;
+			MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
+
 			MonoMobileApplication.Views = new List<UIView>();
 			foreach (var viewType in MonoMobileApplication.ViewTypes)
 			{
@@ -92,10 +78,7 @@ namespace MonoMobile.Views
 			}
 	
 			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
-	
-	//		MonoMobileApplication.CurrentDialogViewController = MonoMobileApplication.NavigationController.ViewControllers.First() as DialogViewController;
-	//		MonoMobileApplication.CurrentViewController = MonoMobileApplication.CurrentDialogViewController;
-			
+				
 			foreach (var view in MonoMobileApplication.Views)
 			{				
 				var initalizable = view as IInitializable;

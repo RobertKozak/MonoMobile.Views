@@ -67,7 +67,8 @@ namespace MonoMobile.Views
 		public override void InitializeCell(UITableView tableView)
 		{
 			base.InitializeCell(tableView);
-			Theme.TextAlignment = UITextAlignment.Center;
+			Cell.TextLabel.BackgroundColor = UIColor.Clear;
+			Cell.TextLabel.TextAlignment = UITextAlignment.Center;
 		}
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)

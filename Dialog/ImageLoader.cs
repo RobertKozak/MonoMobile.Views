@@ -33,6 +33,7 @@ using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
 using MonoMobile.Views.Utilities;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace MonoMobile.Views.Utilities
 {
@@ -96,10 +97,10 @@ namespace MonoMobile.Views.Utilities
 		///   an image is requested.
 		/// </summary>
 		public static ImageLoader DefaultLoader;
-
+		
 		static ImageLoader()
 		{
-			PicDir = Path.Combine(BaseDir, "Library/Caches/Pictures.MonoMobile.Views/");
+			PicDir = Path.Combine(BaseDir, string.Format("Library/Caches/"));
 			
 			if (!Directory.Exists(PicDir))
 				Directory.CreateDirectory(PicDir);
@@ -178,11 +179,11 @@ namespace MonoMobile.Views.Utilities
 		/// <returns>
 		/// If the image has already been downloaded, or is in the cache, this will return the image as a UIImage.
 		/// </returns>
-		public static UIImage DefaultRequestImage(Uri uri, IImageUpdated notify)
+		public static UIImage DefaultRequestImage(Uri uri, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			if (DefaultLoader == null)
 				DefaultLoader = new ImageLoader(50, 4 * 1024 * 1024);
-			return DefaultLoader.RequestImage(uri, notify);
+			return DefaultLoader.RequestImage(uri, notify, headers);
 		}
 		
 
@@ -198,7 +199,7 @@ namespace MonoMobile.Views.Utilities
 		/// <returns>
 		/// If the image has already been downloaded, or is in the cache, this will return the image as a UIImage.
 		/// </returns>
-		public UIImage RequestImage(Uri uri, IImageUpdated notify)
+		public UIImage RequestImage(Uri uri, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			UIImage ret;
 			
@@ -228,11 +229,11 @@ namespace MonoMobile.Views.Utilities
 			}
 			if (uri.IsFile)
 				return null;
-			QueueRequest(uri, picfile, notify);
+			QueueRequest(uri, picfile, notify, headers);
 			return null;
 		}
-
-		static void QueueRequest(Uri uri, string target, IImageUpdated notify)
+		
+		static void QueueRequest(Uri uri, string target, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			if (notify == null)
 				throw new ArgumentNullException("notify");
@@ -257,7 +258,7 @@ namespace MonoMobile.Views.Utilities
 					{
 						try
 						{
-							StartPicDownload(uri, target);
+							StartPicDownload(uri, target, headers);
 						}
 						catch (Exception e)
 						{
@@ -268,7 +269,7 @@ namespace MonoMobile.Views.Utilities
 			}
 		}
 
-		static bool Download(Uri uri, string target)
+		static bool Download(Uri uri, string target, IDictionary<string, string> headers = null)
 		{
 			var buffer = new byte[4 * 1024];
 			
@@ -278,7 +279,19 @@ namespace MonoMobile.Views.Utilities
 				using (var file = new FileStream(tmpfile, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
 					var req = WebRequest.Create(uri) as HttpWebRequest;
-					
+								
+					if (headers != null && headers.Count > 0)
+					{
+						req.Method = "GET";
+						foreach (var keyValuePair in headers)
+						{
+							if (!string.IsNullOrEmpty(keyValuePair.Key) && !string.IsNullOrEmpty(keyValuePair.Value))
+							{
+								req.Headers.Add(keyValuePair.Key, keyValuePair.Value);
+							}
+						}
+					}
+
 					using (var resp = req.GetResponse())
 					{
 						using (var s = resp.GetResponseStream())
@@ -303,12 +316,12 @@ namespace MonoMobile.Views.Utilities
 
 		static long picDownloaders;
 
-		static void StartPicDownload(Uri uri, string target)
+		static void StartPicDownload(Uri uri, string target, IDictionary<string, string> headers = null)
 		{
 			Interlocked.Increment(ref picDownloaders);
 			try
 			{
-				_StartPicDownload(uri, target);
+				_StartPicDownload(uri, target, headers);
 			}
 			catch (Exception e)
 			{
@@ -317,14 +330,14 @@ namespace MonoMobile.Views.Utilities
 			//Util.Log ("Leaving StartPicDownload {0}", picDownloaders);
 			Interlocked.Decrement(ref picDownloaders);
 		}
-
-		static void _StartPicDownload(Uri uri, string target)
+		
+		static void _StartPicDownload(Uri uri, string target, IDictionary<string, string> headers = null)
 		{
 			do
 			{
 				bool downloaded = false;
 				
-				downloaded = Download(uri, target);
+				downloaded = Download(uri, target, headers);
 				if (!downloaded)
 					Console.WriteLine("Error fetching picture for {0} to {1}", uri, target);
 				

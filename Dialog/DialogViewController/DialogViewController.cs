@@ -1,3 +1,4 @@
+using System.Collections;
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
@@ -174,11 +175,11 @@ namespace MonoMobile.Views
 		{
 			using (var pool = new NSAutoreleasePool())
 			{
+				if (Root.PullToRefreshCommand != null)
+					Root.PullToRefreshCommand.Execute(this);
+	
 				InvokeOnMainThread(delegate
 				{
-					if (Root.PullToRefreshCommand != null)
-						Root.PullToRefreshCommand.Execute(this);
-
 					ReloadComplete();
 				});
 			}
@@ -301,7 +302,7 @@ namespace MonoMobile.Views
 			_Searchbar.ResignFirstResponder();
 			_Searchbar.Text = string.Empty;
 		}
-
+	
 		[Export("fadeOutDidFinish")]
 		public void FadeOutDidFinish()
 		{
@@ -557,7 +558,10 @@ namespace MonoMobile.Views
 			if (nav != null)
 			{
 				nav.SetToolbarHidden(ToolbarItems == null, true);
-				
+			
+				NavigationItem.RightBarButtonItem = null;
+				NavigationItem.LeftBarButtonItem = null;
+
 				if (Root.NavbarButtons != null)
 				{
 					foreach (var button in Root.NavbarButtons)
@@ -568,13 +572,6 @@ namespace MonoMobile.Views
 								NavigationItem.RightBarButtonItem = button;
 							else
 								NavigationItem.LeftBarButtonItem = button;
-						}
-						else 
-						{
-							if (button.Location == BarButtonLocation.Right)
-								NavigationItem.RightBarButtonItem = null;
-							else
-								NavigationItem.LeftBarButtonItem = null;
 						}
 					}
 				}
@@ -765,7 +762,7 @@ namespace MonoMobile.Views
 			
 			if (_TableSource != null)
 				_TableSource.Dispose();
-
+		
 			_TableSource = CreateSizingSource(Root.UnevenRows);
 			TableView.Source = _TableSource;
 			

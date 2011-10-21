@@ -91,7 +91,7 @@ namespace MonoMobile.Views
 			var searchable = _Container.Root as ISearchBar;
 
 			if (searchable != null && searchable.IncrementalSearch)
-				_Container.FinishSearch(false);
+				CancelButtonClicked(searchbar);
 			else
 				_Container.PerformFilter(searchbar.Text);
 		}

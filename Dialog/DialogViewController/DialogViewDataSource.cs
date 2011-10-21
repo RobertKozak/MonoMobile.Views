@@ -41,8 +41,8 @@ namespace MonoMobile.Views
 
 	public class DialogViewDataSource : UITableViewSource
 	{
-//		private HeaderTapGestureRecognizer tapRecognizer;
-//		private Selector _HeaderSelector = new Selector("headerTap");
+		private HeaderTapGestureRecognizer tapRecognizer;
+		private Selector _HeaderSelector = new Selector("headerTap");
 
 		private const float _SnapBoundary = 65;
 		protected DialogViewController Container;
@@ -67,11 +67,18 @@ namespace MonoMobile.Views
 		{
 			return Root.Sections.Count;
 		}
-
+		
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
 			var element = GetElement(indexPath);
-
+			
+			//if no element return an empty cell since GetCell must return a cell
+			if (element == null)
+			{
+				Console.WriteLine("Creating empty Cell");
+				return new UITableViewCell();
+			}
+				
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
 
@@ -151,42 +158,42 @@ namespace MonoMobile.Views
 					section.HeaderView = CreateHeaderView(tableView, section.Caption);
 				}
 	
-//				if (section.HeaderView != null)
-//				{
-//					if (section.IsExpandable)
-//					{
-//						section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
-//						section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
-//						section.HeaderView.Add(section.ArrowView);
-//					
-//						tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
-//				
-//						section.HeaderView.AddGestureRecognizer(tapRecognizer);
-//						Flip(section);
-//					}
-//				}
+				if (section.HeaderView != null)
+				{
+					if (section.IsExpandable)
+					{
+						section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
+						section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
+						section.HeaderView.Add(section.ArrowView);
+					
+						tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
+				
+						section.HeaderView.AddGestureRecognizer(tapRecognizer);
+						Flip(section);
+					}
+				}
 				return section.HeaderView;
 			}
 
 			return null;
 		}
 
-//		[Export("headerTap")]
-//		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
-//		{
-//			var section = recognizer.Section;
-//			var state = section.ExpandState;
-//			
-//			if (section.IsExpandable)
-//			{
-//				if (state == ExpandState.Opened)
-//					section.ExpandState = ExpandState.Closed;
-//				else
-//					section.ExpandState = ExpandState.Opened;
-//			
-//				Flip(section);
-//			}
-//		}
+		[Export("headerTap")]
+		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
+		{
+			var section = recognizer.Section;
+			var state = section.ExpandState;
+			
+			if (section.IsExpandable)
+			{
+				if (state == ExpandState.Opened)
+					section.ExpandState = ExpandState.Closed;
+				else
+					section.ExpandState = ExpandState.Opened;
+			
+				Flip(section);
+			}
+		}
 
 		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
 		{
@@ -198,14 +205,14 @@ namespace MonoMobile.Views
 			}
 		}
 		
-//		private void Flip(ISection section)
-//		{
-//			UIView.BeginAnimations(null);
-//			UIView.SetAnimationDuration(0.18f);
-//			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
-//			
-//			UIView.CommitAnimations();
-//		}
+		private void Flip(ISection section)
+		{
+			UIView.BeginAnimations(null);
+			UIView.SetAnimationDuration(0.18f);
+			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
+			
+			UIView.CommitAnimations();
+		}
 
 		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
 		{
@@ -269,7 +276,8 @@ namespace MonoMobile.Views
 				return height;
 			}
 			
-			return 0;			
+			//if greater than 0 then the empty footer will display and prevent empty rows from displaying
+			return 1;			
 		}
 
 		private UIView CreateHeaderView(UITableView tableView, string caption)

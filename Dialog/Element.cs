@@ -326,16 +326,16 @@ namespace MonoMobile.Views
 				Cell.Element = this;
 			
 			InitializeTheme();
-			
+					
 			InitializeCell(TableView);
-			
+
 			if (DataBinding != null)
 			{
 				DataBinding.BindProperties();
 				DataBinding.UpdateTargets();
 				DataBinding.UpdateSources();
 			}
-			
+
 			if (!Enabled)
 				SetDisabled(Cell);
 			
@@ -377,7 +377,7 @@ namespace MonoMobile.Views
 				ElementView.RemoveFromSuperview();
 
 			InitializeContent();
-
+			
 			if (Cell != null)
 			{	
 				if (ElementView != null)
@@ -386,7 +386,7 @@ namespace MonoMobile.Views
 					Cell.ContentView.AddSubview(ElementView);
 				}
 			}
-			
+
 			var elementView = ElementView as IElement;
 			if (elementView != null && elementView.Caption != Caption)
 			{
@@ -394,15 +394,17 @@ namespace MonoMobile.Views
 				elementView.Caption = title;
 			}
 		}
-		
+ 
 		public virtual void InitializeContent()
 		{
 		}
 		
 		public virtual void UpdateCell()
 		{
+			if (ElementView != null)
+				ElementView.Frame = Cell.RecalculateContentFrame(ElementView.Frame, ShowCaption);
 		}
-		
+
 		private bool _Enabled;
 		public bool Enabled 
 		{
@@ -484,7 +486,9 @@ namespace MonoMobile.Views
 			if (Root == null || Root.TableView == null)
 				return;
 			
-			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.None);
+			ImageIcon = ImageLoader.DefaultRequestImage(uri, null);
+			
+			Root.TableView.ReloadRows(new NSIndexPath[] { IndexPath }, UITableViewRowAnimation.Fade);
 		}
 
 		public virtual float GetHeight(UITableView tableView, NSIndexPath indexPath)
