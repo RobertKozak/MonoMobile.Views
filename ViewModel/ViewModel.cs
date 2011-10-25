@@ -37,8 +37,8 @@ namespace MonoMobile.Views
 		private object _DataModel;
 		public object DataModel 
 		{
-			get { return GetModel(); } 
-			set { SetModel(value); }
+			get { return GetDataModel(); } 
+			set { SetDataModel(value); }
 		}
  
 		public BindingContext BindingContext { get; set; }
@@ -47,12 +47,12 @@ namespace MonoMobile.Views
 		{
 		}
 		
-		public virtual object GetModel()
+		public virtual object GetDataModel()
 		{
 			return _DataModel;
 		}
 
-		public virtual void SetModel(object dataModel)
+		public virtual void SetDataModel(object dataModel)
 		{
 			if (_DataModel != dataModel)
 				_DataModel = dataModel;
