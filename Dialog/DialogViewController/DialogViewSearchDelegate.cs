@@ -58,15 +58,15 @@ namespace MonoMobile.Views
 			_Container.StartSearch();
 		}
 
-		public override void OnEditingStopped(UISearchBar searchbar)
-		{
-			var searchable = _Container.Root as ISearchBar;
-			if (searchable != null && searchable.IncrementalSearch)
-			{
-				searchbar.ShowsCancelButton = false;
-				_Container.FinishSearch(false);
-			}
-		}
+//		public override void OnEditingStopped(UISearchBar searchbar)
+//		{
+//			var searchable = _Container.Root as ISearchBar;
+//			if (searchable != null && searchable.IncrementalSearch)
+//			{
+//		//		searchbar.ShowsCancelButton = false;
+//		//		_Container.FinishSearch(false);
+//			}
+//		}
 		public override void TextChanged(UISearchBar searchbar, string searchText)
 		{
 			var searchable = _Container.Root as ISearchBar;
@@ -91,7 +91,7 @@ namespace MonoMobile.Views
 			var searchable = _Container.Root as ISearchBar;
 
 			if (searchable != null && searchable.IncrementalSearch)
-				CancelButtonClicked(searchbar);
+				searchbar.ResignFirstResponder();
 			else
 				_Container.PerformFilter(searchbar.Text);
 		}
