@@ -47,6 +47,7 @@ namespace MonoMobile.Views
 		IElement Parent { get; set; }
 		ISection Section { get; }
 		IRoot Root { get; }
+		int Index { get; set; }
 
 		string Caption { get; set; }
 		

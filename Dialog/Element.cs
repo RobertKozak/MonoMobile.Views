@@ -99,24 +99,7 @@ namespace MonoMobile.Views
 				if (Section == null || Root == null)
 					return null;
 				
-				int row = 0;
-				foreach (var element in Section.Elements)
-				{
-					if (element == this)
-					{
-						int nsect = 0;
-						foreach (var sect in Root.Sections)
-						{
-							if (Section == sect)
-							{
-								return NSIndexPath.FromRowSection(row, nsect);
-							}
-							nsect++;
-						}
-					}
-					row++;
-				}
-				return null;
+				return NSIndexPath.FromRowSection(Index, Section.Index);
 			}
 		}
 		

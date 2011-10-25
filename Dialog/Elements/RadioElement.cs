@@ -78,11 +78,16 @@ namespace MonoMobile.Views
 
 								Container.SelectedItem = Item;
 								Container.SelectedItems.Add(Item);
+								
+								((IContainer)Root).SelectedItem = Item;
+								((IContainer)Root).SelectedItems.Add(Item);
 							}
 							index++;
 						}
 					}
-							
+						
+					((IContainer)Root).IsMultiselect = Container.IsMultiselect;
+	
 					Root.Index = selectedIndex;					
 					
 					var property = BindableProperty.GetBindableProperty(Container, "SelectedItemProperty");

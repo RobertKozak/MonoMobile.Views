@@ -156,9 +156,10 @@ namespace MonoMobile.Views
 			
 			Elements.Add(element);
 			element.Parent = this;
-			
+			element.Index = Elements.Count - 1;
+
 			if (Parent != null)
-				InsertVisual(Elements.Count - 1, UITableViewRowAnimation.None, 1);
+				InsertVisual(element.Index, UITableViewRowAnimation.None, 1);
 		}
 
 		/// <summary>
@@ -176,6 +177,9 @@ namespace MonoMobile.Views
 				Add(e);
 				count++;
 			}
+
+			ResetElementIndices();
+
 			return count;
 		}
 //
@@ -257,6 +261,8 @@ namespace MonoMobile.Views
 				e.Parent = this;
 			}
 			
+			ResetElementIndices();
+
 			if (Root != null && Root.TableView != null)
 			{
 				if (anim == UITableViewRowAnimation.None)
@@ -275,10 +281,12 @@ namespace MonoMobile.Views
 			int count = 0;
 			foreach (var e in newElements)
 			{
-			//	Elements.Insert(pos++, e);
+				Elements.Insert(pos++, e);
 				e.Parent = this;
 				count++;
 			}
+
+			ResetElementIndices();
 
 			if (Root != null && Root.TableView != null)
 			{
@@ -320,6 +328,7 @@ namespace MonoMobile.Views
 				if (Elements[i] == e)
 				{
 					Remove(i);
+					ResetElementIndices();
 					return;
 				}
 			}
@@ -379,6 +388,8 @@ namespace MonoMobile.Views
 			for (int i = 0; i < count; i++)
 				paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
 			Root.TableView.DeleteRows(paths, anim);
+			
+			ResetElementIndices();
 
 			foreach(var element in Elements)
 			{
@@ -460,8 +471,8 @@ namespace MonoMobile.Views
 				foreach (var item in e.NewItems)
 				{
 					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					Elements[e.NewStartingIndex + index] = element;
-					Elements.Insert(e.NewStartingIndex + index, element);
+					Remove(e.OldStartingIndex);
+					Insert(e.NewStartingIndex + index, element);
 					index++;
 				}
 				
@@ -550,7 +561,14 @@ namespace MonoMobile.Views
 
 			//Elements.ForEach((element)=>element.BeginInit());
 		}
-
+		
+		private void ResetElementIndices()
+		{
+			for (int i = Elements.Count - 1; i > 0; i--)
+			{
+				Elements[i].Index = i;
+			}
+		}
 	}
 }
 

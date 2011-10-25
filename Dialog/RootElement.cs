@@ -125,8 +125,13 @@ namespace MonoMobile.Views
 			this._ViewControllerFactory = viewControllerFactory;
 			//Sections = new List<ISection>();
 		}
-
-		public List<ISection> Sections { get; set; }
+		
+		private List<ISection> _Sections;
+		public List<ISection> Sections 
+		{ 
+			get { return _Sections; } 
+			set { _Sections = value; ResetSectionIndices(); }
+		}
 
 		public NSIndexPath PathForRadio()
 		{			
@@ -198,7 +203,9 @@ namespace MonoMobile.Views
 				return;
 
 			Sections.Add(section);
+			section.Index = Sections.Count - 1;
 			section.Parent = this;
+
 			if (TableView == null)
 				return;
 
@@ -308,6 +315,8 @@ namespace MonoMobile.Views
 			
 			Sections.RemoveAt(idx);
 			
+			ResetSectionIndices();
+
 			if (TableView == null)
 				return;
 			
@@ -321,6 +330,9 @@ namespace MonoMobile.Views
 			int idx = Sections.IndexOf(s);
 			if (idx == -1)
 				return;
+
+			ResetSectionIndices();
+
 			RemoveAt(idx, UITableViewRowAnimation.Fade);
 		}
 
@@ -372,6 +384,12 @@ namespace MonoMobile.Views
 		{
 			if (DetailTextLabel != null)
 			{
+				if (IsMultiselect && SelectedItems != null)
+					DetailTextLabel.Text = SelectedItems.Count.ToString();
+
+				if (!IsMultiselect && SelectedItem != null)
+					DetailTextLabel.Text = SelectedItem.ToString();
+
 				DetailTextLabel.TextAlignment = UITextAlignment.Right;	
 			}
 			
@@ -502,6 +520,14 @@ namespace MonoMobile.Views
 		{
 			var element = Sections.FirstOrDefault().Elements.SingleOrDefault((e)=>e.ToString() == value);
 			return element.IndexPath.Row;
+		}
+
+		private void ResetSectionIndices()
+		{
+			for (int i = Sections.Count - 1; i > 0; i--)
+			{
+				Sections[i].Index = i;
+			}
 		}
 	}
 }

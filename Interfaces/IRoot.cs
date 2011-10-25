@@ -50,7 +50,6 @@ namespace MonoMobile.Views
 		bool UnevenRows { get; set;}
 
 		int Count { get; }
-		int Index { get; set; }
 		NSIndexPath PathForRadio();
 
 		void Prepare();

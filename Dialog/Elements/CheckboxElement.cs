@@ -73,14 +73,18 @@ namespace MonoMobile.Views
 				{
 					Container.SelectedItems.Add(Item);
 					Container.SelectedItem = Item;
+					((IContainer)Root).SelectedItems.Add(Item);
+					((IContainer)Root).SelectedItem = Item;
 				}
 				
 				if (!(bool)DataContext && containsItem)
 				{
 					Container.SelectedItems.Remove(Item);
+					((IContainer)Root).SelectedItems.Remove(Item);
 				}
 			
-			
+				((IContainer)Root).IsMultiselect = Container.IsMultiselect;
+
 				var enumBinder = Item as EnumItem;
 				if (enumBinder != null)
 				{

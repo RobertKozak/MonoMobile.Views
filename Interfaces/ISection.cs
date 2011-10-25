@@ -77,6 +77,7 @@ namespace MonoMobile.Views
 		void CollectionChanged(NotifyCollectionChangedEventArgs e);
 
 		IEnumerator GetEnumerator();
+		int Index { get; set; }
 
 		int Count { get; }
 		IElement this[int idx] { get; }
