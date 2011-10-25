@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 	{
 		UIView ElementView { get; }
 		EditMode EditMode { get; }
-	//	UITextView InputControl2 { get; }
+		bool IsNeedsFirstResponder { get; set; }
 
 		NSIndexPath IndexPath { get; }
 

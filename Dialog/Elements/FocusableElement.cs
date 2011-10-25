@@ -40,9 +40,8 @@ namespace MonoMobile.Views
 	public abstract class FocusableElement : StringElement, ISelectable, IFocusable
 	{
 		protected IFocusable _Focus;
-		protected NSTimer _Timer;
-		protected UITextField _Dummy { get; set; }
-
+		
+		public bool IsNeedsFirstResponder { get; set; }
 		public UIControl Control { get; set; }
 
 		public FocusableElement(string caption) : base(caption)
@@ -54,27 +53,30 @@ namespace MonoMobile.Views
 			return new UITableViewElementCell(Theme.CellStyle, Id, this);
 		}
 
-		public override void InitializeContent()
+		protected override void CreateElementView()
 		{
-//			_Dummy = new UITextField(Cell.Bounds);
-//			_Dummy.ShouldBeginEditing = tf =>
-//			{
-//				ContentView.BecomeFirstResponder();
-//				return false;
-//			};
-			
 			ElementView = new UIPlaceholderTextField(Cell.Bounds) 
 			{ 
-			//	DataBinding = DataBinding,
 				BackgroundColor = UIColor.Clear, 
 				Tag = 1, 
 				Hidden = true
 			};
 			
-			//ContentView = _Dummy;
-			//ContentView.AddSubview(InputControl);
+			base.CreateElementView();
 		}
 			
+
+		public override void UpdateCell()
+		{
+			base.UpdateCell();
+
+			if (IsNeedsFirstResponder)
+			{
+				IsNeedsFirstResponder = false;
+				ElementView.BecomeFirstResponder();
+			}
+		}
+
 		public EditMode EditMode { get; set; }
 
 		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
@@ -118,25 +120,20 @@ namespace MonoMobile.Views
 			{
 				_Focus = elements.FirstOrDefault();
 				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-				_Timer = NSTimer.CreateScheduledTimer(TimeSpan.FromMilliseconds(500), FocusTimer);
 			}
 			else
 			{
 				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-				_Focus.ElementView.BecomeFirstResponder();
-			}
-
-		}
-
-		private void FocusTimer()
-		{
-			if (_Timer != null)
-			{
-				_Timer.Invalidate();
-				_Timer = null;
+				
 			}
 			
-			_Focus.ElementView.BecomeFirstResponder();
+			_Focus.IsNeedsFirstResponder = true;
+
+			if (_Focus.ElementView != null)
+			{
+				_Focus.ElementView.BecomeFirstResponder();		
+				_Focus.IsNeedsFirstResponder = !_Focus.ElementView.IsFirstResponder;
+			}
 		}
 	}
 }
