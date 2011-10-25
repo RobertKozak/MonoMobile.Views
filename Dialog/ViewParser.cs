@@ -288,6 +288,10 @@ namespace MonoMobile.Views
 							}
 							else
 								newElement.EditingStyle = root.EditingStyle;
+							
+							var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
+							if (useNibAttribute != null)
+								newElement.NibName = useNibAttribute.NibName;
 
 							bindable = newElement as IBindable;
 
@@ -298,7 +302,7 @@ namespace MonoMobile.Views
 //
 //								var firstSection = sections.FirstOrDefault();
 //								if (firstSection.Elements.Count > 0)
-//									lastSection.Add(firstSection.Elements);
+//									lastSection.Add(firstSection.Elements.Values);
 //
 //								for(var index=1; index < sections.Count; index++)
 //								{
@@ -342,7 +346,7 @@ namespace MonoMobile.Views
 			foreach (var section in sectionList)
 			{
 				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
-				section.Elements = new System.Collections.ObjectModel.ObservableCollection<MonoMobile.Views.IElement>(orderedList);
+				section.Elements = orderedList;
 			}
 
 			var orderedSections = sectionList.Where(s=>s.Elements.Count > 0).OrderBy(section=>section.Order).ToList();

@@ -24,11 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 // 
-using System;
-using System.Collections.Generic;
-
 namespace MonoMobile.Views.Utilities
 {
+	using System;
+	using System.Collections.Generic;
 
 	public class LRUCache<TKey, TValue> where TValue : class, IDisposable
 	{

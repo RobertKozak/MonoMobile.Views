@@ -59,7 +59,8 @@ namespace MonoMobile.Views
 		UITableView TableView { get; set; }
 
 		UITableViewCellEditingStyle EditingStyle { get; set; }
-
+		
+		string NibName { get; set; }
 		UITableViewElementCell Cell { get; set; }
 		UITableViewElementCell GetCell(UITableView tableView);
 		void InitializeCell(UITableView tableView);

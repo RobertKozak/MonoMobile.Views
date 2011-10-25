@@ -313,6 +313,8 @@
     <Compile Include="Dialog\Elements\ProgressElement.cs" />
     <Compile Include="Application\Reachablity.cs" />
     <Compile Include="Application\Util.cs" />
+    <Compile Include="Dialog\Cell\CellFactory.cs" />
+    <Compile Include="Dialog\Reflection API\UseNibAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

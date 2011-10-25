@@ -65,6 +65,8 @@ namespace MonoMobile.Views
 		public int Order { get; set; }
 		public int Index { get; set; }
 		
+		public string NibName { get; set; }
+
 		public event DataContextChangedEvent DataContextChanged;
 
 		protected virtual void SetDataContext(object value)
@@ -312,30 +314,28 @@ namespace MonoMobile.Views
 		{
 		}
 
+		private TableCellFactory<UITableViewElementCell> cellFactory = new TableCellFactory<UITableViewElementCell>();
+
 		public virtual UITableViewElementCell GetCell(UITableView tableView)
 		{
 			TableView = tableView;
 			
-			Cell = tableView.DequeueReusableCell(Id) as UITableViewElementCell;
-			
-			if (Cell == null)
-			{
-				Cell = NewCell();
-			}
-			else
-				Cell.Element = this;
-			
+			cellFactory.CellId = Id;
+			Cell = cellFactory.GetCell(tableView, NibName, ()=>NewCell());
+ 
+			Cell.Element = this;
+
 			InitializeTheme();
 					
 			InitializeCell(TableView);
-
+			
 			if (DataBinding != null)
 			{
 				DataBinding.BindProperties();
 				DataBinding.UpdateTargets();
 				DataBinding.UpdateSources();
 			}
-
+			
 			if (!Enabled)
 				SetDisabled(Cell);
 			
@@ -343,14 +343,13 @@ namespace MonoMobile.Views
 				SetVisible(Cell);
 			
 			UpdateCell();
-
+			
 			return Cell;
 		}
 
 		public virtual UITableViewElementCell NewCell()
 		{
 			var cell = new UITableViewElementCell(Theme.CellStyle, Id, this);
-			cell.Element = this;
 			return cell;
 		}
 
@@ -478,7 +477,7 @@ namespace MonoMobile.Views
 		{
 		}
 
-		void IImageUpdated.UpdatedImage(Uri uri)
+		public void UpdatedImage(Uri uri)
 		{
 			if (uri == null)
 				return;

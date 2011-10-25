@@ -91,7 +91,7 @@ namespace MonoMobile.Views
 		public void MoveNext()
 		{
 			var elements = from section in Root.Sections 
-				from element in section.Elements 
+				from element in section.Elements
 					where (element is IFocusable && ((IFocusable)element).EditMode != EditMode.ReadOnly)
 					select element as IFocusable; 
 					

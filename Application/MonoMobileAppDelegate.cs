@@ -40,11 +40,7 @@ namespace MonoMobile.Views
 
 	[Register("MonoMobileAppDelegate")]
 	public class MonoMobileAppDelegate : UIApplicationDelegate
-	{
-		private static UIImage _DefaultImage;
-		
-		private UIWindow _Window;
-
+	{		
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{			
@@ -57,12 +53,11 @@ namespace MonoMobile.Views
 		{
 			MonoMobileApplication.NavigationController = new UINavigationController();
 			
-			_Window = new UIWindow(UIScreen.MainScreen.Bounds);
+			MonoMobileApplication.Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-			_Window.AddSubview(MonoMobileApplication.NavigationController.View);
-			_Window.MakeKeyAndVisible();
+			MonoMobileApplication.Window.AddSubview(MonoMobileApplication.NavigationController.View);
+			MonoMobileApplication.Window.MakeKeyAndVisible();
 
-			MonoMobileApplication.Window = _Window;
 			MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
 
 			MonoMobileApplication.Views = new List<UIView>();

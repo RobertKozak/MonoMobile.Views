@@ -501,7 +501,7 @@ namespace MonoMobile.Views
 		protected int FromString(string value)
 		{
 			var element = Sections.FirstOrDefault().Elements.SingleOrDefault((e)=>e.ToString() == value);
-			return Sections.FirstOrDefault().Elements.IndexOf(element);
+			return element.IndexPath.Row;
 		}
 	}
 }

@@ -822,14 +822,14 @@ namespace MonoMobile.Views
 		
 		public override void ViewDidDisappear(bool animated)
 		{
-			foreach(var section in Root.Sections)
-			{
-				foreach(var element in section.Elements)
-				{
-				//	if (!(element is IRoot))
-				//		BindingOperations.ClearBindings(element);
-				}
-			}
+//			foreach(var section in Root.Sections)
+//			{
+//				foreach(var element in section.Elements.Values)
+//				{
+//				//	if (!(element is IRoot))
+//				//		BindingOperations.ClearBindings(element);
+//				}
+//			}
 
 			base.ViewDidDisappear(animated);
 		}

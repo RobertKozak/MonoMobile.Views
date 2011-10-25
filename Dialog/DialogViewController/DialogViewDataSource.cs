@@ -70,6 +70,8 @@ namespace MonoMobile.Views
 		
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+
 			var element = GetElement(indexPath);
 			
 			//if no element return an empty cell since GetCell must return a cell
@@ -79,6 +81,8 @@ namespace MonoMobile.Views
 				return new UITableViewCell();
 			}
 				
+			sw.Stop();
+			Console.WriteLine("GetCell: "+sw.Elapsed.TotalMilliseconds);
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
 
@@ -380,7 +384,7 @@ namespace MonoMobile.Views
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
 			var element = GetElement(indexPath);
-			
+
 			var sizable = element as ISizeable;
 			if (sizable != null)
 				return sizable.GetHeight(tableView, indexPath);
@@ -398,7 +402,7 @@ namespace MonoMobile.Views
 		}
 
 		public IElement GetElement(NSIndexPath indexPath)
-		{
+		{					
 			IElement element = null;
 			var section = GetSection(indexPath.Section);
 			if (section != null && section.Elements != null && section.Elements.Count > indexPath.Row)

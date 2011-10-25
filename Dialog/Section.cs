@@ -58,7 +58,7 @@ namespace MonoMobile.Views
 
 		private List<IElement> _HiddenElements;
 
-		public ObservableCollection<IElement> Elements { get; set; }
+		public List<IElement> Elements { get; set; }
 		public ExpandState ExpandState 
 		{
 			get { return _ExpandState; } 
@@ -86,7 +86,7 @@ namespace MonoMobile.Views
 		/// </param>
 		public Section(string caption) : base(caption)
 		{
-			Elements = new ObservableCollection<IElement>();
+			Elements = new List<IElement>();
 			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
 		}
 
@@ -211,7 +211,7 @@ namespace MonoMobile.Views
 				if (Root != null && IsExpandable)
 				{
 					if (_HiddenElements == null)
-						_HiddenElements = Elements.ToList();
+						_HiddenElements = Elements;
 
 					Root.TableView.BeginUpdates();
 					
@@ -222,7 +222,7 @@ namespace MonoMobile.Views
 					}
 					else
 					{
-						_HiddenElements = Elements.ToList();
+						_HiddenElements = Elements;
 						RemoveRange(0, Elements.Count, UITableViewRowAnimation.Top);
 					}
 	
@@ -275,7 +275,7 @@ namespace MonoMobile.Views
 			int count = 0;
 			foreach (var e in newElements)
 			{
-				Elements.Insert(pos++, e);
+			//	Elements.Insert(pos++, e);
 				e.Parent = this;
 				count++;
 			}
@@ -413,7 +413,8 @@ namespace MonoMobile.Views
 		{
 			foreach (var e in Elements)
 				e.Dispose();
-			Elements = new ObservableCollection<IElement>();
+
+			Elements = new List<IElement>();
 			
 			if (Root != null && Root.TableView != null)
 				Root.TableView.ReloadData();
@@ -459,7 +460,7 @@ namespace MonoMobile.Views
 				foreach (var item in e.NewItems)
 				{
 					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					Elements.RemoveAt(e.OldStartingIndex);
+					Elements[e.NewStartingIndex + index] = element;
 					Elements.Insert(e.NewStartingIndex + index, element);
 					index++;
 				}

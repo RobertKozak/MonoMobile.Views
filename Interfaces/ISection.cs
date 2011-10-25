@@ -44,7 +44,7 @@ namespace MonoMobile.Views
 
 		ViewBinding ViewBinding { get; set; }
 
-		ObservableCollection<IElement> Elements { get; set; }
+		List<IElement> Elements { get; set; }
 		string Caption { get; set; }
 		int Order { get; set; }
 		IElement Parent { get; set; }
