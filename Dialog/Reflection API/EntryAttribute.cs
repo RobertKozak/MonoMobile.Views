@@ -47,7 +47,7 @@ namespace MonoMobile.Views
 		public string Placeholder;
 		public UIKeyboardType KeyboardType = UIKeyboardType.Default;
 		public EditMode EditMode = EditMode.WithCaption;
-		public UITextAutocorrectionType AutoCorrectionType = UITextAutocorrectionType.Default;
-		public UITextAutocapitalizationType AutoCapitalizationType = UITextAutocapitalizationType.None;
+		public UITextAutocorrectionType AutocorrectionType = UITextAutocorrectionType.Default;
+		public UITextAutocapitalizationType AutocapitalizationType = UITextAutocapitalizationType.None;
 	}
 }

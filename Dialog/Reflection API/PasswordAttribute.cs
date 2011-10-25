@@ -37,8 +37,8 @@ namespace MonoMobile.Views
 	{
 		public PasswordAttribute() : base()
 		{
-			AutoCorrectionType = UITextAutocorrectionType.No;
-			AutoCapitalizationType = UITextAutocapitalizationType.None;
+			AutocorrectionType = UITextAutocorrectionType.No;
+			AutocapitalizationType = UITextAutocapitalizationType.None;
 		}
 
 		public PasswordAttribute(string placeholder) : this()

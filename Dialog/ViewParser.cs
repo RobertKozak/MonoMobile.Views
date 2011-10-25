@@ -1191,11 +1191,11 @@ namespace MonoMobile.Views
 		
 				if (passwordAttribute != null)
 				{
-					element = new EntryElement(caption) { Placeholder = passwordAttribute.Placeholder, KeyboardType = passwordAttribute.KeyboardType, IsPassword = true, EditMode = entryAttribute.EditMode, AutoCorrectionType = passwordAttribute.AutoCorrectionType, AutoCapitalizationType = passwordAttribute.AutoCapitalizationType };
+					element = new EntryElement(caption) { Placeholder = passwordAttribute.Placeholder, KeyboardType = passwordAttribute.KeyboardType, IsPassword = true, EditMode = entryAttribute.EditMode, AutocorrectionType = passwordAttribute.AutocorrectionType, AutocapitalizationType = passwordAttribute.AutocapitalizationType };
 				} 
 				else if (entryAttribute != null)
 				{
-					element = new EntryElement(caption) { Placeholder = entryAttribute.Placeholder, KeyboardType = entryAttribute.KeyboardType, EditMode = entryAttribute.EditMode,  AutoCorrectionType = entryAttribute.AutoCorrectionType, AutoCapitalizationType = entryAttribute.AutoCapitalizationType };
+					element = new EntryElement(caption) { Placeholder = entryAttribute.Placeholder, KeyboardType = entryAttribute.KeyboardType, EditMode = entryAttribute.EditMode,  AutocorrectionType = entryAttribute.AutocorrectionType, AutocapitalizationType = entryAttribute.AutocapitalizationType };
 				}
 				else if (multilineAttribute != null)
 				{

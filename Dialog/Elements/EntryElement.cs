@@ -55,8 +55,8 @@ namespace MonoMobile.Views
 		public string Text { get; set; }
 		public UIReturnKeyType ReturnKeyType { get; set; }
 		public UIKeyboardType KeyboardType { get; set; }
-		public UITextAutocorrectionType AutoCorrectionType { get; set; }
-		public UITextAutocapitalizationType AutoCapitalizationType { get; set; }
+		public UITextAutocorrectionType AutocorrectionType { get; set; }
+		public UITextAutocapitalizationType AutocapitalizationType { get; set; }
 
 		public EntryElement(string caption) : base(caption)
 		{
@@ -107,8 +107,8 @@ namespace MonoMobile.Views
 					PlaceholderColor = Theme.PlaceholderColor, 
 					PlaceholderAlignment = Theme.PlaceholderAlignment,
 					VerticalAlignment = UIControlContentVerticalAlignment.Center,
-					AutocorrectionType = AutoCorrectionType,
-					AutocapitalizationType = AutoCapitalizationType,
+					AutocorrectionType = AutocorrectionType,
+					AutocapitalizationType = AutocapitalizationType,
 					Tag = 1 
 				};
 		
