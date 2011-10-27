@@ -219,8 +219,6 @@ namespace MonoMobile.Views
 		
 					foreach (var member in members)
 					{
-						var isList = member.GetCustomAttribute<ListAttribute>() != null;
-
 						var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
 						if (pullToRefreshAttribute != null)
 						{
@@ -294,20 +292,23 @@ namespace MonoMobile.Views
 								newElement.NibName = useNibAttribute.NibName;
 
 							bindable = newElement as IBindable;
-
+							
+							var isList = member.GetCustomAttribute<ListAttribute>() != null;
 							if ((isList) && newElement is IRoot)
 							{
-//								var sections = ((IRoot)newElement).Sections;
-//								root.ViewBinding = newElement.ViewBinding;
-//
-//								var firstSection = sections.FirstOrDefault();
-//								if (firstSection.Elements.Count > 0)
-//									lastSection.Add(firstSection.Elements.Values);
-//
-//								for(var index=1; index < sections.Count; index++)
-//								{
-//									sectionList.Add(sections[index]);
-//								}
+								var sections = ((IRoot)newElement).Sections;
+								root.ViewBinding = newElement.ViewBinding;
+								
+								var firstSection = sections.FirstOrDefault();
+								if (firstSection != null && firstSection.Elements.Count > 0)
+								{
+									lastSection.Add(firstSection.Elements);
+								}
+
+								for(var index=1; index < sections.Count; index++)
+								{
+									sectionList.Add(sections[index]);
+								}
 							}
 							else
 							{
@@ -552,10 +553,8 @@ namespace MonoMobile.Views
 
 				if (isList)
 				{
-					//var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
-					//root = innerRoot as IElement;
-					Root.Sections = ((IRoot)rootElement).Sections;
-					root = Root;
+					var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
+					root = innerRoot as IElement;
 					root.ViewBinding = rootElement.ViewBinding;
 				}
 				else
