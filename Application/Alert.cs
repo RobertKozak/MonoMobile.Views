@@ -38,7 +38,7 @@ namespace MonoMobile.Views
 		{
 			using(var alert = new UIAlertView(title, message, null, "OK", null))
 			{
-				alert.Show();  
+				alert.InvokeOnMainThread(() => alert.Show());
 			}
 		}
 	}
