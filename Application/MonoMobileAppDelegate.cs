@@ -66,14 +66,7 @@ namespace MonoMobile.Views
 				var view = Activator.CreateInstance(viewType) as UIView;
 				MonoMobileApplication.Views.Add(view);
 			}
-	
-			foreach(var view in MonoMobileApplication.Views)
-			{	
-				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
-			}
-	
-			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
-				
+
 			foreach (var view in MonoMobileApplication.Views)
 			{				
 				var initalizable = view as IInitializable;
@@ -82,6 +75,13 @@ namespace MonoMobile.Views
 					initalizable.Initialize();
 				}
 			}
+
+			foreach(var view in MonoMobileApplication.Views)
+			{	
+				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
+			}
+	
+			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();
 
 			UIView.BeginAnimations("fadeIn");
 			UIView.SetAnimationDuration(0.3f);
