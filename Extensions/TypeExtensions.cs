@@ -130,15 +130,22 @@ namespace MonoMobile.Views
 		public static object GetValue(this MemberInfo member, object obj)
 		{
 			object result = null;
-
-			if (member.MemberType == MemberTypes.Field)
-			{
-				result = ((FieldInfo)member).GetValue(obj);
-			}
 			
-			if (member.MemberType == MemberTypes.Property)
+			try 
 			{
-				result = ((PropertyInfo)member).GetValue(obj, null);
+				if (member.MemberType == MemberTypes.Field)
+				{
+					result = ((FieldInfo)member).GetValue(obj);
+				}
+			
+				if (member.MemberType == MemberTypes.Property)
+				{
+					result = ((PropertyInfo)member).GetValue(obj, null);
+				}
+			}
+			catch(TargetInvocationException ex)
+			{
+				throw new Exception(string.Format("{0} is null. It needs to have a value.", member.Name), ex);
 			}
 			
 			return result;
