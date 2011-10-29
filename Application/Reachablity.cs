@@ -81,7 +81,7 @@ public static class Reachability
 	{
 		if (adHocWiFiNetworkReachability == null)
 		{
-			adHocWiFiNetworkReachability = new NetworkReachability(new IPAddress(new byte [] {169,254,0,0}));
+			adHocWiFiNetworkReachability = new NetworkReachability(new IPAddress(new byte[] {169,254,0,0}));
 			adHocWiFiNetworkReachability.SetCallback(OnChange);
 			adHocWiFiNetworkReachability.Schedule(CFRunLoop.Current, CFRunLoop.ModeDefault);
 		}

@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 	}
 	
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
-	public class ButtonAttribute : Attribute
+	public class ButtonAttribute : BaseControlAttribute
 	{
 		public ButtonAttribute()
 		{

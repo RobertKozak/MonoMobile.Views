@@ -4,7 +4,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
-	public class ToolbarButtonAttribute: Attribute
+	public class ToolbarButtonAttribute: BaseControlAttribute
 	{
 		public ToolbarButtonAttribute()
 		{

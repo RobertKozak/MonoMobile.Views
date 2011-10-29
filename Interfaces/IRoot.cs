@@ -38,6 +38,8 @@ namespace MonoMobile.Views
 
 	public interface IRoot: IElement, IThemeable, IDisposable
 	{	
+		UIView DataView { get; set; }
+
 		ICommand PullToRefreshCommand { get; set; }
 		string DefaultSettingsKey { get; set; }
 

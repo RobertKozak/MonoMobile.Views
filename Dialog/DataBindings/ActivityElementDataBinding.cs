@@ -52,7 +52,7 @@ namespace MonoMobile.Views
 
 		public override void BindProperties()
 		{
-			ActivityProperty.PropertyChangedAction = () =>
+			ActivityProperty.PropertyChangedAction =() =>
 			{
 				if (_ActivityElement.Animating)
 					ActivityView.StartAnimating();

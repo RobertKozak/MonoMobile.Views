@@ -95,7 +95,7 @@ namespace MonoMobile.Views
             var name = property.PropertyName();
             var isFunction = name.Contains(".") || string.IsNullOrEmpty(name);
 
-            // Either property is of form: ()=>Foo.Bar or property is a function: ()=>CalculateValue();
+            // Either property is of form:()=>Foo.Bar or property is a function:()=>CalculateValue();
             if (isFunction)
             {
 				object source = this;

@@ -81,6 +81,7 @@ namespace MonoMobile.Views
 								
 								((IContainer)Root).SelectedItem = Item;
 								((IContainer)Root).SelectedItems.Add(Item);
+								break;
 							}
 							index++;
 						}

@@ -198,7 +198,7 @@ namespace MonoMobile.Views
 //		/// </summary>fparent
 //		/// <param name="views">
 //		/// An enumarable list that can be produced by something like:
-//		///   from x in ... select (UIView) new UIFoo ();
+//		///   from x in ... select (UIView) new UIFoo();
 //		/// </param>
 //		public void Add(IEnumerable<UIView> views)
 //		{

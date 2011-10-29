@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class TimeAttribute : Attribute
+	public class TimeAttribute : BaseControlAttribute
 	{
 	}
 }

@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class RangeAttribute : Attribute
+	public class RangeAttribute : BaseControlAttribute
 	{
 		public RangeAttribute(float low, float high)
 		{

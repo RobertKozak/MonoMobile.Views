@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class EntryAttribute : Attribute
+	public class EntryAttribute : BaseControlAttribute
 	{
 		public EntryAttribute() : this(null)
 		{

@@ -69,6 +69,8 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class RootElement : ContainerElement, IEnumerable, IRoot, ISelectable, ISearchable, ISearchBar
 	{		
+		public UIView DataView { get; set; }
+
 		public UIImageView ImageView { get; set; }
 
 		public bool IsSearchbarHidden { get; set; }
@@ -524,9 +526,12 @@ namespace MonoMobile.Views
 
 		private void ResetSectionIndices()
 		{
-			for (int i = Sections.Count - 1; i > 0; i--)
+			if(Sections != null)
 			{
-				Sections[i].Index = i;
+				for (int i = Sections.Count - 1; i > 0; i--)
+				{
+					Sections[i].Index = i;
+				}
 			}
 		}
 	}

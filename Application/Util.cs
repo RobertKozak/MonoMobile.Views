@@ -58,10 +58,10 @@ namespace MonoMobile.Views
 		// searches) we need a centralized API to keep the network visibility
 		// indicator state
 		//
-		static object networkLock = new object ();
+		static object networkLock = new object();
 		static int active;
 		
-		public static void PushNetworkActive ()
+		public static void PushNetworkActive()
 		{
 			lock (networkLock){
 				active++;
@@ -69,7 +69,7 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		public static void PopNetworkActive ()
+		public static void PopNetworkActive()
 		{
 			lock (networkLock){
 				active--;
@@ -97,7 +97,7 @@ namespace MonoMobile.Views
 		
 		public static void RecordUpdate (string key)
 		{
-			Defaults.SetString (key, DateTime.UtcNow.Ticks.ToString ());
+			Defaults.SetString (key, DateTime.UtcNow.Ticks.ToString());
 		}
 			
 		
@@ -111,7 +111,7 @@ namespace MonoMobile.Views
 		{
 			if (str.IndexOf ('<') == -1)
 				return str;
-			var sb = new StringBuilder ();
+			var sb = new StringBuilder();
 			for (int i = 0; i < str.Length; i++){
 				char c = str [i];
 				if (c != '<'){
@@ -134,12 +134,12 @@ namespace MonoMobile.Views
 						break;
 				}
 			}
-			return sb.ToString ();
+			return sb.ToString();
 		}
 	
 		public static string ObscureString (string value)
 		{
-			StringBuilder sb = new StringBuilder ();
+			StringBuilder sb = new StringBuilder();
 			
 			if (value.Length >= 4) {
 				sb.Append (char.Parse ("*"), value.Length - 4);
@@ -148,16 +148,16 @@ namespace MonoMobile.Views
 				sb.Append (value);
 			}
 			
-			return sb.ToString ();
+			return sb.ToString();
 			
 		}
 
-		public static void SuccessfulMessage ()
+		public static void SuccessfulMessage()
 		{
 			UIApplication.SharedApplication.InvokeOnMainThread (delegate {
 				var msg = new UIAlertView ("Success", "Saved Succcessfully", null, "Ok");
 				msg.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation (0f, 110f);
-				msg.Show ();
+				msg.Show();
 			});
 			
 		}
@@ -167,16 +167,16 @@ namespace MonoMobile.Views
 			UIApplication.SharedApplication.InvokeOnMainThread (delegate {
 				var msg = new UIAlertView ("Success", message, null, "Ok");
 				msg.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation (0f, 110f);
-				msg.Show ();
+				msg.Show();
 			});
 		}
 
-		public static void UnsuccessfulMessage ()
+		public static void UnsuccessfulMessage()
 		{
 			UIApplication.SharedApplication.InvokeOnMainThread (delegate {
 				var msg = new UIAlertView ("Error", "Save UnSuccessful, Please try again", null, "Ok");
 				msg.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation (0f, 110f);
-				msg.Show ();
+				msg.Show();
 			});
 			
 		}
@@ -186,7 +186,7 @@ namespace MonoMobile.Views
 			UIApplication.SharedApplication.InvokeOnMainThread (delegate {
 				var msg = new UIAlertView ("Error", message, null, "Ok");
 				msg.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation (0f, 110f);
-				msg.Show ();
+				msg.Show();
 			});
 		}
 
@@ -196,7 +196,7 @@ namespace MonoMobile.Views
 				var msg = new UIAlertView ("Info", message, null, "Ok");
 				msg.Clicked += delegate { UIApplication.SharedApplication.InvokeOnMainThread (action); };
 				msg.Transform = MonoTouch.CoreGraphics.CGAffineTransform.MakeTranslation (0f, 110f);
-				msg.Show ();
+				msg.Show();
 			});
 			
 		}
@@ -230,15 +230,15 @@ namespace MonoMobile.Views
 	
 	public static class Device
 	{
-		public static string IPAddress ()
+		public static string IPAddress()
 		{
 			IPHostEntry host;
 			string localIP = "?";
-			host = Dns.GetHostEntry (Dns.GetHostName ());
+			host = Dns.GetHostEntry (Dns.GetHostName());
 			
 			foreach (IPAddress ip in host.AddressList) {
 				if (ip.AddressFamily == AddressFamily.InterNetwork) {
-					localIP = ip.ToString ();
+					localIP = ip.ToString();
 				}
 			}
 			
@@ -257,15 +257,15 @@ namespace MonoMobile.Views
 			byte[] keyArray;
 			byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes (toEncrypt);
 			
-			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider ();
+			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
 			keyArray = hashmd5.ComputeHash (UTF8Encoding.UTF8.GetBytes (bkey));
 			
-			TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider ();
+			TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
 			tdes.Key = keyArray;
 			tdes.Mode = CipherMode.ECB;
 			tdes.Padding = PaddingMode.PKCS7;
 			
-			ICryptoTransform cTransform = tdes.CreateEncryptor ();
+			ICryptoTransform cTransform = tdes.CreateEncryptor();
 			byte[] resultArray = cTransform.TransformFinalBlock (toEncryptArray, 0, toEncryptArray.Length);
 			
 			return Convert.ToBase64String (resultArray, 0, resultArray.Length);
@@ -274,7 +274,7 @@ namespace MonoMobile.Views
 
 		public static string EncryptString (int value, string bkey)
 		{
-			return EncryptString (value.ToString (), bkey);
+			return EncryptString (value.ToString(), bkey);
 			
 		}
 
@@ -283,15 +283,15 @@ namespace MonoMobile.Views
 			byte[] keyArray;
 			byte[] toEncryptArray = Convert.FromBase64String (toDecrypt);
 			
-			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider ();
+			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
 			keyArray = hashmd5.ComputeHash (UTF8Encoding.UTF8.GetBytes (bkey));
 			
-			TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider ();
+			TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
 			tdes.Key = keyArray;
 			tdes.Mode = CipherMode.ECB;
 			tdes.Padding = PaddingMode.PKCS7;
 			
-			ICryptoTransform cTransform = tdes.CreateDecryptor ();
+			ICryptoTransform cTransform = tdes.CreateDecryptor();
 			byte[] resultArray = cTransform.TransformFinalBlock (toEncryptArray, 0, toEncryptArray.Length);
 			
 			return UTF8Encoding.UTF8.GetString (resultArray);
@@ -313,7 +313,7 @@ namespace MonoMobile.Views
 			Password pw = new Password (passwordLength);
 			pw.Exclusions = exclusions;
 			
-			return pw.Generate ();
+			return pw.Generate();
 			
 		}
 		
@@ -322,7 +322,7 @@ namespace MonoMobile.Views
 			Password pw = new Password (passwordLength);
 			pw.ExcludeSymbols = true;
 			
-			return pw.Generate ();
+			return pw.Generate();
 			
 		}
 
@@ -336,7 +336,7 @@ namespace MonoMobile.Views
 
 		public Password (int passwordLength)
 		{
-			pwdCharArray = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&()-_=+[]{}\\,<.>/?".ToCharArray ();
+			pwdCharArray = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&()-_=+[]{}\\,<.>/?".ToCharArray();
 			
 			Minimum = passwordLength;
 			
@@ -348,7 +348,7 @@ namespace MonoMobile.Views
 			ExcludeSymbols = false;
 			Exclusions = null;
 			
-			rng = new RNGCryptoServiceProvider ();
+			rng = new RNGCryptoServiceProvider();
 		}
 
 		protected int GetCryptographicRandomNumber (int lowerBound, int upperBound)
@@ -375,7 +375,7 @@ namespace MonoMobile.Views
 			
 		}
 
-		protected char GetRandomCharacter ()
+		protected char GetRandomCharacter()
 		{
 			int upperBound = pwdCharArray.GetUpperBound (0);
 			
@@ -395,13 +395,13 @@ namespace MonoMobile.Views
 			
 		}
 
-		protected string Generate ()
+		protected string Generate()
 		{
 			
 			//// Pick random length between minimum and maximum
 			int pwdLength = GetCryptographicRandomNumber (this.Minimum, this.Maximum);
 			
-			StringBuilder pwdBuffer = new StringBuilder ();
+			StringBuilder pwdBuffer = new StringBuilder();
 			pwdBuffer.Capacity = this.Maximum;
 			
 			//// Generate random characters
@@ -416,27 +416,27 @@ namespace MonoMobile.Views
 			
 			for (i = 0; i <= pwdLength; i++) {
 				
-				nextCharacter = GetRandomCharacter ();
+				nextCharacter = GetRandomCharacter();
 				
 				if (!this.ConsecutiveCharacters) {
 					while (lastCharacter == nextCharacter) {
-						nextCharacter = GetRandomCharacter ();
+						nextCharacter = GetRandomCharacter();
 					}
 				}
 				
 				if (!this.RepeatCharacters) {
 					
-					string temp = pwdBuffer.ToString ();
+					string temp = pwdBuffer.ToString();
 					int duplicateIndex = temp.IndexOf (nextCharacter);
 					while (-1 != duplicateIndex) {
-						nextCharacter = GetRandomCharacter ();
+						nextCharacter = GetRandomCharacter();
 						duplicateIndex = temp.IndexOf (nextCharacter);
 					}
 				}
 				
 				if (this.Exclusions != null) {
 					while (-1 != this.Exclusions.IndexOf (nextCharacter)) {
-						nextCharacter = GetRandomCharacter ();
+						nextCharacter = GetRandomCharacter();
 					}
 				}
 				pwdBuffer.Append (nextCharacter);
@@ -444,7 +444,7 @@ namespace MonoMobile.Views
 			}
 			
 			if (null != pwdBuffer) {
-				return pwdBuffer.ToString ();
+				return pwdBuffer.ToString();
 				
 			} else {
 				
@@ -528,7 +528,7 @@ namespace MonoMobile.Views
 		
 		public static void RecordUpdate (string key)
 		{
-			Defaults.SetString (key, DateTime.UtcNow.Ticks.ToString ());
+			Defaults.SetString (key, DateTime.UtcNow.Ticks.ToString());
 		}
 			
 		
@@ -538,7 +538,7 @@ namespace MonoMobile.Views
 		{
 			if (str.IndexOf ('<') == -1)
 				return str;
-			var sb = new StringBuilder ();
+			var sb = new StringBuilder();
 			for (int i = 0; i < str.Length; i++){
 				char c = str [i];
 				if (c != '<'){
@@ -561,7 +561,7 @@ namespace MonoMobile.Views
 						break;
 				}
 			}
-			return sb.ToString ();
+			return sb.ToString();
 		}
 		
 		public static string CleanName (string name)
@@ -579,21 +579,21 @@ namespace MonoMobile.Views
 			if (clean)
 				return name;
 			
-			var sb = new StringBuilder ();
+			var sb = new StringBuilder();
 			foreach (char c in name){
 				if (!Char.IsLetterOrDigit (c))
 					break;
 				
 				sb.Append (c);
 			}
-			return sb.ToString ();
+			return sb.ToString();
 		}
 		
 		public static RootElement MakeProgressRoot (string caption)
 		{
 			return new RootElement (caption){
-				new Section (){
-					new ActivityElement ()
+				new Section(){
+					new ActivityElement()
 				}
 			};
 		}
@@ -609,7 +609,7 @@ namespace MonoMobile.Views
 		}
 		
 		[Conditional ("TRACE")]
-		public static void Log (string format, params object [] args)
+		public static void Log (string format, params object[] args)
 		{
 			Console.WriteLine (String.Format (format, args));
 		}
@@ -644,7 +644,7 @@ namespace MonoMobile.Views
 			
 			public override void UpdatedLocation (CLLocationManager manager, CLLocation newLocation, CLLocation oldLocation)
 			{
-				manager.StopUpdatingLocation ();
+				manager.StopUpdatingLocation();
 				locationManager = null;
 				callback (newLocation);
 			}
@@ -659,13 +659,13 @@ namespace MonoMobile.Views
 		static CLLocationManager locationManager;
 		static public void RequestLocation (Action<CLLocation> callback)
 		{
-			locationManager = new CLLocationManager () {
+			locationManager = new CLLocationManager() {
 				DesiredAccuracy = CLLocation.AccuracyBest,
 				Delegate = new MyCLLocationManagerDelegate (callback),
 				DistanceFilter = 1000f
 			};
 			if (CLLocationManager.LocationServicesEnabled)
-				locationManager.StartUpdatingLocation ();
+				locationManager.StartUpdatingLocation();
 		}	
 		#endregion
 	}

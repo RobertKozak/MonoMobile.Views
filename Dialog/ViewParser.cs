@@ -83,6 +83,7 @@ namespace MonoMobile.Views
 			
 			Root = new RootElement(caption);
 			Root.DataContext = view;
+			Root.DataView = view;
 
 			var dataContext = view as IDataContext;
 			if (dataContext != null)
@@ -122,7 +123,7 @@ namespace MonoMobile.Views
 			PropertyInfo propertyInfo = null;
 			var commandOption = CommandOption.Disable;
 
-			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute> ();
+			var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
 			if (buttonAttribute != null)
 			{
 				propertyName = buttonAttribute.CanExecutePropertyName;
@@ -268,6 +269,8 @@ namespace MonoMobile.Views
 						}
 						else if (newElement != null)
 						{
+							CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
+
 							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
 							if (editStyle != null)
 							{
@@ -882,6 +885,35 @@ namespace MonoMobile.Views
 			}).ToArray();
 		}
 
+		private void CheckForInstanceProperties(object view, MemberInfo member, IElement element, UIView elementView)
+		{
+			var baseControlAttribute = member.GetCustomAttribute<BaseControlAttribute>(true);
+			if (baseControlAttribute != null && element != _NoElement)
+			{
+				if (!string.IsNullOrEmpty(baseControlAttribute.InstancePropertyName))
+				{
+					var instanceProperty = view.GetType().GetProperty(baseControlAttribute.InstancePropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+					if (instanceProperty != null)
+					{
+						UIView instanceView = elementView;
+						if (element != null && element.ElementView != null)
+							instanceView = element.ElementView;
+
+						instanceProperty.SetValue(view, instanceView);
+					}
+				}
+
+				if (!string.IsNullOrEmpty(baseControlAttribute.ElementPropertyName))
+				{
+					var elementProperty = view.GetType().GetProperty(baseControlAttribute.ElementPropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+					if (elementProperty != null)
+					{
+						elementProperty.SetValue(view, element);
+					}
+				}
+			}
+		}
+		
 		private List<CommandBarButtonItem> CheckForToolbarItems(object view)
 		{
 			var buttonList = new List<CommandBarButtonItem>();
@@ -901,7 +933,9 @@ namespace MonoMobile.Views
 					if (buttonAttribute.ViewType != null)
 					{	
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
-					
+						
+						CheckForInstanceProperties(view, member, null, buttonView);
+
 						var tappable = buttonView as ITappable;
 						if (tappable != null)
 						{
@@ -948,6 +982,21 @@ namespace MonoMobile.Views
 					var memberName = buttonAttribute.ButtonType.HasValue ? null : member.Name.Capitalize();
 
 					var title = caption ?? memberName;
+
+					if (buttonAttribute.ViewType != null)
+					{	
+						UIView buttonView = null;
+						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+						
+						CheckForInstanceProperties(view, member, null, buttonView);
+
+						var tappable = buttonView as ITappable;
+						if (tappable != null)
+						{
+							tappable.Command = GetCommandForMember(view, member); 
+						}
+					}
+
 					var button = CreateCommandBarButton(view, member, title, null, buttonAttribute.Style, buttonAttribute.ButtonType, buttonAttribute.Location);
 					
 					if (button != null)
@@ -1126,6 +1175,7 @@ namespace MonoMobile.Views
 					var command = GetCommandForMember(view, member) as ReflectiveCommand;
 					
 					command.Element = pelement;
+					command.CanExecuteChanged -= HandleCanExecuteChanged;
 					command.CanExecuteChanged += HandleCanExecuteChanged;
 
 					pelement.Command = command;
@@ -1155,6 +1205,7 @@ namespace MonoMobile.Views
 					var command = GetCommandForMember(view, member) as ReflectiveCommand;
 					
 					command.Element = belement;
+					command.CanExecuteChanged -= HandleCanExecuteChanged;
 					command.CanExecuteChanged += HandleCanExecuteChanged;
 
 					belement.Command = command;

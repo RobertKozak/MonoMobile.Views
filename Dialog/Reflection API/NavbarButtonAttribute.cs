@@ -4,7 +4,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method, Inherited = false)]
-	public class NavbarButtonAttribute : Attribute
+	public class NavbarButtonAttribute : BaseControlAttribute
 	{
 		public NavbarButtonAttribute() : base()
 		{

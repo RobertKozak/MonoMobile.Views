@@ -73,6 +73,16 @@ namespace MonoMobile.Views
 			DialogViewControllers = new List<DialogViewController>();
 		}
 		
+		public static bool IsSearchbarVisible()
+		{
+			if (CurrentDialogViewController != null)
+			{
+				return CurrentDialogViewController.IsSearchBarVisible;
+			}
+
+			return false;
+		}
+
 		public static void ToggleSearchbar()
 		{
 			if (CurrentDialogViewController != null)

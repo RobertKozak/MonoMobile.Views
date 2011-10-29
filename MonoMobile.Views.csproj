@@ -178,7 +178,6 @@
     <Compile Include="Dialog\Reflection API\MapAttribute.cs" />
     <Compile Include="Converters\MoneyConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
-    <Compile Include="Dialog\Reflection API\ToolbarButton.cs" />
     <Compile Include="Converters\UriConverter.cs" />
     <Compile Include="Dialog\Reflection API\NavbarButtonAttribute.cs" />
     <Compile Include="Dialog\Reflection API\BarButtonLocation.cs" />
@@ -315,6 +314,9 @@
     <Compile Include="Application\Util.cs" />
     <Compile Include="Dialog\Cell\CellFactory.cs" />
     <Compile Include="Dialog\Reflection API\UseNibAttribute.cs" />
+    <Compile Include="Interfaces\IActivation.cs" />
+    <Compile Include="Dialog\Reflection API\ToolbarButtonAttribute.cs" />
+    <Compile Include="Dialog\Reflection API\BaseControlAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

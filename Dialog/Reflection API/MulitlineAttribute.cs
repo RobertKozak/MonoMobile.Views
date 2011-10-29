@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class MultilineAttribute : Attribute
+	public class MultilineAttribute : BaseControlAttribute
 	{
 		public MultilineAttribute()
 		{

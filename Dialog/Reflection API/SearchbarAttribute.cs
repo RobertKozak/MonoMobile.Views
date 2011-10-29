@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-	public class SearchbarAttribute : Attribute
+	public class SearchbarAttribute : BaseControlAttribute
 	{
 		public SearchbarAttribute()
 		{

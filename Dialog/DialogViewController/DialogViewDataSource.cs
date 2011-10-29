@@ -70,7 +70,7 @@ namespace MonoMobile.Views
 		
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			var sw = System.Diagnostics.Stopwatch.StartNew();
+//			var sw = System.Diagnostics.Stopwatch.StartNew();
 
 			var element = GetElement(indexPath);
 			
@@ -81,8 +81,8 @@ namespace MonoMobile.Views
 				return new UITableViewCell();
 			}
 				
-			sw.Stop();
-			Console.WriteLine("GetCell: "+sw.Elapsed.TotalMilliseconds);
+//			sw.Stop();
+//			Console.WriteLine("GetCell: "+sw.Elapsed.TotalMilliseconds);
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
 

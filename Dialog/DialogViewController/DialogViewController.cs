@@ -505,6 +505,10 @@ namespace MonoMobile.Views
 					StartSearch();
 				}
 			}
+
+			var activation = Root.DataView as IActivation;
+			if (activation != null)
+				activation.Activated();
 		}
 
 		private void ConfigureToolbarItems()
@@ -638,6 +642,20 @@ namespace MonoMobile.Views
 			return new RefreshTableHeaderView(rect, defaultSettingsKey);
 		}
 		
+		public bool IsSearchBarVisible
+		{
+			get 
+			{ 
+				var searchbar = Root as ISearchBar;
+				if (searchbar != null)
+				{
+					return !searchbar.IsSearchbarHidden;
+				}
+
+				return false; 
+			}
+		}
+
 		public void ToggleSearchbar()
 		{
 			var searchbar = Root as ISearchBar;
@@ -694,7 +712,7 @@ namespace MonoMobile.Views
 				return;
 			
 			Root.Prepare();
-			
+
 			NavigationItem.HidesBackButton = !_Pushing;
 
 			if (Root.Caption != null)
@@ -832,6 +850,10 @@ namespace MonoMobile.Views
 //			}
 
 			base.ViewDidDisappear(animated);
+
+			var activation = Root.DataView as IActivation;
+			if (activation != null)
+				activation.Deactived();
 		}
 
 		protected void PrepareRoot(IRoot root)

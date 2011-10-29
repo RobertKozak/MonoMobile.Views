@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class HtmlAttribute : Attribute
+	public class HtmlAttribute : BaseControlAttribute
 	{
 	}
 }
