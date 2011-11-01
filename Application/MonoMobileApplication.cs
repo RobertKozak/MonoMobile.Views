@@ -39,6 +39,8 @@ namespace MonoMobile.Views
 	[Register("MonoMobileApplication")]
 	public class MonoMobileApplication : UIApplication
 	{
+		private int _NetworkActivityCount;
+
 		public const string Version = "0.9";
 
 		public static Type[] ViewTypes { get; private set;}
@@ -50,6 +52,24 @@ namespace MonoMobile.Views
 
 		public static string Title { get; set; }
 		public static Action ResumeFromBackgroundAction { get; set; }
+
+		public override bool NetworkActivityIndicatorVisible 
+		{
+			get { return _NetworkActivityCount > 0; }
+			set 
+			{ 
+				if (value)
+				{
+					_NetworkActivityCount++;	
+				}
+				else
+				{
+					_NetworkActivityCount--;
+				}
+
+				Window.InvokeOnMainThread(() => base.NetworkActivityIndicatorVisible = _NetworkActivityCount > 0);
+			}
+		}
 
 		public static DialogViewController CurrentDialogViewController 
 		{ 
@@ -66,7 +86,6 @@ namespace MonoMobile.Views
 				return CurrentDialogViewController != null ? CurrentDialogViewController as UIViewController : null;
 			} 
 		}
-
 
 		static MonoMobileApplication()
 		{

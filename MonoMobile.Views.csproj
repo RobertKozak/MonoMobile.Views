@@ -305,7 +305,6 @@
     <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
     <Compile Include="Interfaces\IDataTemplate.cs" />
     <Compile Include="Dialog\DataTemplate.cs" />
-    <Compile Include="Dialog\DialogViewController\DialogViewListDataSource.cs" />
     <Compile Include="View\ListView.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
     <Compile Include="Dialog\Reflection API\ProgressAttribute.cs" />
@@ -317,6 +316,8 @@
     <Compile Include="Interfaces\IActivation.cs" />
     <Compile Include="Dialog\Reflection API\ToolbarButtonAttribute.cs" />
     <Compile Include="Dialog\Reflection API\BaseControlAttribute.cs" />
+    <Compile Include="Dialog\DialogViewController\SectionedListViewDataSource.cs" />
+    <Compile Include="Dialog\DialogViewController\ListViewDataSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

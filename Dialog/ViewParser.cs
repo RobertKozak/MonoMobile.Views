@@ -459,7 +459,7 @@ namespace MonoMobile.Views
 				elementType = rootAttribute.ElementType ?? elementType;
 			}
 			
-			var cellEditingStyle = member.GetCustomAttribute<CellEditingStyleAttribute>(); 
+			var cellEditingStyleAttribute = member.GetCustomAttribute<CellEditingStyleAttribute>(); 
 
 			var isEnum = memberType.IsEnum;
 			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
@@ -529,8 +529,10 @@ namespace MonoMobile.Views
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
 				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 
-				if (cellEditingStyle != null)
-					rootElement.EditingStyle = cellEditingStyle.EditingStyle;
+				if (cellEditingStyleAttribute != null)
+				{
+					rootElement.EditingStyle = cellEditingStyleAttribute.EditingStyle;
+				}
 
 				if (items != null)
 				{
