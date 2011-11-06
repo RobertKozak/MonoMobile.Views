@@ -52,9 +52,9 @@ namespace MonoMobile.Views
 			DataBinding = new FloatElementDataBinding(this);
 		}
 
-		public override UITableViewElementCell NewCell()
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			var cell = base.NewCell();
+			var cell = base.NewCell(cellId, indexPath);
 			cell.Accessory = UITableViewCellAccessory.None;
 
 			return cell;

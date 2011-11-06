@@ -86,9 +86,39 @@ namespace MonoMobile.Views
 			return element.GetCell(tableView) as UITableViewElementCell;
 		}
 
-		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
-			Container.Selected(indexPath);
+			var element = GetElement(indexPath);
+
+			if (element != null)
+			{
+				var selectable = element as ISelectable;
+	
+				if (selectable != null)
+				{
+					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
+					{
+						tableView.DeselectRow(indexPath, false);
+						
+						UIView.Animate(0.3f, delegate {
+							element.Cell.Highlighted = true;  }, delegate {
+							element.Cell.Highlighted = false; });
+					}
+					
+					selectable.Selected(Container, tableView, element.DataContext, indexPath);
+				}
+			}
+			else
+			{
+//				tableView.DeselectRow(indexPath, true);
+//				var selectable = RootView as ISelectable;
+//				if (selectable != null)
+//				{
+//					selectable.Selected(Container, tableView, indexPath);
+//				}
+
+				throw new Exception("Find out why we are here!");
+			}
 		}
 
 		#region Pull to Refresh support
@@ -315,7 +345,7 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-				var theme = Container.Root.Theme;
+				var theme = Container.Theme;
 				var background = theme.HeaderBackgroundColor;
 				if (background != null)
 					headerLabel.BackgroundColor = background;

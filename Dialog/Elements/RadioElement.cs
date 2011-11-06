@@ -53,7 +53,7 @@ namespace MonoMobile.Views
 			UpdateSelected();
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath indexPath)
 		{
 			if (Parent != null)
 			{

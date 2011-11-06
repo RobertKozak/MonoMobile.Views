@@ -1,5 +1,5 @@
 // 
-// MultiSelectionAttribute.cs
+// MultiselectAttribute.cs
 // 
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -32,11 +32,18 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public class MultiSelectionAttribute : Attribute
+	public class MultiselectionAttribute : Attribute
 	{
-		public MultiSelectionAttribute()
+		public MultiselectionAttribute()
 		{
 		}
+
+		public MultiselectionAttribute(string memberName)
+		{
+			MemberName = memberName;
+		}
+
+		public string MemberName { get; set; }
 	}
 }
 

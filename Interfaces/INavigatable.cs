@@ -1,5 +1,5 @@
 // 
-//  TableCellFactory.cs
+//  INavigatable.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,65 +27,14 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.ObjCRuntime;
 
 namespace MonoMobile.Views
 {
-	public class TableCellFactory<T> where T : UITableViewCell
+	using System;
+
+	public interface INavigatable
 	{
-		private string _NibName;
-
-		public string CellId { get; set; }
-    
-		public TableCellFactory(string cellId, string nibName)
-		{
-			CellId = cellId;
-			_NibName = nibName;
-		}
-    
-		public TableCellFactory(string cellId)
-		{
-			CellId = cellId;
-		}
-		
-		public TableCellFactory()
-		{
-		}
-
-		public T GetCell(UITableView tableView, NSIndexPath indexPath, Func<NSString, NSIndexPath, T> newCell)
-		{
-			return GetCell(tableView, indexPath, string.Empty, newCell);
-		}
-
-		public T GetCell(UITableView tableView, NSIndexPath indexPath, string nibName, Func<NSString, NSIndexPath, T> newCell)
-		{
-			_NibName = nibName;
- 
-			var cell = tableView.DequeueReusableCell(CellId) as T;
-            
-			if (cell == null)
-			{
-				if (newCell != null)
-				{
-					cell = newCell(new NSString(CellId), indexPath) as T;
-				}
-				else if (!string.IsNullOrEmpty(_NibName))
-				{
-					var views = NSBundle.MainBundle.LoadNib(_NibName, cell, null);
-					var nibCell = Runtime.GetNSObject(views.ValueAt(0));
-					cell = nibCell as T;
-				}
-				else
-				{
-					cell = Activator.CreateInstance<T>();
-				}
-			}
-        							
-			return cell;
-		}
+		void Navigate();
 	}
 }
 

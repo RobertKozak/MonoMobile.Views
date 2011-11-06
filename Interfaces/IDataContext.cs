@@ -31,9 +31,9 @@ namespace MonoMobile.Views
 {
 	using System;
 	
-	public interface IDataContext
+	public interface IDataContext<T>
 	{
-		object DataContext { get; set; }
+		T DataContext { get; set; }
 	}
 }
 

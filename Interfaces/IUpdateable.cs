@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public interface IUpdateable 
+	public interface IUpdateable
 	{
 		void UpdateCell(UITableViewCell cell, NSIndexPath indexPath);
 	}

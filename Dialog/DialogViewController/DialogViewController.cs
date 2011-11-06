@@ -1,4 +1,3 @@
-using System.Collections;
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
@@ -33,6 +32,7 @@ using System.Collections;
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
@@ -42,13 +42,14 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
-
+			
 	public class DialogViewController : UITableViewController
 	{
 		private CommandBarButtonItem _LeftFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Left };
 		private CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
 
 		private UITableView _TableView;
+		private object _DataContext;
 
 		private IRoot _Root;
 		private bool _Pushing;
@@ -58,7 +59,12 @@ namespace MonoMobile.Views
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
 		private DialogViewDataSource _TableSource;
+
+		public List<CommandBarButtonItem> ToolbarButtons { get; set; }		
+		public List<CommandBarButtonItem> NavbarButtons { get; set; }
 		
+		public Theme Theme { get; set; }
+
 		public RefreshTableHeaderView RefreshView { get; set; }
 		public bool Reloading { get; set; }
 		public bool IsModal { get; set; }  
@@ -243,7 +249,7 @@ namespace MonoMobile.Views
 		/// </summary>
 		public void StartSearch()
 		{		
-			var searchbar = Root as ISearchBar;
+			var searchbar = TableView.Source as ISearchBar;
 			if (searchbar != null && searchbar.IsSearchbarHidden || _Searchbar == null)
 			{
 				TableView.ScrollToRow(NSIndexPath.FromRowSection(0, 0), UITableViewScrollPosition.Top, true);
@@ -330,7 +336,7 @@ namespace MonoMobile.Views
 			
 			var newSections = new List<ISection>();
 			
-			var searchable = Root as ISearchBar;
+			var searchable = TableView.Source as ISearchBar;
 			if (searchable != null)
 			{
 				if (searchable.SearchCommand == null)
@@ -417,13 +423,23 @@ namespace MonoMobile.Views
 				DismissModalViewControllerAnimated(animated);
 		}
 
-		public void Selected(NSIndexPath indexPath)
+		public void Selected(object item, NSIndexPath indexPath)
 		{
+			var selectable = RootView as ISelectable;
+			if (selectable != null)
+			{
+				selectable.Selected(this, TableView, item, indexPath);
+			}
+			
+			TableView.DeselectRow(indexPath, true);
+
+			return;
+
 			var element = _TableSource.GetElement(indexPath);
 
 			if (element != null)
 			{
-				var selectable = element as ISelectable;
+				selectable = element as ISelectable;
 	
 				if (selectable != null)
 				{
@@ -434,15 +450,15 @@ namespace MonoMobile.Views
 						UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
 					}
 					
-					selectable.Selected(this, TableView, indexPath);
+					selectable.Selected(this, TableView, item, indexPath);
 				}
 			}
 			else
 			{
 				TableView.DeselectRow(indexPath, true);
-				var selectable = RootView as ISelectable;
+				selectable = RootView as ISelectable;
 				if(selectable != null)
-					selectable.Selected(this, TableView, indexPath);
+					selectable.Selected(this, TableView, item, indexPath);
 			}
 		}
 
@@ -497,7 +513,7 @@ namespace MonoMobile.Views
 			ConfigureNavbarItems();
 			ConfigureToolbarItems();
 
-			var searchBar = Root as ISearchBar;
+			var searchBar = TableView.Source as ISearchBar;
 			if (searchBar != null)
 			{
 				if (searchBar.EnableSearch && !searchBar.IsSearchbarHidden)
@@ -505,19 +521,22 @@ namespace MonoMobile.Views
 					StartSearch();
 				}
 			}
-
-			var activation = Root.DataView as IActivation;
-			if (activation != null)
-				activation.Activated();
+			
+			if (RootView != null)
+			{
+				var activation = RootView as IActivation;
+				if (activation != null)
+					activation.Activated();
+			}
 		}
 
 		private void ConfigureToolbarItems()
 		{
 			var standardButtonSize = 31;
 
-			if (Root != null && Root.ToolbarButtons != null)
+			if (ToolbarButtons != null)
 			{
-				var buttonList = Root.ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToList();
+				var buttonList = ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToList();
 
 				var leftCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Left).Count();
 				var rightCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Right).Count();
@@ -561,14 +580,14 @@ namespace MonoMobile.Views
 			var nav = ParentViewController as UINavigationController;
 			if (nav != null)
 			{
-				nav.SetToolbarHidden(ToolbarItems == null, true);
+				nav.SetToolbarHidden(ToolbarButtons == null, true);
 			
 				NavigationItem.RightBarButtonItem = null;
 				NavigationItem.LeftBarButtonItem = null;
 
-				if (Root.NavbarButtons != null)
+				if (NavbarButtons != null)
 				{
-					foreach (var button in Root.NavbarButtons)
+					foreach (var button in NavbarButtons)
 					{
 						if (button.Command.CanExecute(null))
 						{
@@ -586,25 +605,22 @@ namespace MonoMobile.Views
 		{
 			if (BackgroundColor == null)
 			{
-				if (BackgroundImage == null)
+				if (BackgroundImage == null && Theme != null)
 				{
-					if (Root != null)
+					if (Theme.BackgroundUri != null)
 					{
-						if (Root.Theme.BackgroundUri != null)
-						{
-							var imageUri = Root.Theme.BackgroundUri;
-							BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
-						}
-						
-						if (Root.Theme.BackgroundColor != null)
-						{
-							BackgroundColor = Root.Theme.BackgroundColor;
-						}
-		
-						if (Root.Theme.BackgroundImage != null)
-						{
-							BackgroundImage = Root.Theme.BackgroundImage;
-						}
+						var imageUri = Theme.BackgroundUri;
+						BackgroundImage = ImageLoader.DefaultRequestImage(imageUri, null);
+					}
+					
+					if (Theme.BackgroundColor != null)
+					{
+						BackgroundColor = Theme.BackgroundColor;
+					}
+	
+					if (Theme.BackgroundImage != null)
+					{
+						BackgroundImage = Theme.BackgroundImage;
 					}
 				}
 		
@@ -646,7 +662,7 @@ namespace MonoMobile.Views
 		{
 			get 
 			{ 
-				var searchbar = Root as ISearchBar;
+				var searchbar = TableView.Source as ISearchBar;
 				if (searchbar != null)
 				{
 					return !searchbar.IsSearchbarHidden;
@@ -658,7 +674,7 @@ namespace MonoMobile.Views
 
 		public void ToggleSearchbar()
 		{
-			var searchbar = Root as ISearchBar;
+			var searchbar = TableView.Source as ISearchBar;
 			if (searchbar != null)
 			{
 				if (!searchbar.IsSearchbarHidden)
@@ -682,13 +698,13 @@ namespace MonoMobile.Views
 		{
 			if (_Searchbar == null)
 			{
-				var searchable = Root as ISearchBar;
+				var searchable = TableView.Source as ISearchBar;
 				if (searchable != null)
 				{
 					_Searchbar = new UISearchBar(new RectangleF(0, 0, TableView.Bounds.Width, 45)) 
 					{ 
 						Delegate = new DialogViewSearchDelegate(this),
-						TintColor = Root.Theme.BarTintColor,
+						TintColor = Theme.BarTintColor,
 					};	
 
 					if (!string.IsNullOrEmpty(searchable.SearchPlaceholder))
@@ -712,8 +728,6 @@ namespace MonoMobile.Views
 				return;
 			
 			Root.Prepare();
-
-			NavigationItem.HidesBackButton = !_Pushing;
 
 			if (Root.Caption != null)
 				NavigationItem.Title = Root.Caption;
@@ -774,26 +788,30 @@ namespace MonoMobile.Views
 		}
 
 		public void UpdateSource()
-		{
-			if (Root == null)
-				return;
+		{			
+			if (Root != null)
+			{
+				if (_TableSource != null)
+				{
+					_TableSource.Dispose();
+				}
 			
-			if (_TableSource != null)
-				_TableSource.Dispose();
-		
-			_TableSource = CreateSizingSource(Root.UnevenRows);
-			TableView.Source = _TableSource;
-			
+				_TableSource = CreateSizingSource(Root.UnevenRows);
+				TableView.Source = _TableSource;
+			}
+
+			TableView.ReloadData();
 			ConfigureNavbarItems();
 			ConfigureToolbarItems();
 		}
 
 		public void ReloadData()
 		{
-			if (Root == null)
-				return;
+			if (Root != null)
+			{
+				Root.Prepare();
+			}
 			
-			Root.Prepare();
 			if (TableView != null)
 			{
 				UpdateSource();
@@ -829,7 +847,7 @@ namespace MonoMobile.Views
 		
 		public override void ViewWillDisappear(bool animated)
 		{
-			var searchbar = Root as ISearchBar;
+			var searchbar = TableView.Source as ISearchBar;
 			if (searchbar != null && searchbar.EnableSearch && !searchbar.IsSearchbarHidden)
 				FinishSearch(true);
 
@@ -850,72 +868,74 @@ namespace MonoMobile.Views
 //			}
 
 			base.ViewDidDisappear(animated);
-
-			var activation = Root.DataView as IActivation;
-			if (activation != null)
-				activation.Deactived();
+			
+			if (RootView != null)
+			{
+				var activation = RootView as IActivation;
+				if (activation != null)
+					activation.Deactived();
+			}
 		}
 
-		protected void PrepareRoot(IRoot root)
+		public void PrepareRoot(IRoot root)
 		{
 			Root = root;
 			if (Root != null)
 				Root.Prepare();
 		}
-		
-		public DialogViewController(string title, UIView view, UITableViewStyle style, bool pushing) : base(style)
+
+		private void SetPushing(bool pushing)
 		{
-			RootView = view;
-			
-			var bindingContext = new BindingContext(RootView, title);
 			_Pushing = pushing;
-			PrepareRoot(bindingContext.Root);
+			NavigationItem.HidesBackButton = !_Pushing;
 		}
-		
+
+		private void SetDataContextChangeHandler(UIView view)
+		{
+			var notifyDataContextChanged = view as INotifyDataContextChanged;
+			if (notifyDataContextChanged != null)
+			{
+				var handleDataContextChanged = TableView.Source as IHandleDataContextChanged;
+				if (handleDataContextChanged != null)
+				{
+					notifyDataContextChanged.DataContextChanged += handleDataContextChanged.HandleNotifyDataContextChangedDataContextChanged;
+				}
+			}
+		}
+
+		private void CreateTableView(UIView view)
+		{
+			var parser = new ViewParser();
+			var source = parser.Parse(this, view);
+
+			var tableViewStyle = UITableViewStyle.Grouped;
+
+			var tableStyle = source as ITableViewStyle;
+			if (tableStyle != null)
+			{
+				tableViewStyle = tableStyle.TableViewStyle;
+			}
+			
+			if (source != null)
+			{
+				TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
+				TableView.Source = source;
+			}
+
+			SetDataContextChangeHandler(view);
+		}
+
 		public DialogViewController(string title, UIView view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
-			RootView = view;
+			Title = title;
+			SetPushing(pushing);
 
-			var bindingContext = new BindingContext(RootView, title);
-			_Pushing = pushing;
-			
-			PrepareRoot(bindingContext.Root);
-		}
-
-		public DialogViewController(UIView view, bool pushing) : base(UITableViewStyle.Grouped)
-		{
-			RootView = view;
-			
-			var title = string.Empty;
-			var vw = RootView as IView;
-			if (vw != null)
-				title = vw.Caption;
-
-			var bindingContext = new BindingContext(RootView, title);
-			_Pushing = pushing;
-			PrepareRoot(bindingContext.Root);
-		}
-
-		/// <summary>
-		///    Creates a new DialogViewController from a IRoot and sets the push status
-		/// </summary>
-		/// <param name="_Root">
-		/// The <see cref="IRoot"/> containing the information to render.
-		/// </param>
-		/// <param name="_Pushing">
-		/// A <see cref="System.Boolean"/> describing whether this is being pushed 
-		/// (NavigationControllers) or not.   If _Pushing is true, then the back button 
-		/// will be shown, allowing the user to go back to the previous controller
-		/// </param>
-		public DialogViewController(IRoot root, bool pushing) : base(UITableViewStyle.Grouped)
-		{
-			_Pushing = pushing;
-			PrepareRoot(root);
+			CreateTableView(view);	
 		}
 
 		public DialogViewController(UITableViewStyle style, IRoot root, bool pushing) : base(style)
 		{
-			_Pushing = pushing;
+			SetPushing(pushing);
 			Style = style;
 			PrepareRoot(root);
 		}

@@ -84,7 +84,7 @@ namespace MonoMobile.Views
 			Binding.ViewSource = viewSource;
 			SourceProperty = _ViewProperty;
 
-			var dataContext = viewSource as IDataContext;
+			var dataContext = viewSource as IDataContext<object>;
 			if (dataContext != null && dataContext.DataContext != null)
 			{
 				var source = dataContext.DataContext;

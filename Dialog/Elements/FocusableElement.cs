@@ -48,9 +48,9 @@ namespace MonoMobile.Views
 		{
 		}
 
-		public override UITableViewElementCell NewCell()
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			return new UITableViewElementCell(Theme.CellStyle, Id, this);
+			return new UITableViewElementCell(UITableViewCellStyle.Default, cellId, this);
 		}
 
 		protected override void CreateElementView()
@@ -79,7 +79,7 @@ namespace MonoMobile.Views
 
 		public EditMode EditMode { get; set; }
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 			if (ElementView != null)
 			{

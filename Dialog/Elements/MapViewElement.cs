@@ -52,7 +52,7 @@ namespace MonoMobile.Views
 			base.InitializeCell(tableView);
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 			var mapViewController = new MapViewController((CLLocationCoordinate2D)DataContext) { Title = Caption };
 			dvc.ActivateController(mapViewController, dvc);

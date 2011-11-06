@@ -43,9 +43,20 @@ namespace MonoMobile.Views
 	{		
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-		{			
-			InvokeOnMainThread(()=> { Startup(); });
+		{		
+#if DBEUG
+			var thread = new System.Threading.Thread(() =>
+			{
+				using (NSAutoreleasePool pool = new NSAutoreleasePool())
+				{
+					InvokeOnMainThread(()=> { Startup(); });
+				}
+			});
 			
+			thread.Start();
+#else
+			InvokeOnMainThread(()=> { Startup(); });
+#endif
 			return true;
 		}
 
@@ -91,18 +102,19 @@ namespace MonoMobile.Views
 
 		public override void WillEnterForeground(UIApplication application)
 		{
-			//MonoMobileApplication.ResumeFromBackgroundAction();
+			if (MonoMobileApplication.ResumeFromBackgroundAction != null)
+				MonoMobileApplication.ResumeFromBackgroundAction();
+		}
+		
+		public override void ReceiveMemoryWarning(UIApplication application)
+		{
+			Console.WriteLine("Memory warning.");
 		}
 
         // This method is allegedly required in iPhoneOS 3.0
         public override void OnActivated(UIApplication application)
         {
         }
-
-		public override void ReceiveMemoryWarning(UIApplication application)
-		{
-			Console.WriteLine("Memory warning.");
-		}
 	}
 }
 

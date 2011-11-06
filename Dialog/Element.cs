@@ -246,7 +246,6 @@ namespace MonoMobile.Views
 			Id = new NSString(GetType().FullName);
 			Caption = caption;
 			ShowCaption = !string.IsNullOrEmpty(Caption);
-			Theme.CellStyle = UITableViewCellStyle.Default;
 			ViewBinding = new ViewBinding();
 			Visible = true;
 			Enabled = true;
@@ -304,7 +303,7 @@ namespace MonoMobile.Views
 			TableView = tableView;
 			
 			cellFactory.CellId = Id;
-			Cell = cellFactory.GetCell(tableView, NibName, ()=>NewCell());
+			Cell = cellFactory.GetCell(tableView, new NSIndexPath(), NibName, (cellId, indexPath) => NewCell(cellId, indexPath));
  
 			Cell.Element = this;
 
@@ -330,9 +329,9 @@ namespace MonoMobile.Views
 			return Cell;
 		}
 
-		public virtual UITableViewElementCell NewCell()
+		public virtual UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			var cell = new UITableViewElementCell(Theme.CellStyle, Id, this);
+			var cell = new UITableViewElementCell(UITableViewCellStyle.Default, cellId, this);
 			return cell;
 		}
 

@@ -37,10 +37,8 @@ namespace MonoMobile.Views
 	{
 		public RootAttribute()
 		{
-			CellStyle = UITableViewCellStyle.Value1;
 		}
 
-		public UITableViewCellStyle CellStyle { get; set; }
 		public Type ViewType { get; set; }
 		public Type ElementType { get; set; }
 	}

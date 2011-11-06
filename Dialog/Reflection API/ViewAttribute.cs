@@ -31,7 +31,7 @@ namespace MonoMobile.Views
 {
 	using System;
 
-	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
 	public class ViewAttribute: Attribute
 	{
 		public ViewAttribute(Type viewType)
@@ -39,7 +39,13 @@ namespace MonoMobile.Views
 			ViewType = viewType;
 		}
 
+		public ViewAttribute(string nibName)
+		{
+			NibName = nibName;
+		}
+
 		public Type ViewType { get; set; }
+		public string NibName { get; set; }
 	}
 }
 

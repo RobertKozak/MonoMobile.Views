@@ -70,7 +70,6 @@ namespace MonoMobile.Views
 			set { InitializePropertiesFromCell(value); } 
 		}
 	
-		public UITableViewCellStyle CellStyle { get; set; }
 		public UITableViewCellAccessory? Accessory { get; set; }
 		public float CellHeight { get; set; }
 
@@ -244,9 +243,6 @@ namespace MonoMobile.Views
 			if (theme != null)
 			{	
 				Name = theme.Name;
-
-				if (theme.CellStyle != UITableViewCellStyle.Default && CellStyle != theme.CellStyle)
-					CellStyle = theme.CellStyle;
 
 				if (theme.CellHeight != 0 && CellHeight != theme.CellHeight)
 					CellHeight = theme.CellHeight;

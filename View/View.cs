@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using System.ComponentModel;
 	using MonoTouch.UIKit;
 
-	public abstract class View : UIView, IView, IDataContext, INotifyDataContextChanged, IInitializable
+	public abstract class View : UIView, IView, IDataContext<object>, INotifyDataContextChanged, IInitializable
 	{
 		private object _DataContext;
 		
@@ -50,12 +50,12 @@ namespace MonoMobile.Views
 			set { SetDataContext(value); }
 		}
 		
-		public object GetDataContext()
+		public virtual object GetDataContext()
 		{
 			return _DataContext;
 		}
 
-		public void SetDataContext(object dataContext)
+		public virtual void SetDataContext(object dataContext)
 		{
 			if (_DataContext != dataContext)
 			{

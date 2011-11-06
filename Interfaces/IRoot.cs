@@ -44,9 +44,6 @@ namespace MonoMobile.Views
 		string DefaultSettingsKey { get; set; }
 
 		DialogViewController Controller { get; set; }
-		
-		List<CommandBarButtonItem> ToolbarButtons { get; set; }
-		List<CommandBarButtonItem> NavbarButtons { get; set; }
  
 		List<ISection> Sections { get; set; }
 		bool UnevenRows { get; set;}

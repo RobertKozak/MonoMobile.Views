@@ -69,7 +69,7 @@ namespace MonoMobile.Views
 			if (viewContext != null)
 			{
 				viewContext.BindingContext = this;
-				var dataContext = view as IDataContext;
+				var dataContext = view as IDataContext<object>;
 				if (dataContext != null)
 				{
 					var vmContext = dataContext.DataContext as IBindingContext;
@@ -270,7 +270,7 @@ namespace MonoMobile.Views
 				}
 			}
 
-			var dataContext = view as IDataContext;
+			var dataContext = view as IDataContext<object>;
 			if (dataContext != null)
 			{
 				dataContext.DataContext = context;

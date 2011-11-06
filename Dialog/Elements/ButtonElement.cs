@@ -66,7 +66,7 @@ namespace MonoMobile.Views
 			return Caption;
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath indexPath)
 		{
 			if (Command != null && Command.CanExecute(CommandParameter))
 				Command.Execute(CommandParameter);

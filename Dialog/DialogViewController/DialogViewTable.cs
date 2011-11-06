@@ -41,6 +41,7 @@ namespace MonoMobile.Views
 		private UIColor oldDetailTextShadowColor = UIColor.Clear;
 
 		public DialogViewController Controller { get; set; }
+		public UIView View { get; set; }
 
 		public DialogViewTable(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
 		{
@@ -64,7 +65,7 @@ namespace MonoMobile.Views
 		{
 			base.TouchesEnded(touches, evt);
 			
-			if (Controller != null)
+			if (Controller != null && Controller.Root != null)
 			{
 				foreach (var section in Controller.Root.Sections)
 				{

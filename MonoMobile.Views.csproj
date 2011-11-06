@@ -174,7 +174,6 @@
     <Compile Include="Dialog\Reflection API\ListAttribute.cs" />
     <Compile Include="Converters\EnumerableConverter.cs" />
     <Compile Include="Dialog\Reflection API\RootAttribute.cs" />
-    <Compile Include="Dialog\Reflection API\PopOnSelectionAttribute.cs" />
     <Compile Include="Dialog\Reflection API\MapAttribute.cs" />
     <Compile Include="Converters\MoneyConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
@@ -239,7 +238,6 @@
     <Compile Include="Interfaces\ISearchBar.cs" />
     <Compile Include="Interfaces\IThemeable.cs" />
     <Compile Include="Interfaces\ISection.cs" />
-    <Compile Include="Interfaces\IReload.cs" />
     <Compile Include="Interfaces\IDataContext.cs" />
     <Compile Include="Interfaces\IBindingContext.cs" />
     <Compile Include="Application\ObservableObject.cs" />
@@ -305,7 +303,6 @@
     <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
     <Compile Include="Interfaces\IDataTemplate.cs" />
     <Compile Include="Dialog\DataTemplate.cs" />
-    <Compile Include="View\ListView.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
     <Compile Include="Dialog\Reflection API\ProgressAttribute.cs" />
     <Compile Include="Dialog\Elements\ProgressElement.cs" />
@@ -318,6 +315,13 @@
     <Compile Include="Dialog\Reflection API\BaseControlAttribute.cs" />
     <Compile Include="Dialog\DialogViewController\SectionedListViewDataSource.cs" />
     <Compile Include="Dialog\DialogViewController\ListViewDataSource.cs" />
+    <Compile Include="Interfaces\ICell.cs" />
+    <Compile Include="Interfaces\IInitializeCell.cs" />
+    <Compile Include="Interfaces\ICellContent.cs" />
+    <Compile Include="Interfaces\IHandleDataContextChanged.cs" />
+    <Compile Include="Interfaces\ITableViewStyle.cs" />
+    <Compile Include="Dialog\DialogViewController\BaseDialogViewSource.cs" />
+    <Compile Include="Dialog\Reflection API\NavigateToViewAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

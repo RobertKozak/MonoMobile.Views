@@ -54,9 +54,9 @@ namespace MonoMobile.Views
 			DataContext = date;
 		}
 		
-		public override UITableViewElementCell NewCell()
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			return new UITableViewElementCell(UITableViewCellStyle.Value1, Id, this);
+			return new UITableViewElementCell(UITableViewCellStyle.Value1, cellId, this);
 		}
 
 		public override void InitializeCell(UITableView tableView)

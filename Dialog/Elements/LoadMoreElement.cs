@@ -116,7 +116,7 @@ namespace MonoMobile.Views
 			Cell.ContentView.AddSubview(_ActivityIndicator);
 		}
 		
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{			
 			if (Animating)
 				return;

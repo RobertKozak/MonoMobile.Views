@@ -50,23 +50,18 @@ namespace MonoMobile.Views
 
 		public StringElement(string caption, string value) : this(caption)
 		{
-			Theme.CellStyle = UITableViewCellStyle.Value1;
 			DataContext = value;
 		}
 
 		public StringElement(string caption, string value, UITableViewCellStyle style) : this(caption, value)
 		{
-			Theme.CellStyle = style;
 		}
 
-		public override UITableViewElementCell NewCell()
-		{
-			if (Theme.CellStyle == UITableViewCellStyle.Default)
-				Theme.CellStyle = DataContext == null ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1;
-			
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
+		{		
 			Accessory = UITableViewCellAccessory.None;
 
-			return base.NewCell(); 
+			return base.NewCell(cellId, indexPath); 
 		}
 	}
 }

@@ -67,10 +67,9 @@ namespace MonoMobile.Views
 //			Frame = frame;
 //		}
 		
-		public override UITableViewElementCell NewCell()
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			Theme.CellStyle = UITableViewCellStyle.Default;
-			return base.NewCell();
+			return base.NewCell(cellId, indexPath);
 		}
 
 		public override void InitializeCell(UITableView tableView)

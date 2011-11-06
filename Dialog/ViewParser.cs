@@ -1,4 +1,3 @@
-using System.Drawing;
 // 
 // ViewParser.cs
 // 
@@ -34,6 +33,7 @@ namespace MonoMobile.Views
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
 	using System.Text;
@@ -68,6 +68,130 @@ namespace MonoMobile.Views
 		{
 			BuildElementPropertyMap();
 		}
+		
+		public UITableViewSource Parse(DialogViewController controller, UIView view)
+		{
+			List<Type> viewTypes = null;
+			object dataContext = null;
+			UITableViewSource source = null;
+
+			controller.RootView = view;
+
+			controller.Theme = new Theme();
+			var themeable = view as IThemeable;
+			if (themeable != null)
+				themeable.Theme = Theme.CreateTheme(controller.Theme);
+			
+			controller.ToolbarButtons = CheckForToolbarItems(view);
+			controller.NavbarButtons = CheckForNavbarItems(view);
+
+			var memberInfo = view.GetType().GetMember("DataContext").FirstOrDefault();
+			
+			viewTypes = GetViewTypes(view, memberInfo);
+		
+			source = ParseList(controller, view, memberInfo, viewTypes);
+
+			if (source == null)
+			{
+				//RootView = view;
+				var bindingContext = new BindingContext(view, "", controller.Theme);
+				controller.PrepareRoot(bindingContext.Root);
+			}
+
+			InitializeSearch(view, source);
+			return source;
+		}
+
+		private List<Type> GetViewTypes(UIView view, MemberInfo memberInfo)
+		{
+			var dc = view as IDataContext<object>;
+			if (dc != null)
+			{
+				var viewAttributes = memberInfo.GetCustomAttributes<ViewAttribute>();
+				if (viewAttributes.Length > 0)
+				{
+					return (from attribute in viewAttributes select attribute.ViewType).ToList();
+				}
+			}
+
+			return null;
+		}
+
+		public UITableViewSource ParseList(DialogViewController controller, UIView view, MemberInfo member, List<Type> viewTypes)
+		{
+			var dc = view as IDataContext<object>;
+			if (dc != null)
+			{
+				var type = dc.DataContext.GetType();
+			
+				var isList = typeof(IEnumerable).IsAssignableFrom(type) || typeof(Enum).IsAssignableFrom(type);
+				if (isList)
+				{
+					IList data = null;
+					ListViewDataSource source = null;
+					Type[] generic = { type };
+					var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
+					
+					if (type.IsEnum)
+					{
+						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+		
+						var enumValues = Enum.GetValues(type);
+						foreach (Enum value in enumValues)
+						{
+							data.Add(value);
+						}
+					}
+
+					if (type.IsGenericType)
+					{
+						var genericType = type.GetGenericArguments().FirstOrDefault();
+						generic = new Type[] { genericType };
+						data = (IList)dc.DataContext;
+						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
+					}
+		
+					source = new ListViewDataSource(controller, (IList)data, viewTypes);
+
+					if (source != null)
+					{
+						if (type.IsEnum)
+						{
+							source.SelectedItem = dc.DataContext;
+						}
+
+						var multiselectionAttribute = member.GetCustomAttribute<MultiselectionAttribute>();
+						source.IsMultiselect = multiselectionAttribute != null;
+						if (multiselectionAttribute != null && !string.IsNullOrEmpty(multiselectionAttribute.MemberName))
+						{
+							source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
+						}
+	
+						var selectionAttribute = member.GetCustomAttribute<SelectionAttribute>();
+						source.PopOnSelection = selectionAttribute != null && selectionAttribute.PopOnSelection;
+						if (selectionAttribute != null && !string.IsNullOrEmpty(selectionAttribute.MemberName))
+						{
+							source.IsSelectable = true;
+							source.SelectedItemMemberName = selectionAttribute.MemberName;
+						}						
+		
+						var listAttribute = member.GetCustomAttribute<ListAttribute>();
+						source.TableViewStyle = listAttribute != null ? UITableViewStyle.Plain : UITableViewStyle.Grouped;
+	
+						var navigateToViewAttribute = member.GetCustomAttribute<NavigatetToViewAttribute>();
+						if (navigateToViewAttribute != null)
+						{
+							source.IsNavigateable = navigateToViewAttribute != null;
+							source.NavigateToView = navigateToViewAttribute.ViewType;
+						}
+						
+						return source;
+					}
+				}
+			}
+
+			return null;
+		}
 
 		public void Parse(UIView view, string caption, Theme theme)
 		{
@@ -85,7 +209,7 @@ namespace MonoMobile.Views
 			Root.DataContext = view;
 			Root.DataView = view;
 
-			var dataContext = view as IDataContext;
+			var dataContext = view as IDataContext<object>;
 			if (dataContext != null)
 				Root.DataContext = dataContext.DataContext;
 
@@ -112,9 +236,6 @@ namespace MonoMobile.Views
 			var sectionList = CreateSectionList(view, Root);
 			sectionList.ForEach((section)=>section.Initialize());
 			Root.Add(sectionList);
-			
-			Root.ToolbarButtons = CheckForToolbarItems(view);
-			Root.NavbarButtons = CheckForNavbarItems(view);
 		}
 		
 	    public static ICommand GetCommandForMember(object view, MemberInfo member)
@@ -163,7 +284,7 @@ namespace MonoMobile.Views
 				
 				if (property == null)
 				{
-					var dataContext = view as IDataContext;
+					var dataContext = view as IDataContext<object>;
 					if (dataContext != null)
 					{
 						var vm = dataContext.DataContext;
@@ -463,7 +584,7 @@ namespace MonoMobile.Views
 
 			var isEnum = memberType.IsEnum;
 			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
-			var isMultiselect = member.GetCustomAttribute<MultiSelectionAttribute>() != null;
+			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
 			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
 			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
 			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
@@ -482,7 +603,6 @@ namespace MonoMobile.Views
 					rootElement.Theme = Theme.CreateTheme(Root.Theme); 
 		
 					rootElement.ViewBinding = section.ViewBinding;
-					rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Value1);
 					root = rootElement;
 				}
 				else
@@ -527,7 +647,6 @@ namespace MonoMobile.Views
 				rootElement.ViewBinding.ElementType = elementType;
 				rootElement.ViewBinding.ViewType = viewType;
 				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-				rootElement.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Default);
 
 				if (cellEditingStyleAttribute != null)
 				{
@@ -596,15 +715,15 @@ namespace MonoMobile.Views
 			var caption = GetCaption(member);
 			Type memberType = GetTypeForMember(member);
 			ISection section = null;
-			var isMultiselect = member.GetCustomAttribute<MultiSelectionAttribute>() != null;
+			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
 			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
 
 			if (memberType.IsEnum)
 			{
 				SetDefaultConverter(view, member, "DataContext", new EnumConverter(), memberType, bindings);
 	
-				var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
-				
+			//	var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
+				var pop = false;
 				var currentValue = member.GetValue(view);
 				var enumValues = Enum.GetValues(memberType);
 
@@ -665,7 +784,7 @@ namespace MonoMobile.Views
 			Type memberType = GetTypeForMember(member);
 			
 			object context = view;
-			var dataContext = view as IDataContext;
+			var dataContext = view as IDataContext<object>;
 
 			if (dataContext != null)
 			{
@@ -835,20 +954,8 @@ namespace MonoMobile.Views
 
 				root.ViewBinding.ViewType = listAttribute.ViewType ?? root.ViewBinding.ViewType;
 			}
-		
-			root.Theme.CellStyle = GetCellStyle(member, UITableViewCellStyle.Value1);
 			
 			return root;
-		}
-
-		private UITableViewCellStyle GetCellStyle(MemberInfo member, UITableViewCellStyle defaultCellStyle)
-		{
-			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-			var cellStyle = defaultCellStyle;
-			if (rootAttribute != null)
-				cellStyle = rootAttribute.CellStyle;
-
-			return cellStyle;
 		}
 
 		private void SetDefaultConverter(object view, MemberInfo member, string targetPath, IValueConverter converter, object parameter, List<Binding> bindings)
@@ -916,7 +1023,7 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		private List<CommandBarButtonItem> CheckForToolbarItems(object view)
+		public List<CommandBarButtonItem> CheckForToolbarItems(object view)
 		{
 			var buttonList = new List<CommandBarButtonItem>();
 			var members = GetMethods(view);
@@ -969,7 +1076,7 @@ namespace MonoMobile.Views
 			return null;
 		}
 	
-		private List<CommandBarButtonItem> CheckForNavbarItems(object view)
+		public List<CommandBarButtonItem> CheckForNavbarItems(object view)
 		{
 			var buttonList = new List<CommandBarButtonItem>();
 			var members = GetMethods(view);
@@ -1132,7 +1239,7 @@ namespace MonoMobile.Views
 		private static MemberInfo GetMemberFromDataContext(MemberInfo memberInfo, ref object dataContext)
 		{
 			var member = memberInfo;
-			var context = dataContext as IDataContext;
+			var context = dataContext as IDataContext<object>;
 			if (context != null)
 			{
 				if (context != null && context.DataContext != null)
@@ -1403,6 +1510,7 @@ namespace MonoMobile.Views
 
 			return element;
 		}
+
 		private IElement CreateIntElement(MemberInfo member, string caption, object view, List<Binding> bindings)
 		{
 			IElement element = null;
@@ -1427,6 +1535,36 @@ namespace MonoMobile.Views
 			SetDefaultConverter(view, member, "DataContext", new IntConverter(), null, bindings);
 
 			return element;
+		}
+
+		private void InitializeSearch(UIView view, UITableViewSource source)
+		{
+			var searchbarAttribute = view.GetType().GetCustomAttribute<SearchbarAttribute>();
+			var searchbar = source as ISearchBar;
+			if (searchbarAttribute != null && searchbar != null)
+			{
+				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
+				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
+				searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
+				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+		
+					
+				var methods = GetMethods(view);
+				foreach (var method in methods)
+				{
+					var attribute = method.GetCustomAttribute<SearchbarAttribute>();
+					if (attribute != null)
+					{
+						searchbar.SearchPlaceholder = attribute.Placeholder;
+						searchbar.IncrementalSearch = attribute.IncrementalSearch;
+						searchbar.EnableSearch = attribute.ShowImmediately;
+						searchbar.IsSearchbarHidden = !attribute.ShowImmediately;
+
+						searchbar.SearchCommand = new SearchCommand(view, method as MethodInfo);
+						break;
+					};
+				}
+			}
 		}
 
 		public void HandleCanExecuteChanged(object sender, EventArgs e)

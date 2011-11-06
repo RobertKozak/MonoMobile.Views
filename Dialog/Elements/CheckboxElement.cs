@@ -115,7 +115,7 @@ namespace MonoMobile.Views
 			return Caption;
 		}
 	
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 			DataContext = !(bool)DataContext;
 			DataBinding.UpdateDataContext();

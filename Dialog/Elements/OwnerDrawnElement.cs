@@ -26,9 +26,9 @@ namespace MonoMobile.Views
 			return Height(tableView.Bounds);
 		}
 
-		public override UITableViewElementCell NewCell()
+		public override UITableViewElementCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			Cell = new OwnerDrawnCell(this, Style, Id);
+			Cell = new OwnerDrawnCell(this, Style, cellId);
 
 			return Cell;
 		}

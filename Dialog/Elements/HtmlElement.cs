@@ -100,7 +100,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 			var vc = new WebViewController(this) { Autorotate = dvc.Autorotate };
 			var frame = UIScreen.MainScreen.Bounds;

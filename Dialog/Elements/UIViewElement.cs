@@ -88,7 +88,7 @@ namespace MonoMobile.Views
 				Cell.ContentView.AddSubview(ElementView);
 		}
 		
-		public virtual void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public virtual void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 
 		}

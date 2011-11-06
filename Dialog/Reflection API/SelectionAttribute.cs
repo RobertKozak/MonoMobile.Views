@@ -37,5 +37,13 @@ namespace MonoMobile.Views
 		public SelectionAttribute()
 		{
 		}
+
+		public SelectionAttribute(string memberName)
+		{
+			MemberName = memberName;
+		}
+
+		public string MemberName { get; set; }
+		public bool PopOnSelection { get; set; }
 	}
 }

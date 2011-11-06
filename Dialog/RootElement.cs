@@ -424,7 +424,7 @@ namespace MonoMobile.Views
 			return dvc;
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+		public void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path)
 		{
 			var root = BindingContext.CreateRootedView(this);
 			

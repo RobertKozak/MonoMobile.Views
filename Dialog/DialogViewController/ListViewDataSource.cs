@@ -31,26 +31,43 @@ namespace MonoMobile.Views
 {	
 	using System;
 	using System.Collections;
-	using System.Collections.Generic;
-	using System.Collections.Specialized;
+	using System.Linq;
+	using System.Reflection;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;	
+	using System.Collections.Generic;
 
 	[Preserve(AllMembers = true)]
-	public abstract class ListViewDataSource<T> : UITableViewSource
+	public class ListViewDataSource : BaseDialogViewSource, IDataContext<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle
 	{
-		private TableCellFactory<UITableViewCell> cellFactory = new TableCellFactory<UITableViewCell>();
-		private readonly string _Id;
+		private MemberInfo _SelectedItemsMember;
+		private MemberInfo _SelectedItemMember;
 
-		protected DialogViewController Controller;
-		protected UITableViewCell Cell { get; set; }
-		protected IList<T> DataContext { get; set; }
+		public IList SelectedItems { get; set; }
+		public object SelectedItem { get; set; }
 		
-		public string NibName { get; set; }
-		
-		public ListViewDataSource(string cellId, DialogViewController controller) : base()
-		{
-			_Id = cellId;
+		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); } }
+		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); } }
+
+		public IList DataContext { get; set; }
+
+		public bool IsSelectable { get; set; }
+		public bool IsMultiselect { get; set; }
+		public bool PopOnSelection { get; set; }
+
+		public ListViewDataSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller, viewTypes)
+		{	
+			DataContext = list;
+
+			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
+			var genericType = DataContext.GetType().GetGenericArguments().FirstOrDefault();
+			Type[] generic = { genericType };		
+			SelectedItems = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+
+			CellFactory = new TableCellFactory<UITableViewCell>("listCell");
+
+			SelectedItemMemberName = "ItemSelected";
+			SelectedItemsMemberName = "ItemsSelected";
 		}
 
 		protected override void Dispose(bool disposing)
@@ -62,55 +79,104 @@ namespace MonoMobile.Views
 			base.Dispose(disposing);
 		}
 
-		public abstract void InitializeData(object data);
-
 		public override int RowsInSection(UITableView tableview, int section)
 		{
-			if (DataContext != null)
-				return DataContext.Count;
-
-			return 0;
-
+			return DataContext != null ? DataContext.Count : 0;
 		}
 
 		public override int NumberOfSections(UITableView tableView)
-		{
-			if (DataContext != null)
-				return DataContext.Count;
-		
-			return 0;
-		}
-		
-		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-		{
-			cellFactory.CellId = _Id;
-			Cell = cellFactory.GetCell(tableView, NibName, ()=>NewCell());
-
-			UpdateCell(Cell, indexPath);
-
-			return Cell;
-		}
-
-		protected UITableViewCell NewCell()
-		{
-			var cellStyle = UITableViewCellStyle.Subtitle;
-			var cell = new UITableViewCell(cellStyle, _Id) { };
-			
-			return cell;
+		{	
+			return DataContext != null ? 1 : 0;
 		}
 		
 		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			Controller.Selected(indexPath);
+			SelectedItem = DataContext[indexPath.Row]; 
+			if (_SelectedItemMember != null)
+			{
+				_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
+			}
+
+			if (IsMultiselect)
+			{	
+				if (SelectedItems.Contains(SelectedItem))
+				{
+					SelectedItems.Remove(SelectedItem);
+				}
+				else
+				{
+					SelectedItems.Add(SelectedItem);
+				}
+
+				if (_SelectedItemsMember != null)
+				{
+					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
+				}
+			};
+
+			if (Controller != null)
+			{
+				Controller.Selected(SelectedItem, indexPath);
+			}
+
+			if (PopOnSelection)
+			{
+				Controller.NavigationController.PopViewControllerAnimated(true);
+			}
+			
+
+			Controller.ReloadData();
+		}
+	
+		protected override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{	
+			var selectedIndex = DataContext.IndexOf(SelectedItem);
+
+			if (IsMultiselect && indexPath.Row == selectedIndex)
+			{
+				cell.Accessory = cell.Accessory == UITableViewCellAccessory.None ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+			}
+
+			if (IsSelectable && !IsMultiselect)
+			{
+				cell.Accessory = (indexPath.Row == selectedIndex) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+			}
+
+			if (Views.ContainsKey(cell))
+			{
+				var views = Views[cell];
+	
+				if (views.Count > 0)
+				{
+					foreach (var view in views)
+					{
+						var dc = view as IDataContext<object>;
+						if (dc != null)
+						{
+							dc.DataContext = DataContext[indexPath.Row];
+						}
+		
+						var updateable = view as IUpdateable;
+						if (updateable != null)
+						{
+							updateable.UpdateCell(cell, indexPath);
+						}
+					}
+				}
+				else
+				{
+					cell.TextLabel.Text = DataContext[indexPath.Row].ToString();
+				}
+			}
 		}
 
-		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		public void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
 		{
-			Cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			DataContext = e.NewDataContext as IList;
 
-			var selectable = this as ISelectable;
-			Cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
+			SelectedItems.Clear();
+
+			Controller.UpdateSource();
 		}
 	}
 }
-

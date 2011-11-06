@@ -1,5 +1,5 @@
 // 
-//  ListView.cs
+//  ICellContent.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,33 +30,11 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Specialized;
-	using System.ComponentModel;
-	using System.Drawing;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class ListView : View, ISelectable, IUpdateable
+	public interface ICellContent
 	{
-		public ListView(): this(null)
-		{
-		}
-		
-		public ListView(RectangleF frame): base(frame)
-		{
-		}
-
-		public ListView(string caption) : base()
-		{
-		}
-
-		public virtual void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{	
-		}
-
-		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{	
-
-		}	
+		UITableViewCell Cell { get; set; } 
 	}
 }
+

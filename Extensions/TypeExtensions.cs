@@ -52,6 +52,19 @@ namespace MonoMobile.Views
 			}
 			return (T)attribute;
 		}
+		
+		public static T[] GetCustomAttributes<T>(this MemberInfo member) where T: Attribute
+		{
+			return GetCustomAttributes<T>(member, false);
+		}
+
+		public static T[] GetCustomAttributes<T>(this MemberInfo member, bool inherited) where T: Attribute
+		{
+			Attribute attribute = default(T);
+			var attributes = Attribute.GetCustomAttributes(member, typeof(T), inherited);
+
+			return (T[])attributes;
+		}
 
 		public static MemberInfo GetNestedMember(this Type sourceType, ref object obj, string path, bool allowPrivateMembers)
 		{

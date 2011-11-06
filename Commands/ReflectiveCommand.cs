@@ -92,7 +92,7 @@ namespace MonoMobile.Views
 			var notifier = _ViewModel as INotifyPropertyChanged;
 			if (notifier == null)
 			{
-				var dataContext = _ViewModel as IDataContext;
+				var dataContext = _ViewModel as IDataContext<object>;
 				if (dataContext != null)
 				{
 					notifier = dataContext.DataContext as INotifyPropertyChanged;
@@ -125,12 +125,19 @@ namespace MonoMobile.Views
 		{
 			object result = null;
 			
-			if (CanExecute(parameter))
+			try
 			{
-				if (_Execute.GetParameters().Any())
-					result = _Execute.Invoke(_ViewModel, new object[] { parameter });
-				else
-					result = _Execute.Invoke(_ViewModel, null);
+				if (CanExecute(parameter))
+				{
+					if (_Execute.GetParameters().Any())
+						result = _Execute.Invoke(_ViewModel, new object[] { parameter });
+					else
+						result = _Execute.Invoke(_ViewModel, null);
+				}
+			}
+			catch(TargetInvocationException ex)
+			{
+				throw new Exception(string.Format("{0} method has thrown an exception: {1}", ex.InnerException.TargetSite.Name, ex.InnerException.Message), ex);
 			}
 
 			return result;
