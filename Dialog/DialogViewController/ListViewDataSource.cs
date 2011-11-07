@@ -31,29 +31,37 @@ namespace MonoMobile.Views
 {	
 	using System;
 	using System.Collections;
+	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;	
-	using System.Collections.Generic;
-
+	using MonoTouch.UIKit;
+				
 	[Preserve(AllMembers = true)]
-	public class ListViewDataSource : BaseDialogViewSource, IDataContext<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle
+	public class ListViewDataSource : BaseDialogViewSource, IDataContext<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
+		private ListViewDataSource _NavigationSource;
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
+
+		protected IDictionary<UITableViewCell, UIView> _SelectedAccessoryViews;
+		protected IDictionary<UITableViewCell, UIView> _UnselectedAccessoryViews;
 
 		public IList SelectedItems { get; set; }
 		public object SelectedItem { get; set; }
 		
 		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); } }
 		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); } }
+		
+		public Type SelectedAccessoryViewType { get; set; }
+		public Type UnselectedAccessoryViewType { get; set; } 
 
 		public IList DataContext { get; set; }
 
 		public bool IsSelectable { get; set; }
 		public bool IsMultiselect { get; set; }
 		public bool PopOnSelection { get; set; }
+		public bool HideCaptionOnSelection { get; set; }
 
 		public ListViewDataSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller, viewTypes)
 		{	
@@ -68,6 +76,9 @@ namespace MonoMobile.Views
 
 			SelectedItemMemberName = "ItemSelected";
 			SelectedItemsMemberName = "ItemsSelected";
+
+			_SelectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
+			_UnselectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -81,6 +92,9 @@ namespace MonoMobile.Views
 
 		public override int RowsInSection(UITableView tableview, int section)
 		{
+			if (IsRoot)
+				return 1;
+
 			return DataContext != null ? DataContext.Count : 0;
 		}
 
@@ -90,57 +104,65 @@ namespace MonoMobile.Views
 		}
 		
 		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-		{
-			SelectedItem = DataContext[indexPath.Row]; 
-			if (_SelectedItemMember != null)
+		{			
+			if (!IsRoot)
 			{
-				_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
-			}
-
-			if (IsMultiselect)
-			{	
-				if (SelectedItems.Contains(SelectedItem))
+				SelectedItem = DataContext[indexPath.Row]; 
+				if (_SelectedItemMember != null)
 				{
-					SelectedItems.Remove(SelectedItem);
+					_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
 				}
-				else
+	
+				if (IsMultiselect)
+				{	
+					if (SelectedItems.Contains(SelectedItem))
+					{
+						SelectedItems.Remove(SelectedItem);
+					}
+					else
+					{
+						SelectedItems.Add(SelectedItem);
+					}
+	
+					if (_SelectedItemsMember != null)
+					{
+						_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
+					}
+				};
+	
+				if (Controller != null)
 				{
-					SelectedItems.Add(SelectedItem);
+					Controller.Selected(SelectedItem, indexPath);
 				}
-
-				if (_SelectedItemsMember != null)
+	
+				if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
 				{
-					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
+					Controller.NavigationController.PopViewControllerAnimated(true);
 				}
-			};
-
-			if (Controller != null)
-			{
-				Controller.Selected(SelectedItem, indexPath);
-			}
-
-			if (PopOnSelection)
-			{
-				Controller.NavigationController.PopViewControllerAnimated(true);
+				
+				Controller.ReloadData();
 			}
 			
-
-			Controller.ReloadData();
+			if (IsNavigateable || IsRoot)
+			{
+				if (NavigationView != null)
+				{
+					NavigateToView(NavigationView);
+					//return;
+				}
+			
+				if (IsRoot)
+				{
+					NavigateToList();
+				}
+			}
 		}
 	
 		protected override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{	
-			var selectedIndex = DataContext.IndexOf(SelectedItem);
+			base.UpdateCell(cell, indexPath);
 
-			if (IsMultiselect && indexPath.Row == selectedIndex)
-			{
-				cell.Accessory = cell.Accessory == UITableViewCellAccessory.None ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-			}
-
-			if (IsSelectable && !IsMultiselect)
-			{
-				cell.Accessory = (indexPath.Row == selectedIndex) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-			}
+			SetSelectionAccessory(cell, indexPath);
 
 			if (Views.ContainsKey(cell))
 			{
@@ -163,11 +185,84 @@ namespace MonoMobile.Views
 						}
 					}
 				}
+				else if (IsRoot)
+				{
+					cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+					cell.TextLabel.Text = Caption;
+					if (IsMultiselect)
+					{
+						cell.DetailTextLabel.Text = SelectedItems.Count.ToString();
+					}
+					else
+					{
+						if (SelectedItem != null)
+						{
+							if (HideCaptionOnSelection)
+								cell.TextLabel.Text = SelectedItem.ToString();
+							else
+								cell.DetailTextLabel.Text = SelectedItem.ToString();
+						}
+					}
+				}
 				else
 				{
 					cell.TextLabel.Text = DataContext[indexPath.Row].ToString();
 				}
 			}
+		}
+		
+		public void NavigateToView(Type viewType)
+		{
+			if (NavigationView != null)
+			{
+				var view = Activator.CreateInstance(NavigationView) as UIView;
+
+				var dc = view as IDataContext<object>;
+				if (dc != null)
+				{
+					dc.DataContext = SelectedItem;
+				}
+				
+				MonoMobileApplication.PushView(view);
+			}
+		}
+
+		public void NavigateToList()
+		{
+			var dvc = new DialogViewController(Caption, Controller.RootView, true);
+			if (_NavigationSource == null)
+				_NavigationSource = new ListViewDataSource(dvc, DataContext, ViewTypes);
+
+			_NavigationSource.Controller = dvc;
+
+			dvc.ToolbarButtons = null;
+			dvc.NavbarButtons = null;
+
+			_NavigationSource.SelectedItem = SelectedItem;
+			_NavigationSource.SelectedItems = SelectedItems;
+
+			_NavigationSource.IsNavigateable = false;
+			_NavigationSource.IsRoot = false;
+			_NavigationSource.IsMultiselect = IsMultiselect;
+			_NavigationSource.IsSelectable = IsSelectable;
+			_NavigationSource.CellFactory = CellFactory;
+			_NavigationSource.NavigationView = null;
+			_NavigationSource.PopOnSelection = PopOnSelection;
+			_NavigationSource.NibName = NibName;
+
+			_NavigationSource.TableViewStyle= TableViewStyle;
+	
+			_NavigationSource.IsSearchbarHidden = IsSearchbarHidden;
+			_NavigationSource.EnableSearch = EnableSearch;
+			_NavigationSource.IncrementalSearch = IncrementalSearch;
+			_NavigationSource.SearchPlaceholder = SearchPlaceholder;
+			_NavigationSource.SearchCommand = SearchCommand;
+
+			_NavigationSource.SelectedAccessoryViewType = SelectedAccessoryViewType;
+			_NavigationSource.UnselectedAccessoryViewType = UnselectedAccessoryViewType;
+			
+			dvc.TableView.Source = _NavigationSource;
+			Controller.NavigationController.PushViewController(dvc, true);
 		}
 
 		public void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
@@ -177,6 +272,87 @@ namespace MonoMobile.Views
 			SelectedItems.Clear();
 
 			Controller.UpdateSource();
+		}
+
+		public void Activated()
+		{
+			if (_NavigationSource != null)
+			{
+				SelectedItem = _NavigationSource.SelectedItem;
+				SelectedItems = _NavigationSource.SelectedItems;
+			}
+			else
+			{
+				Controller.UpdateSource();
+			}
+
+			Controller.ReloadData();
+		}
+
+		public void Deactived()
+		{
+		}
+
+		private void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
+		{
+			if (!IsNavigateable)
+			{
+				var selectedIndex = DataContext.IndexOf(SelectedItem);
+				
+				UIView selectedAccessoryView = null;
+				UIView unselectedAccessoryView = null;
+
+				if (_SelectedAccessoryViews.ContainsKey(cell))
+				{
+					selectedAccessoryView = _SelectedAccessoryViews[cell];
+				}
+				else
+				{
+					if (SelectedAccessoryViewType != null)
+					{
+						selectedAccessoryView = Activator.CreateInstance(SelectedAccessoryViewType) as UIView;
+						_SelectedAccessoryViews.Add(cell, selectedAccessoryView);
+					}
+				}
+
+				if (_UnselectedAccessoryViews.ContainsKey(cell))
+				{
+					unselectedAccessoryView = _UnselectedAccessoryViews[cell];
+				}
+				else
+				{
+					if (UnselectedAccessoryViewType != null)
+					{
+						unselectedAccessoryView = Activator.CreateInstance(UnselectedAccessoryViewType) as UIView;
+						_UnselectedAccessoryViews.Add(cell, unselectedAccessoryView);
+					}
+				}	
+				
+
+				if (IsMultiselect)
+				{
+					foreach (var item in SelectedItems)
+					{
+						selectedIndex = DataContext.IndexOf(item);
+
+						if (selectedAccessoryView != null)
+						{
+							cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : cell.AccessoryView;
+						}
+						else
+							cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : cell.Accessory;
+					}
+				}
+				else
+				{
+					if (selectedAccessoryView != null)
+					{
+						cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : unselectedAccessoryView;
+					}
+					else
+						cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+				}
+			}
 		}
 	}
 }

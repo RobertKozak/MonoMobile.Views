@@ -593,8 +593,13 @@ namespace MonoMobile.Views
 						{
 							if (button.Location == BarButtonLocation.Right)
 								NavigationItem.RightBarButtonItem = button;
-							else
+							else if (button.Location != BarButtonLocation.Back)
 								NavigationItem.LeftBarButtonItem = button;
+							else
+							{
+								NavigationItem.LeftBarButtonItem = button;
+								NavigationItem.SetHidesBackButton(true, false);
+							}
 						}
 					}
 				}
@@ -724,6 +729,12 @@ namespace MonoMobile.Views
 		{
 			base.ViewWillAppear(animated);
 			
+			var activation = TableView.Source as IActivation;
+			if (activation != null)
+			{
+				activation.Activated();
+			}
+
 			if (Root == null)
 				return;
 			
@@ -854,6 +865,12 @@ namespace MonoMobile.Views
 			base.ViewWillDisappear(animated);
 			if (ViewDissapearing != null)
 				ViewDissapearing(this, EventArgs.Empty);
+
+			var activation = TableView.Source as IActivation;
+			if (activation != null)
+			{
+				activation.Deactived();
+			}
 		}
 		
 		public override void ViewDidDisappear(bool animated)

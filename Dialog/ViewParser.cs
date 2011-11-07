@@ -158,33 +158,46 @@ namespace MonoMobile.Views
 						if (type.IsEnum)
 						{
 							source.SelectedItem = dc.DataContext;
+							source.SelectedItems.Add(source.SelectedItem);
 						}
+
+						source.Caption = GetCaption(member);
 
 						var multiselectionAttribute = member.GetCustomAttribute<MultiselectionAttribute>();
 						source.IsMultiselect = multiselectionAttribute != null;
 						if (multiselectionAttribute != null && !string.IsNullOrEmpty(multiselectionAttribute.MemberName))
 						{
 							source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
+							source.SelectedAccessoryViewType = multiselectionAttribute.SelectedAccessoryViewType;
+							source.UnselectedAccessoryViewType = multiselectionAttribute.UnselectedAccessoryViewType;
 						}
 	
 						var selectionAttribute = member.GetCustomAttribute<SelectionAttribute>();
-						source.PopOnSelection = selectionAttribute != null && selectionAttribute.PopOnSelection;
 						if (selectionAttribute != null && !string.IsNullOrEmpty(selectionAttribute.MemberName))
 						{
 							source.IsSelectable = true;
 							source.SelectedItemMemberName = selectionAttribute.MemberName;
+							source.NavigationView = selectionAttribute.NavigateToView;
+							source.IsNavigateable = selectionAttribute.NavigateToView != null || type.IsEnum;
+
+							if (source.SelectedAccessoryViewType == null || selectionAttribute.SelectedAccessoryViewType != null)
+								source.SelectedAccessoryViewType = selectionAttribute.SelectedAccessoryViewType;
+							if (source.UnselectedAccessoryViewType == null || selectionAttribute.UnselectedAccessoryViewType != null)
+								source.UnselectedAccessoryViewType = selectionAttribute.UnselectedAccessoryViewType;
 						}						
 		
 						var listAttribute = member.GetCustomAttribute<ListAttribute>();
 						source.TableViewStyle = listAttribute != null ? UITableViewStyle.Plain : UITableViewStyle.Grouped;
 	
-						var navigateToViewAttribute = member.GetCustomAttribute<NavigatetToViewAttribute>();
-						if (navigateToViewAttribute != null)
+						var rootAttribute = member.GetCustomAttribute<RootAttribute>();
+						source.IsRoot = rootAttribute != null;
+						source.IsNavigateable = !source.IsRoot;
+						if (rootAttribute != null)
 						{
-							source.IsNavigateable = navigateToViewAttribute != null;
-							source.NavigateToView = navigateToViewAttribute.ViewType;
-						}
-						
+							source.PopOnSelection = rootAttribute.PopOnSelection;
+							source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
+						}	
+					
 						return source;
 					}
 				}
@@ -1202,19 +1215,6 @@ namespace MonoMobile.Views
 			return bindings;
 		}
 
-		private string GetCaption(MemberInfo member)
-		{
-			var caption = string.Empty;
-			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
-
-			if(captionAttribute != null)
-				caption = captionAttribute.Caption;
-			else
-				caption = member.Name.Capitalize();
-			
-			return caption;
-		}
-
 		// Returns the type for fields and properties and null for everything else
 		private static Type GetTypeForMember(MemberInfo mi)
 		{
@@ -1566,7 +1566,38 @@ namespace MonoMobile.Views
 				}
 			}
 		}
+		
+		private string GetCaption(MemberInfo member)
+		{
+			var caption = string.Empty;
+			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
 
+			if(captionAttribute != null)
+			{
+				caption = captionAttribute.Caption;
+			}
+			else
+			{
+				caption = member.Name;
+				if (caption == "DataContext")
+				{
+					var propertyInfo = member as PropertyInfo;
+					if (propertyInfo != null)
+					{
+						caption = propertyInfo.PropertyType.Name.Split('.').LastOrDefault();
+					}
+	
+					var fieldInfo = member as FieldInfo;
+					if (fieldInfo != null)
+					{
+						caption = fieldInfo.FieldType.Name.Split('.').LastOrDefault();
+					}
+				}
+			}
+
+			return caption.Capitalize();
+		}
+		
 		public void HandleCanExecuteChanged(object sender, EventArgs e)
 		{
 			var reflectiveCommand = sender as ReflectiveCommand;

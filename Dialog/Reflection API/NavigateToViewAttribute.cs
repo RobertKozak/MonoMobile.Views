@@ -1,5 +1,5 @@
 // 
-//  NavigatetToViewAttribute.cs
+//  NavigateToViewAttribute.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -33,10 +33,15 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class NavigatetToViewAttribute: Attribute
+	public class NavigateToViewAttribute: Attribute
 	{
-		public NavigatetToViewAttribute()
+		public NavigateToViewAttribute()
 		{
+		}
+		
+		public NavigateToViewAttribute(Type viewType)
+		{
+			ViewType = viewType;
 		}
 
 		public Type ViewType { get; set; }

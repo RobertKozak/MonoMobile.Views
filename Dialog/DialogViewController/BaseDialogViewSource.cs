@@ -49,17 +49,18 @@ namespace MonoMobile.Views
 		protected string NibName { get; set; }
 
 		public UITableViewStyle TableViewStyle { get; set; }
-
-		public UITableViewCellAccessory Accessory { get; set; }
 			
 		public bool IsSearchbarHidden { get; set; }
 		public bool EnableSearch { get; set; }
 		public bool IncrementalSearch { get; set; }
 		public string SearchPlaceholder { get; set; }
 		public SearchCommand SearchCommand { get; set; }
-
+		
+		public bool IsRoot { get; set; }
 		public bool IsNavigateable { get; set; }
-		public Type NavigateToView { get; set; }
+		public Type NavigationView { get; set; }
+
+		public string Caption { get; set; }
 		
 		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes)
 		{
@@ -71,7 +72,7 @@ namespace MonoMobile.Views
 
 		protected virtual UITableViewCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			var cellStyle = UITableViewCellStyle.Default;
+			var cellStyle = UITableViewCellStyle.Value1;
 
 			var views = new List<UIView>();
 
@@ -84,7 +85,7 @@ namespace MonoMobile.Views
 					var initializeCell = view as IInitializeCell;
 					if (initializeCell != null)
 					{
-						if (cellStyle == UITableViewCellStyle.Default)
+						if (cellStyle == UITableViewCellStyle.Value1)
 						{
 							cellStyle = initializeCell.CellStyle;
 						}
@@ -96,14 +97,10 @@ namespace MonoMobile.Views
 			
 			var cell = new UITableViewCell(cellStyle, cellId) { };
 			
-			Accessory = IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-			cell.Accessory = Accessory;
 			cell.TextLabel.BackgroundColor = UIColor.Clear;
-			cell.TextLabel.BackgroundColor = UIColor.Clear;
-			if (cell.DetailTextLabel != null)
-			{
-				cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-			}
+			cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
+			cell.TextLabel.AdjustsFontSizeToFitWidth = true;
+			cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
 
 			var selectable = this as ISelectable;
 			cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.Blue;
@@ -134,6 +131,8 @@ namespace MonoMobile.Views
 					createCell.InitializeCell(cell, indexPath);
 				}
 			}
+			
+			cell.TextLabel.Text = Caption;
 
 			return cell;
 		}
@@ -149,6 +148,9 @@ namespace MonoMobile.Views
 
 		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			cell.AccessoryView = null;
+
+			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 		}
 
 		protected MemberInfo GetMemberFromView(string memberName)
