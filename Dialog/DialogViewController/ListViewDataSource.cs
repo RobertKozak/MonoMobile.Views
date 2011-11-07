@@ -108,27 +108,8 @@ namespace MonoMobile.Views
 			if (!IsRoot)
 			{
 				SelectedItem = DataContext[indexPath.Row]; 
-				if (_SelectedItemMember != null)
-				{
-					_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
-				}
-	
-				if (IsMultiselect)
-				{	
-					if (SelectedItems.Contains(SelectedItem))
-					{
-						SelectedItems.Remove(SelectedItem);
-					}
-					else
-					{
-						SelectedItems.Add(SelectedItem);
-					}
-	
-					if (_SelectedItemsMember != null)
-					{
-						_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
-					}
-				};
+
+				SetItems();
 	
 				if (Controller != null)
 				{
@@ -140,7 +121,17 @@ namespace MonoMobile.Views
 					Controller.NavigationController.PopViewControllerAnimated(true);
 				}
 				
-				Controller.ReloadData();
+				if (IsSelectable || IsMultiselect)
+				{
+					Controller.ReloadData();
+				}
+				else
+				{
+					new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+					{
+						Controller.ReloadData();
+					});
+				}
 			}
 			
 			if (IsNavigateable || IsRoot)
@@ -280,6 +271,7 @@ namespace MonoMobile.Views
 			{
 				SelectedItem = _NavigationSource.SelectedItem;
 				SelectedItems = _NavigationSource.SelectedItems;
+				SetItems();
 			}
 			else
 			{
@@ -292,9 +284,36 @@ namespace MonoMobile.Views
 		public void Deactived()
 		{
 		}
-
+		
+		private void SetItems()
+		{
+			if (_SelectedItemMember != null)
+			{
+				_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
+			}
+	
+			if (IsMultiselect)
+			{	
+				if (SelectedItems.Contains(SelectedItem))
+				{
+					SelectedItems.Remove(SelectedItem);
+				}
+				else
+				{
+					SelectedItems.Add(SelectedItem);
+				}
+	
+				if (_SelectedItemsMember != null)
+				{
+					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
+				}
+			}
+			;
+		}
 		private void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			cell.AccessoryView = null;
+
 			if (!IsNavigateable)
 			{
 				var selectedIndex = DataContext.IndexOf(SelectedItem);

@@ -88,12 +88,11 @@ namespace MonoMobile.Views
 			var memberInfo = view.GetType().GetMember("DataContext").FirstOrDefault();
 			
 			viewTypes = GetViewTypes(view, memberInfo);
-		
+			
 			source = ParseList(controller, view, memberInfo, viewTypes);
 
 			if (source == null)
 			{
-				//RootView = view;
 				var bindingContext = new BindingContext(view, "", controller.Theme);
 				controller.PrepareRoot(bindingContext.Root);
 			}
@@ -101,7 +100,182 @@ namespace MonoMobile.Views
 			InitializeSearch(view, source);
 			return source;
 		}
-
+		
+//		public UITableViewSource ParseSections(DialogTableViewController controller, UIView view)
+//		{
+//			ISection lastSection = new Section() { Order = -1, Parent = root as IElement };
+//
+//			var sectionList = new List<ISection>() { lastSection };
+//
+//			IElement newElement = null;
+//			Theme theme = null;
+//			var themeable = root as IThemeable;
+//			if (themeable != null)
+//			{
+//				Theme.ApplyRootTheme(view, themeable);
+//				theme = themeable.Theme;
+//				Theme.ApplyElementTheme(theme, lastSection, null);
+//			}
+//			
+//			if (!(view is IView))
+//			{
+//				newElement = new UIViewElement(null, view, false);
+//				lastSection.Add(newElement);
+//			}
+//			else
+//			{
+//				foreach (var memberFunc in _MemberFuncMap)
+//				{
+//					var members = memberFunc(view);
+//		
+//					foreach (var member in members)
+//					{
+//						var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
+//						if (pullToRefreshAttribute != null)
+//						{
+//							root.PullToRefreshCommand = GetCommandForMember(view, member);
+//							root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
+//						}
+//						var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
+//						if (skipAttribute != null)
+//						{
+//							continue;
+//						}
+//						
+//						var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+//		
+//						if (sectionAttribute != null)
+//						{	
+//							Theme sectionTheme = null;
+//							if (sectionAttribute.ThemeType != null)
+//							{
+//								sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
+//							}
+//							
+//							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
+//							{ 
+//								Order = sectionAttribute.Order,
+//								IsExpandable = sectionAttribute.IsExpandable,
+//								ExpandState = sectionAttribute.ExpandState,
+//							};
+//							lastSection.Parent = root as IElement;
+//
+//							Theme.ApplyElementTheme(root.Theme, lastSection, null); 
+//							Theme.ApplyElementTheme(sectionTheme, lastSection, null);
+//
+//							sectionList.Add(lastSection);
+//						}
+//		
+//						var bindings = GetBindings(view, member);
+//	
+//						newElement = GetElementForMember(root.Theme, view, member, bindings);
+//
+//						Theme.ApplyElementTheme(theme, newElement, member);
+//						
+//						IBindable bindable = null;
+//						
+//						if (newElement is ISection)
+//						{
+//							lastSection.Caption = newElement.Caption;
+//							lastSection.Order = newElement.Order;
+//							
+//							lastSection.Add(((ISection)newElement).Elements);
+//							bindable = lastSection as IBindable;
+//						}
+//						else if (newElement != null)
+//							{
+//								CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
+//
+//								var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
+//								if (editStyle != null)
+//								{
+//									root.EditingStyle = editStyle.EditingStyle;
+//									newElement.EditingStyle = editStyle.EditingStyle;
+//									if (newElement.Section != null)
+//									{
+//										foreach (ISection section in newElement.Section)
+//										{
+//											foreach (var element in section.Elements)
+//											{
+//												element.EditingStyle = editStyle.EditingStyle;
+//											}
+//										}
+//									}
+//								}
+//								else
+//								{
+//									newElement.EditingStyle = root.EditingStyle;
+//								}
+//							
+//								var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
+//								if (useNibAttribute != null)
+//								{
+//									newElement.NibName = useNibAttribute.NibName;
+//								}
+//
+//								bindable = newElement as IBindable;
+//							
+//								var isList = member.GetCustomAttribute<ListAttribute>() != null;
+//								if ((isList) && newElement is IRoot)
+//								{
+//									var sections = ((IRoot)newElement).Sections;
+//									root.ViewBinding = newElement.ViewBinding;
+//								
+//									var firstSection = sections.FirstOrDefault();
+//									if (firstSection != null && firstSection.Elements.Count > 0)
+//									{
+//										lastSection.Add(firstSection.Elements);
+//									}
+//
+//									for (var index=1; index < sections.Count; index++)
+//									{
+//										sectionList.Add(sections[index]);
+//									}
+//								}
+//								else
+//								{
+//									lastSection.Add(newElement);
+//								}
+//							}
+//
+//						if (bindable != null && bindable != _NoElement && bindings.Count != 0)
+//						{
+//							foreach (Binding binding in bindings)
+//							{
+//								if (binding.TargetPath == null)
+//								{
+//									binding.TargetPath = "DataContext";	
+//								}
+//			
+//								var bindingRoot = bindable as IRoot;
+//								if (bindingRoot != null && binding.TargetPath == "DataContext")
+//								{
+//									foreach (var section in bindingRoot.Sections)
+//									{
+//										section.Parent = bindingRoot;
+//										BindingOperations.SetBinding(section as IBindable, binding);
+//									}
+//
+//									BindingOperations.SetBinding(Root as IBindable, binding);
+//								}
+//
+//								BindingOperations.SetBinding(bindable, binding);	
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//			foreach (var section in sectionList)
+//			{
+//				var orderedList = section.Elements.OrderBy(e => e.Order).Where((e) => e != _NoElement).ToList();
+//				section.Elements = orderedList;
+//			}
+//
+//			var orderedSections = sectionList.Where(s => s.Elements.Count > 0).OrderBy(section => section.Order).ToList();
+//			return orderedSections;
+//		}
+		
 		private List<Type> GetViewTypes(UIView view, MemberInfo memberInfo)
 		{
 			var dc = view as IDataContext<object>;
@@ -178,7 +352,7 @@ namespace MonoMobile.Views
 							source.IsSelectable = true;
 							source.SelectedItemMemberName = selectionAttribute.MemberName;
 							source.NavigationView = selectionAttribute.NavigateToView;
-							source.IsNavigateable = selectionAttribute.NavigateToView != null || type.IsEnum;
+							source.IsNavigateable = selectionAttribute.NavigateToView != null || !type.IsEnum;
 
 							if (source.SelectedAccessoryViewType == null || selectionAttribute.SelectedAccessoryViewType != null)
 								source.SelectedAccessoryViewType = selectionAttribute.SelectedAccessoryViewType;
@@ -191,13 +365,13 @@ namespace MonoMobile.Views
 	
 						var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 						source.IsRoot = rootAttribute != null;
-						source.IsNavigateable = !source.IsRoot;
+				//		source.IsNavigateable = !source.IsRoot;
 						if (rootAttribute != null)
 						{
 							source.PopOnSelection = rootAttribute.PopOnSelection;
 							source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
 						}	
-					
+
 						return source;
 					}
 				}

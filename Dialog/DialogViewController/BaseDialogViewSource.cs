@@ -44,8 +44,6 @@ namespace MonoMobile.Views
 		protected TableCellFactory<UITableViewCell> CellFactory;
 		protected DialogViewController Controller;
 
-		protected UITableViewCell Cell { get; set; }
-
 		protected string NibName { get; set; }
 
 		public UITableViewStyle TableViewStyle { get; set; }
@@ -61,6 +59,7 @@ namespace MonoMobile.Views
 		public Type NavigationView { get; set; }
 
 		public string Caption { get; set; }
+		public float RowHeight { get; set; }
 		
 		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes)
 		{
@@ -90,7 +89,7 @@ namespace MonoMobile.Views
 							cellStyle = initializeCell.CellStyle;
 						}
 					}
-
+					
 					views.Add(view);
 				}
 			}
@@ -139,11 +138,11 @@ namespace MonoMobile.Views
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
-			Cell = CellFactory.GetCell(tableView, indexPath, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
+			var cell = CellFactory.GetCell(tableView, indexPath, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
 
-			UpdateCell(Cell, indexPath);
+			UpdateCell(cell, indexPath);
 
-			return Cell;
+			return cell;
 		}
 
 		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
@@ -158,6 +157,14 @@ namespace MonoMobile.Views
 			var memberInfo = Controller.RootView.GetType().GetMember(memberName, BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).SingleOrDefault();
 
 			return memberInfo;
+		}
+
+		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			if (RowHeight == 0)
+				return tableView.RowHeight;
+
+			return RowHeight;
 		}
 	}
 }
