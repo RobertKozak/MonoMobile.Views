@@ -31,6 +31,13 @@ namespace MonoMobile.Views
 {
 	using System;
 
+	public enum UnselectionBehavior
+	{
+		SetSelectedToCurrentValue,
+		SetSelectedToPreviousValueOrNull,
+		SetSelectedToNull
+	}
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public class MultiselectionAttribute : Attribute
 	{
@@ -46,6 +53,7 @@ namespace MonoMobile.Views
 		public string MemberName { get; set; }
 		public Type SelectedAccessoryViewType { get; set; }
 		public Type UnselectedAccessoryViewType { get; set; }
+		public UnselectionBehavior UnselectionBehavior { get; set; }
 	}
 }
 

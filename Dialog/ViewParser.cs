@@ -344,6 +344,7 @@ namespace MonoMobile.Views
 							source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
 							source.SelectedAccessoryViewType = multiselectionAttribute.SelectedAccessoryViewType;
 							source.UnselectedAccessoryViewType = multiselectionAttribute.UnselectedAccessoryViewType;
+							source.UnselectionBehavior = multiselectionAttribute.UnselectionBehavior;
 						}
 	
 						var selectionAttribute = member.GetCustomAttribute<SelectionAttribute>();
@@ -365,7 +366,6 @@ namespace MonoMobile.Views
 	
 						var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 						source.IsRoot = rootAttribute != null;
-				//		source.IsNavigateable = !source.IsRoot;
 						if (rootAttribute != null)
 						{
 							source.PopOnSelection = rootAttribute.PopOnSelection;

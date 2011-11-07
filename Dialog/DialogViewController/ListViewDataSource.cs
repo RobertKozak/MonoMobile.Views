@@ -41,6 +41,7 @@ namespace MonoMobile.Views
 	public class ListViewDataSource : BaseDialogViewSource, IDataContext<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
 		private ListViewDataSource _NavigationSource;
+
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
 
@@ -55,6 +56,8 @@ namespace MonoMobile.Views
 		
 		public Type SelectedAccessoryViewType { get; set; }
 		public Type UnselectedAccessoryViewType { get; set; } 
+		
+		public UnselectionBehavior UnselectionBehavior { get; set; }
 
 		public IList DataContext { get; set; }
 
@@ -108,6 +111,35 @@ namespace MonoMobile.Views
 			if (!IsRoot)
 			{
 				SelectedItem = DataContext[indexPath.Row]; 
+
+				if (SelectedItems.Contains(SelectedItem))
+				{
+					SelectedItems.Remove(SelectedItem);
+
+					switch (UnselectionBehavior)
+					{
+						case UnselectionBehavior.SetSelectedToCurrentValue : break;
+						case UnselectionBehavior.SetSelectedToNull : SelectedItem = null; break;
+						case UnselectionBehavior.SetSelectedToPreviousValueOrNull :
+						{
+							if (SelectedItems.Count > 0)
+							{
+								SelectedItem = SelectedItems[SelectedItems.Count - 1];
+							}
+							else
+							{
+								SelectedItem = null;
+							}
+
+							break;
+						}
+					}
+
+				}
+				else
+				{
+					SelectedItems.Add(SelectedItem);
+				}
 
 				SetItems();
 	
@@ -231,6 +263,7 @@ namespace MonoMobile.Views
 
 			_NavigationSource.SelectedItem = SelectedItem;
 			_NavigationSource.SelectedItems = SelectedItems;
+			_NavigationSource.UnselectionBehavior = UnselectionBehavior;
 
 			_NavigationSource.IsNavigateable = false;
 			_NavigationSource.IsRoot = false;
@@ -293,23 +326,14 @@ namespace MonoMobile.Views
 			}
 	
 			if (IsMultiselect)
-			{	
-				if (SelectedItems.Contains(SelectedItem))
-				{
-					SelectedItems.Remove(SelectedItem);
-				}
-				else
-				{
-					SelectedItems.Add(SelectedItem);
-				}
-	
+			{		
 				if (_SelectedItemsMember != null)
 				{
 					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
 				}
 			}
-			;
 		}
+
 		private void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			cell.AccessoryView = null;
