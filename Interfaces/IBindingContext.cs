@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 
 	public interface IBindingContext
 	{
-		BindingContext BindingContext { get; set; }
+	//	BindingContext BindingContext { get; set; }
 	}
 }
 

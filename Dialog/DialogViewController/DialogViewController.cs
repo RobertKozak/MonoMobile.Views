@@ -58,7 +58,7 @@ namespace MonoMobile.Views
 		private UISearchBar _Searchbar;
 		private ISection[] _OriginalSections;
 		private IElement[][] _OriginalElements;
-		private DialogViewDataSource _TableSource;
+		private ViewSource _TableSource;
 
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; }		
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
@@ -71,7 +71,7 @@ namespace MonoMobile.Views
 		public UIImage BackgroundImage { get; set; }
 		public UIColor BackgroundColor { get; set; }
 		public bool CanDeleteCells { get; set; }
-		public UIView RootView { get; set; }
+		public object RootView { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
 
@@ -329,47 +329,47 @@ namespace MonoMobile.Views
 
 		public void PerformFilter(string text)
 		{
-			if (_OriginalSections == null)
-				return;
-			
-			OnSearchTextChanged(text);
-			
-			var newSections = new List<ISection>();
-			
-			var searchable = TableView.Source as ISearchBar;
-			if (searchable != null)
-			{
-				if (searchable.SearchCommand == null)
-				{
-					for (int sidx = 0; sidx < _OriginalSections.Length; sidx++)
-					{
-						ISection newSection = null;
-						var section = _OriginalSections[sidx];
-						IElement[] elements = _OriginalElements[sidx];
-						
-						for (int eidx = 0; eidx < elements.Length; eidx++)
-						{
-							var searchableView = elements[eidx] as ISearchable;
-							
-							if ((searchableView != null && searchableView.Matches(text)) || (elements[eidx].Caption != null) && elements[eidx].Caption.Contains(text))
-							{
-								if (newSection == null)
-								{
-									newSection = new Section(section.HeaderText, section.FooterText) { FooterView = section.FooterView, HeaderView = section.HeaderView };
-									newSections.Add(newSection);
-								}
-								newSection.Add(elements[eidx]);
-							}
-						}
-					}
-				}
-				else
-				{
-					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
-				}
-			}
-			
-			Root.Sections = newSections;
+//			if (_OriginalSections == null)
+//				return;
+//			
+//			OnSearchTextChanged(text);
+//			
+//			var newSections = new List<ISection>();
+//			
+//			var searchable = TableView.Source as ISearchBar;
+//			if (searchable != null)
+//			{
+//				if (searchable.SearchCommand == null)
+//				{
+//					for (int sidx = 0; sidx < _OriginalSections.Length; sidx++)
+//					{
+//						ISection newSection = null;
+//						var section = _OriginalSections[sidx];
+//						IElement[] elements = _OriginalElements[sidx];
+//						
+//						for (int eidx = 0; eidx < elements.Length; eidx++)
+//						{
+//							var searchableView = elements[eidx] as ISearchable;
+//							
+//							if ((searchableView != null && searchableView.Matches(text)) || (elements[eidx].Caption != null) && elements[eidx].Caption.Contains(text))
+//							{
+//								if (newSection == null)
+//								{
+//									newSection = new Section(section.HeaderText, section.FooterText) { FooterView = section.FooterView, HeaderView = section.HeaderView };
+//									newSections.Add(newSection);
+//								}
+//								newSection.Add(elements[eidx]);
+//							}
+//						}
+//					}
+//				}
+//				else
+//				{
+//					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
+//				}
+//			}
+//			
+//			Root.Sections = newSections;
 
 			ReloadData();
 		}
@@ -433,33 +433,29 @@ namespace MonoMobile.Views
 			
 			TableView.DeselectRow(indexPath, true);
 
-			return;
-
-			var element = _TableSource.GetElement(indexPath);
-
-			if (element != null)
-			{
-				selectable = element as ISelectable;
-	
-				if (selectable != null)
-				{
-					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
-					{
-						TableView.DeselectRow(indexPath, false);
-						
-						UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
-					}
-					
-					selectable.Selected(this, TableView, item, indexPath);
-				}
-			}
-			else
-			{
-				TableView.DeselectRow(indexPath, true);
-				selectable = RootView as ISelectable;
-				if(selectable != null)
-					selectable.Selected(this, TableView, item, indexPath);
-			}
+//			if (element != null)
+//			{
+//				selectable = element as ISelectable;
+//	
+//				if (selectable != null)
+//				{
+//					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
+//					{
+//						TableView.DeselectRow(indexPath, false);
+//						
+//						UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
+//					}
+//					
+//					selectable.Selected(this, TableView, item, indexPath);
+//				}
+//			}
+//			else
+//			{
+//				TableView.DeselectRow(indexPath, true);
+//				selectable = RootView as ISelectable;
+//				if(selectable != null)
+//					selectable.Selected(this, TableView, item, indexPath);
+//			}
 		}
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
@@ -788,14 +784,15 @@ namespace MonoMobile.Views
 			ConfigureBackgroundImage();
 		}
 		
-		public virtual DialogViewDataSource CreateSizingSource(bool unevenRows)
+		public virtual ViewSource CreateSizingSource(bool unevenRows)
 		{
 //			if (unevenRows)
 //				return new DialogViewListDataSource(this);
 //			else
 //				return new DialogViewListDataSource(this);
-
-			return new DialogViewDataSource(this);
+			
+			return new ViewSource(this, RootView);
+		//	return new DialogViewDataSource(this);
 		}
 
 		public void UpdateSource()
@@ -907,7 +904,7 @@ namespace MonoMobile.Views
 			NavigationItem.HidesBackButton = !_Pushing;
 		}
 
-		private void SetDataContextChangeHandler(UIView view)
+		private void SetDataContextChangeHandler(object view)
 		{
 			var notifyDataContextChanged = view as INotifyDataContextChanged;
 			if (notifyDataContextChanged != null)
@@ -920,7 +917,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void CreateTableView(UIView view)
+		private void CreateTableView(object view)
 		{
 			var parser = new ViewParser();
 			var source = parser.Parse(this, view);
@@ -942,7 +939,7 @@ namespace MonoMobile.Views
 			SetDataContextChangeHandler(view);
 		}
 
-		public DialogViewController(string title, UIView view, bool pushing) : base(UITableViewStyle.Grouped)
+		public DialogViewController(string title, object view, bool pushing) : base(UITableViewStyle.Grouped)
 		{
 			Title = title;
 			SetPushing(pushing);

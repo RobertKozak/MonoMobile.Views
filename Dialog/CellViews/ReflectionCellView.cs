@@ -1,9 +1,8 @@
 // 
-//  DialogViewSizingSource.cs
+//  ReflectionCellView.cs
 // 
-// Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Author:
+//    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
 //  Copyright 2011, Nowcom Corporation.
 // 
@@ -31,31 +30,46 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
+	using System.Reflection;
 	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
 
-	//
-	// Performance trick, if we expose GetHeightForRow, the UITableView will
-	// probe *every* row for its size;   Avoid this by creating a separate
-	// model that is used only when we have items that require resizing
-	//
-	public class DialogViewSizingSource : DialogViewDataSource
+	public class ReflectionCellView : CellView, IUpdateable 
 	{
-		public DialogViewSizingSource(DialogViewController controller) : base(controller)
+		public object Source { get; private set; }
+		public MemberInfo Member { get; private set; }
+
+		public ReflectionCellView(object source, MemberInfo member) : base(null)
 		{
+			Source = source;
+			Member = member;
 		}
 
-		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		public void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			var element = GetElement(indexPath);
-			
-			var sizable = element as ISizeable;
-			if (sizable != null)
-				return sizable.GetHeight(tableView, indexPath);
-			
-			return tableView.RowHeight;
+			cell.TextLabel.Text = Member.Name.ToString();
+		}
+
+		protected override object GetDataContext()
+		{
+			if (Member != null && Source != null)
+			{
+				var view = Source as IDataContext<object>;
+				if (view != null && view.DataContext != null)
+				{
+
+				}
+	
+				return Member.GetValue(Source);
+			}
+
+			return base.GetDataContext();
+		}
+
+		protected override void SetDataContext(object value)
+		{
+			base.SetDataContext(value);
 		}
 	}
-
 }
 

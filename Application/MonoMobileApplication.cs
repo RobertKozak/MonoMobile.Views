@@ -47,7 +47,7 @@ namespace MonoMobile.Views
 
 		public static UIWindow Window { get; set; }
 		public static UINavigationController NavigationController { get; set; }
-		public static List<UIView> Views { get; set; }
+		public static List<object> Views { get; set; }
 		public static List<DialogViewController> DialogViewControllers { get; private set;}
 
 		public static string Title { get; set; }
@@ -110,26 +110,26 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		public static void PushView(UIView view)
+		public static void PushView(object view)
 		{
 			PushView(view, true);
 		}
 
-		public static void PushView(UIView view, bool animated)
+		public static void PushView(object view, bool animated)
 		{
 			var dvc = CreateDialogViewController(view, false, true);
 		
 			NavigationController.PushViewController(dvc, animated);
 		}
 		
-		public static void PushView(UIView view, bool animated, bool pushing)
+		public static void PushView(object view, bool animated, bool pushing)
 		{
 			var dvc = CreateDialogViewController(view, false, pushing);
 		
 			NavigationController.PushViewController(dvc, animated);
 		}
 
-		public static void PresentModelView(UIView view)
+		public static void PresentModelView(object view)
 		{
 			PresentModelView(view, UIModalTransitionStyle.CoverVertical);
 		}
@@ -146,7 +146,7 @@ namespace MonoMobile.Views
 			PresentModelView(view);
 		}
 
-		public static void PresentModelView(UIView view, UIModalTransitionStyle transistionStyle)
+		public static void PresentModelView(object view, UIModalTransitionStyle transistionStyle)
 		{			
 			var dvc = CreateDialogViewController(view, true, false);			
 			dvc.ModalTransitionStyle = transistionStyle;
@@ -181,7 +181,7 @@ namespace MonoMobile.Views
 			UIApplication.Main(args, "MonoMobileApplication", delegateName);
 		}
 
-		private static DialogViewController CreateDialogViewController(UIView view, bool isModal, bool pushing)
+		private static DialogViewController CreateDialogViewController(object view, bool isModal, bool pushing)
 		{
 			Theme theme = null;
 			

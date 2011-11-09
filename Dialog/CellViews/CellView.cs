@@ -1,5 +1,5 @@
 // 
-//  IInitializeCell.cs
+//  CellView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,19 +27,44 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
 	using System;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public interface IInitializeCell
+	public class CellView : UIView, IDataContext<object>, IUpdateable, IInitializeCell
 	{
-		UITableViewCellStyle CellStyle { get; }
-		//UITableViewCellEditingStyle EditingStyle { get; set; }
+		private Type _Type { get; set; }
 
-		void InitializeCell(UITableViewCell cell, NSIndexPath indexPath);
+		private object _DataContext;
+		public object DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
+		
+		public int Order { get; set; }
+		public UITableViewCellStyle CellStyle { get; private set; }
+		
+		public CellView(object dataContext)
+		{
+			DataContext = dataContext;
+		}
+
+		public void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{
+		}
+
+		public void InitializeCell(UITableViewCell cell, NSIndexPath indexPath)
+		{
+		}
+
+		protected virtual object GetDataContext()
+		{
+			return _DataContext;
+		}
+		
+		protected virtual void SetDataContext(object value)
+		{
+			_Type = value != null ? value.GetType() : null;
+			_DataContext = value;
+		}
 	}
 }
-

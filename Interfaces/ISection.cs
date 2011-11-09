@@ -38,25 +38,25 @@ namespace MonoMobile.Views
 	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 
-	public interface ISection : IThemeable, IDisposable, IInitializable
+	public interface ISection : IEnumerable, IThemeable, IDisposable, IInitializable
 	{
-		object DataContext { get; set; }
+		object DataContext { get; set; } //
 
-		ViewBinding ViewBinding { get; set; }
+		ViewBinding ViewBinding { get; set; } //
 
-		List<IElement> Elements { get; set; }
-		string Caption { get; set; }
-		int Order { get; set; }
-		IElement Parent { get; set; }
-		ObservableCollection<object> SelectedItems { get; }
-		object SelectedItem { get; set; }
-		bool IsMultiselect { get; set; }
+		List<IElement> Elements { get; set; } //
+		string Caption { get; set; } //
+		int Order { get; set; } //
+		IElement Parent { get; set; } //
+		ObservableCollection<object> SelectedItems { get; } //
+		object SelectedItem { get; set; } //
+		bool IsMultiselect { get; set; } //
 
-		string HeaderText { get; set; }
-		string FooterText { get; set; }
-		UIView HeaderView { get; set; }
-		UIView FooterView { get; set; }
-		UIImageView ArrowView { get; set; }
+		string HeaderText { get; set; } //
+		string FooterText { get; set; } //
+		UIView HeaderView { get; set; } //
+		UIView FooterView { get; set; } //
+		UIImageView ArrowView { get; set; } //
 
 		bool IsExpandable { get; set;}
 		ExpandState ExpandState { get; set; }
@@ -78,10 +78,5 @@ namespace MonoMobile.Views
 
 		IEnumerator GetEnumerator();
 		int Index { get; set; }
-
-		int Count { get; }
-		IElement this[int idx] { get; }
-
-		void Clear();
 	}
 }

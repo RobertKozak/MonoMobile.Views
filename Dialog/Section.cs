@@ -29,6 +29,7 @@
 //
 namespace MonoMobile.Views
 {
+	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
@@ -41,170 +42,115 @@ namespace MonoMobile.Views
 	
 	public enum ExpandState
 	{
-		Opened, 
+		Opened,
 		Closed
 	}
 
-	/// <summary>
-	/// Generic base version of Section
-	/// </summary>
-	[Preserve(AllMembers = true)]
-	public class Section : ContainerElement, ISection, IEnumerable, IInitializable
+	public class Section<T>: IDataContext<T>
 	{
+		private DialogViewController _Controller;
 		private ExpandState _ExpandState;
+		private List<UIView> _HiddenViews;
+		private T _DataContext;
+		
+		public T DataContext
+		{ 
+			get { return _DataContext; } 
+			set { _DataContext = value;
+				SetNumberOfRows(); }
+		}
 
-		private UIView _Header;
-		private UIView _Footer;
+		public int Index { get; set; }
 
-		private List<IElement> _HiddenElements;
+		public int NumberOfRows { get; set; }
 
-		public List<IElement> Elements { get; set; }
-		public ExpandState ExpandState 
+		public IEnumerable<Type> ViewTypes;
+		public IDictionary<UITableViewCell, IList<UIView>> Views;
+		
+		public string HeaderText { get; set; }
+
+		public string FooterText { get; set; }
+
+		public UIView HeaderView { get; set; }
+
+		public UIView FooterView { get; set; }
+
+		public UIImageView ArrowView { get; set; }
+
+		public bool IsExpandable { get; set; }
+
+		public ExpandState ExpandState
 		{
 			get { return _ExpandState; } 
 			set { SetExpandState(value); }
 		}
-		public bool IsExpandable {get; set; }
 
-		public UIImageView ArrowView { get; set; }
-
-		public new IRoot Root { get { return Parent as IRoot; } }
-
-
-		/// <summary>
-		/// Constructs a Section without header or footers.
-		/// </summary>
-		public Section() : this((string)null)
+		public Section(DialogViewController controller, IEnumerable<Type> viewTypes)
 		{
+			_Controller = controller;
+
+			ViewTypes = viewTypes;
+			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}
 
-		/// <summary>
-		/// Constructs a Section with the specified header
-		/// </summary>
-		/// <param name="caption">
-		/// The header to display
-		/// </param>
-		public Section(string caption) : base(caption)
+		public IEnumerator GetEnumerator()
 		{
-			Elements = new List<IElement>();
-			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
+			foreach (var view in Views)
+				yield return view;
 		}
 
-		/// <summary>
-		/// Constructs a Section with a header and a footer
-		/// </summary>
-		/// <param name="caption">
-		/// The caption to display (or null to not display a caption)
-		/// </param>
-		/// <param name="footer">
-		/// The footer to display.
-		/// </param>
-		public Section(string caption, string footer) : this(caption)
+		public void CollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
-			FooterText = footer;
+//			if (e.Action == NotifyCollectionChangedAction.Add)
+//			{
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					
+//					Add(element);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Remove)
+//			{
+//				foreach (var item in e.OldItems)
+//				{
+//					Remove(e.OldStartingIndex);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Reset)
+//			{
+//				Clear();
+//				if (e.NewItems != null)
+//				{
+//					foreach (var item in e.NewItems)
+//					{
+//						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//						Add(element);
+//					}
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Move)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					Remove(e.OldStartingIndex);
+//					Insert(e.NewStartingIndex + index, element);
+//					index++;
+//				}
+//				
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Replace)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					index++;
+//				}
+//			}
 		}
-
-		public Section(UIView header) : this((string)null)
-		{
-			HeaderView = header;
-		}
-
-		public Section(UIView header, UIView footer) : this((string)null)
-		{
-			HeaderView = header;
-			FooterView = footer;
-		}
-
-		/// <summary>
-		///   The section header, as a string
-		/// </summary>
-		public string HeaderText {get { return Caption; } set { Caption = value; } }
-
-		/// <summary>
-		/// The section footer, as a string.
-		/// </summary>
-		public string FooterText { get; set; }
-
-		/// <summary>
-		/// The section's header view.  
-		/// </summary>
-		public UIView HeaderView
-		{
-			get { return _Header; }
-			set { _Header = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
-		}
-
-		/// <summary>
-		/// The section's footer view.
-		/// </summary>
-		public UIView FooterView
-		{
-			get { return _Footer; }
-			set { _Footer = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
-		}
-
-		/// <summary>
-		/// Adds a new child Element to the Section
-		/// </summary>
-		/// <param name="element">
-		/// An element to add to the section.
-		/// </param>
-		public void Add(IElement element)
-		{
-			if (element == null)
-				return;
-			
-			Elements.Add(element);
-			element.Parent = this;
-			element.Index = Elements.Count - 1;
-
-			if (Parent != null)
-				InsertVisual(element.Index, UITableViewRowAnimation.None, 1);
-		}
-
-		/// <summary>
-		///   Add version that can be used with LINQ
-		/// </summary>
-		/// <param name="elements">
-		/// An enumerable list that can be produced by something like:
-		///   from x in ... select (Element) new MyElement (...)
-		/// </param>
-		public int Add(IEnumerable<IElement> elements)
-		{
-			int count = 0;
-			foreach (var e in elements)
-			{
-				Add(e);
-				count++;
-			}
-
-			ResetElementIndices();
-
-			return count;
-		}
-//
-//		/// <summary>
-//		/// Use to add a UIView to a section, it makes the section opaque, to
-//		/// get a transparent one, you must manually call UIViewElement
-//		public void Add(UIView view)
-//		{
-//			if (view == null)
-//				return;
-//			Add(new UIViewElement(null, view, false));
-//		}
-//
-//		/// <summary>
-//		///  Adds the UIViews to the section.
-//		/// </summary>fparent
-//		/// <param name="views">
-//		/// An enumarable list that can be produced by something like:
-//		///   from x in ... select (UIView) new UIFoo();
-//		/// </param>
-//		public void Add(IEnumerable<UIView> views)
-//		{
-//			foreach (var v in views)
-//				Add(v);
-//		}
 
 		public void SetExpandState(ExpandState state)
 		{
@@ -212,363 +158,527 @@ namespace MonoMobile.Views
 			{
 				_ExpandState = state;
 				
-				if (Root != null && IsExpandable)
-				{
-					if (_HiddenElements == null)
-						_HiddenElements = Elements;
+				SetNumberOfRows();
 
-					Root.TableView.BeginUpdates();
-					
-					if (_ExpandState == ExpandState.Opened)
-					{
-						Elements.Clear();
-						Insert(0, UITableViewRowAnimation.Bottom, _HiddenElements.ToArray());
-					}
-					else
-					{
-						_HiddenElements = Elements;
-						RemoveRange(0, Elements.Count, UITableViewRowAnimation.Top);
-					}
-	
-			
-					Root.TableView.ReloadSections(new NSIndexSet((uint)Index), UITableViewRowAnimation.None);
-					Root.TableView.EndUpdates();
-				}
+				_Controller.ReloadData();
 			}
 		}
 
-		/// <summary>
-		/// Inserts a series of elements into the Section using the specified animation
-		/// </summary>
-		/// <param name="idx">
-		/// The index where the elements are inserted
-		/// </param>
-		/// <param name="anim">
-		/// The animation to use
-		/// </param>
-		/// <param name="newElements">
-		/// A series of elements.
-		/// </param>
-		public void Insert(int idx, UITableViewRowAnimation anim, params IElement[] newElements)
+		private void SetNumberOfRows()
 		{
-			if (newElements == null)
-				return;
-			
-			int pos = idx;
-			foreach (var e in newElements)
+			var count = 0;
+			//TODO: Come back and fix this for objects (member count)
+			var collection = DataContext as ICollection;
+			if (collection != null)
 			{
-				Elements.Insert(pos++, e);
-				e.Parent = this;
-			}
-			
-			ResetElementIndices();
-
-			if (Root != null && Root.TableView != null)
-			{
-				if (anim == UITableViewRowAnimation.None)
-					Root.TableView.ReloadData();
-				else
-					InsertVisual(idx, anim, newElements.Length);
-			}
-		}
-
-		public int Insert(int idx, UITableViewRowAnimation anim, IEnumerable<IElement> newElements)
-		{
-			if (newElements == null)
-				return 0;
-			
-			int pos = idx;
-			int count = 0;
-			foreach (var e in newElements)
-			{
-				Elements.Insert(pos++, e);
-				e.Parent = this;
-				count++;
+				count = collection.Count;
 			}
 
-			ResetElementIndices();
-
-			if (Root != null && Root.TableView != null)
-			{
-				if (anim == UITableViewRowAnimation.None)
-					Root.TableView.ReloadData();
-				else
-					InsertVisual(idx, anim, pos - idx);
-			}
-			return count;
+			NumberOfRows = _ExpandState == ExpandState.Opened ? count : 0;
 		}
+	} 
 
-		void InsertVisual(int idx, UITableViewRowAnimation anim, int count)
-		{
-			if (Root == null || Root.TableView == null)
-				return;
-			
-			int sidx = Root.IndexOf(this as ISection);
-			if (sidx != -1)
-			{
-				var paths = new NSIndexPath[count];
-				for (int i = 0; i < count; i++)
-					paths[i] = NSIndexPath.FromRowSection(idx + i, sidx);
-			
-				Root.TableView.InsertRows(paths, anim);
-			}
-		}
-
-		public void Insert(int index, params IElement[] newElements)
-		{
-			Insert(index, UITableViewRowAnimation.None, newElements);
-		}
-
-		public void Remove(IElement e)
-		{
-			if (e == null)
-				return;
-			for (int i = Elements.Count - 1; i > 0; i--)
-			{
-				if (Elements[i] == e)
-				{
-					Remove(i);
-					ResetElementIndices();
-					return;
-				}
-			}
-		}
-
-		public void Remove(int idx)
-		{
-			RemoveRange(idx, 1);
-		}
-
-		/// <summary>
-		/// Removes a range of elements from the Section
-		/// </summary>
-		/// <param name="start">
-		/// Starting position
-		/// </param>
-		/// <param name="count">
-		/// Number of elements to remove from the section
-		/// </param>
-		public void RemoveRange(int start, int count)
-		{
-			RemoveRange(start, count, UITableViewRowAnimation.Fade);
-		}
-
-		/// <summary>
-		/// Remove a range of elements from the section with the given animation
-		/// </summary>
-		/// <param name="start">
-		/// Starting position
-		/// </param>
-		/// <param name="count">
-		/// Number of elements to remove form the section
-		/// </param>
-		/// <param name="anim">
-		/// The animation to use while removing the elements
-		/// </param>
-		public void RemoveRange(int start, int count, UITableViewRowAnimation anim)
-		{
-			if (start < 0 || start >= Elements.Count)
-				return;
-			if (count == 0)
-				return;
-			
-			if (start + count > Elements.Count)
-				count = Elements.Count - start;
-			
-			for(var index = start + count - 1; index >= start; index--)
-			{
-				Elements.RemoveAt(index);
-			}
-
-			if (Root == null || Root.TableView == null)
-				return;
-			
-			int sidx = Root.IndexOf(this as ISection);
-			var paths = new NSIndexPath[count];
-			for (int i = 0; i < count; i++)
-				paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
-			Root.TableView.DeleteRows(paths, anim);
-			
-			ResetElementIndices();
-
-			foreach(var element in Elements)
-			{
-				if (element.Cell != null)
-					element.Cell.SetNeedsDisplay();
-			}
-		}
-
-		/// <summary>
-		/// Enumerator to get all the elements in the Section.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="IEnumerator"/>
-		/// </returns>
-		public IEnumerator GetEnumerator()
-		{
-			foreach (var e in Elements)
-				yield return e;
-		}
-
-		public int Count
-		{
-			get { return ExpandState == ExpandState.Opened ? Elements.Count : 0; }
-		}
-
-		public IElement this[int idx]
-		{
-			get { return Elements[idx]; }
-		}
-
-		public void Clear()
-		{
-			foreach (var e in Elements)
-				e.Dispose();
-
-			Elements = new List<IElement>();
-			
-			if (Root != null && Root.TableView != null)
-				Root.TableView.ReloadData();
-		}
-		
-		public virtual void CollectionChanged(NotifyCollectionChangedEventArgs e)
-		{	
-			var elementType = Root.ViewBinding.ElementType;
-			if (elementType == null)
-				elementType = typeof(RootElement);
-
-			if (e.Action == NotifyCollectionChangedAction.Add)
-			{
-				foreach (var item in e.NewItems)
-				{
-					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					
-					Add(element);
-				}
-			}
-			if (e.Action == NotifyCollectionChangedAction.Remove)
-			{
-				foreach (var item in e.OldItems)
-				{
-					Remove(e.OldStartingIndex);
-				}
-			}
-			if (e.Action == NotifyCollectionChangedAction.Reset)
-			{
-				Clear();
-				if (e.NewItems != null)
-				{
-					foreach (var item in e.NewItems)
-					{
-						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-						Add(element);
-					}
-				}
-			}
-			if (e.Action == NotifyCollectionChangedAction.Move)
-			{
-				var index = 0;
-				foreach (var item in e.NewItems)
-				{
-					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-					Remove(e.OldStartingIndex);
-					Insert(e.NewStartingIndex + index, element);
-					index++;
-				}
-				
-			}
-			if (e.Action == NotifyCollectionChangedAction.Replace)
-			{
-				var index = 0;
-				foreach (var item in e.NewItems)
-				{
-					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
-					index++;
-				}
-			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				Parent = null;
-				Clear();
-				Elements = null;
-			}
-		}
-		
-		public override void InitializeTheme()
-		{	
-			if (Theme != null)
-			{
-				if (HeaderView != null)
-				{
-					var headerLabel = HeaderView.Subviews[0] as UILabel;
-					
-					headerLabel.Text = Caption;
-					
-					if (Theme.HeaderTextFont != null)
-						headerLabel.Font = Theme.HeaderTextFont;
-					if (Theme.HeaderTextColor != null)
-						headerLabel.TextColor = Theme.HeaderTextColor;
-					if (Theme.HeaderTextShadowColor != null)
-						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
-					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
-						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
-					if (Theme.HeaderBackgroundColor != null)
-					{
-						headerLabel.BackgroundColor = Theme.HeaderBackgroundColor;
-						HeaderView.BackgroundColor = Theme.HeaderBackgroundColor;
-					}
-				}
-				
-				if (FooterView != null)
-				{
-					var footerLabel = FooterView as UILabel;
-					
-					if (Theme.FooterTextFont != null)
-						footerLabel.Font = Theme.DetailTextFont;
-					if (Theme.FooterTextColor != null)
-						footerLabel.TextColor = Theme.FooterTextColor;
-					if (Theme.FooterTextShadowColor != null)
-						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
-					if (Theme.FooterTextShadowOffset != SizeF.Empty)
-						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
-					if (Theme.FooterBackgroundColor != null)
-					{
-						footerLabel.BackgroundColor = Theme.FooterBackgroundColor;
-						FooterView.BackgroundColor = Theme.FooterBackgroundColor;
-					}
-				}
-			}
-		}
-
-		public override void InitializeCell(UITableView tableView)
-		{
-			Cell.TextLabel.Text = "Section was used for Element";
-		}
-
-		public override void Initialize()
-		{
-			if (DataBinding != null)
-			{
-				DataBinding.BindProperties();
-				
-				DataBinding.UpdateTargets();
-				DataBinding.UpdateSources();
-			}
-
-			//Elements.ForEach((element)=>element.BeginInit());
-		}
-		
-		private void ResetElementIndices()
-		{
-			for (int i = Elements.Count - 1; i > 0; i--)
-			{
-				Elements[i].Index = i;
-			}
-		}
-	}
+//	/// <summary>
+//	/// Generic base version of Section
+//	/// </summary>
+//	[Preserve(AllMembers = true)]
+//	public class Section : ContainerElement, ISection, IEnumerable, IInitializable
+//	{
+//		private ExpandState _ExpandState;
+//
+//		private UIView _Header;
+//		private UIView _Footer;
+//
+//		private List<IElement> _HiddenElements;
+//
+//		public List<IElement> Elements { get; set; }
+//		public ExpandState ExpandState 
+//		{
+//			get { return _ExpandState; } 
+//			set { SetExpandState(value); }
+//		}
+//		public bool IsExpandable {get; set; }
+//
+//		public UIImageView ArrowView { get; set; }
+//
+//		public new IRoot Root { get { return Parent as IRoot; } }
+//
+//
+//		/// <summary>
+//		/// Constructs a Section without header or footers.
+//		/// </summary>
+//		public Section() : this((string)null)
+//		{
+//		}
+//
+//		/// <summary>
+//		/// Constructs a Section with the specified header
+//		/// </summary>
+//		/// <param name="caption">
+//		/// The header to display
+//		/// </param>
+//		public Section(string caption) : base(caption)
+//		{
+//			Elements = new List<IElement>();
+//			ArrowView = new UIImageView(UIImage.FromResource(null, "ArrowDown.png"));
+//		}
+//
+//		/// <summary>
+//		/// Constructs a Section with a header and a footer
+//		/// </summary>
+//		/// <param name="caption">
+//		/// The caption to display (or null to not display a caption)
+//		/// </param>
+//		/// <param name="footer">
+//		/// The footer to display.
+//		/// </param>
+//		public Section(string caption, string footer) : this(caption)
+//		{
+//			FooterText = footer;
+//		}
+//
+//		public Section(UIView header) : this((string)null)
+//		{
+//			HeaderView = header;
+//		}
+//
+//		public Section(UIView header, UIView footer) : this((string)null)
+//		{
+//			HeaderView = header;
+//			FooterView = footer;
+//		}
+//
+//		/// <summary>
+//		///   The section header, as a string
+//		/// </summary>
+//		public string HeaderText {get { return Caption; } set { Caption = value; } }
+//
+//		/// <summary>
+//		/// The section footer, as a string.
+//		/// </summary>
+//		public string FooterText { get; set; }
+//
+//		/// <summary>
+//		/// The section's header view.  
+//		/// </summary>
+//		public UIView HeaderView
+//		{
+//			get { return _Header; }
+//			set { _Header = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
+//		}
+//
+//		/// <summary>
+//		/// The section's footer view.
+//		/// </summary>
+//		public UIView FooterView
+//		{
+//			get { return _Footer; }
+//			set { _Footer = value; InitializeTheme(); Theme.ThemeChanged(Cell);}
+//		}
+//
+//		/// <summary>
+//		/// Adds a new child Element to the Section
+//		/// </summary>
+//		/// <param name="element">
+//		/// An element to add to the section.
+//		/// </param>
+//		public void Add(IElement element)
+//		{
+//			if (element == null)
+//				return;
+//			
+//			Elements.Add(element);
+//			element.Parent = this;
+//			element.Index = Elements.Count - 1;
+//
+//			if (Parent != null)
+//				InsertVisual(element.Index, UITableViewRowAnimation.None, 1);
+//		}
+//
+//		/// <summary>
+//		///   Add version that can be used with LINQ
+//		/// </summary>
+//		/// <param name="elements">
+//		/// An enumerable list that can be produced by something like:
+//		///   from x in ... select (Element) new MyElement (...)
+//		/// </param>
+//		public int Add(IEnumerable<IElement> elements)
+//		{
+//			int count = 0;
+//			foreach (var e in elements)
+//			{
+//				Add(e);
+//				count++;
+//			}
+//
+//			ResetElementIndices();
+//
+//			return count;
+//		}
+//
+//		public void SetExpandState(ExpandState state)
+//		{
+//			if (_ExpandState != state)
+//			{
+//				_ExpandState = state;
+//				
+//				if (Root != null && IsExpandable)
+//				{
+//					if (_HiddenElements == null)
+//						_HiddenElements = Elements;
+//
+//					Root.TableView.BeginUpdates();
+//					
+//					if (_ExpandState == ExpandState.Opened)
+//					{
+//						Elements.Clear();
+//						Insert(0, UITableViewRowAnimation.Bottom, _HiddenElements.ToArray());
+//					}
+//					else
+//					{
+//						_HiddenElements = Elements;
+//						RemoveRange(0, Elements.Count, UITableViewRowAnimation.Top);
+//					}
+//	
+//			
+//					Root.TableView.ReloadSections(new NSIndexSet((uint)Index), UITableViewRowAnimation.None);
+//					Root.TableView.EndUpdates();
+//				}
+//			}
+//		}
+//
+//		/// <summary>
+//		/// Inserts a series of elements into the Section using the specified animation
+//		/// </summary>
+//		/// <param name="idx">
+//		/// The index where the elements are inserted
+//		/// </param>
+//		/// <param name="anim">
+//		/// The animation to use
+//		/// </param>
+//		/// <param name="newElements">
+//		/// A series of elements.
+//		/// </param>
+//		public void Insert(int idx, UITableViewRowAnimation anim, params IElement[] newElements)
+//		{
+//			if (newElements == null)
+//				return;
+//			
+//			int pos = idx;
+//			foreach (var e in newElements)
+//			{
+//				Elements.Insert(pos++, e);
+//				e.Parent = this;
+//			}
+//			
+//			ResetElementIndices();
+//
+//			if (Root != null && Root.TableView != null)
+//			{
+//				if (anim == UITableViewRowAnimation.None)
+//					Root.TableView.ReloadData();
+//				else
+//					InsertVisual(idx, anim, newElements.Length);
+//			}
+//		}
+//
+//		public int Insert(int idx, UITableViewRowAnimation anim, IEnumerable<IElement> newElements)
+//		{
+//			if (newElements == null)
+//				return 0;
+//			
+//			int pos = idx;
+//			int count = 0;
+//			foreach (var e in newElements)
+//			{
+//				Elements.Insert(pos++, e);
+//				e.Parent = this;
+//				count++;
+//			}
+//
+//			ResetElementIndices();
+//
+//			if (Root != null && Root.TableView != null)
+//			{
+//				if (anim == UITableViewRowAnimation.None)
+//					Root.TableView.ReloadData();
+//				else
+//					InsertVisual(idx, anim, pos - idx);
+//			}
+//			return count;
+//		}
+//
+//		void InsertVisual(int idx, UITableViewRowAnimation anim, int count)
+//		{
+//			if (Root == null || Root.TableView == null)
+//				return;
+//			
+//			int sidx = Root.IndexOf(this as ISection);
+//			if (sidx != -1)
+//			{
+//				var paths = new NSIndexPath[count];
+//				for (int i = 0; i < count; i++)
+//					paths[i] = NSIndexPath.FromRowSection(idx + i, sidx);
+//			
+//				Root.TableView.InsertRows(paths, anim);
+//			}
+//		}
+//
+//		public void Insert(int index, params IElement[] newElements)
+//		{
+//			Insert(index, UITableViewRowAnimation.None, newElements);
+//		}
+//
+//		public void Remove(IElement e)
+//		{
+//			if (e == null)
+//				return;
+//			for (int i = Elements.Count - 1; i > 0; i--)
+//			{
+//				if (Elements[i] == e)
+//				{
+//					Remove(i);
+//					ResetElementIndices();
+//					return;
+//				}
+//			}
+//		}
+//
+//		public void Remove(int idx)
+//		{
+//			RemoveRange(idx, 1);
+//		}
+//
+//		/// <summary>
+//		/// Removes a range of elements from the Section
+//		/// </summary>
+//		/// <param name="start">
+//		/// Starting position
+//		/// </param>
+//		/// <param name="count">
+//		/// Number of elements to remove from the section
+//		/// </param>
+//		public void RemoveRange(int start, int count)
+//		{
+//			RemoveRange(start, count, UITableViewRowAnimation.Fade);
+//		}
+//
+//		/// <summary>
+//		/// Remove a range of elements from the section with the given animation
+//		/// </summary>
+//		/// <param name="start">
+//		/// Starting position
+//		/// </param>
+//		/// <param name="count">
+//		/// Number of elements to remove form the section
+//		/// </param>
+//		/// <param name="anim">
+//		/// The animation to use while removing the elements
+//		/// </param>
+//		public void RemoveRange(int start, int count, UITableViewRowAnimation anim)
+//		{
+//			if (start < 0 || start >= Elements.Count)
+//				return;
+//			if (count == 0)
+//				return;
+//			
+//			if (start + count > Elements.Count)
+//				count = Elements.Count - start;
+//			
+//			for(var index = start + count - 1; index >= start; index--)
+//			{
+//				Elements.RemoveAt(index);
+//			}
+//
+//			if (Root == null || Root.TableView == null)
+//				return;
+//			
+//			int sidx = Root.IndexOf(this as ISection);
+//			var paths = new NSIndexPath[count];
+//			for (int i = 0; i < count; i++)
+//				paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
+//			Root.TableView.DeleteRows(paths, anim);
+//			
+//			ResetElementIndices();
+//
+//			foreach(var element in Elements)
+//			{
+//				if (element.Cell != null)
+//					element.Cell.SetNeedsDisplay();
+//			}
+//		}
+//
+//		/// <summary>
+//		/// Enumerator to get all the elements in the Section.
+//		/// </summary>
+//		/// <returns>
+//		/// A <see cref="IEnumerator"/>
+//		/// </returns>
+//		public IEnumerator GetEnumerator()
+//		{
+//			foreach (var e in Elements)
+//				yield return e;
+//		}
+//
+//		public int Count
+//		{
+//			get { return ExpandState == ExpandState.Opened ? Elements.Count : 0; }
+//		}
+//
+//		public IElement this[int idx]
+//		{
+//			get { return Elements[idx]; }
+//		}
+//
+//		public void Clear()
+//		{
+//			foreach (var e in Elements)
+//				e.Dispose();
+//
+//			Elements = new List<IElement>();
+//			
+//			if (Root != null && Root.TableView != null)
+//				Root.TableView.ReloadData();
+//		}
+//		
+//		public virtual void CollectionChanged(NotifyCollectionChangedEventArgs e)
+//		{	
+//			var elementType = Root.ViewBinding.ElementType;
+//			if (elementType == null)
+//				elementType = typeof(RootElement);
+//
+//			if (e.Action == NotifyCollectionChangedAction.Add)
+//			{
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					
+//					Add(element);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Remove)
+//			{
+//				foreach (var item in e.OldItems)
+//				{
+//					Remove(e.OldStartingIndex);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Reset)
+//			{
+//				Clear();
+//				if (e.NewItems != null)
+//				{
+//					foreach (var item in e.NewItems)
+//					{
+//						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//						Add(element);
+//					}
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Move)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					Remove(e.OldStartingIndex);
+//					Insert(e.NewStartingIndex + index, element);
+//					index++;
+//				}
+//				
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Replace)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					index++;
+//				}
+//			}
+//		}
+//
+//		protected override void Dispose(bool disposing)
+//		{
+//			if (disposing)
+//			{
+//				Parent = null;
+//				Clear();
+//				Elements = null;
+//			}
+//		}
+//		
+//		public override void InitializeTheme()
+//		{	
+//			if (Theme != null)
+//			{
+//				if (HeaderView != null)
+//				{
+//					var headerLabel = HeaderView.Subviews[0] as UILabel;
+//					
+//					headerLabel.Text = Caption;
+//					
+//					if (Theme.HeaderTextFont != null)
+//						headerLabel.Font = Theme.HeaderTextFont;
+//					if (Theme.HeaderTextColor != null)
+//						headerLabel.TextColor = Theme.HeaderTextColor;
+//					if (Theme.HeaderTextShadowColor != null)
+//						headerLabel.ShadowColor = Theme.HeaderTextShadowColor;
+//					if (Theme.HeaderTextShadowOffset != SizeF.Empty)
+//						headerLabel.ShadowOffset = Theme.HeaderTextShadowOffset;
+//					if (Theme.HeaderBackgroundColor != null)
+//					{
+//						headerLabel.BackgroundColor = Theme.HeaderBackgroundColor;
+//						HeaderView.BackgroundColor = Theme.HeaderBackgroundColor;
+//					}
+//				}
+//				
+//				if (FooterView != null)
+//				{
+//					var footerLabel = FooterView as UILabel;
+//					
+//					if (Theme.FooterTextFont != null)
+//						footerLabel.Font = Theme.DetailTextFont;
+//					if (Theme.FooterTextColor != null)
+//						footerLabel.TextColor = Theme.FooterTextColor;
+//					if (Theme.FooterTextShadowColor != null)
+//						footerLabel.ShadowColor = Theme.FooterTextShadowColor;
+//					if (Theme.FooterTextShadowOffset != SizeF.Empty)
+//						footerLabel.ShadowOffset = Theme.FooterTextShadowOffset;
+//					if (Theme.FooterBackgroundColor != null)
+//					{
+//						footerLabel.BackgroundColor = Theme.FooterBackgroundColor;
+//						FooterView.BackgroundColor = Theme.FooterBackgroundColor;
+//					}
+//				}
+//			}
+//		}
+//
+//		public override void InitializeCell(UITableView tableView)
+//		{
+//			Cell.TextLabel.Text = "Section was used for Element";
+//		}
+//
+//		public override void Initialize()
+//		{
+//			if (DataBinding != null)
+//			{
+//				DataBinding.BindProperties();
+//				
+//				DataBinding.UpdateTargets();
+//				DataBinding.UpdateSources();
+//			}
+//
+//			//Elements.ForEach((element)=>element.BeginInit());
+//		}
+//		
+//		private void ResetElementIndices()
+//		{
+//			for (int i = Elements.Count - 1; i > 0; i--)
+//			{
+//				Elements[i].Index = i;
+//			}
+//		}
+//	}
 }
 

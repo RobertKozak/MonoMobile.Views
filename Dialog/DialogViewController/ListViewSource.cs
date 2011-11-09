@@ -1,5 +1,5 @@
 // 
-//  ListViewDataSource.cs
+//  ListViewSource.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -38,50 +38,37 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 				
 	[Preserve(AllMembers = true)]
-	public class ListViewDataSource : BaseDialogViewSource, IDataContext<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
+	public class ListViewSource : BaseDialogViewSource<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
-		private ListViewDataSource _NavigationSource;
+		private ListViewSource _NavigationSource;
 
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
-
-		protected IDictionary<UITableViewCell, UIView> _SelectedAccessoryViews;
-		protected IDictionary<UITableViewCell, UIView> _UnselectedAccessoryViews;
 
 		public IList SelectedItems { get; set; }
 		public object SelectedItem { get; set; }
 		
 		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); } }
 		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); } }
-		
-		public Type SelectedAccessoryViewType { get; set; }
-		public Type UnselectedAccessoryViewType { get; set; } 
-		
+				
 		public UnselectionBehavior UnselectionBehavior { get; set; }
-
-		public IList DataContext { get; set; }
 
 		public bool IsSelectable { get; set; }
 		public bool IsMultiselect { get; set; }
 		public bool PopOnSelection { get; set; }
 		public bool HideCaptionOnSelection { get; set; }
 
-		public ListViewDataSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller, viewTypes)
+		public ListViewSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller, viewTypes)
 		{	
-			DataContext = list;
+			Sections = new Dictionary<int, Section<IList>>();
+			Sections.Add(0, new Section<IList>(controller, viewTypes) { DataContext = list });
 
 			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
-			var genericType = DataContext.GetType().GetGenericArguments().FirstOrDefault();
+			var genericType = list.GetType().GetGenericArguments().FirstOrDefault();
 			Type[] generic = { genericType };		
 			SelectedItems = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
 
 			CellFactory = new TableCellFactory<UITableViewCell>("listCell");
-
-			SelectedItemMemberName = "ItemSelected";
-			SelectedItemsMemberName = "ItemsSelected";
-
-			_SelectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
-			_UnselectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -93,24 +80,11 @@ namespace MonoMobile.Views
 			base.Dispose(disposing);
 		}
 
-		public override int RowsInSection(UITableView tableview, int section)
-		{
-			if (IsRoot)
-				return 1;
-
-			return DataContext != null ? DataContext.Count : 0;
-		}
-
-		public override int NumberOfSections(UITableView tableView)
-		{	
-			return DataContext != null ? 1 : 0;
-		}
-		
 		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{			
 			if (!IsRoot)
 			{
-				SelectedItem = DataContext[indexPath.Row]; 
+				SelectedItem = GetSectionData(indexPath.Section)[indexPath.Row]; 
 
 				if (SelectedItems.Contains(SelectedItem))
 				{
@@ -187,9 +161,10 @@ namespace MonoMobile.Views
 
 			SetSelectionAccessory(cell, indexPath);
 
-			if (Views.ContainsKey(cell))
+			var section = Sections[indexPath.Section];
+			if (section.Views.ContainsKey(cell))
 			{
-				var views = Views[cell];
+				var views = section.Views[cell];
 	
 				if (views.Count > 0)
 				{
@@ -198,7 +173,7 @@ namespace MonoMobile.Views
 						var dc = view as IDataContext<object>;
 						if (dc != null)
 						{
-							dc.DataContext = DataContext[indexPath.Row];
+							dc.DataContext = GetSectionData(indexPath.Section)[indexPath.Row];
 						}
 		
 						var updateable = view as IUpdateable;
@@ -229,7 +204,7 @@ namespace MonoMobile.Views
 				}
 				else
 				{
-					cell.TextLabel.Text = DataContext[indexPath.Row].ToString();
+					cell.TextLabel.Text = GetSectionData(indexPath.Section)[indexPath.Row].ToString();
 				}
 			}
 		}
@@ -252,9 +227,10 @@ namespace MonoMobile.Views
 
 		public void NavigateToList()
 		{
+			var section = Sections[0];
 			var dvc = new DialogViewController(Caption, Controller.RootView, true);
 			if (_NavigationSource == null)
-				_NavigationSource = new ListViewDataSource(dvc, DataContext, ViewTypes);
+				_NavigationSource = new ListViewSource(dvc, GetSectionData(0), section.ViewTypes);
 
 			_NavigationSource.Controller = dvc;
 
@@ -291,11 +267,25 @@ namespace MonoMobile.Views
 
 		public void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
 		{
-			DataContext = e.NewDataContext as IList;
+			SetSectionData(0, e.NewDataContext as IList);
 
 			SelectedItems.Clear();
 
 			Controller.UpdateSource();
+		}
+
+		public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			return false;
+		}
+
+		public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			return  UITableViewCellEditingStyle.None;
+		}
+
+		public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+		{
 		}
 
 		public void Activated()
@@ -334,50 +324,31 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
+		protected override void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			cell.AccessoryView = null;
-
+			base.SetSelectionAccessory(cell, indexPath);
+			
 			if (!IsNavigateable)
-			{
-				var selectedIndex = DataContext.IndexOf(SelectedItem);
-				
-				UIView selectedAccessoryView = null;
-				UIView unselectedAccessoryView = null;
+			{	
+				var selectedIndex = GetSectionData(indexPath.Section).IndexOf(SelectedItem);
+				UIView selectedAccessoryView = SelectedAccessoryViews.Count > 0 ? SelectedAccessoryViews[cell] : null;
+				UIView unselectedAccessoryView = UnselectedAccessoryViews.Count > 0 ? UnselectedAccessoryViews[cell] : null;
 
-				if (_SelectedAccessoryViews.ContainsKey(cell))
+				if (selectedAccessoryView != null)
 				{
-					selectedAccessoryView = _SelectedAccessoryViews[cell];
+					cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : unselectedAccessoryView;
 				}
 				else
 				{
-					if (SelectedAccessoryViewType != null)
-					{
-						selectedAccessoryView = Activator.CreateInstance(SelectedAccessoryViewType) as UIView;
-						_SelectedAccessoryViews.Add(cell, selectedAccessoryView);
-					}
+					cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				}
-
-				if (_UnselectedAccessoryViews.ContainsKey(cell))
-				{
-					unselectedAccessoryView = _UnselectedAccessoryViews[cell];
-				}
-				else
-				{
-					if (UnselectedAccessoryViewType != null)
-					{
-						unselectedAccessoryView = Activator.CreateInstance(UnselectedAccessoryViewType) as UIView;
-						_UnselectedAccessoryViews.Add(cell, unselectedAccessoryView);
-					}
-				}	
 				
-
 				if (IsMultiselect)
 				{
 					foreach (var item in SelectedItems)
 					{
-						selectedIndex = DataContext.IndexOf(item);
-
+						selectedIndex = GetSectionData(indexPath.Section).IndexOf(item);
+						
 						if (selectedAccessoryView != null)
 						{
 							cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : cell.AccessoryView;
@@ -385,15 +356,6 @@ namespace MonoMobile.Views
 						else
 							cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : cell.Accessory;
 					}
-				}
-				else
-				{
-					if (selectedAccessoryView != null)
-					{
-						cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : unselectedAccessoryView;
-					}
-					else
-						cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				}
 			}
 		}

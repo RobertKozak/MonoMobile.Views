@@ -1,5 +1,5 @@
 // 
-//  IInitializeCell.cs
+//  MemberData.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,19 +27,48 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
+	using System.Reflection;
 
-	public interface IInitializeCell
+	public class MemberData
 	{
-		UITableViewCellStyle CellStyle { get; }
-		//UITableViewCellEditingStyle EditingStyle { get; set; }
+		private object _DataContext;
+		public object DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
 
-		void InitializeCell(UITableViewCell cell, NSIndexPath indexPath);
+		public object Source { get; private set; }
+		public MemberInfo Member { get; private set; }
+		
+		public int Order { get; set; }
+
+		public MemberData(object source, MemberInfo member)
+		{
+			Source = source;
+			Member = member;
+		}
+
+		protected object GetDataContext()
+		{
+			if (Member != null && Source != null)
+			{
+				var view = Source as IDataContext<object>;
+				if (view != null && view.DataContext != null)
+				{
+
+				}
+	
+				return Member.GetValue(Source);
+			}
+
+			return _DataContext;
+		}
+
+		protected void SetDataContext(object value)
+		{
+			_DataContext = value;
+		}
+
 	}
 }
 

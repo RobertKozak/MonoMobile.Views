@@ -49,7 +49,14 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private List<Func<object, MemberInfo[]>> _MemberFuncMap = new List<Func<object, MemberInfo[]>>() 
+		private List<Func<object, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
+		{
+			(T)=>GetFields(T),
+			(T)=>GetProperties(T),
+			(T)=>GetMethods(T)
+		};
+		
+		private List<Func<object, MemberInfo[]>> _TypeMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
 		{
 			(T)=>GetFields(T),
 			(T)=>GetProperties(T),
@@ -69,7 +76,7 @@ namespace MonoMobile.Views
 			BuildElementPropertyMap();
 		}
 		
-		public UITableViewSource Parse(DialogViewController controller, UIView view)
+		public UITableViewSource Parse(DialogViewController controller, object view)
 		{
 			List<Type> viewTypes = null;
 			object dataContext = null;
@@ -93,174 +100,198 @@ namespace MonoMobile.Views
 
 			if (source == null)
 			{
-				var bindingContext = new BindingContext(view, "", controller.Theme);
-				controller.PrepareRoot(bindingContext.Root);
+				var actualView = view as IView;
+				if (actualView != null)
+					source = ParseView(controller, actualView);
+			}
+
+			if (source == null)
+			{
+				source = ParseObject(controller, view);
 			}
 
 			InitializeSearch(view, source);
 			return source;
 		}
 		
-//		public UITableViewSource ParseSections(DialogTableViewController controller, UIView view)
+		public MemberInfo[] GetMembers(object obj)
+		{
+			Console.WriteLine("View: "+obj.GetType().ToString());
+
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			var members = new List<MemberInfo>();
+
+			foreach (var memberFunc in _ObjectMemberFuncMap)
+			{
+				members.AddRange(memberFunc(obj));
+			}
+			
+			var result = members.ToArray();
+			sw.Stop();
+			Console.WriteLine("GetMebers: "+sw.Elapsed.TotalMilliseconds);
+			return result;
+		}
+
+		public MemberInfo[] GetMembers(Type type)
+		{
+			Console.WriteLine("View: " + type.ToString());
+
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			var members = new List<MemberInfo>();
+
+			foreach (var memberFunc in _TypeMemberFuncMap)
+			{
+				members.AddRange(memberFunc(type));
+			}
+			
+			var result = members.ToArray();
+			sw.Stop();
+			Console.WriteLine("GetMebers: " + sw.Elapsed.TotalMilliseconds);
+			return result;
+		}
+
+//		public UITableViewSource ParseSections(DialogViewController controller, UIView view)
 //		{
-//			ISection lastSection = new Section() { Order = -1, Parent = root as IElement };
+//			Section<object> lastSection = new Section<object>(controller, null) { };
 //
-//			var sectionList = new List<ISection>() { lastSection };
+//			var sectionList = new List<Section<object>>() { lastSection };
 //
-//			IElement newElement = null;
-//			Theme theme = null;
-//			var themeable = root as IThemeable;
-//			if (themeable != null)
+//			foreach (var memberFunc in _MemberFuncMap)
 //			{
-//				Theme.ApplyRootTheme(view, themeable);
-//				theme = themeable.Theme;
-//				Theme.ApplyElementTheme(theme, lastSection, null);
-//			}
-//			
-//			if (!(view is IView))
-//			{
-//				newElement = new UIViewElement(null, view, false);
-//				lastSection.Add(newElement);
-//			}
-//			else
-//			{
-//				foreach (var memberFunc in _MemberFuncMap)
-//				{
-//					var members = memberFunc(view);
-//		
-//					foreach (var member in members)
-//					{
-//						var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
-//						if (pullToRefreshAttribute != null)
-//						{
-//							root.PullToRefreshCommand = GetCommandForMember(view, member);
-//							root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
-//						}
-//						var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
-//						if (skipAttribute != null)
-//						{
-//							continue;
-//						}
-//						
-//						var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-//		
-//						if (sectionAttribute != null)
-//						{	
-//							Theme sectionTheme = null;
-//							if (sectionAttribute.ThemeType != null)
-//							{
-//								sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
-//							}
-//							
-//							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
-//							{ 
-//								Order = sectionAttribute.Order,
-//								IsExpandable = sectionAttribute.IsExpandable,
-//								ExpandState = sectionAttribute.ExpandState,
-//							};
-//							lastSection.Parent = root as IElement;
-//
-//							Theme.ApplyElementTheme(root.Theme, lastSection, null); 
-//							Theme.ApplyElementTheme(sectionTheme, lastSection, null);
-//
-//							sectionList.Add(lastSection);
-//						}
-//		
-//						var bindings = GetBindings(view, member);
+//				var members = memberFunc(view);
 //	
-//						newElement = GetElementForMember(root.Theme, view, member, bindings);
-//
-//						Theme.ApplyElementTheme(theme, newElement, member);
-//						
-//						IBindable bindable = null;
-//						
-//						if (newElement is ISection)
+//				foreach (var member in members)
+//				{
+//					var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
+//					if (pullToRefreshAttribute != null)
+//					{
+//						root.PullToRefreshCommand = GetCommandForMember(view, member);
+//						root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
+//					}
+//					var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
+//					if (skipAttribute != null)
+//					{
+//						continue;
+//					}
+//					
+//					var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+//	
+//					if (sectionAttribute != null)
+//					{	
+//						Theme sectionTheme = null;
+//						if (sectionAttribute.ThemeType != null)
 //						{
-//							lastSection.Caption = newElement.Caption;
-//							lastSection.Order = newElement.Order;
-//							
-//							lastSection.Add(((ISection)newElement).Elements);
-//							bindable = lastSection as IBindable;
+//							sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
 //						}
-//						else if (newElement != null)
-//							{
-//								CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
+//						
+//						lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
+//						{ 
+//							Order = sectionAttribute.Order,
+//							IsExpandable = sectionAttribute.IsExpandable,
+//							ExpandState = sectionAttribute.ExpandState,
+//						};
+//						lastSection.Parent = root as IElement;
 //
-//								var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
-//								if (editStyle != null)
+//						Theme.ApplyElementTheme(root.Theme, lastSection, null); 
+//						Theme.ApplyElementTheme(sectionTheme, lastSection, null);
+//
+//						sectionList.Add(lastSection);
+//					}
+//	
+//					var bindings = GetBindings(view, member);
+//
+//					newElement = GetElementForMember(root.Theme, view, member, bindings);
+//
+//					Theme.ApplyElementTheme(theme, newElement, member);
+//					
+//					IBindable bindable = null;
+//					
+//					if (newElement is ISection)
+//					{
+//						lastSection.Caption = newElement.Caption;
+//						lastSection.Order = newElement.Order;
+//						
+//						lastSection.Add(((ISection)newElement).Elements);
+//						bindable = lastSection as IBindable;
+//					}
+//					else if (newElement != null)
+//						{
+//							CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
+//
+//							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
+//							if (editStyle != null)
+//							{
+//								root.EditingStyle = editStyle.EditingStyle;
+//								newElement.EditingStyle = editStyle.EditingStyle;
+//								if (newElement.Section != null)
 //								{
-//									root.EditingStyle = editStyle.EditingStyle;
-//									newElement.EditingStyle = editStyle.EditingStyle;
-//									if (newElement.Section != null)
+//									foreach (ISection section in newElement.Section)
 //									{
-//										foreach (ISection section in newElement.Section)
+//										foreach (var element in section.Elements)
 //										{
-//											foreach (var element in section.Elements)
-//											{
-//												element.EditingStyle = editStyle.EditingStyle;
-//											}
+//											element.EditingStyle = editStyle.EditingStyle;
 //										}
 //									}
 //								}
-//								else
-//								{
-//									newElement.EditingStyle = root.EditingStyle;
-//								}
-//							
-//								var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
-//								if (useNibAttribute != null)
-//								{
-//									newElement.NibName = useNibAttribute.NibName;
-//								}
-//
-//								bindable = newElement as IBindable;
-//							
-//								var isList = member.GetCustomAttribute<ListAttribute>() != null;
-//								if ((isList) && newElement is IRoot)
-//								{
-//									var sections = ((IRoot)newElement).Sections;
-//									root.ViewBinding = newElement.ViewBinding;
-//								
-//									var firstSection = sections.FirstOrDefault();
-//									if (firstSection != null && firstSection.Elements.Count > 0)
-//									{
-//										lastSection.Add(firstSection.Elements);
-//									}
-//
-//									for (var index=1; index < sections.Count; index++)
-//									{
-//										sectionList.Add(sections[index]);
-//									}
-//								}
-//								else
-//								{
-//									lastSection.Add(newElement);
-//								}
 //							}
-//
-//						if (bindable != null && bindable != _NoElement && bindings.Count != 0)
-//						{
-//							foreach (Binding binding in bindings)
+//							else
 //							{
-//								if (binding.TargetPath == null)
-//								{
-//									binding.TargetPath = "DataContext";	
-//								}
-//			
-//								var bindingRoot = bindable as IRoot;
-//								if (bindingRoot != null && binding.TargetPath == "DataContext")
-//								{
-//									foreach (var section in bindingRoot.Sections)
-//									{
-//										section.Parent = bindingRoot;
-//										BindingOperations.SetBinding(section as IBindable, binding);
-//									}
-//
-//									BindingOperations.SetBinding(Root as IBindable, binding);
-//								}
-//
-//								BindingOperations.SetBinding(bindable, binding);	
+//								newElement.EditingStyle = root.EditingStyle;
 //							}
+//						
+//							var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
+//							if (useNibAttribute != null)
+//							{
+//								newElement.NibName = useNibAttribute.NibName;
+//							}
+//
+//							bindable = newElement as IBindable;
+//						
+//							var isList = member.GetCustomAttribute<ListAttribute>() != null;
+//							if ((isList) && newElement is IRoot)
+//							{
+//								var sections = ((IRoot)newElement).Sections;
+//								root.ViewBinding = newElement.ViewBinding;
+//							
+//								var firstSection = sections.FirstOrDefault();
+//								if (firstSection != null && firstSection.Elements.Count > 0)
+//								{
+//									lastSection.Add(firstSection.Elements);
+//								}
+//
+//								for (var index=1; index < sections.Count; index++)
+//								{
+//									sectionList.Add(sections[index]);
+//								}
+//							}
+//							else
+//							{
+//								lastSection.Add(newElement);
+//							}
+//						}
+//
+//					if (bindable != null && bindable != _NoElement && bindings.Count != 0)
+//					{
+//						foreach (Binding binding in bindings)
+//						{
+//							if (binding.TargetPath == null)
+//							{
+//								binding.TargetPath = "DataContext";	
+//							}
+//		
+//							var bindingRoot = bindable as IRoot;
+//							if (bindingRoot != null && binding.TargetPath == "DataContext")
+//							{
+//								foreach (var section in bindingRoot.Sections)
+//								{
+//									section.Parent = bindingRoot;
+//									BindingOperations.SetBinding(section as IBindable, binding);
+//								}
+//
+//								BindingOperations.SetBinding(Root as IBindable, binding);
+//							}
+//
+//							BindingOperations.SetBinding(bindable, binding);	
 //						}
 //					}
 //				}
@@ -276,7 +307,7 @@ namespace MonoMobile.Views
 //			return orderedSections;
 //		}
 		
-		private List<Type> GetViewTypes(UIView view, MemberInfo memberInfo)
+		private List<Type> GetViewTypes(object view, MemberInfo memberInfo)
 		{
 			var dc = view as IDataContext<object>;
 			if (dc != null)
@@ -291,10 +322,76 @@ namespace MonoMobile.Views
 			return null;
 		}
 
-		public UITableViewSource ParseList(DialogViewController controller, UIView view, MemberInfo member, List<Type> viewTypes)
+		public UITableViewSource ParseObject(DialogViewController controller, object view)
+		{
+			return null;
+		}
+
+		public UITableViewSource ParseView(DialogViewController controller, IView view)
+		{
+			var members = GetMembers(view);
+			var source = new ViewSource(controller, view);
+
+			var sections = new List<Section<List<MemberData>>>();
+			var currentSection = new Section<List<MemberData>>(controller, null);
+			var sectionMembers = new List<MemberData>();
+			var sectionIndex = 0;
+
+			foreach (var member in members)
+			{
+				var memberData = new MemberData(view, member);
+
+				var skipAttribute = member.GetCustomAttribute<SkipAttribute>();
+				if (skipAttribute != null)
+				{
+					continue;
+				}
+				
+				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
+				if (orderAttribute != null)
+				{
+					memberData.Order = orderAttribute.Order;
+				}
+
+				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+				if (sectionAttribute != null)
+				{
+					sectionMembers = new List<MemberData>();
+					
+					currentSection = new Section<List<MemberData>>(controller, null) { DataContext = sectionMembers };
+					
+					currentSection.HeaderText = sectionAttribute.Caption;
+					currentSection.FooterText = sectionAttribute.Footer;
+					currentSection.ExpandState = sectionAttribute.ExpandState;
+					currentSection.IsExpandable = sectionAttribute.IsExpandable;
+					currentSection.Index = sectionAttribute.Order == 0 ? sectionIndex++ : sectionAttribute.Order;
+
+					sections.Add(currentSection);
+				}
+
+				sectionMembers.Add(memberData);
+				currentSection.DataContext = sectionMembers;
+			}
+
+			foreach (var section in sections)
+			{
+				var orderedList = section.DataContext.OrderBy(data => data.Order).ToList();
+				section.DataContext = orderedList;
+			}
+			
+			var orderedSections = sections.Where(s => s.DataContext.Count > 0).OrderBy(section => section.Index).ToList();
+			
+			sectionIndex = 0; 
+			source.Sections.Clear();
+			orderedSections.ForEach((section) => source.Sections.Add(sectionIndex++, section));
+
+			return source;
+		}
+
+		public UITableViewSource ParseList(DialogViewController controller, object view, MemberInfo member, List<Type> viewTypes)
 		{
 			var dc = view as IDataContext<object>;
-			if (dc != null)
+			if (dc != null && dc.DataContext != null)
 			{
 				var type = dc.DataContext.GetType();
 			
@@ -302,7 +399,7 @@ namespace MonoMobile.Views
 				if (isList)
 				{
 					IList data = null;
-					ListViewDataSource source = null;
+					ListViewSource source = null;
 					Type[] generic = { type };
 					var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
 					
@@ -325,7 +422,7 @@ namespace MonoMobile.Views
 						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
 					}
 		
-					source = new ListViewDataSource(controller, (IList)data, viewTypes);
+					source = new ListViewSource(controller, (IList)data, viewTypes);
 
 					if (source != null)
 					{
@@ -380,50 +477,50 @@ namespace MonoMobile.Views
 			return null;
 		}
 
-		public void Parse(UIView view, string caption, Theme theme)
-		{
-			Type viewType = view.GetType();
-
-			var vw = view as IView;
-			if (vw != null)
-			{
-				var captionAttribute = viewType.GetCustomAttribute<CaptionAttribute>();
-				if (captionAttribute != null)
-					caption = captionAttribute.Caption;
-			}
-			
-			Root = new RootElement(caption);
-			Root.DataContext = view;
-			Root.DataView = view;
-
-			var dataContext = view as IDataContext<object>;
-			if (dataContext != null)
-				Root.DataContext = dataContext.DataContext;
-
-			var themeable = Root as IThemeable;
-			if (themeable != null)
-				themeable.Theme = Theme.CreateTheme(theme);
-			
-			var searchbarAttribute = viewType.GetCustomAttribute<SearchbarAttribute>();
-			var searchbar = Root as ISearchBar;
-			if (searchbarAttribute != null && searchbar != null)
-			{
-				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
-				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
-				searchbar.EnableSearch =  searchbarAttribute.ShowImmediately;
-				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
-			}
-
-			var editStyle = viewType.GetCustomAttribute<CellEditingStyleAttribute>();
-			if (editStyle != null)
-			{
-				Root.EditingStyle = editStyle.EditingStyle;
-			}
-
-			var sectionList = CreateSectionList(view, Root);
-			sectionList.ForEach((section)=>section.Initialize());
-			Root.Add(sectionList);
-		}
+//		public void Parse(UIView view, string caption, Theme theme)
+//		{
+//			Type viewType = view.GetType();
+//
+//			var vw = view as IView;
+//			if (vw != null)
+//			{
+//				var captionAttribute = viewType.GetCustomAttribute<CaptionAttribute>();
+//				if (captionAttribute != null)
+//					caption = captionAttribute.Caption;
+//			}
+//			
+//			Root = new RootElement(caption);
+//			Root.DataContext = view;
+//			Root.DataView = view;
+//
+//			var dataContext = view as IDataContext<object>;
+//			if (dataContext != null)
+//				Root.DataContext = dataContext.DataContext;
+//
+//			var themeable = Root as IThemeable;
+//			if (themeable != null)
+//				themeable.Theme = Theme.CreateTheme(theme);
+//			
+//			var searchbarAttribute = viewType.GetCustomAttribute<SearchbarAttribute>();
+//			var searchbar = Root as ISearchBar;
+//			if (searchbarAttribute != null && searchbar != null)
+//			{
+//				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
+//				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
+//				searchbar.EnableSearch =  searchbarAttribute.ShowImmediately;
+//				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+//			}
+//
+//			var editStyle = viewType.GetCustomAttribute<CellEditingStyleAttribute>();
+//			if (editStyle != null)
+//			{
+//				Root.EditingStyle = editStyle.EditingStyle;
+//			}
+//
+//			var sectionList = CreateSectionList(view, Root);
+//			sectionList.ForEach((section)=>section.Initialize());
+//			Root.Add(sectionList);
+//		}
 		
 	    public static ICommand GetCommandForMember(object view, MemberInfo member)
 		{
@@ -499,651 +596,651 @@ namespace MonoMobile.Views
 			return new ReflectiveCommand(view, methodInfo, source, propertyInfo) { CommandOption = commandOption };
 		}
 
-		private List<ISection> CreateSectionList(UIView view, IRoot root)
-		{
-			ISection lastSection = new Section() { Order = -1, Parent = root as IElement };
-
-			var sectionList = new List<ISection>() { lastSection };
-
-			IElement newElement = null;
-			Theme theme = null;
-			var themeable = root as IThemeable;
-			if (themeable != null)
-			{
-				Theme.ApplyRootTheme(view, themeable);
-				theme = themeable.Theme;
-				Theme.ApplyElementTheme(theme, lastSection, null);
-			}
-			
-			if (!(view is IView))
-			{
-				newElement = new UIViewElement(null, view, false);
-				lastSection.Add(newElement);
-			}
-			else
-			{
-				foreach(var memberFunc in _MemberFuncMap)
-				{
-					var members = memberFunc(view);
-		
-					foreach (var member in members)
-					{
-						var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
-						if (pullToRefreshAttribute != null)
-						{
-							root.PullToRefreshCommand = GetCommandForMember(view, member);
-							root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
-						}
-						var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
-						if (skipAttribute != null) continue;
-						
-						var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-		
-						if (sectionAttribute != null)
-						{	
-							Theme sectionTheme = null;
-							if (sectionAttribute.ThemeType != null)
-								 sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
-							
-							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
-							{ 
-								Order = sectionAttribute.Order,
-								IsExpandable = sectionAttribute.IsExpandable,
-								ExpandState = sectionAttribute.ExpandState,
-							};
-							lastSection.Parent = root as IElement;
-
-							Theme.ApplyElementTheme(root.Theme, lastSection, null); 
-							Theme.ApplyElementTheme(sectionTheme, lastSection, null);
-
-							sectionList.Add(lastSection);
-						}
-		
-						var bindings = GetBindings(view, member);
-	
-						newElement = GetElementForMember(root.Theme, view, member, bindings);
-
-						Theme.ApplyElementTheme(theme, newElement, member);
-						
-						IBindable bindable = null;
-						
-						if (newElement is ISection)
-						{
-							lastSection.Caption = newElement.Caption;
-							lastSection.Order = newElement.Order;
-							
-							lastSection.Add(((ISection)newElement).Elements);
-							bindable = lastSection as IBindable;
-						}
-						else if (newElement != null)
-						{
-							CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
-
-							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
-							if (editStyle != null)
-							{
-								root.EditingStyle = editStyle.EditingStyle;
-								newElement.EditingStyle = editStyle.EditingStyle;
-								if (newElement.Section != null)
-								{
-									foreach(ISection section in newElement.Section)
-									{
-										foreach(var element in section.Elements)
-										{
-											element.EditingStyle = editStyle.EditingStyle;
-										}
-									}
-								}
-							}
-							else
-								newElement.EditingStyle = root.EditingStyle;
-							
-							var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
-							if (useNibAttribute != null)
-								newElement.NibName = useNibAttribute.NibName;
-
-							bindable = newElement as IBindable;
-							
-							var isList = member.GetCustomAttribute<ListAttribute>() != null;
-							if ((isList) && newElement is IRoot)
-							{
-								var sections = ((IRoot)newElement).Sections;
-								root.ViewBinding = newElement.ViewBinding;
-								
-								var firstSection = sections.FirstOrDefault();
-								if (firstSection != null && firstSection.Elements.Count > 0)
-								{
-									lastSection.Add(firstSection.Elements);
-								}
-
-								for(var index=1; index < sections.Count; index++)
-								{
-									sectionList.Add(sections[index]);
-								}
-							}
-							else
-							{
-								lastSection.Add(newElement);
-							}
-						}
-
-						if (bindable != null && bindable != _NoElement && bindings.Count != 0)
-						{
-							foreach (Binding binding in bindings)
-							{
-								if (binding.TargetPath == null)
-								{
-									binding.TargetPath = "DataContext";	
-								}
-			
-								var bindingRoot = bindable as IRoot;
-								if (bindingRoot != null && binding.TargetPath == "DataContext")
-								{
-									foreach(var section in bindingRoot.Sections)
-									{
-										section.Parent = bindingRoot;
-										BindingOperations.SetBinding(section as IBindable, binding);
-									}
-
-									BindingOperations.SetBinding(Root as IBindable, binding);
-								}
-
-								BindingOperations.SetBinding(bindable, binding);	
-							}
-						}
-					}
-				}
-			}
-
-			foreach (var section in sectionList)
-			{
-				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
-				section.Elements = orderedList;
-			}
-
-			var orderedSections = sectionList.Where(s=>s.Elements.Count > 0).OrderBy(section=>section.Order).ToList();
-			return orderedSections;
-		}
-
-		private IElement GetElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
-		{
-			string caption = GetCaption(member);
-			IElement element = null;
-
-			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
-
-			Type memberType = GetTypeForMember(member);
-
-			if (!(member is MethodInfo))
-			{
-				var defaultValue = member.GetCustomAttribute<DefaultValueAttribute>();
-				if (defaultValue != null)
-				{
-					var propertyInfo = member as PropertyInfo;
-					var fieldInfo = member as FieldInfo;
-					if (propertyInfo != null && propertyInfo.CanWrite)
-					{
-						propertyInfo.SetValue(view, defaultValue.Value, null);
-					}
-					
-					if (fieldInfo != null)
-					{
-						fieldInfo.SetValue(view, defaultValue.Value);
-					}
-				}
-
-			}
-
-			// get a single element
-			if(element == null && _ElementPropertyMap.ContainsKey(memberType))
-			{
-				element = _ElementPropertyMap[memberType](member, caption, view, bindings);
-			}
-			
-			if (typeof(IElement).IsAssignableFrom(memberType))
-			{
-				object context = view;
-				var memberValue = GetMemberValue<IElement>(ref context, member);
-
-				//var memberValue = member.GetValue(view) as IElement;
-				if (memberValue == null)
-				{
-					memberValue = Activator.CreateInstance(memberType) as IElement;
-				}
-				if (memberValue != null)
-				{
-					memberValue.Caption = caption;
-				}
-
-				element = memberValue;
-			}
-
-			if (element == null)
-			{
-				element = GetRootElementForMember(theme, view, member, bindings);
-			}
-			
-			if (element == null)
-			{
-				throw new Exception(string.Format("Unknown type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
-			}	
-			
-			if (orderAttribute != null && element != null)
-				element.Order = orderAttribute.Order;
-			
-//			var dataContext = view as IDataContext;
-//			if (dataContext != null && element.DataContext == null && element.DataContext != dataContext.DataContext)
+//		private List<ISection> CreateSectionList(UIView view, IRoot root)
+//		{
+//			ISection lastSection = new Section() { Order = -1, Parent = root as IElement };
+//
+//			var sectionList = new List<ISection>() { lastSection };
+//
+//			IElement newElement = null;
+//			Theme theme = null;
+//			var themeable = root as IThemeable;
+//			if (themeable != null)
 //			{
-//				element.DataContext = dataContext.DataContext;
+//				Theme.ApplyRootTheme(view, themeable);
+//				theme = themeable.Theme;
+//				Theme.ApplyElementTheme(theme, lastSection, null);
 //			}
+//			
+//			if (!(view is IView))
+//			{
+//				newElement = new UIViewElement(null, view, false);
+//				lastSection.Add(newElement);
+//			}
+//			else
+//			{
+//				foreach(var memberFunc in _ObjectMemberFuncMap)
+//				{
+//					var members = memberFunc(view);
+//		
+//					foreach (var member in members)
+//					{
+//						var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
+//						if (pullToRefreshAttribute != null)
+//						{
+//							root.PullToRefreshCommand = GetCommandForMember(view, member);
+//							root.DefaultSettingsKey = pullToRefreshAttribute.SettingsKey;
+//						}
+//						var skipAttribute = member.GetCustomAttribute<SkipAttribute>(true);
+//						if (skipAttribute != null) continue;
+//						
+//						var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+//		
+//						if (sectionAttribute != null)
+//						{	
+//							Theme sectionTheme = null;
+//							if (sectionAttribute.ThemeType != null)
+//								 sectionTheme = Activator.CreateInstance(sectionAttribute.ThemeType) as Theme;
+//							
+//							lastSection = new Section(sectionAttribute.Caption, sectionAttribute.Footer) 
+//							{ 
+//								Order = sectionAttribute.Order,
+//								IsExpandable = sectionAttribute.IsExpandable,
+//								ExpandState = sectionAttribute.ExpandState,
+//							};
+//							lastSection.Parent = root as IElement;
+//
+//							Theme.ApplyElementTheme(root.Theme, lastSection, null); 
+//							Theme.ApplyElementTheme(sectionTheme, lastSection, null);
+//
+//							sectionList.Add(lastSection);
+//						}
+//		
+//						var bindings = GetBindings(view, member);
+//	
+//						newElement = GetElementForMember(root.Theme, view, member, bindings);
+//
+//						Theme.ApplyElementTheme(theme, newElement, member);
+//						
+//						IBindable bindable = null;
+//						
+//						if (newElement is ISection)
+//						{
+//							lastSection.Caption = newElement.Caption;
+//							lastSection.Order = newElement.Order;
+//							
+//							lastSection.Add(((ISection)newElement).Elements);
+//							bindable = lastSection as IBindable;
+//						}
+//						else if (newElement != null)
+//						{
+//							CheckForInstanceProperties(view, member, newElement, newElement.ElementView);
+//
+//							var editStyle = member.GetCustomAttribute<CellEditingStyleAttribute>();
+//							if (editStyle != null)
+//							{
+//								root.EditingStyle = editStyle.EditingStyle;
+//								newElement.EditingStyle = editStyle.EditingStyle;
+//								if (newElement.Section != null)
+//								{
+//									foreach(ISection section in newElement.Section)
+//									{
+//										foreach(var element in section.Elements)
+//										{
+//											element.EditingStyle = editStyle.EditingStyle;
+//										}
+//									}
+//								}
+//							}
+//							else
+//								newElement.EditingStyle = root.EditingStyle;
+//							
+//							var useNibAttribute = member.GetCustomAttribute<UseNibAttribute>();
+//							if (useNibAttribute != null)
+//								newElement.NibName = useNibAttribute.NibName;
+//
+//							bindable = newElement as IBindable;
+//							
+//							var isList = member.GetCustomAttribute<ListAttribute>() != null;
+//							if ((isList) && newElement is IRoot)
+//							{
+//								var sections = ((IRoot)newElement).Sections;
+//								root.ViewBinding = newElement.ViewBinding;
+//								
+//								var firstSection = sections.FirstOrDefault();
+//								if (firstSection != null && firstSection.Elements.Count > 0)
+//								{
+//									lastSection.Add(firstSection.Elements);
+//								}
+//
+//								for(var index=1; index < sections.Count; index++)
+//								{
+//									sectionList.Add(sections[index]);
+//								}
+//							}
+//							else
+//							{
+//								lastSection.Add(newElement);
+//							}
+//						}
+//
+//						if (bindable != null && bindable != _NoElement && bindings.Count != 0)
+//						{
+//							foreach (Binding binding in bindings)
+//							{
+//								if (binding.TargetPath == null)
+//								{
+//									binding.TargetPath = "DataContext";	
+//								}
+//			
+//								var bindingRoot = bindable as IRoot;
+//								if (bindingRoot != null && binding.TargetPath == "DataContext")
+//								{
+//									foreach(var section in bindingRoot.Sections)
+//									{
+//										section.Parent = bindingRoot;
+//										BindingOperations.SetBinding(section as IBindable, binding);
+//									}
+//
+//									BindingOperations.SetBinding(Root as IBindable, binding);
+//								}
+//
+//								BindingOperations.SetBinding(bindable, binding);	
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//			foreach (var section in sectionList)
+//			{
+//				var orderedList = section.Elements.OrderBy(e=>e.Order).Where((e)=>e != _NoElement).ToList();
+//				section.Elements = orderedList;
+//			}
+//
+//			var orderedSections = sectionList.Where(s=>s.Elements.Count > 0).OrderBy(section=>section.Order).ToList();
+//			return orderedSections;
+//		}
 
-			return element;
-		}
+//		private IElement GetElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
+//		{
+//			string caption = GetCaption(member);
+//			IElement element = null;
+//
+//			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
+//
+//			Type memberType = GetTypeForMember(member);
+//
+//			if (!(member is MethodInfo))
+//			{
+//				var defaultValue = member.GetCustomAttribute<DefaultValueAttribute>();
+//				if (defaultValue != null)
+//				{
+//					var propertyInfo = member as PropertyInfo;
+//					var fieldInfo = member as FieldInfo;
+//					if (propertyInfo != null && propertyInfo.CanWrite)
+//					{
+//						propertyInfo.SetValue(view, defaultValue.Value, null);
+//					}
+//					
+//					if (fieldInfo != null)
+//					{
+//						fieldInfo.SetValue(view, defaultValue.Value);
+//					}
+//				}
+//
+//			}
+//
+//			// get a single element
+//			if(element == null && _ElementPropertyMap.ContainsKey(memberType))
+//			{
+//				element = _ElementPropertyMap[memberType](member, caption, view, bindings);
+//			}
+//			
+//			if (typeof(IElement).IsAssignableFrom(memberType))
+//			{
+//				object context = view;
+//				var memberValue = GetMemberValue<IElement>(ref context, member);
+//
+//				//var memberValue = member.GetValue(view) as IElement;
+//				if (memberValue == null)
+//				{
+//					memberValue = Activator.CreateInstance(memberType) as IElement;
+//				}
+//				if (memberValue != null)
+//				{
+//					memberValue.Caption = caption;
+//				}
+//
+//				element = memberValue;
+//			}
+//
+//			if (element == null)
+//			{
+//				element = GetRootElementForMember(theme, view, member, bindings);
+//			}
+//			
+//			if (element == null)
+//			{
+//				throw new Exception(string.Format("Unknown type ({0}). Are you missing a [Root] or [List] attribute?", memberType));
+//			}	
+//			
+//			if (orderAttribute != null && element != null)
+//				element.Order = orderAttribute.Order;
+//			
+////			var dataContext = view as IDataContext;
+////			if (dataContext != null && element.DataContext == null && element.DataContext != dataContext.DataContext)
+////			{
+////				element.DataContext = dataContext.DataContext;
+////			}
+//
+//			return element;
+//		}
 		
-		private IElement GetRootElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
-		{
-			Type memberType = GetTypeForMember(member);
-			var caption = GetCaption(member);
-			
-			IElement root = null;
-			Type viewType = memberType;
-			Type elementType = null;
-
-			var genericType = memberType.GetGenericArguments().FirstOrDefault();
-			if (genericType != null)
-				viewType = genericType;
-			
-			var listAttribute = member.GetCustomAttribute<ListAttribute>();
-			if (listAttribute != null)
-			{
-				viewType = listAttribute.ViewType ?? viewType;
-				elementType = listAttribute.ElementType ?? elementType;
-			}
-
-			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-			if (rootAttribute != null)
-			{
-				viewType = rootAttribute.ViewType ?? viewType;
-				elementType = rootAttribute.ElementType ?? elementType;
-			}
-			
-			var cellEditingStyleAttribute = member.GetCustomAttribute<CellEditingStyleAttribute>(); 
-
-			var isEnum = memberType.IsEnum;
-			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
-			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
-			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
-			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
-			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
-
-			var isEnumerable = typeof(IEnumerable).IsAssignableFrom(memberType) && !(isView || isUIView);
+//		private IElement GetRootElementForMember(Theme theme, UIView view, MemberInfo member, List<Binding> bindings)
+//		{
+//			Type memberType = GetTypeForMember(member);
+//			var caption = GetCaption(member);
+//			
+//			IElement root = null;
+//			Type viewType = memberType;
+//			Type elementType = null;
+//
+//			var genericType = memberType.GetGenericArguments().FirstOrDefault();
+//			if (genericType != null)
+//				viewType = genericType;
+//			
+//			var listAttribute = member.GetCustomAttribute<ListAttribute>();
+//			if (listAttribute != null)
+//			{
+//				viewType = listAttribute.ViewType ?? viewType;
+//				elementType = listAttribute.ElementType ?? elementType;
+//			}
+//
+//			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
+//			if (rootAttribute != null)
+//			{
+//				viewType = rootAttribute.ViewType ?? viewType;
+//				elementType = rootAttribute.ElementType ?? elementType;
+//			}
+//			
+//			var cellEditingStyleAttribute = member.GetCustomAttribute<CellEditingStyleAttribute>(); 
+//
+//			var isEnum = memberType.IsEnum;
+//			var isEnumCollection = typeof(EnumCollection).IsAssignableFrom(memberType);
+//			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
+//			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
+//			var isView = typeof(IView).IsAssignableFrom(memberType) || typeof(IView).IsAssignableFrom(viewType);
+//			var isUIView = typeof(UIView).IsAssignableFrom(memberType) || typeof(UIView).IsAssignableFrom(viewType);
+//
+//			var isEnumerable = typeof(IEnumerable).IsAssignableFrom(memberType) && !(isView || isUIView);
+//		
+//			var isList = member.GetCustomAttribute<ListAttribute>() != null;
+//
+//			if (isEnum || isEnumCollection || isMultiselect || isSelect)
+//			{
+//				ISection section = GetSectionElementForMember(theme, view, member, bindings);
+//				if (!isList && section != null)
+//				{
+//					var rootElement = new RootElement() { section };
+//					rootElement.Caption = caption;
+//					rootElement.Theme = Theme.CreateTheme(Root.Theme); 
+//		
+//					rootElement.ViewBinding = section.ViewBinding;
+//					root = rootElement;
+//				}
+//				else
+//				{
+//					var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+//					if (sectionAttribute != null)
+//					{
+//						section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
+//						section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
+//						section.IsExpandable = sectionAttribute.IsExpandable;
+//						section.ExpandState = sectionAttribute.ExpandState;
+//					}
+//					root = section as IElement;
+//				} 
+//			}
+//			else if (isEnumerable)
+//			{
+//				var rootElement = CreateEnumerableRoot(theme, member, caption, view, bindings);
+//				if (isList)
+//				{
+//					root = rootElement.Sections.FirstOrDefault() as IElement;
+//				}
+//				else
+//				{
+//					root = rootElement as IElement;
+//				}
+//			}
+//			else if (isView || elementType != null)
+//			{
+//				elementType = elementType ?? typeof(RootElement);
+//
+//				object context = view;
+//				MemberInfo dataContextMember = GetMemberFromDataContext(member, ref context);
+//				var items = dataContextMember.GetValue(context);
+//
+//				var rootElement = Activator.CreateInstance(elementType) as IElement;
+//				
+//				rootElement.Caption = caption;
+//				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
+//				rootElement.ViewBinding.DataContext = context;
+//				rootElement.ViewBinding.MemberInfo = dataContextMember;
+//				rootElement.ViewBinding.ElementType = elementType;
+//				rootElement.ViewBinding.ViewType = viewType;
+//				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
+//
+//				if (cellEditingStyleAttribute != null)
+//				{
+//					rootElement.EditingStyle = cellEditingStyleAttribute.EditingStyle;
+//				}
+//
+//				if (items != null)
+//				{
+//					if (items is UIView)
+//					{				
+//						rootElement.ViewBinding.View = items as UIView;
+//						rootElement.DataContext = items;
+//					}
+//					else
+//					{
+//						rootElement.DataContext = items;
+//					}
+//				}
+//				else
+//					rootElement.DataContext = context;
+//
+//				if (genericType != null)
+//				{
+//					SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
+//					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
+//					rootElement.ViewBinding.ViewType = viewType;
+//				}
+//
+//				if (isList)
+//				{
+//					var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
+//					root = innerRoot as IElement;
+//					root.ViewBinding = rootElement.ViewBinding;
+//				}
+//				else
+//				{
+//					root = rootElement;
+//				}
+//			}
+//			else if (isUIView)
+//			{
+//				object context = view;
+//			//	MemberInfo dataContextMember = GetMemberFromDataContext(member, ref dataContext);
+//				var uiView = GetMemberValue<UIView>(ref context, member);
+//				
+//				if (uiView == null)
+//					uiView = Activator.CreateInstance(memberType) as UIView;
+//
+//				root = new UIViewElement(caption, uiView, true);
+//				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
+//			}
+//			else if (elementType != null)
+//			{
+//				root = CreateElement(elementType, "") as IElement;
+//				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
+//			}
+//
+//		//	if (root != null)
+//		//		SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
+//
+//			return root;
+//		}
 		
-			var isList = member.GetCustomAttribute<ListAttribute>() != null;
+//		private ISection GetSectionElementForMember(Theme theme, object view, MemberInfo member, List<Binding> bindings)
+//		{
+//			var caption = GetCaption(member);
+//			Type memberType = GetTypeForMember(member);
+//			ISection section = null;
+//			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
+//			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
+//
+//			if (memberType.IsEnum)
+//			{
+//				SetDefaultConverter(view, member, "DataContext", new EnumConverter(), memberType, bindings);
+//	
+//			//	var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
+//				var pop = false;
+//				var currentValue = member.GetValue(view);
+//				var enumValues = Enum.GetValues(memberType);
+//
+//				section = CreateEnumSection(enumValues, typeof(RadioElement), currentValue, pop, false);
+//			}
+//			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
+//			{
+//				section = CreateEnumCollectionSection(member, caption, view, bindings);
+//			}
+//			else if (isMultiselect)
+//			{
+//				section = CreateMultiselectCollectionSection(member, caption, view, bindings);
+//			}
+//			else if (isSelect)
+//			{
+//				section = CreateSelectCollectionSection(member, caption, view, bindings);
+//			}
+//
+//			return section;
+//		}
+			
+//		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection, bool readOnly)
+//		{
+//			var csection = new Section();
+//
+//			int index = 0;
+//			
+//			csection = BindingContext.CreateSection(null, csection, values, elementType, popOnSelection);
+//			
+//			foreach(var element in csection.Elements)
+//			{
+//				var radioElement = element as RadioElement;
+//				if (radioElement != null)
+//				{
+//					radioElement.Item = element.DataContext;
+//					radioElement.Index = index;
+//					radioElement.PopOnSelect = popOnSelection;
+//					index++;
+//				}
+//				
+//				if (!readOnly)
+//				{
+//					if (currentValue != null && currentValue.Equals(element.DataContext))
+//					{
+//						element.DataContext = true;
+//					}
+//					element.DataContext = false;
+//				}
+//			}
+//
+//			csection.ViewBinding.DataContextCode = DataContextCode.Enum;
+//
+//			return csection;
+//		}
 
-			if (isEnum || isEnumCollection || isMultiselect || isSelect)
-			{
-				ISection section = GetSectionElementForMember(theme, view, member, bindings);
-				if (!isList && section != null)
-				{
-					var rootElement = new RootElement() { section };
-					rootElement.Caption = caption;
-					rootElement.Theme = Theme.CreateTheme(Root.Theme); 
+//		private ISection CreateEnumCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			Type memberType = GetTypeForMember(member);
+//			
+//			object context = view;
+//			var dataContext = view as IDataContext<object>;
+//
+//			if (dataContext != null)
+//			{
+//				context = dataContext.DataContext;
+//			}
+//			
+//			SetDefaultConverter(view, member, "DataContext", new EnumCollectionConverter(), null, bindings);
+//
+//			member = GetMemberFromDataContext(member, ref context);
+//
+//			var csection = new Section() { IsMultiselect = true };
+//
+//			var collection = member.GetValue(view);
+//			if (collection == null)
+//			{
+//				var collectionType = typeof(EnumCollection<>);
+//				var enumType = memberType.GetGenericArguments().FirstOrDefault();
+//				Type[] generic = { enumType };
+//
+//				collection = Activator.CreateInstance(collectionType.MakeGenericType(generic));
+//				member.SetValue(view, collection);
+//			}
+//
+//			var index = 0;
+//			var items = (EnumCollection)collection;
+//			foreach (var item in items.Items)
+//			{
+//				var checkboxElement = new CheckboxElement(item.Description) 
+//				{ 
+//					Item = item, 
+//					Index = index, 
+//					DataContext = item.IsChecked, 
+//					Group = item.GroupName
+//				};
+//
+//				csection.Add(checkboxElement);				
+//				index++;
+//			}
+//			
+//			csection.DataContext = memberType;
+//			csection.ViewBinding.DataContextCode = DataContextCode.EnumCollection;
+//
+//			return csection;
+//		}
 		
-					rootElement.ViewBinding = section.ViewBinding;
-					root = rootElement;
-				}
-				else
-				{
-					var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-					if (sectionAttribute != null)
-					{
-						section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
-						section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
-						section.IsExpandable = sectionAttribute.IsExpandable;
-						section.ExpandState = sectionAttribute.ExpandState;
-					}
-					root = section as IElement;
-				} 
-			}
-			else if (isEnumerable)
-			{
-				var rootElement = CreateEnumerableRoot(theme, member, caption, view, bindings);
-				if (isList)
-				{
-					root = rootElement.Sections.FirstOrDefault() as IElement;
-				}
-				else
-				{
-					root = rootElement as IElement;
-				}
-			}
-			else if (isView || elementType != null)
-			{
-				elementType = elementType ?? typeof(RootElement);
+//		private ISection CreateMultiselectCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			object context = view;
+//
+//			var csection = new Section() { IsMultiselect = true };
+//			var index = 0;
+//
+//			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
+//		
+////			var dataContextMember = GetMemberFromDataContext(member, ref context);
+////			var collection = dataContextMember.GetValue(context) as IEnumerable;
+//
+//			var collection = GetMemberValue<IEnumerable>(ref context, member);
+//			foreach (var item in collection)
+//			{
+//				var checkboxElement = new CheckboxElement(item.ToString()) { Item = item, Index = index, DataContext = false};
+//				
+//				csection.Add(checkboxElement);
+//				index++;
+//			}
+//			
+//			csection.ViewBinding.DataContextCode = DataContextCode.MultiselectCollection;
+//			csection.ViewBinding.ViewType = null;
+//
+//			return csection;
+//		}
 
-				object context = view;
-				MemberInfo dataContextMember = GetMemberFromDataContext(member, ref context);
-				var items = dataContextMember.GetValue(context);
+//		private ISection CreateSelectCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			object context = view;
+//
+//			var csection = new Section() { IsMultiselect = false };
+//			var index = 0;
+//
+//			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
+//		
+////			var dataContextMember = GetMemberFromDataContext(member, ref context);
+////			var collection = dataContextMember.GetValue(context) as IEnumerable;
+//					
+//			var collection = GetMemberValue<IEnumerable>(ref context, member);
+//			foreach (var item in collection)
+//			{
+//				var radioElement = new RadioElement(item.ToString()) { Item = item, Index = index, DataContext = false};
+//				
+//				csection.Add(radioElement);
+//				index++;
+//			}
+//			
+//			csection.ViewBinding.DataContextCode = DataContextCode.Enumerable;
+//			csection.ViewBinding.ViewType = null;
+//
+//			return csection;
+//		}
 
-				var rootElement = Activator.CreateInstance(elementType) as IElement;
-				
-				rootElement.Caption = caption;
-				rootElement.Theme = Theme.CreateTheme(Root.Theme); 
-				rootElement.ViewBinding.DataContext = context;
-				rootElement.ViewBinding.MemberInfo = dataContextMember;
-				rootElement.ViewBinding.ElementType = elementType;
-				rootElement.ViewBinding.ViewType = viewType;
-				rootElement.ViewBinding.DataContextCode = DataContextCode.Object;
-
-				if (cellEditingStyleAttribute != null)
-				{
-					rootElement.EditingStyle = cellEditingStyleAttribute.EditingStyle;
-				}
-
-				if (items != null)
-				{
-					if (items is UIView)
-					{				
-						rootElement.ViewBinding.View = items as UIView;
-						rootElement.DataContext = items;
-					}
-					else
-					{
-						rootElement.DataContext = items;
-					}
-				}
-				else
-					rootElement.DataContext = context;
-
-				if (genericType != null)
-				{
-					SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
-					rootElement.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
-					rootElement.ViewBinding.ViewType = viewType;
-				}
-
-				if (isList)
-				{
-					var innerRoot = BindingContext.CreateRootedView(rootElement as IRoot);
-					root = innerRoot as IElement;
-					root.ViewBinding = rootElement.ViewBinding;
-				}
-				else
-				{
-					root = rootElement;
-				}
-			}
-			else if (isUIView)
-			{
-				object context = view;
-			//	MemberInfo dataContextMember = GetMemberFromDataContext(member, ref dataContext);
-				var uiView = GetMemberValue<UIView>(ref context, member);
-				
-				if (uiView == null)
-					uiView = Activator.CreateInstance(memberType) as UIView;
-
-				root = new UIViewElement(caption, uiView, true);
-				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
-			}
-			else if (elementType != null)
-			{
-				root = CreateElement(elementType, "") as IElement;
-				SetDefaultConverter(view, member, "DataContext", null, null, bindings);
-			}
-
-		//	if (root != null)
-		//		SetDefaultConverter(view, member, "DataContext", new ViewConverter(), null, bindings);
-
-			return root;
-		}
-		
-		private ISection GetSectionElementForMember(Theme theme, object view, MemberInfo member, List<Binding> bindings)
-		{
-			var caption = GetCaption(member);
-			Type memberType = GetTypeForMember(member);
-			ISection section = null;
-			var isMultiselect = member.GetCustomAttribute<MultiselectionAttribute>() != null;
-			var isSelect = member.GetCustomAttribute<SelectionAttribute>() != null;
-
-			if (memberType.IsEnum)
-			{
-				SetDefaultConverter(view, member, "DataContext", new EnumConverter(), memberType, bindings);
-	
-			//	var pop = member.GetCustomAttribute<PopOnSelectionAttribute>() != null;
-				var pop = false;
-				var currentValue = member.GetValue(view);
-				var enumValues = Enum.GetValues(memberType);
-
-				section = CreateEnumSection(enumValues, typeof(RadioElement), currentValue, pop, false);
-			}
-			else if (typeof(EnumCollection).IsAssignableFrom(memberType))
-			{
-				section = CreateEnumCollectionSection(member, caption, view, bindings);
-			}
-			else if (isMultiselect)
-			{
-				section = CreateMultiselectCollectionSection(member, caption, view, bindings);
-			}
-			else if (isSelect)
-			{
-				section = CreateSelectCollectionSection(member, caption, view, bindings);
-			}
-
-			return section;
-		}
-			
-		private ISection CreateEnumSection(IEnumerable values, Type elementType, object currentValue, bool popOnSelection, bool readOnly)
-		{
-			var csection = new Section();
-
-			int index = 0;
-			
-			csection = BindingContext.CreateSection(null, csection, values, elementType, popOnSelection);
-			
-			foreach(var element in csection.Elements)
-			{
-				var radioElement = element as RadioElement;
-				if (radioElement != null)
-				{
-					radioElement.Item = element.DataContext;
-					radioElement.Index = index;
-					radioElement.PopOnSelect = popOnSelection;
-					index++;
-				}
-				
-				if (!readOnly)
-				{
-					if (currentValue != null && currentValue.Equals(element.DataContext))
-					{
-						element.DataContext = true;
-					}
-					element.DataContext = false;
-				}
-			}
-
-			csection.ViewBinding.DataContextCode = DataContextCode.Enum;
-
-			return csection;
-		}
-
-		private ISection CreateEnumCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			Type memberType = GetTypeForMember(member);
-			
-			object context = view;
-			var dataContext = view as IDataContext<object>;
-
-			if (dataContext != null)
-			{
-				context = dataContext.DataContext;
-			}
-			
-			SetDefaultConverter(view, member, "DataContext", new EnumCollectionConverter(), null, bindings);
-
-			member = GetMemberFromDataContext(member, ref context);
-
-			var csection = new Section() { IsMultiselect = true };
-
-			var collection = member.GetValue(view);
-			if (collection == null)
-			{
-				var collectionType = typeof(EnumCollection<>);
-				var enumType = memberType.GetGenericArguments().FirstOrDefault();
-				Type[] generic = { enumType };
-
-				collection = Activator.CreateInstance(collectionType.MakeGenericType(generic));
-				member.SetValue(view, collection);
-			}
-
-			var index = 0;
-			var items = (EnumCollection)collection;
-			foreach (var item in items.Items)
-			{
-				var checkboxElement = new CheckboxElement(item.Description) 
-				{ 
-					Item = item, 
-					Index = index, 
-					DataContext = item.IsChecked, 
-					Group = item.GroupName
-				};
-
-				csection.Add(checkboxElement);				
-				index++;
-			}
-			
-			csection.DataContext = memberType;
-			csection.ViewBinding.DataContextCode = DataContextCode.EnumCollection;
-
-			return csection;
-		}
-		
-		private ISection CreateMultiselectCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			object context = view;
-
-			var csection = new Section() { IsMultiselect = true };
-			var index = 0;
-
-			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
-		
-//			var dataContextMember = GetMemberFromDataContext(member, ref context);
-//			var collection = dataContextMember.GetValue(context) as IEnumerable;
-
-			var collection = GetMemberValue<IEnumerable>(ref context, member);
-			foreach (var item in collection)
-			{
-				var checkboxElement = new CheckboxElement(item.ToString()) { Item = item, Index = index, DataContext = false};
-				
-				csection.Add(checkboxElement);
-				index++;
-			}
-			
-			csection.ViewBinding.DataContextCode = DataContextCode.MultiselectCollection;
-			csection.ViewBinding.ViewType = null;
-
-			return csection;
-		}
-
-		private ISection CreateSelectCollectionSection(MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			object context = view;
-
-			var csection = new Section() { IsMultiselect = false };
-			var index = 0;
-
-			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
-		
-//			var dataContextMember = GetMemberFromDataContext(member, ref context);
-//			var collection = dataContextMember.GetValue(context) as IEnumerable;
-					
-			var collection = GetMemberValue<IEnumerable>(ref context, member);
-			foreach (var item in collection)
-			{
-				var radioElement = new RadioElement(item.ToString()) { Item = item, Index = index, DataContext = false};
-				
-				csection.Add(radioElement);
-				index++;
-			}
-			
-			csection.ViewBinding.DataContextCode = DataContextCode.Enumerable;
-			csection.ViewBinding.ViewType = null;
-
-			return csection;
-		}
-
-		private IRoot CreateEnumerableRoot(Theme theme, MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-			var listAttribute = member.GetCustomAttribute<ListAttribute>();
-			var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
-
-			Type elementType = null;
-			
-			if (listAttribute != null)
-			{
-				elementType = listAttribute.ElementType;
-			}
-			
-			if (rootAttribute != null && elementType == null)
-			{
-				elementType = rootAttribute.ElementType;
-			}
-
-			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
-
-			var items = GetMemberValue<IEnumerable>(ref view, member);
-
-			if (items == null)
-				throw new ArgumentNullException(member.Name, string.Format("Member of class {0} must have a value.", view.GetType().Name));
-
-			SetDefaultConverter(view, member, "DetailTextLabel", null, null, bindings);
-
-			var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
-
-			var isUIView = typeof(UIView).IsAssignableFrom(genericType);
- 
-			var readOnly = member.GetCustomAttribute<ReadOnlyAttribute>() != null;
-
-			var section = CreateEnumSection(items, elementType, null, true, readOnly);
-
-			var root = new RootElement(caption) { section };
-			root.ViewBinding.MemberInfo = member;
-			root.DataContext = items;
-			root.ViewBinding.DataContextCode = DataContextCode.Enumerable;
-
-			if (isUIView)
-			{
-				root.ViewBinding.ViewType = genericType;
-				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
-			}
-			else if (viewAttribute != null && viewAttribute.ViewType != null)
-			{
-				root.ViewBinding.ViewType = viewAttribute.ViewType;
-				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
-			}
-
-			if (rootAttribute != null && rootAttribute.ViewType != null)
-			{
-				root.ViewBinding.ViewType = rootAttribute.ViewType;
-				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
-			}
-
-			if (listAttribute != null)
-			{
-				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-				if (sectionAttribute != null)
-				{
-					section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
-					section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
-					section.IsExpandable = sectionAttribute.IsExpandable;
-					section.ExpandState = sectionAttribute.ExpandState;
-				}
-
-				root.ViewBinding.ViewType = listAttribute.ViewType ?? root.ViewBinding.ViewType;
-			}
-			
-			return root;
-		}
+//		private IRoot CreateEnumerableRoot(Theme theme, MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			var rootAttribute = member.GetCustomAttribute<RootAttribute>();
+//			var listAttribute = member.GetCustomAttribute<ListAttribute>();
+//			var viewAttribute = member.GetCustomAttribute<ViewAttribute>();
+//
+//			Type elementType = null;
+//			
+//			if (listAttribute != null)
+//			{
+//				elementType = listAttribute.ElementType;
+//			}
+//			
+//			if (rootAttribute != null && elementType == null)
+//			{
+//				elementType = rootAttribute.ElementType;
+//			}
+//
+//			SetDefaultConverter(view, member, "DataContext", new EnumerableConverter(), null, bindings);
+//
+//			var items = GetMemberValue<IEnumerable>(ref view, member);
+//
+//			if (items == null)
+//				throw new ArgumentNullException(member.Name, string.Format("Member of class {0} must have a value.", view.GetType().Name));
+//
+//			SetDefaultConverter(view, member, "DetailTextLabel", null, null, bindings);
+//
+//			var genericType = items.GetType().GetGenericArguments().SingleOrDefault();
+//
+//			var isUIView = typeof(UIView).IsAssignableFrom(genericType);
+// 
+//			var readOnly = member.GetCustomAttribute<ReadOnlyAttribute>() != null;
+//
+//			var section = CreateEnumSection(items, elementType, null, true, readOnly);
+//
+//			var root = new RootElement(caption) { section };
+//			root.ViewBinding.MemberInfo = member;
+//			root.DataContext = items;
+//			root.ViewBinding.DataContextCode = DataContextCode.Enumerable;
+//
+//			if (isUIView)
+//			{
+//				root.ViewBinding.ViewType = genericType;
+//				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
+//			}
+//			else if (viewAttribute != null && viewAttribute.ViewType != null)
+//			{
+//				root.ViewBinding.ViewType = viewAttribute.ViewType;
+//				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
+//			}
+//
+//			if (rootAttribute != null && rootAttribute.ViewType != null)
+//			{
+//				root.ViewBinding.ViewType = rootAttribute.ViewType;
+//				root.ViewBinding.DataContextCode = DataContextCode.ViewEnumerable;
+//			}
+//
+//			if (listAttribute != null)
+//			{
+//				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+//				if (sectionAttribute != null)
+//				{
+//					section.Caption = sectionAttribute.Caption.Capitalize() ?? section.Caption.Capitalize();
+//					section.Order = sectionAttribute.Order > -1 ? sectionAttribute.Order : section.Order;
+//					section.IsExpandable = sectionAttribute.IsExpandable;
+//					section.ExpandState = sectionAttribute.ExpandState;
+//				}
+//
+//				root.ViewBinding.ViewType = listAttribute.ViewType ?? root.ViewBinding.ViewType;
+//			}
+//			
+//			return root;
+//		}
 
 		private void SetDefaultConverter(object view, MemberInfo member, string targetPath, IValueConverter converter, object parameter, List<Binding> bindings)
 		{
@@ -1164,17 +1261,32 @@ namespace MonoMobile.Views
 
 		private static MemberInfo[] GetFields(object view)
 		{
-			return view.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			return GetFields(view.GetType()); 
 		}
 
 		private static MemberInfo[] GetProperties(object view)
 		{
-			return view.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			return GetProperties(view.GetType()); 
 		}
 
 		private static MemberInfo[] GetMethods(object view)
 		{
-			return view.GetType().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Where(m =>
+			return GetMethods(view.GetType()); 
+		}
+		
+		private static MemberInfo[] GetFields(Type type)
+		{
+			return type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+		}
+
+		private static MemberInfo[] GetProperties(Type type)
+		{
+			return type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+		}
+
+		private static MemberInfo[] GetMethods(Type type)
+		{
+			return type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Where(m =>
 			{
 				var methodInfo = m as MethodBase;
 				return (methodInfo == null || !methodInfo.IsConstructor && !methodInfo.IsSpecialName);
@@ -1711,7 +1823,7 @@ namespace MonoMobile.Views
 			return element;
 		}
 
-		private void InitializeSearch(UIView view, UITableViewSource source)
+		private void InitializeSearch(object view, UITableViewSource source)
 		{
 			var searchbarAttribute = view.GetType().GetCustomAttribute<SearchbarAttribute>();
 			var searchbar = source as ISearchBar;

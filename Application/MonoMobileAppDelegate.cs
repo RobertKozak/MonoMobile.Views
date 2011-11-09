@@ -71,10 +71,10 @@ namespace MonoMobile.Views
 
 			MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
 
-			MonoMobileApplication.Views = new List<UIView>();
+			MonoMobileApplication.Views = new List<object>();
 			foreach (var viewType in MonoMobileApplication.ViewTypes)
 			{
-				var view = Activator.CreateInstance(viewType) as UIView;
+				var view = Activator.CreateInstance(viewType);
 				MonoMobileApplication.Views.Add(view);
 			}
 

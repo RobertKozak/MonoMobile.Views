@@ -277,10 +277,8 @@
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Application\Wait.cs" />
     <Compile Include="Dialog\DialogViewController\DialogViewController.cs" />
-    <Compile Include="Dialog\DialogViewController\DialogViewDataSource.cs" />
     <Compile Include="Dialog\DialogViewController\DialogViewTable.cs" />
     <Compile Include="Dialog\DialogViewController\DialogViewSearchDelegate.cs" />
-    <Compile Include="Dialog\DialogViewController\DialogViewSizingSource.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
     <Compile Include="View\ObservableView.cs" />
@@ -313,15 +311,17 @@
     <Compile Include="Interfaces\IActivation.cs" />
     <Compile Include="Dialog\Reflection API\ToolbarButtonAttribute.cs" />
     <Compile Include="Dialog\Reflection API\BaseControlAttribute.cs" />
-    <Compile Include="Dialog\DialogViewController\SectionedListViewDataSource.cs" />
-    <Compile Include="Dialog\DialogViewController\ListViewDataSource.cs" />
-    <Compile Include="Interfaces\ICell.cs" />
     <Compile Include="Interfaces\IInitializeCell.cs" />
     <Compile Include="Interfaces\ICellContent.cs" />
     <Compile Include="Interfaces\IHandleDataContextChanged.cs" />
     <Compile Include="Interfaces\ITableViewStyle.cs" />
     <Compile Include="Dialog\DialogViewController\BaseDialogViewSource.cs" />
     <Compile Include="Dialog\Reflection API\NavigateToViewAttribute.cs" />
+    <Compile Include="Dialog\DialogViewController\ListViewSource.cs" />
+    <Compile Include="Dialog\DialogViewController\ObjectSource.cs" />
+    <Compile Include="Dialog\DialogViewController\ViewSource.cs" />
+    <Compile Include="Dialog\CellViews\CellView.cs" />
+    <Compile Include="Dialog\DialogViewController\MemberData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -343,6 +343,7 @@
     <Folder Include="Controllers\" />
     <Folder Include="Dialog\DialogViewController\" />
     <Folder Include="Dialog\DataBindings\" />
+    <Folder Include="Dialog\CellViews\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />

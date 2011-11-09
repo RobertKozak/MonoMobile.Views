@@ -40,7 +40,7 @@ namespace MonoMobile.Views
 		public UITableView TableView { get; set; }
 
 		public string Caption { get; set; }
-		public BindingContext BindingContext { get; set; }
+	//	public BindingContext BindingContext { get; set; }
 
 		public event DataContextChangedEvent DataContextChanged;
 
@@ -67,11 +67,11 @@ namespace MonoMobile.Views
 					DataContextChanged(this, new DataContextChangedEventArgs(oldDataContext, _DataContext));
 				}
 
-				var viewModel = DataContext as IViewModel;
-				if (viewModel != null)
-				{
-					viewModel.BindingContext = BindingContext;
-				}
+//				var viewModel = DataContext as IViewModel;
+//				if (viewModel != null)
+//				{
+//					viewModel.BindingContext = BindingContext;
+//				}
 			}
 		}
 

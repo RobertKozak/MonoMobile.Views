@@ -41,7 +41,7 @@ namespace MonoMobile.Views
 			set { SetDataModel(value); }
 		}
  
-		public BindingContext BindingContext { get; set; }
+	//	public BindingContext BindingContext { get; set; }
 
 		public ViewModel()
 		{

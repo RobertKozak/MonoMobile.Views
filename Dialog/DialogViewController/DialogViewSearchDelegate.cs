@@ -67,6 +67,7 @@ namespace MonoMobile.Views
 //		//		_Container.FinishSearch(false);
 //			}
 //		}
+
 		public override void TextChanged(UISearchBar searchbar, string searchText)
 		{
 			var searchable = _Container.Root as ISearchBar;

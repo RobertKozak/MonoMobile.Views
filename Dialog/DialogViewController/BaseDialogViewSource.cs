@@ -27,24 +27,42 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
+	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
+	using MonoTouch.CoreAnimation;
 	using MonoTouch.Foundation;
+	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
 
-	public abstract class BaseDialogViewSource : UITableViewSource, ISearchBar
+	public abstract class BaseDialogViewSource<T> : UITableViewSource, ISearchBar
 	{
-		protected IEnumerable<Type> ViewTypes;
-		protected IDictionary<UITableViewCell, IList<UIView>> Views;
+		private IEnumerable<Type> _ViewTypes;
+
+		private const float _SnapBoundary = 65;
+		private bool _CheckForRefresh;
+
+		private HeaderTapGestureRecognizer<T> tapRecognizer;
+		private Selector _HeaderSelector = new Selector("headerTap");
+
 		protected TableCellFactory<UITableViewCell> CellFactory;
 		protected DialogViewController Controller;
-
+		
 		protected string NibName { get; set; }
+
+		protected IDictionary<UITableViewCell, UIView> SelectedAccessoryViews;
+		protected IDictionary<UITableViewCell, UIView> UnselectedAccessoryViews;
+
+		public Type SelectedAccessoryViewType { get; set; }
+		public Type UnselectedAccessoryViewType { get; set; }
+		
+		public IDictionary<int, Section<T>> Sections { get; set;}
 
 		public UITableViewStyle TableViewStyle { get; set; }
 			
@@ -61,23 +79,37 @@ namespace MonoMobile.Views
 		public string Caption { get; set; }
 		public float RowHeight { get; set; }
 		
-		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes)
+		public BaseDialogViewSource(DialogViewController controller)
 		{
 			Controller = controller;
-			ViewTypes = viewTypes;
 
-			Views = new Dictionary<UITableViewCell, IList<UIView>>();
+			SelectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
+			UnselectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
+
+			Sections = new Dictionary<int, Section<T>>();
 		}
 
+		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes) : this(controller)
+		{
+			_ViewTypes = viewTypes;
+			Sections.Add(0, new Section<T>(controller, viewTypes));
+		}
+		
+		public BaseDialogViewSource(DialogViewController controller, Type viewType) : this(controller, new Type[] { viewType })
+		{
+		}
+
+		#region Cells
 		protected virtual UITableViewCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
 			var cellStyle = UITableViewCellStyle.Value1;
 
 			var views = new List<UIView>();
-
-			if (ViewTypes != null)
+			var section = Sections[indexPath.Section];
+		
+			if (section.ViewTypes != null)
 			{
-				foreach (var viewType in ViewTypes)
+				foreach (var viewType in section.ViewTypes)
 				{
 					var view = Activator.CreateInstance(viewType) as UIView;
 			
@@ -109,7 +141,7 @@ namespace MonoMobile.Views
 				cell.ContentView.AutosizesSubviews = true;
 			}
 
-			Views.Add(cell, views);
+			section.Views.Add(cell, views);
 
 			foreach (var view in views)
 			{
@@ -151,6 +183,343 @@ namespace MonoMobile.Views
 
 			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 		}
+		#endregion
+
+		#region Row support
+		public override int RowsInSection(UITableView tableview, int section)
+		{
+			if (IsRoot)
+			{
+				return 1;
+			}
+
+			return Sections != null ? Sections[section].NumberOfRows : 0;
+		}
+
+		public override int NumberOfSections(UITableView tableView)
+		{
+			return Sections != null ? Sections.Count : 0;
+		}
+		
+		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			if (RowHeight == 0)
+			{
+				return tableView.RowHeight;
+			}
+
+			return RowHeight;
+		}
+		#endregion
+
+		#region Pull to Refresh support
+		public override void Scrolled(UIScrollView scrollView)
+		{
+			if (!_CheckForRefresh)
+				return;
+			if (Controller.Reloading)
+				return;
+			var view = Controller.RefreshView;
+			if (view == null)
+				return;
+			
+			var point = Controller.TableView.ContentOffset;
+			
+			if (view.IsFlipped && point.Y > -_SnapBoundary && point.Y < 0)
+			{
+				view.Flip(true);
+				view.SetStatus(RefreshStatus.PullToReload);
+			}
+			else if (!view.IsFlipped && point.Y < -_SnapBoundary)
+			{
+				view.Flip(true);
+				view.SetStatus(RefreshStatus.ReleaseToReload);
+			}
+		}
+
+		public override void DraggingStarted(UIScrollView scrollView)
+		{
+			_CheckForRefresh = true;
+		}
+
+		public override void DraggingEnded(UIScrollView scrollView, bool willDecelerate)
+		{
+			if (Controller.RefreshView == null)
+				return;
+			
+			_CheckForRefresh = false;
+			if (Controller.TableView.ContentOffset.Y > -_SnapBoundary)
+				return;
+			
+			Controller.TriggerRefresh(true);
+		}
+		#endregion
+		
+		#region Headers and Footers
+		public override string TitleForHeader(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				if (section != null)
+				{
+					return section.HeaderText;
+				}
+			}
+
+			return string.Empty;
+		}
+
+		public override string TitleForFooter(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				if (section != null)
+				{
+					return section.FooterText;
+				}
+			}
+		
+			return string.Empty;
+		}
+
+		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				
+				if (section != null && !string.IsNullOrEmpty(section.HeaderText))
+				{
+					var indentation = UIDevice.CurrentDevice.GetIndentation();
+					var width = tableView.Bounds.Width - (indentation * 2);
+					
+					var headerLabel = new UILabel();
+	
+					headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+					var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
+				
+					var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
+						
+					return height;
+				}
+			}
+			return 0;
+		}
+
+		public override UIView GetViewForHeader(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				if (section != null)
+				{
+					if (section.HeaderView == null && !string.IsNullOrEmpty(section.HeaderText))
+					{
+						section.HeaderView = CreateHeaderView(tableView, section.HeaderText);
+					}
+		
+					if (section.HeaderView != null)
+					{
+						if (section.IsExpandable)
+						{
+							section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
+							section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
+							section.HeaderView.Add(section.ArrowView);
+						
+							tapRecognizer = new HeaderTapGestureRecognizer<T>(section, this, _HeaderSelector);
+					
+							section.HeaderView.AddGestureRecognizer(tapRecognizer);
+							Flip(section);
+						}
+					}
+					return section.HeaderView;
+				}
+			}
+			return null;
+		}
+
+		public override float GetHeightForFooter(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				if (section != null && !string.IsNullOrEmpty(section.FooterText))
+				{
+					var indentation = UIDevice.CurrentDevice.GetIndentation();
+	
+					var width = tableView.Bounds.Width - (indentation * 2);
+	
+					var footerLabel = new UILabel();
+				
+					footerLabel.Font = UIFont.SystemFontOfSize(15);
+					var size = footerLabel.StringSize(section.FooterText, footerLabel.Font);
+	
+					var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width));
+					
+					return height;
+				}
+			}
+			
+			//if greater than 0 then the empty footer will display and prevent empty rows from displaying
+			return 1;			
+		}
+		
+		public override UIView GetViewForFooter(UITableView tableView, int sectionIndex)
+		{
+			if (Sections.Count > sectionIndex)
+			{
+				var section = Sections[sectionIndex];
+				if (section != null)
+				{
+					if (section.FooterView == null && !string.IsNullOrEmpty(section.FooterText))
+					{
+						section.FooterView = CreateFooterView(tableView, section.FooterText);
+					}
+					
+					// Use an empty UIView to Eliminate Extra separators for blank items
+					if (section.FooterView == null || section.ExpandState == ExpandState.Closed)
+					{
+						return new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
+					}
+					
+					return section.FooterView;
+				}
+			}
+			return null;
+		}
+
+		[Export("headerTap")]
+		public void HeaderTap(HeaderTapGestureRecognizer<T> recognizer)
+		{
+			var section = recognizer.Section;
+			var state = section.ExpandState;
+			
+			if (section.IsExpandable)
+			{
+				if (state == ExpandState.Opened)
+				{
+					section.ExpandState = ExpandState.Closed;
+				}
+				else
+				{
+					section.ExpandState = ExpandState.Opened;
+				}
+			
+				Flip(section);
+			}
+		}
+
+		private UIView CreateHeaderView(UITableView tableView, string caption)
+		{
+			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			var width = tableView.Bounds.Width - (indentation - 10);
+
+			var headerLabel = new UILabel();
+			headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+
+			var size = headerLabel.StringSize(caption, headerLabel.Font);
+			var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(caption, width) + 0.5));
+
+			var frame = new RectangleF(tableView.Bounds.X + (indentation + 10), 0, width, height);
+			
+			headerLabel.Frame = frame;
+			
+			headerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
+			headerLabel.ShadowColor = UIColor.White;
+			headerLabel.LineBreakMode = UILineBreakMode.WordWrap;
+			headerLabel.ShadowOffset = new SizeF(0, 1);
+			headerLabel.Text = caption;
+			headerLabel.Lines = headerLabel.Font.NumberOfLines(caption, frame.Width);
+			
+			var view = new UIView(new RectangleF(0, 0, frame.Width, height));
+
+			if (tableView.Style == UITableViewStyle.Grouped)
+			{
+				headerLabel.BackgroundColor = UIColor.Clear;
+				view.Opaque = false;
+			}
+			else
+			{
+//				var theme = Container.Theme;
+//				var background = theme.HeaderBackgroundColor;
+//				if (background != null)
+//				{
+//					headerLabel.BackgroundColor = background;
+//				}
+			}
+
+			view.BackgroundColor = headerLabel.BackgroundColor;
+			
+			view.AddSubview(headerLabel);
+			
+			return view;
+		}
+
+		private UIView CreateFooterView(UITableView tableView, string caption)
+		{
+			var indentation = UIDevice.CurrentDevice.GetIndentation();
+			
+			var bounds = tableView.Bounds;
+			var width = bounds.Width - (indentation * 2);
+
+			var footerLabel = new UILabel();		
+			
+			footerLabel.Font = UIFont.SystemFontOfSize(15);
+			
+			var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, 0);
+					
+			footerLabel.Frame = rect;
+			footerLabel.BackgroundColor = UIColor.Clear;
+			footerLabel.TextAlignment = UITextAlignment.Center;
+			footerLabel.LineBreakMode = UILineBreakMode.WordWrap;
+			footerLabel.TextColor = UIColor.FromRGB(76, 86, 108);
+			footerLabel.ShadowColor = UIColor.White;
+			footerLabel.ShadowOffset = new SizeF(0, 1);
+			footerLabel.Text = caption;
+			footerLabel.Lines = footerLabel.Font.NumberOfLines(caption, width);
+
+			return footerLabel;
+		}
+
+		private void Flip(Section<T> section)
+		{
+			UIView.BeginAnimations(null);
+			UIView.SetAnimationDuration(0.18f);
+			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
+			
+			UIView.CommitAnimations();
+		}
+		#endregion
+
+		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
+		{
+//			var element = GetElement(indexPath);
+//
+//			if (element.AccessoryCommand != null && element.AccessoryCommand.CanExecute(null))
+//			{
+//				element.AccessoryCommand.Execute(null);
+//			}
+		}
+
+		public T GetSectionData(int sectionIndex)
+		{
+			if (Sections != null)
+			{
+				return Sections[sectionIndex].DataContext;
+			}
+
+			return default(T);
+		}
+
+		public void SetSectionData(int sectionIndex, T data)
+		{
+			if (Sections != null)
+			{
+				Sections[sectionIndex].DataContext = data;
+			}
+		}
 
 		protected MemberInfo GetMemberFromView(string memberName)
 		{
@@ -158,13 +527,52 @@ namespace MonoMobile.Views
 
 			return memberInfo;
 		}
-
-		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		
+		protected virtual void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			if (RowHeight == 0)
-				return tableView.RowHeight;
+			cell.AccessoryView = null;
 
-			return RowHeight;
+			if (!IsNavigateable)
+			{
+				UIView selectedAccessoryView = null;
+				UIView unselectedAccessoryView = null;
+
+				if (SelectedAccessoryViews.ContainsKey(cell))
+				{
+					selectedAccessoryView = SelectedAccessoryViews[cell];
+				}
+				else
+				{
+					if (SelectedAccessoryViewType != null)
+					{
+						selectedAccessoryView = Activator.CreateInstance(SelectedAccessoryViewType) as UIView;
+						SelectedAccessoryViews.Add(cell, selectedAccessoryView);
+					}
+				}
+
+				if (UnselectedAccessoryViews.ContainsKey(cell))
+				{
+					unselectedAccessoryView = UnselectedAccessoryViews[cell];
+				}
+				else
+				{
+					if (UnselectedAccessoryViewType != null)
+					{
+						unselectedAccessoryView = Activator.CreateInstance(UnselectedAccessoryViewType) as UIView;
+						UnselectedAccessoryViews.Add(cell, unselectedAccessoryView);
+					}
+				}
+			}
+		}
+	}
+
+	public class HeaderTapGestureRecognizer<T> : UITapGestureRecognizer
+	{
+		public Section<T> Section { get; set; }
+ 
+		public HeaderTapGestureRecognizer(Section<T> section, NSObject target, Selector selector): base(target, selector)
+		{
+			Section = section;
 		}
 	}
 }

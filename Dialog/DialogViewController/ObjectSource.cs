@@ -1,5 +1,5 @@
 // 
-//  IInitializeCell.cs
+//  ObjectSource.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,19 +27,18 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
+	using System.Collections;
+	using System.Collections.Generic;
 
-	public interface IInitializeCell
+	public class ObjectSource : BaseDialogViewSource<IList>
 	{
-		UITableViewCellStyle CellStyle { get; }
-		//UITableViewCellEditingStyle EditingStyle { get; set; }
+		public ObjectSource(DialogViewController controller, object view) : base(controller)
+		{
 
-		void InitializeCell(UITableViewCell cell, NSIndexPath indexPath);
+		}
 	}
 }
 
