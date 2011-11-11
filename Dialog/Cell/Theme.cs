@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 	
 	public class Theme
 	{
-		private UITableViewElementCell _Cell;
+		private UITableViewCell _Cell;
 
 		private UIImage _CellImageIcon;
 		private Uri _CellImageIconUri;
@@ -64,7 +64,7 @@ namespace MonoMobile.Views
 		public string BarImage { get; set; }
 		public bool BarTranslucent { get; set; }
 
-		public UITableViewElementCell Cell 
+		public UITableViewCell Cell 
 		{ 
 			get {return _Cell; }
 			set { InitializePropertiesFromCell(value); } 
@@ -219,7 +219,7 @@ namespace MonoMobile.Views
 		
 		public UIColor DisabledColor { get; set; }
 
-		public Action<RectangleF, CGContext, UITableViewElementCell> DrawElementViewAction { get; set; }
+		public Action<RectangleF, CGContext, UITableViewCell> DrawElementViewAction { get; set; }
 
 		public Theme()
 		{
@@ -382,7 +382,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void InitializePropertiesFromCell(UITableViewElementCell cell)
+		private void InitializePropertiesFromCell(UITableViewCell cell)
 		{
 			if (cell != null)
 			{
@@ -469,20 +469,20 @@ namespace MonoMobile.Views
 					cell.DetailTextLabel.HighlightedTextColor = DetailTextHighlightColor;
 			}
 			
-			var elementCell = cell as UITableViewElementCell;
-			IImageUpdated element = null;
-			if (elementCell != null)
-				element = elementCell.Element as IImageUpdated;
+//			var elementCell = cell as UITableViewCell;
+//			IImageUpdated element = null;
+//			if (elementCell != null)
+//				element = elementCell.Element as IImageUpdated;
 
 			if (CellBackgroundColor != null)
 			{
 				cell.BackgroundColor = CellBackgroundColor;
 			}
-			else if (element != null && CellBackgroundUri != null)
-			{
-				var img = ImageLoader.DefaultRequestImage(CellBackgroundUri, element);
-				cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
-			}
+//			else if (element != null && CellBackgroundUri != null)
+//			{
+//				var img = ImageLoader.DefaultRequestImage(CellBackgroundUri, element);
+//				cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
+//			}
 			else if (CellBackgroundImage != null)
 			{
 				cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
@@ -492,24 +492,24 @@ namespace MonoMobile.Views
 				cell.BackgroundColor = UIColor.White;
 			}
 			
-			if (element != null && CellImageIconUri != null)
-			{
-				var img = ImageLoader.DefaultRequestImage(CellImageIconUri, element);
-				
-				if (img != null)
-				{
-					var small = img.Scale(new SizeF(32, 32));
-					small = small.RemoveSharpEdges(5);
-					
-					cell.ImageView.Image = small;
-					cell.ImageView.Layer.MasksToBounds = false;
-					cell.ImageView.Layer.ShadowOffset = new SizeF(2, 2);
-					cell.ImageView.Layer.ShadowRadius = 2f;
-					cell.ImageView.Layer.ShadowOpacity = 0.8f;
-				}
-			}
-			else if (CellImageIcon != null)
-				cell.ImageView.Image = CellImageIcon;
+//			if (element != null && CellImageIconUri != null)
+//			{
+//				var img = ImageLoader.DefaultRequestImage(CellImageIconUri, element);
+//				
+//				if (img != null)
+//				{
+//					var small = img.Scale(new SizeF(32, 32));
+//					small = small.RemoveSharpEdges(5);
+//					
+//					cell.ImageView.Image = small;
+//					cell.ImageView.Layer.MasksToBounds = false;
+//					cell.ImageView.Layer.ShadowOffset = new SizeF(2, 2);
+//					cell.ImageView.Layer.ShadowRadius = 2f;
+//					cell.ImageView.Layer.ShadowOpacity = 0.8f;
+//				}
+//			}
+//			else if (CellImageIcon != null)
+//				cell.ImageView.Image = CellImageIcon;
 			
 			if (Accessory.HasValue)
 				cell.Accessory = Accessory.Value;
@@ -550,20 +550,20 @@ namespace MonoMobile.Views
 			if (member != null)
 				ApplyMemberTheme(member, element);
 			
-			var root = element as IRoot;
-			if (root != null)
-			{
-				foreach (var s in root.Sections)
-					foreach (var e in s.Elements)
-						ApplyElementTheme(element.Theme, e, null);
-			}
-			
-			var section = element as ISection;
-			if (section != null)
-			{
-				foreach (var e in section.Elements)
-					ApplyElementTheme(element.Theme, e, null);
-			}
+//			var root = element as IRoot;
+//			if (root != null)
+//			{
+//				foreach (var s in root.Sections)
+//					foreach (var e in s.Elements)
+//						ApplyElementTheme(element.Theme, e, null);
+//			}
+//			
+//			var section = element as ISection;
+//			if (section != null)
+//			{
+//				foreach (var e in section.Elements)
+//					ApplyElementTheme(element.Theme, e, null);
+//			}
 		}
 
 		private static void ApplyMemberTheme(MemberInfo member, IThemeable themeableElement)

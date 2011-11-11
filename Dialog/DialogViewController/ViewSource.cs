@@ -36,23 +36,62 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
-	public class ViewSource : BaseDialogViewSource<List<MemberData>>
-	{
-		public ViewSource(DialogViewController controller, object view) : base(controller)
+	public class ViewSource : BaseDialogViewSource
+	{	
+		public ViewSource(DialogViewController controller) : base(controller)
 		{
-			CellFactory = new TableCellFactory<UITableViewCell>("memberCell");
-		}  
+			CellFactory = new TableCellFactory<UITableViewCell>("cell");
+		}  	
 		
+		public ViewSource(DialogViewController controller, string title) : this(controller)
+		{
+		}
+
+		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+		{
+			var memberData = GetMemberData(indexPath);
+			
+			var cell = CellFactory.GetCell(tableView, indexPath, memberData.Id, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
+
+			UpdateCell(cell, indexPath);
+
+			return cell;
+		}
+
+		protected override UITableViewCell NewCell(NSString cellId, NSIndexPath indexPath)
+		{
+			var memberData = GetMemberData(indexPath);
+			
+			var section = Sections[indexPath.Section];
+		
+			if (section.ViewTypes != null)
+			{
+				var viewType = ViewContainer.GetView(memberData);
+				if (viewType != null)
+				{
+					if (section.ViewTypes.ContainsKey(memberData.Id))
+						section.ViewTypes[memberData.Id] = new List<Type>() { viewType}; 
+					else
+						section.ViewTypes.Add(memberData.Id, new List<Type>() { viewType });
+				}
+			}
+
+			return base.NewCell(memberData.Id, indexPath);
+		}
+
 		protected override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			base.UpdateCell(cell, indexPath);
 
-			var memberData = GetSectionData(indexPath.Section)[indexPath.Row];
+			var resizedRows = false;
+
+			var memberData = GetMemberData(indexPath);
 			
-			cell.TextLabel.Text = memberData.Member.Name.Capitalize();
+			var caption = memberData.Member.Name.Capitalize();
+			cell.TextLabel.Text = caption;
 			
-			if (memberData.DataContext != null)
-				cell.DetailTextLabel.Text = memberData.DataContext.ToString();
+			if (memberData.Value != null && cell.DetailTextLabel != null)
+				cell.DetailTextLabel.Text = memberData.Value.ToString();
 
 			var section = Sections[indexPath.Section];
 			if (section.Views.ContainsKey(cell))
@@ -63,10 +102,17 @@ namespace MonoMobile.Views
 				{
 					foreach (var view in views)
 					{
-						var dc = view as IDataContext<object>;
+						var viewCaption = view as ICaption;
+						if (viewCaption != null)
+						{
+							viewCaption.Caption = caption;
+						}
+		
+						var dc = view as IDataContext<MemberData>;
 						if (dc != null)
 						{
-							dc.DataContext = GetSectionData(indexPath.Section)[indexPath.Row];
+							var item = GetMemberData(indexPath);
+							dc.DataContext = item;
 						}
 		
 						var updateable = view as IUpdateable;
@@ -74,31 +120,63 @@ namespace MonoMobile.Views
 						{
 							updateable.UpdateCell(cell, indexPath);
 						}
+
+						var sizeable = view as ISizeable;
+						if (sizeable != null)
+						{
+							var rowHeight = sizeable.GetRowHeight();
+
+							if (RowHeights.ContainsKey(indexPath))
+							{
+								RowHeights[indexPath] = rowHeight;
+							}
+							else
+								RowHeights.Add(indexPath, rowHeight);
+							
+							resizedRows = true;
+						}
 					}
+				}
+
+				if (resizedRows)
+				{
+					new Wait(new TimeSpan(0), ()=>
+					{
+						Controller.TableView.BeginUpdates();
+						Controller.TableView.EndUpdates();
+					});
 				}
 			}
 		}
 
 		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
-			var item = GetSectionData(indexPath.Section)[indexPath.Row];
+			var memberData = GetMemberData(indexPath);
+			var cell = GetCell(tableView, indexPath);
 
-			var methodInfo = item.Member as MethodInfo; 
-			if (methodInfo != null)
+			var section = Sections[indexPath.Section];
+			if (section.Views.ContainsKey(cell))
 			{
-				methodInfo.Invoke(item.Source, null);
-				return;
+				var views = section.Views[cell];
+	
+				if (views.Count > 0)
+				{
+					foreach (var view in views)
+					{
+						var selectable = view as ISelectable;
+						if (selectable != null)
+						{
+							selectable.Selected(Controller, tableView, memberData, indexPath);
+						}
+					}
+				}
 			}
-			
-			UIView view = item.DataContext as UIView;
+		}	
 
-			if (view != null)
-			{
-				var dvc = new DialogViewController("", view, true) { Autorotate = true };
-				var nav = Controller.ParentViewController as UINavigationController;
-				nav.PushViewController(dvc, true);
-			}
-		}		
+		private MemberData GetMemberData(NSIndexPath indexPath)
+		{
+			return GetSectionData(indexPath.Section)[indexPath.Row] as MemberData;
+		}
 	}
 
 //	public class DialogViewDataSource : BaseDialogViewSource<object>

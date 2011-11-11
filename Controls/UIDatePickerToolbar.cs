@@ -54,7 +54,7 @@ namespace MonoMobile.Views
 		{
 			var caption = "Today";
 
-			_DatePicker = FocusableElement.Control as UIDatePicker;
+			_DatePicker = FocusableView.Control as UIDatePicker;
 			if(_DatePicker != null)
 			{
 				if (_DatePicker.Mode == UIDatePickerMode.Time)

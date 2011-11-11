@@ -42,7 +42,7 @@ namespace MonoMobile.Views
 		private readonly object _ViewModel;
 		private readonly object _CanExecuteSource;
 		
-		public IElement Element { get; set; }
+	//	public IElement Element { get; set; }
 		public CommandOption CommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };

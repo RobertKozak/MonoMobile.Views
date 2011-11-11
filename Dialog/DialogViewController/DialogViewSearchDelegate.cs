@@ -47,7 +47,7 @@ namespace MonoMobile.Views
 		{
 			searchbar.ShowsCancelButton = true;
 			
-			var searchable = _Container.Root as ISearchBar;
+			var searchable = _Container as ISearchBar;
 			if (searchable != null && searchable.IncrementalSearch)
 			{
 				var textField = searchbar.Subviews.FirstOrDefault((v)=>v.GetType() == typeof(UITextField)) as UITextField;
@@ -70,7 +70,7 @@ namespace MonoMobile.Views
 
 		public override void TextChanged(UISearchBar searchbar, string searchText)
 		{
-			var searchable = _Container.Root as ISearchBar;
+			var searchable = _Container as ISearchBar;
 			if (searchable != null && searchable.IncrementalSearch)
 				_Container.PerformFilter(searchText ?? "");
 		}
@@ -89,7 +89,7 @@ namespace MonoMobile.Views
 		public override void SearchButtonClicked(UISearchBar searchbar)
 		{
 			_Container.SearchButtonClicked(searchbar.Text);
-			var searchable = _Container.Root as ISearchBar;
+			var searchable = _Container as ISearchBar;
 
 			if (searchable != null && searchable.IncrementalSearch)
 				searchbar.ResignFirstResponder();

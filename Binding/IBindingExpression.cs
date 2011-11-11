@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 		object ConvertbackValue(object value, MemberInfo member);
 		object ConvertbackValue(object value);
 		
-		IElement Element { get; }
+	//	IElement Element { get; }
 
 		void UpdateTarget();
 		void UpdateSource();

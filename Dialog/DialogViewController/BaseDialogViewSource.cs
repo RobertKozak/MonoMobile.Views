@@ -40,21 +40,22 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
-
-	public abstract class BaseDialogViewSource<T> : UITableViewSource, ISearchBar
+	
+	[Preserve(AllMembers = true)]
+	public abstract class BaseDialogViewSource : UITableViewSource, ISearchBar, IEnumerable
 	{
-		private IEnumerable<Type> _ViewTypes;
-
 		private const float _SnapBoundary = 65;
 		private bool _CheckForRefresh;
 
-		private HeaderTapGestureRecognizer<T> tapRecognizer;
+		private HeaderTapGestureRecognizer tapRecognizer;
 		private Selector _HeaderSelector = new Selector("headerTap");
 
 		protected TableCellFactory<UITableViewCell> CellFactory;
 		protected DialogViewController Controller;
 		
 		protected string NibName { get; set; }
+		
+		protected IDictionary<NSIndexPath, float> RowHeights;
 
 		protected IDictionary<UITableViewCell, UIView> SelectedAccessoryViews;
 		protected IDictionary<UITableViewCell, UIView> UnselectedAccessoryViews;
@@ -62,7 +63,15 @@ namespace MonoMobile.Views
 		public Type SelectedAccessoryViewType { get; set; }
 		public Type UnselectedAccessoryViewType { get; set; }
 		
-		public IDictionary<int, Section<T>> Sections { get; set;}
+		private IDictionary<int, Section> _Sections;
+		public IDictionary<int, Section> Sections {
+			get 
+			{ return _Sections;}  
+			set
+			{
+				_Sections = value;
+			} 
+		}
 
 		public UITableViewStyle TableViewStyle { get; set; }
 			
@@ -77,48 +86,72 @@ namespace MonoMobile.Views
 		public Type NavigationView { get; set; }
 
 		public string Caption { get; set; }
-		public float RowHeight { get; set; }
 		
 		public BaseDialogViewSource(DialogViewController controller)
 		{
 			Controller = controller;
 
+			RowHeights = new Dictionary<NSIndexPath, float>();
+
 			SelectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
 			UnselectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
 
-			Sections = new Dictionary<int, Section<T>>();
+			Sections = new Dictionary<int, Section>();
 		}
 
-		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes) : this(controller)
+		public virtual IEnumerator GetEnumerator()
 		{
-			_ViewTypes = viewTypes;
-			Sections.Add(0, new Section<T>(controller, viewTypes));
+			foreach (var section in Sections)
+				yield return section;
 		}
 		
-		public BaseDialogViewSource(DialogViewController controller, Type viewType) : this(controller, new Type[] { viewType })
+		public int Add(Section section)
 		{
+			if (Sections.ContainsKey(section.Index))
+			{
+				Sections[section.Index] = section;
+			}
+			else
+			{
+				Sections.Add(section.Index, section);
+			}
+			
+			section.Controller = Controller;
+			return section.Index;
 		}
+
+//		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes) : this(controller)
+//		{
+//			Sections.Add(0, new Section<T>(controller, viewTypes));
+//		}
+		
+//		public BaseDialogViewSource(DialogViewController controller, Type viewType) : this(controller, new Type[] { viewType })
+//		{
+//		}
 
 		#region Cells
 		protected virtual UITableViewCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
-			var cellStyle = UITableViewCellStyle.Value1;
+			var cellStyle = UITableViewCellStyle.Default;
+			var cell = new UITableViewCell(cellStyle, cellId) { };			
 
 			var views = new List<UIView>();
 			var section = Sections[indexPath.Section];
 		
-			if (section.ViewTypes != null)
+			if (section.ViewTypes != null && section.ViewTypes.ContainsKey(cellId))
 			{
-				foreach (var viewType in section.ViewTypes)
+				foreach (var viewType in section.ViewTypes[cellId])
 				{
-					var view = Activator.CreateInstance(viewType) as UIView;
+					var view = Activator.CreateInstance(viewType, new object[] { cell.ContentView.Bounds }) as UIView;
 			
 					var initializeCell = view as IInitializeCell;
 					if (initializeCell != null)
 					{
-						if (cellStyle == UITableViewCellStyle.Value1)
+						var newCellStyle = initializeCell.CellStyle;
+						if (newCellStyle != cellStyle)
 						{
-							cellStyle = initializeCell.CellStyle;
+							// recreate cell with new style
+							cell = new UITableViewCell(newCellStyle, cellId) { };
 						}
 					}
 					
@@ -126,13 +159,16 @@ namespace MonoMobile.Views
 				}
 			}
 			
-			var cell = new UITableViewCell(cellStyle, cellId) { };
-			
+			cell.TextLabel.Text = Caption;
 			cell.TextLabel.BackgroundColor = UIColor.Clear;
-			cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
 			cell.TextLabel.AdjustsFontSizeToFitWidth = true;
-			cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
-
+			
+			if (cell.DetailTextLabel != null)
+			{
+				cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
+				cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
+			}
+			
 			var selectable = this as ISelectable;
 			cell.SelectionStyle = selectable != null ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.Blue;
 			
@@ -155,24 +191,7 @@ namespace MonoMobile.Views
 					view.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 					cell.ContentView.Add(view);
 				}
-
-				var createCell = view as IInitializeCell;
-				if (createCell != null)
-				{
-					createCell.InitializeCell(cell, indexPath);
-				}
 			}
-			
-			cell.TextLabel.Text = Caption;
-
-			return cell;
-		}
-
-		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-		{
-			var cell = CellFactory.GetCell(tableView, indexPath, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
-
-			UpdateCell(cell, indexPath);
 
 			return cell;
 		}
@@ -180,8 +199,16 @@ namespace MonoMobile.Views
 		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			cell.AccessoryView = null;
-
 			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+	
+			cell.TextLabel.TextAlignment = UITextAlignment.Left;
+			cell.TextLabel.Text = string.Empty;
+
+			if (cell.DetailTextLabel != null)
+			{
+				cell.DetailTextLabel.TextAlignment = UITextAlignment.Right;
+				cell.DetailTextLabel.Text = string.Empty;
+			}
 		}
 		#endregion
 
@@ -203,12 +230,12 @@ namespace MonoMobile.Views
 		
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			if (RowHeight == 0)
+			if (!RowHeights.ContainsKey(indexPath))
 			{
 				return tableView.RowHeight;
 			}
 
-			return RowHeight;
+			return RowHeights[indexPath];
 		}
 		#endregion
 
@@ -328,7 +355,7 @@ namespace MonoMobile.Views
 							section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
 							section.HeaderView.Add(section.ArrowView);
 						
-							tapRecognizer = new HeaderTapGestureRecognizer<T>(section, this, _HeaderSelector);
+							tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
 					
 							section.HeaderView.AddGestureRecognizer(tapRecognizer);
 							Flip(section);
@@ -391,7 +418,7 @@ namespace MonoMobile.Views
 		}
 
 		[Export("headerTap")]
-		public void HeaderTap(HeaderTapGestureRecognizer<T> recognizer)
+		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
 		{
 			var section = recognizer.Section;
 			var state = section.ExpandState;
@@ -483,7 +510,7 @@ namespace MonoMobile.Views
 			return footerLabel;
 		}
 
-		private void Flip(Section<T> section)
+		private void Flip(Section section)
 		{
 			UIView.BeginAnimations(null);
 			UIView.SetAnimationDuration(0.18f);
@@ -503,17 +530,17 @@ namespace MonoMobile.Views
 //			}
 		}
 
-		public T GetSectionData(int sectionIndex)
+		public IList GetSectionData(int sectionIndex)
 		{
 			if (Sections != null)
 			{
 				return Sections[sectionIndex].DataContext;
 			}
 
-			return default(T);
+			return default(IList);
 		}
 
-		public void SetSectionData(int sectionIndex, T data)
+		public void SetSectionData(int sectionIndex, IList data)
 		{
 			if (Sections != null)
 			{
@@ -566,11 +593,11 @@ namespace MonoMobile.Views
 		}
 	}
 
-	public class HeaderTapGestureRecognizer<T> : UITapGestureRecognizer
+	public class HeaderTapGestureRecognizer : UITapGestureRecognizer
 	{
-		public Section<T> Section { get; set; }
+		public Section Section { get; set; }
  
-		public HeaderTapGestureRecognizer(Section<T> section, NSObject target, Selector selector): base(target, selector)
+		public HeaderTapGestureRecognizer(Section section, NSObject target, Selector selector): base(target, selector)
 		{
 			Section = section;
 		}

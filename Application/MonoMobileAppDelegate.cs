@@ -43,8 +43,17 @@ namespace MonoMobile.Views
 	{		
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-		{		
-#if DBEUG
+		{	
+			MonoMobileApplication.NavigationController = new UINavigationController();
+			
+			MonoMobileApplication.Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+			MonoMobileApplication.Window.AddSubview(MonoMobileApplication.NavigationController.View);
+			MonoMobileApplication.Window.MakeKeyAndVisible();
+
+			MonoMobileApplication.NavigationController.View.Alpha = 0.0f;
+	
+#if DEBUG
 			var thread = new System.Threading.Thread(() =>
 			{
 				using (NSAutoreleasePool pool = new NSAutoreleasePool())
@@ -62,15 +71,6 @@ namespace MonoMobile.Views
 
 		private void Startup()
 		{
-			MonoMobileApplication.NavigationController = new UINavigationController();
-			
-			MonoMobileApplication.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-
-			MonoMobileApplication.Window.AddSubview(MonoMobileApplication.NavigationController.View);
-			MonoMobileApplication.Window.MakeKeyAndVisible();
-
-			MonoMobileApplication.NavigationController.View.Alpha = 1.0f;
-
 			MonoMobileApplication.Views = new List<object>();
 			foreach (var viewType in MonoMobileApplication.ViewTypes)
 			{

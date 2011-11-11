@@ -1,85 +1,85 @@
+////
+//// EnumConverter.cs: 
+////
+//// Author:
+////   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+////
+//// Copyright 2011, Nowcom Corporation
+////
+//// Code licensed under the MIT X11 license
+////
+//// Permission is hereby granted, free of charge, to any person obtaining
+//// a copy of this software and associated documentation files (the
+//// "Software"), to deal in the Software without restriction, including
+//// without limitation the rights to use, copy, modify, merge, publish,
+//// distribute, sublicense, and/or sell copies of the Software, and to
+//// permit persons to whom the Software is furnished to do so, subject to
+//// the following conditions:
+////
+//// The above copyright notice and this permission notice shall be
+//// included in all copies or substantial portions of the Software.
+////
+//// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+//// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+//// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+//// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+//// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+////
+//namespace MonoMobile.Views
+//{
+//    using System;
+//	using System.Globalization;
+//	using MonoTouch.Foundation;
+//	
+//	[Preserve(AllMembers = true)]
+//    public class EnumConverter : IValueConverter
+//    {
+//        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+//        {
+//            if (value == null)
+//                return value;
 //
-// EnumConverter.cs: 
+//			if (targetType == typeof(int))
+//			{
+//				return (int)value;
+//			}
+//			
+//			if (value.GetType().IsAssignableFrom(typeof(EnumItem)))
+//				value = ((EnumItem)value).FieldName;
 //
-// Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//			if (value.GetType() == typeof(string))
+//			{
+//				if (string.IsNullOrEmpty((string)value))
+//					return string.Empty;
 //
-// Copyright 2011, Nowcom Corporation
+//				var enumValue = EnumExtensions.GetValueFromString((Type)parameter, (string)value);
+//				var enumString = Enum.GetName((Type)parameter, enumValue);
+//				return enumString;
+//			}
 //
-// Code licensed under the MIT X11 license
+//			return ((Enum)value).GetDescription();
+//        }
 //
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
+//        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+//        {
+//			if (string.IsNullOrEmpty((string)value))
+//				value = 0;
+//			
+//			if (targetType == value.GetType())
+//				return value;
 //
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
+//			if (targetType == typeof(int))
+//			{
+//				if (value.GetType() == typeof(int))
+//				{
+//					var values = Enum.GetValues((Type)parameter);
+//					return values.GetValue((int)value);
+//				}
+//			}
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-namespace MonoMobile.Views
-{
-    using System;
-	using System.Globalization;
-	using MonoTouch.Foundation;
-	
-	[Preserve(AllMembers = true)]
-    public class EnumConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return value;
-
-			if (targetType == typeof(int))
-			{
-				return (int)value;
-			}
-			
-			if (value.GetType().IsAssignableFrom(typeof(EnumItem)))
-				value = ((EnumItem)value).FieldName;
-
-			if (value.GetType() == typeof(string))
-			{
-				if (string.IsNullOrEmpty((string)value))
-					return string.Empty;
-
-				var enumValue = EnumExtensions.GetValueFromString((Type)parameter, (string)value);
-				var enumString = Enum.GetName((Type)parameter, enumValue);
-				return enumString;
-			}
-
-			return ((Enum)value).GetDescription();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-			if (string.IsNullOrEmpty((string)value))
-				value = 0;
-			
-			if (targetType == value.GetType())
-				return value;
-
-			if (targetType == typeof(int))
-			{
-				if (value.GetType() == typeof(int))
-				{
-					var values = Enum.GetValues((Type)parameter);
-					return values.GetValue((int)value);
-				}
-			}
-
-			return EnumExtensions.GetValueFromString((Type)parameter, (string)value);
-        }
-    }
-}
+//			return EnumExtensions.GetValueFromString((Type)parameter, (string)value);
+//        }
+//    }
+//}

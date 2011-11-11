@@ -30,38 +30,40 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
-	public class CellView : UIView, IDataContext<object>, IUpdateable, IInitializeCell
+	
+	[Preserve(AllMembers = true)]
+	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption
 	{
 		private Type _Type { get; set; }
 
-		private object _DataContext;
-		public object DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
+		private MemberData _DataContext;
+		public MemberData DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
 		
 		public int Order { get; set; }
-		public UITableViewCellStyle CellStyle { get; private set; }
+		public string Caption { get; set; }
+		public bool ShowCaption { get; set; } 
+
+		public virtual UITableViewCellStyle CellStyle { get; private set; }
+
 		
-		public CellView(object dataContext)
+		public CellView(RectangleF frame) : base(frame)
 		{
-			DataContext = dataContext;
+			ShowCaption = true;
 		}
 
-		public void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{
-		}
-
-		public void InitializeCell(UITableViewCell cell, NSIndexPath indexPath)
+		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 		}
 
-		protected virtual object GetDataContext()
+		protected virtual MemberData GetDataContext()
 		{
 			return _DataContext;
 		}
 		
-		protected virtual void SetDataContext(object value)
+		protected virtual void SetDataContext(MemberData value)
 		{
 			_Type = value != null ? value.GetType() : null;
 			_DataContext = value;

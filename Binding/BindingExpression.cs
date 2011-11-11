@@ -1,3 +1,4 @@
+using MonoTouch.UIKit;
 //
 // BindingExpression.cs:
 //
@@ -41,7 +42,7 @@ namespace MonoMobile.Views
 	{
 		struct PendingUpdateKey
 		{
-			public UITableViewElementCell Cell;
+			public UITableViewCell Cell;
 			public PropertyInfo TargetProperty;
 			public object Target;
 		}
@@ -51,12 +52,12 @@ namespace MonoMobile.Views
 		public MemberInfo SourceProperty { get; set; }
 		public MemberInfo TargetProperty { get; set; }
 
-		private IElement _Element;
-		public IElement Element 
-		{ 
-			get {return _Element; } 
-			set { _Element = value; } 
-		}
+//		private IElement _Element;
+//		public IElement Element 
+//		{ 
+//			get {return _Element; } 
+//			set { _Element = value; } 
+//		}
 
 		public Binding Binding { get; private set; }
 
@@ -159,11 +160,11 @@ namespace MonoMobile.Views
 	
 					object convertedSourceValue = ConvertValue(sourceValue);
 	
-					if (Element != null && (Element.Cell != null && Element.Cell.Element == Element) || Element.Cell == null)
-					{
-						convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
-						SetValue(TargetProperty, Binding.Target, convertedSourceValue);
-					}
+//					if (Element != null && (Element.Cell != null && Element.Cell.Element == Element) || Element.Cell == null)
+//					{
+//						convertedSourceValue = CheckAndCoerceToObjectEnumerable(convertedSourceValue);
+//						SetValue(TargetProperty, Binding.Target, convertedSourceValue);
+//					}
 				}
 			}
 		}
@@ -178,11 +179,11 @@ namespace MonoMobile.Views
 			{
 //				try
 				{
-					object parameter = Element;
-					if (Binding.ConverterParameter != null)
-						parameter = Binding.ConverterParameter;
-	
-					convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
+//					object parameter = Element;
+//					if (Binding.ConverterParameter != null)
+//						parameter = Binding.ConverterParameter;
+//	
+//					convertedValue = Binding.Converter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
 				}
 //				catch (InvalidCastException) {}
 //				catch (NotSupportedException) {}
@@ -209,11 +210,11 @@ namespace MonoMobile.Views
 			{
 //				try
 				{
-					object parameter = Element;
-					if (Binding.ConverterParameter != null)
-						parameter = Binding.ConverterParameter;
-					
-					convertedValue = Binding.Converter.ConvertBack(value, member.GetMemberType(), parameter, CultureInfo.CurrentUICulture);
+//					object parameter = Element;
+//					if (Binding.ConverterParameter != null)
+//						parameter = Binding.ConverterParameter;
+//					
+//					convertedValue = Binding.Converter.ConvertBack(value, member.GetMemberType(), parameter, CultureInfo.CurrentUICulture);
 				}
 //				catch (InvalidCastException) {}
 //				catch (NotSupportedException) { convertSupported = false; }

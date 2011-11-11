@@ -41,13 +41,13 @@ namespace MonoMobile.Views
 		private UIBarButtonItem _Spacer;
 		private UIBarButtonItem _DoneButton;
 
-		protected IFocusable FocusableElement;
+		protected IFocusable FocusableView;
 
-		public UIInputViewToolbar(IFocusable focusableElement) : base(new RectangleF(0, 0, 320, 44))
+		public UIInputViewToolbar(IFocusable focusableView) : base(new RectangleF(0, 0, 320, 44))
 		{
-			FocusableElement = focusableElement;
+			FocusableView = focusableView;
 						
-			var themeable = FocusableElement as IThemeable;
+			var themeable = FocusableView as IThemeable;
 			if (themeable != null)
 				TintColor = themeable.Theme.BarTintColor;
 				
@@ -80,7 +80,7 @@ namespace MonoMobile.Views
 
 		public void DismissKeyboard(object sender, EventArgs e)
 		{
-			FocusableElement.ElementView.ResignFirstResponder();
+			FocusableView.InputView.ResignFirstResponder();
 		}
 	}
 }

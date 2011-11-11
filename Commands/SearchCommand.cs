@@ -17,14 +17,14 @@ namespace MonoMobile.Views
 			_Execute = execute;
 		}
 
-		public List<ISection> Execute(ISection[] sections, string searchText)
+		public List<Section> Execute(Section[] sections, string searchText)
 		{
-			List<ISection> result = null;
+			List<Section> result = null;
 			
 			try
 			{
 				if (_Execute.GetParameters().Any())
-					result = _Execute.Invoke(_ViewModel, new object[] { sections, searchText }) as List<ISection>;
+					result = _Execute.Invoke(_ViewModel, new object[] { sections, searchText }) as List<Section>;
 			}
 			catch(Exception ex) 
 			{

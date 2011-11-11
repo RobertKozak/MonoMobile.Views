@@ -65,21 +65,21 @@ namespace MonoMobile.Views
 		{
 			base.TouchesEnded(touches, evt);
 			
-			if (Controller != null && Controller.Root != null)
-			{
-				foreach (var section in Controller.Root.Sections)
-				{
-					foreach (var element in section.Elements)
-					{
-						var selected = element as IFocusable;
-						if (selected != null && selected.ElementView != null && selected.ElementView.IsFirstResponder)
-						{
-							selected.ElementView.ResignFirstResponder();
-							break;
-						}
-					}
-				}
-			}
+//			if (Controller != null)
+//			{
+//				foreach (var section in Controller.TableView.Source)
+//				{
+//					foreach (var element in section.Elements)
+//					{
+//						var selected = element as IFocusable;
+//						if (selected != null && selected.ElementView != null && selected.ElementView.IsFirstResponder)
+//						{
+//							selected.ElementView.ResignFirstResponder();
+//							break;
+//						}
+//					}
+//				}
+//			}
 			
 			ResetTextShadow(true, touches);
 		}
@@ -91,7 +91,7 @@ namespace MonoMobile.Views
 			
 			if (view != null)
 			{
-				var cell = view.Superview as UITableViewElementCell;
+				var cell = view.Superview as UITableViewCell;
 				
 				if (cell != null && cell.SelectionStyle != UITableViewCellSelectionStyle.None)
 				{

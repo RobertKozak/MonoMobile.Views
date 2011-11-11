@@ -38,8 +38,6 @@ namespace MonoMobile.Views
 	{
 		UITableViewCellStyle CellStyle { get; }
 		//UITableViewCellEditingStyle EditingStyle { get; set; }
-
-		void InitializeCell(UITableViewCell cell, NSIndexPath indexPath);
 	}
 }
 

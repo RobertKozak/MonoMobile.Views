@@ -1,13 +1,13 @@
-//
-// ButtonAttribute.cs:
-//
+// 
+// ViewAttribute.cs
+// 
 // Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
-//
-// Copyright 2011, Nowcom Corportation
-//
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+// Copyright 2011, Nowcom Corporation.
+// 
 // Code licensed under the MIT X11 license
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,41 +26,33 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+// 
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
 	
-	public enum CommandOption
+	public enum ViewUsage
 	{
-		Hide,
-		Disable
+		Replace,
+		Compose
 	}
-	
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
-	public class ButtonAttribute : BaseControlAttribute
+
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
+	public class ViewAttribute: Attribute
 	{
-		public ButtonAttribute()
-		{
-			ViewType = typeof(ButtonElement);
-		}
-		
-		public ButtonAttribute(Type viewType)
+		public ViewAttribute(Type viewType)
 		{
 			ViewType = viewType;
 		}
 
-		public ButtonAttribute(string canExecutePropertyName): this()
+		public ViewAttribute(string nibName)
 		{
-			CanExecutePropertyName = canExecutePropertyName;
-			CommandOption = CommandOption.Hide;
+			NibName = nibName;
 		}
 
-		internal string CanExecutePropertyName;
-		public CommandOption CommandOption;
-
-		public Type ViewType { get; set; } 
+		public Type ViewType { get; set; }
+		public string NibName { get; set; }
+		public ViewUsage ViewUsage { get; set;}
 	}
 }
 

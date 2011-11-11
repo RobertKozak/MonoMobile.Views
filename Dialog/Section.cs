@@ -46,14 +46,16 @@ namespace MonoMobile.Views
 		Closed
 	}
 
-	public class Section<T>: IDataContext<T>
+	[Preserve(AllMembers = true)]
+	public class Section: IDataContext<IList>, IEnumerable
 	{
-		private DialogViewController _Controller;
+		internal DialogViewController Controller;
+
 		private ExpandState _ExpandState;
 		private List<UIView> _HiddenViews;
-		private T _DataContext;
+		private IList _DataContext;
 		
-		public T DataContext
+		public IList DataContext
 		{ 
 			get { return _DataContext; } 
 			set { _DataContext = value;
@@ -61,42 +63,70 @@ namespace MonoMobile.Views
 		}
 
 		public int Index { get; set; }
-
 		public int NumberOfRows { get; set; }
 
-		public IEnumerable<Type> ViewTypes;
+		public IDictionary<string, IList<Type>> ViewTypes;
 		public IDictionary<UITableViewCell, IList<UIView>> Views;
 		
 		public string HeaderText { get; set; }
-
 		public string FooterText { get; set; }
-
 		public UIView HeaderView { get; set; }
-
 		public UIView FooterView { get; set; }
-
 		public UIImageView ArrowView { get; set; }
 
 		public bool IsExpandable { get; set; }
-
 		public ExpandState ExpandState
 		{
 			get { return _ExpandState; } 
 			set { SetExpandState(value); }
 		}
-
-		public Section(DialogViewController controller, IEnumerable<Type> viewTypes)
+		
+		public Section(string title)
 		{
-			_Controller = controller;
-
-			ViewTypes = viewTypes;
+			ViewTypes = new Dictionary<string, IList<Type>>();
 			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}
+
+		public Section(DialogViewController controller)
+		{
+			Controller = controller;
+
+			ViewTypes = new Dictionary<string, IList<Type>>();
+			Views = new Dictionary<UITableViewCell, IList<UIView>>();
+		}
+
+//		public Section(DialogViewController controller, IEnumerable<Type> viewTypes)
+//		{
+//			_Controller = controller;
+//
+//			ViewTypes = new Dictionary<NSString, IList<Type>>();
+//			Views = new Dictionary<UITableViewCell, IList<UIView>>();
+//		}
 
 		public IEnumerator GetEnumerator()
 		{
 			foreach (var view in Views)
 				yield return view;
+		}
+
+		public int Add(object value)
+		{
+			int count = 0;
+			
+//			var list = DataContext as IList;
+//			if (list != null)
+//			{
+//				list.Add(value);
+//			}
+//			var members = data.GetType().GetMembers();
+//			foreach (var item in data)
+//			{
+//				DataContext
+//				Add(item);
+//				count++;
+//			}
+
+			return count;
 		}
 
 		public void CollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -160,7 +190,7 @@ namespace MonoMobile.Views
 				
 				SetNumberOfRows();
 
-				_Controller.ReloadData();
+				Controller.ReloadData();
 			}
 		}
 

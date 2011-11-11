@@ -1,5 +1,5 @@
 // 
-//  ListViewSource.cs
+//  ListSource.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -38,9 +38,10 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 				
 	[Preserve(AllMembers = true)]
-	public class ListViewSource : BaseDialogViewSource<IList>, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
+	public class ListSource : BaseDialogViewSource, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
-		private ListViewSource _NavigationSource;
+		private readonly NSString _CellId = new NSString("listCell");
+		private ListSource _NavigationSource;
 
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
@@ -57,18 +58,21 @@ namespace MonoMobile.Views
 		public bool IsMultiselect { get; set; }
 		public bool PopOnSelection { get; set; }
 		public bool HideCaptionOnSelection { get; set; }
-
-		public ListViewSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller, viewTypes)
+		
+		public ListSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller)
 		{	
-			Sections = new Dictionary<int, Section<IList>>();
-			Sections.Add(0, new Section<IList>(controller, viewTypes) { DataContext = list });
+			Sections = new Dictionary<int, Section>();
+			var section = new Section(controller) { DataContext = list };
+			section.ViewTypes.Add(_CellId, viewTypes.ToList());
+			
+			Sections.Add(0, section);
 
 			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
 			var genericType = list.GetType().GetGenericArguments().FirstOrDefault();
 			Type[] generic = { genericType };		
 			SelectedItems = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
 
-			CellFactory = new TableCellFactory<UITableViewCell>("listCell");
+			CellFactory = new TableCellFactory<UITableViewCell>(_CellId);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -79,82 +83,16 @@ namespace MonoMobile.Views
 
 			base.Dispose(disposing);
 		}
-
-		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-		{			
-			if (!IsRoot)
-			{
-				SelectedItem = GetSectionData(indexPath.Section)[indexPath.Row]; 
-
-				if (SelectedItems.Contains(SelectedItem))
-				{
-					SelectedItems.Remove(SelectedItem);
-
-					switch (UnselectionBehavior)
-					{
-						case UnselectionBehavior.SetSelectedToCurrentValue : break;
-						case UnselectionBehavior.SetSelectedToNull : SelectedItem = null; break;
-						case UnselectionBehavior.SetSelectedToPreviousValueOrNull :
-						{
-							if (SelectedItems.Count > 0)
-							{
-								SelectedItem = SelectedItems[SelectedItems.Count - 1];
-							}
-							else
-							{
-								SelectedItem = null;
-							}
-
-							break;
-						}
-					}
-
-				}
-				else
-				{
-					SelectedItems.Add(SelectedItem);
-				}
-
-				SetItems();
 	
-				if (Controller != null)
-				{
-					Controller.Selected(SelectedItem, indexPath);
-				}
-	
-				if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
-				{
-					Controller.NavigationController.PopViewControllerAnimated(true);
-				}
-				
-				if (IsSelectable || IsMultiselect)
-				{
-					Controller.ReloadData();
-				}
-				else
-				{
-					new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
-					{
-						Controller.ReloadData();
-					});
-				}
-			}
-			
-			if (IsNavigateable || IsRoot)
-			{
-				if (NavigationView != null)
-				{
-					NavigateToView(NavigationView);
-					//return;
-				}
-			
-				if (IsRoot)
-				{
-					NavigateToList();
-				}
-			}
+		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+		{
+			var cell = CellFactory.GetCell(tableView, indexPath, _CellId, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
+
+			UpdateCell(cell, indexPath);
+
+			return cell;
 		}
-	
+
 		protected override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{	
 			base.UpdateCell(cell, indexPath);
@@ -208,6 +146,84 @@ namespace MonoMobile.Views
 				}
 			}
 		}
+
+		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+		{			
+			if (!IsRoot)
+			{
+				SelectedItem = GetSectionData(indexPath.Section)[indexPath.Row]; 
+
+				if (SelectedItems.Contains(SelectedItem))
+				{
+					SelectedItems.Remove(SelectedItem);
+
+					switch (UnselectionBehavior)
+					{
+						case UnselectionBehavior.SetSelectedToCurrentValue :
+							break;
+						case UnselectionBehavior.SetSelectedToNull :
+							SelectedItem = null;
+							break;
+						case UnselectionBehavior.SetSelectedToPreviousValueOrNull :
+							{
+								if (SelectedItems.Count > 0)
+								{
+									SelectedItem = SelectedItems[SelectedItems.Count - 1];
+								}
+								else
+								{
+									SelectedItem = null;
+								}
+
+								break;
+							}
+					}
+
+				}
+				else
+				{
+					SelectedItems.Add(SelectedItem);
+				}
+
+				SetItems();
+	
+				if (Controller != null)
+				{
+					Controller.Selected(SelectedItem, indexPath);
+				}
+	
+				if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
+				{
+					Controller.NavigationController.PopViewControllerAnimated(true);
+				}
+				
+				if (IsSelectable || IsMultiselect)
+				{
+					Controller.ReloadData();
+				}
+				else
+				{
+					new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+					{
+						Controller.ReloadData();
+					});
+				}
+			}
+			
+			if (IsNavigateable || IsRoot)
+			{
+				if (NavigationView != null)
+				{
+					NavigateToView(NavigationView);
+					//return;
+				}
+			
+				if (IsRoot)
+				{
+					NavigateToList();
+				}
+			}
+		}
 		
 		public void NavigateToView(Type viewType)
 		{
@@ -230,7 +246,7 @@ namespace MonoMobile.Views
 			var section = Sections[0];
 			var dvc = new DialogViewController(Caption, Controller.RootView, true);
 			if (_NavigationSource == null)
-				_NavigationSource = new ListViewSource(dvc, GetSectionData(0), section.ViewTypes);
+				_NavigationSource = new ListSource(dvc, GetSectionData(0), section.ViewTypes[_CellId]);
 
 			_NavigationSource.Controller = dvc;
 

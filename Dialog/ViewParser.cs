@@ -42,12 +42,12 @@ namespace MonoMobile.Views
 	
 	public class ViewParser
 	{
-		private class NoElement : Element
-		{
-			public NoElement() : base(null)
-			{
-			}
-		}
+//		private class NoElement : Element
+//		{
+//			public NoElement() : base(null)
+//			{
+//			}
+//		}
 
 		private List<Func<object, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
 		{
@@ -56,20 +56,13 @@ namespace MonoMobile.Views
 			(T)=>GetMethods(T)
 		};
 		
-		private List<Func<object, MemberInfo[]>> _TypeMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
-		{
-			(T)=>GetFields(T),
-			(T)=>GetProperties(T),
-			(T)=>GetMethods(T)
-		};
-
 		private CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
 		private CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
 
-		private readonly NoElement _NoElement = new NoElement();
-		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
+//		private readonly NoElement _NoElement = new NoElement();
+//		private Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>> _ElementPropertyMap;
 		
-		public IRoot Root { get; set; }
+//		public IRoot Root { get; set; }
 
 		public ViewParser()
 		{
@@ -81,7 +74,8 @@ namespace MonoMobile.Views
 			List<Type> viewTypes = null;
 			object dataContext = null;
 			UITableViewSource source = null;
-
+			
+			view = GetActualView(view);
 			controller.RootView = view;
 
 			controller.Theme = new Theme();
@@ -100,9 +94,9 @@ namespace MonoMobile.Views
 
 			if (source == null)
 			{
-				var actualView = view as IView;
-				if (actualView != null)
-					source = ParseView(controller, actualView);
+//				var actualView = view as IView;
+//				if (actualView != null)
+					source = ParseView(controller, view);
 			}
 
 			if (source == null)
@@ -116,9 +110,6 @@ namespace MonoMobile.Views
 		
 		public MemberInfo[] GetMembers(object obj)
 		{
-			Console.WriteLine("View: "+obj.GetType().ToString());
-
-			var sw = System.Diagnostics.Stopwatch.StartNew();
 			var members = new List<MemberInfo>();
 
 			foreach (var memberFunc in _ObjectMemberFuncMap)
@@ -127,26 +118,7 @@ namespace MonoMobile.Views
 			}
 			
 			var result = members.ToArray();
-			sw.Stop();
-			Console.WriteLine("GetMebers: "+sw.Elapsed.TotalMilliseconds);
-			return result;
-		}
 
-		public MemberInfo[] GetMembers(Type type)
-		{
-			Console.WriteLine("View: " + type.ToString());
-
-			var sw = System.Diagnostics.Stopwatch.StartNew();
-			var members = new List<MemberInfo>();
-
-			foreach (var memberFunc in _TypeMemberFuncMap)
-			{
-				members.AddRange(memberFunc(type));
-			}
-			
-			var result = members.ToArray();
-			sw.Stop();
-			Console.WriteLine("GetMebers: " + sw.Elapsed.TotalMilliseconds);
 			return result;
 		}
 
@@ -307,6 +279,29 @@ namespace MonoMobile.Views
 //			return orderedSections;
 //		}
 		
+		private object GetActualView(object view)
+		{
+			if (!(view is IView))
+			{
+				var type = view.GetType();
+				var actualView = ViewContainer.GetExactView(type);
+				
+				if (actualView != null)
+				{
+					var newView = Activator.CreateInstance(actualView);
+					var dc = newView as IDataContext<object>;
+					if (dc != null)
+					{
+						dc.DataContext = view;
+					}
+
+					return newView;
+				}
+			}
+
+			return view;
+		}
+
 		private List<Type> GetViewTypes(object view, MemberInfo memberInfo)
 		{
 			var dc = view as IDataContext<object>;
@@ -327,13 +322,13 @@ namespace MonoMobile.Views
 			return null;
 		}
 
-		public UITableViewSource ParseView(DialogViewController controller, IView view)
+		public UITableViewSource ParseView(DialogViewController controller, object view)
 		{
 			var members = GetMembers(view);
-			var source = new ViewSource(controller, view);
+			var source = new ViewSource(controller);
 
-			var sections = new List<Section<List<MemberData>>>();
-			var currentSection = new Section<List<MemberData>>(controller, null);
+			var currentSection = new Section(controller);
+			var sections = new List<Section>();
 			var sectionMembers = new List<MemberData>();
 			var sectionIndex = 0;
 
@@ -358,7 +353,7 @@ namespace MonoMobile.Views
 				{
 					sectionMembers = new List<MemberData>();
 					
-					currentSection = new Section<List<MemberData>>(controller, null) { DataContext = sectionMembers };
+					currentSection = new Section(controller) { DataContext = sectionMembers };
 					
 					currentSection.HeaderText = sectionAttribute.Caption;
 					currentSection.FooterText = sectionAttribute.Footer;
@@ -368,6 +363,9 @@ namespace MonoMobile.Views
 
 					sections.Add(currentSection);
 				}
+				
+				if (sections.Count == 0)
+					sections.Add(currentSection);
 
 				sectionMembers.Add(memberData);
 				currentSection.DataContext = sectionMembers;
@@ -375,11 +373,13 @@ namespace MonoMobile.Views
 
 			foreach (var section in sections)
 			{
-				var orderedList = section.DataContext.OrderBy(data => data.Order).ToList();
+				Console.WriteLine(section.GetType().ToString());
+				var memberList = (List<MemberData>)section.DataContext;
+				var orderedList = memberList.OrderBy(data => data.Order).ToList();
 				section.DataContext = orderedList;
 			}
 			
-			var orderedSections = sections.Where(s => s.DataContext.Count > 0).OrderBy(section => section.Index).ToList();
+			var orderedSections = sections.Where(s => s.DataContext.Count > 0).Cast<Section>().OrderBy(section => section.Index).ToList();
 			
 			sectionIndex = 0; 
 			source.Sections.Clear();
@@ -399,7 +399,7 @@ namespace MonoMobile.Views
 				if (isList)
 				{
 					IList data = null;
-					ListViewSource source = null;
+					ListSource source = null;
 					Type[] generic = { type };
 					var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
 					
@@ -422,7 +422,7 @@ namespace MonoMobile.Views
 						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
 					}
 		
-					source = new ListViewSource(controller, (IList)data, viewTypes);
+					source = new ListSource(controller, (IList)data, viewTypes);
 
 					if (source != null)
 					{
@@ -1293,10 +1293,10 @@ namespace MonoMobile.Views
 			}).ToArray();
 		}
 
-		private void CheckForInstanceProperties(object view, MemberInfo member, IElement element, UIView elementView)
+		private void CheckForInstanceProperties(object view, MemberInfo member, UIView elementView)
 		{
 			var baseControlAttribute = member.GetCustomAttribute<BaseControlAttribute>(true);
-			if (baseControlAttribute != null && element != _NoElement)
+			if (baseControlAttribute != null)// && element != _NoElement)
 			{
 				if (!string.IsNullOrEmpty(baseControlAttribute.InstancePropertyName))
 				{
@@ -1304,21 +1304,21 @@ namespace MonoMobile.Views
 					if (instanceProperty != null)
 					{
 						UIView instanceView = elementView;
-						if (element != null && element.ElementView != null)
-							instanceView = element.ElementView;
+//						if (element != null && element.ElementView != null)
+//							instanceView = element.ElementView;
 
 						instanceProperty.SetValue(view, instanceView);
 					}
 				}
 
-				if (!string.IsNullOrEmpty(baseControlAttribute.ElementPropertyName))
-				{
-					var elementProperty = view.GetType().GetProperty(baseControlAttribute.ElementPropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-					if (elementProperty != null)
-					{
-						elementProperty.SetValue(view, element);
-					}
-				}
+//				if (!string.IsNullOrEmpty(baseControlAttribute.ElementPropertyName))
+//				{
+//					var elementProperty = view.GetType().GetProperty(baseControlAttribute.ElementPropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+//					if (elementProperty != null)
+//					{
+//						elementProperty.SetValue(view, element);
+//					}
+//				}
 			}
 		}
 		
@@ -1342,7 +1342,7 @@ namespace MonoMobile.Views
 					{	
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
 						
-						CheckForInstanceProperties(view, member, null, buttonView);
+						CheckForInstanceProperties(view, member, buttonView);
 
 						var tappable = buttonView as ITappable;
 						if (tappable != null)
@@ -1396,7 +1396,7 @@ namespace MonoMobile.Views
 						UIView buttonView = null;
 						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
 						
-						CheckForInstanceProperties(view, member, null, buttonView);
+						CheckForInstanceProperties(view, member, buttonView);
 
 						var tappable = buttonView as ITappable;
 						if (tappable != null)
@@ -1500,21 +1500,6 @@ namespace MonoMobile.Views
 			
 			return bindings;
 		}
-
-		// Returns the type for fields and properties and null for everything else
-		private static Type GetTypeForMember(MemberInfo mi)
-		{
-			if (mi is FieldInfo)
-				return ((FieldInfo)mi).FieldType;
-
-			if (mi is PropertyInfo)
-				return ((PropertyInfo)mi).PropertyType;
-
-			if (mi is MethodInfo)
-				return typeof(MethodInfo);
-
-			return null;
-		}
 		
 		private T GetMemberValue<T>(ref object context, MemberInfo member)
 		{
@@ -1546,282 +1531,282 @@ namespace MonoMobile.Views
 
 		private void BuildElementPropertyMap()
 		{
-			_ElementPropertyMap = new Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>>();
-			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, view, bindings)=>
-			{
-				IElement element = null;
-				
-				var loadMoreAttribute = member.GetCustomAttribute<LoadMoreAttribute>();
-				if (loadMoreAttribute != null)
-				{
-					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption : "Load More";
-					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption : "Loading...";
-
-					element = new LoadMoreElement(normalCaption, loadingCaption, GetCommandForMember(view, member));
-				}
-				
-				var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
-				if (progressAttribute != null)
-				{
-					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title : caption;
-					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText : null;
-
-					var pelement = new ProgressElement(caption, title, detailText, null) { ShowHud = progressAttribute.IndicatorStyle == IndicatorStyle.Hud };
-					var command = GetCommandForMember(view, member) as ReflectiveCommand;
-					
-					command.Element = pelement;
-					command.CanExecuteChanged -= HandleCanExecuteChanged;
-					command.CanExecuteChanged += HandleCanExecuteChanged;
-
-					pelement.Command = command;
-			
-					HandleCanExecuteChanged(command, EventArgs.Empty);
-
-					element = pelement;
-				}
-
-				var searchbarAttribute = member.GetCustomAttribute<SearchbarAttribute>();
-				var searchbar = Root as ISearchBar;
-				if (searchbarAttribute != null && searchbar != null)
-				{
-					searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
-					searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
-					searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
-					searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
-					
-					var methodInfo = member as MethodInfo;
-					searchbar.SearchCommand = new SearchCommand(view, methodInfo);
-				}
-				
-				var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
-				if (buttonAttribute != null)
-				{	
-					var belement = CreateElement(buttonAttribute.ViewType, caption) as ButtonElement; 
-					var command = GetCommandForMember(view, member) as ReflectiveCommand;
-					
-					command.Element = belement;
-					command.CanExecuteChanged -= HandleCanExecuteChanged;
-					command.CanExecuteChanged += HandleCanExecuteChanged;
-
-					belement.Command = command;
-			
-					HandleCanExecuteChanged(command, EventArgs.Empty);
-
-					element = belement;
-				}
-
-				return element ?? _NoElement;
-			});
-
-			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings) =>
-			{
-				IElement element = null;
-		
-				var mapAttribute = member.GetCustomAttribute<MapAttribute>();
-				var location = (CLLocationCoordinate2D)member.GetValue(view);
-				if (mapAttribute != null)
-					element = new MapElement(mapAttribute.Caption, location);
-
-				return element;
-			});
-
-			_ElementPropertyMap.Add(typeof(string), (member, caption, view, bindings)=>
-			{
-				IElement element = null;
-	
-				var passwordAttribute = member.GetCustomAttribute<PasswordAttribute>();
-				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
-				var multilineAttribute = member.GetCustomAttribute<MultilineAttribute>();
-				var htmlAttribute = member.GetCustomAttribute<HtmlAttribute>();
-		
-				if (passwordAttribute != null)
-				{
-					element = new EntryElement(caption) { Placeholder = passwordAttribute.Placeholder, KeyboardType = passwordAttribute.KeyboardType, IsPassword = true, EditMode = entryAttribute.EditMode, AutocorrectionType = passwordAttribute.AutocorrectionType, AutocapitalizationType = passwordAttribute.AutocapitalizationType };
-				} 
-				else if (entryAttribute != null)
-				{
-					element = new EntryElement(caption) { Placeholder = entryAttribute.Placeholder, KeyboardType = entryAttribute.KeyboardType, EditMode = entryAttribute.EditMode,  AutocorrectionType = entryAttribute.AutocorrectionType, AutocapitalizationType = entryAttribute.AutocapitalizationType };
-				}
-				else if (multilineAttribute != null)
-				{
-					element = new MultilineElement(caption) { Lines = multilineAttribute.Lines };
-					element.Theme.TextAlignment = UITextAlignment.Left;
-				}
-				else if (htmlAttribute != null)
-				{
-					SetDefaultConverter(view, member, "DataContext", new UriConverter(), null, bindings);
-					element = new HtmlElement(caption);
-				}
-				else
-				{
-					var selement = new StringElement(caption, (string)member.GetValue(view)) { };
-					
-					element = selement;
-				}
-				
-				return element;
-			});
-
-			_ElementPropertyMap.Add(typeof(Single), (member, caption, view, bindings)=>
-			{
-				return CreateFloatElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Double), (member, caption, view, bindings)=>
-			{
-				return CreateFloatElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Uri), (member, caption, view, bindings)=>
-			{
-				return new HtmlElement(caption, (Uri)member.GetValue(view));  
-			});
-
-			_ElementPropertyMap.Add(typeof(bool), (member, caption, view, bindings)=>
-			{
-				IElement element = null;
-
-				var checkmarkAttribute = member.GetCustomAttribute<CheckmarkAttribute>();
-				if (checkmarkAttribute != null)
-				    element = new CheckboxElement(caption) {  };
-				else
-					element = new BooleanElement(caption) { };
-
-				return element;
-			});
-
-			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, view, bindings)=>
-			{
-				IElement element = null;
-
-				SetDefaultConverter(view, member, "DataContext", new DateTimeConverter(), null, bindings);
-
-				var dateAttribute = member.GetCustomAttribute<DateAttribute>();
-				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();
-
-				if(dateAttribute != null)
-					element = new DateElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
-				else if (timeAttribute != null)
-					element = new TimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
-				else
-					element = new DateTimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
-				
-				return element;
-			});
-
-			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, view, bindings)=>
-			{
-				return new ImageElement((UIImage)member.GetValue(view));
-			});
-
-			_ElementPropertyMap.Add(typeof(Int32), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Int16), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Int64), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(UInt32), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(UInt16), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(UInt64), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Byte), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(SByte), (member, caption, view, bindings)=>
-			{				
-				return CreateIntElement(member, caption, view, bindings);
-			});
-
-			_ElementPropertyMap.Add(typeof(Decimal), (member, caption, view, bindings)=>
-			{				
-				return CreateFloatElement(member, caption, view, bindings);
-			});
+//			_ElementPropertyMap = new Dictionary<Type, Func<MemberInfo, string, object, List<Binding>, IElement>>();
+//			_ElementPropertyMap.Add(typeof(MethodInfo), (member, caption, view, bindings)=>
+//			{
+//				IElement element = null;
+//				
+//				var loadMoreAttribute = member.GetCustomAttribute<LoadMoreAttribute>();
+//				if (loadMoreAttribute != null)
+//				{
+//					var normalCaption = !string.IsNullOrEmpty(loadMoreAttribute.NormalCaption) ? loadMoreAttribute.NormalCaption : "Load More";
+//					var loadingCaption =  !string.IsNullOrEmpty(loadMoreAttribute.LoadingCaption) ? loadMoreAttribute.LoadingCaption : "Loading...";
+//
+//					element = new LoadMoreElement(normalCaption, loadingCaption, GetCommandForMember(view, member));
+//				}
+//				
+//				var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
+//				if (progressAttribute != null)
+//				{
+//					var title = !string.IsNullOrEmpty(progressAttribute.Title) ? progressAttribute.Title : caption;
+//					var detailText =  !string.IsNullOrEmpty(progressAttribute.DetailText) ? progressAttribute.DetailText : null;
+//
+//					var pelement = new ProgressElement(caption, title, detailText, null) { ShowHud = progressAttribute.IndicatorStyle == IndicatorStyle.Hud };
+//					var command = GetCommandForMember(view, member) as ReflectiveCommand;
+//					
+//					command.Element = pelement;
+//					command.CanExecuteChanged -= HandleCanExecuteChanged;
+//					command.CanExecuteChanged += HandleCanExecuteChanged;
+//
+//					pelement.Command = command;
+//			
+//					HandleCanExecuteChanged(command, EventArgs.Empty);
+//
+//					element = pelement;
+//				}
+//
+//				var searchbarAttribute = member.GetCustomAttribute<SearchbarAttribute>();
+//				var searchbar = Root as ISearchBar;
+//				if (searchbarAttribute != null && searchbar != null)
+//				{
+//					searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
+//					searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
+//					searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
+//					searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+//					
+//					var methodInfo = member as MethodInfo;
+//					searchbar.SearchCommand = new SearchCommand(view, methodInfo);
+//				}
+//				
+//				var buttonAttribute = member.GetCustomAttribute<ButtonAttribute>();
+//				if (buttonAttribute != null)
+//				{	
+//					var belement = CreateElement(buttonAttribute.ViewType, caption) as ButtonElement; 
+//					var command = GetCommandForMember(view, member) as ReflectiveCommand;
+//					
+//					command.Element = belement;
+//					command.CanExecuteChanged -= HandleCanExecuteChanged;
+//					command.CanExecuteChanged += HandleCanExecuteChanged;
+//
+//					belement.Command = command;
+//			
+//					HandleCanExecuteChanged(command, EventArgs.Empty);
+//
+//					element = belement;
+//				}
+//
+//				return element;// ?? _NoElement;
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(CLLocationCoordinate2D), (member, caption, view, bindings) =>
+//			{
+//				IElement element = null;
+//		
+//				var mapAttribute = member.GetCustomAttribute<MapAttribute>();
+//				var location = (CLLocationCoordinate2D)member.GetValue(view);
+//				if (mapAttribute != null)
+//					element = new MapElement(mapAttribute.Caption, location);
+//
+//				return element;
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(string), (member, caption, view, bindings)=>
+//			{
+//				IElement element = null;
+//	
+//				var passwordAttribute = member.GetCustomAttribute<PasswordAttribute>();
+//				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
+//				var multilineAttribute = member.GetCustomAttribute<MultilineAttribute>();
+//				var htmlAttribute = member.GetCustomAttribute<HtmlAttribute>();
+//		
+//				if (passwordAttribute != null)
+//				{
+//					element = new EntryElement(caption) { Placeholder = passwordAttribute.Placeholder, KeyboardType = passwordAttribute.KeyboardType, IsPassword = true, EditMode = entryAttribute.EditMode, AutocorrectionType = passwordAttribute.AutocorrectionType, AutocapitalizationType = passwordAttribute.AutocapitalizationType };
+//				} 
+//				else if (entryAttribute != null)
+//				{
+//					element = new EntryElement(caption) { Placeholder = entryAttribute.Placeholder, KeyboardType = entryAttribute.KeyboardType, EditMode = entryAttribute.EditMode,  AutocorrectionType = entryAttribute.AutocorrectionType, AutocapitalizationType = entryAttribute.AutocapitalizationType };
+//				}
+//				else if (multilineAttribute != null)
+//				{
+//					element = new MultilineElement(caption) { Lines = multilineAttribute.Lines };
+//					element.Theme.TextAlignment = UITextAlignment.Left;
+//				}
+//				else if (htmlAttribute != null)
+//				{
+//					SetDefaultConverter(view, member, "DataContext", new UriConverter(), null, bindings);
+//					element = new HtmlElement(caption);
+//				}
+//				else
+//				{
+//					var selement = new StringElement(caption, (string)member.GetValue(view)) { };
+//					
+//					element = selement;
+//				}
+//				
+//				return element;
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Single), (member, caption, view, bindings)=>
+//			{
+//				return CreateFloatElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Double), (member, caption, view, bindings)=>
+//			{
+//				return CreateFloatElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Uri), (member, caption, view, bindings)=>
+//			{
+//				return new HtmlElement(caption, (Uri)member.GetValue(view));  
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(bool), (member, caption, view, bindings)=>
+//			{
+//				IElement element = null;
+//
+//				var checkmarkAttribute = member.GetCustomAttribute<CheckmarkAttribute>();
+//				if (checkmarkAttribute != null)
+//				    element = new CheckboxElement(caption) {  };
+//				else
+//					element = new BooleanElement(caption) { };
+//
+//				return element;
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(DateTime), (member, caption, view, bindings)=>
+//			{
+//				IElement element = null;
+//
+//				SetDefaultConverter(view, member, "DataContext", new DateTimeConverter(), null, bindings);
+//
+//				var dateAttribute = member.GetCustomAttribute<DateAttribute>();
+//				var timeAttribute = member.GetCustomAttribute<TimeAttribute>();
+//
+//				if(dateAttribute != null)
+//					element = new DateElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
+//				else if (timeAttribute != null)
+//					element = new TimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
+//				else
+//					element = new DateTimeElement(caption);// { DataContext = (DateTime)member.GetValue(view)};
+//				
+//				return element;
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(UIImage),(member, caption, view, bindings)=>
+//			{
+//				return new ImageElement((UIImage)member.GetValue(view));
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Int32), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Int16), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Int64), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(UInt32), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(UInt16), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(UInt64), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Byte), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(SByte), (member, caption, view, bindings)=>
+//			{				
+//				return CreateIntElement(member, caption, view, bindings);
+//			});
+//
+//			_ElementPropertyMap.Add(typeof(Decimal), (member, caption, view, bindings)=>
+//			{				
+//				return CreateFloatElement(member, caption, view, bindings);
+//			});
 		}
 		
-		private IElement CreateElement(Type elementType, string caption)
-		{
-			var element = Activator.CreateInstance(elementType, new object[] { caption }) as IElement;
+//		private IElement CreateElement(Type elementType, string caption)
+//		{
+//			var element = Activator.CreateInstance(elementType, new object[] { caption }) as IElement;
+//
+//			return element;
+//		}
 
-			return element;
-		}
+//		private IElement CreateFloatElement(MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			IElement element = null;
+//			var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
+//			if (rangeAttribute != null)
+//			{
+//				var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, DataContext = rangeAttribute.Low };
+//				element = floatElement;
+//			}
+//			else 
+//			{		
+//				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
+//				string placeholder = null;
+//				var keyboardType = UIKeyboardType.DecimalPad;
+//
+//				if (entryAttribute != null)
+//				{
+//					placeholder = entryAttribute.Placeholder;
+//					if(entryAttribute.KeyboardType != UIKeyboardType.Default)
+//						keyboardType = entryAttribute.KeyboardType;
+//				}
+//
+//				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
+//			}
+//		
+//			SetDefaultConverter(view, member, "DataContext", new FloatConverter(), null, bindings);
+//
+//			return element;
+//		}
 
-		private IElement CreateFloatElement(MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			IElement element = null;
-			var rangeAttribute = member.GetCustomAttribute<RangeAttribute>();
-			if (rangeAttribute != null)
-			{
-				var floatElement = new FloatElement(caption) {  ShowCaption = rangeAttribute.ShowCaption, MinValue = rangeAttribute.Low, MaxValue = rangeAttribute.High, DataContext = rangeAttribute.Low };
-				element = floatElement;
-			}
-			else 
-			{		
-				var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
-				string placeholder = null;
-				var keyboardType = UIKeyboardType.DecimalPad;
-
-				if (entryAttribute != null)
-				{
-					placeholder = entryAttribute.Placeholder;
-					if(entryAttribute.KeyboardType != UIKeyboardType.Default)
-						keyboardType = entryAttribute.KeyboardType;
-				}
-
-				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
-			}
-		
-			SetDefaultConverter(view, member, "DataContext", new FloatConverter(), null, bindings);
-
-			return element;
-		}
-
-		private IElement CreateIntElement(MemberInfo member, string caption, object view, List<Binding> bindings)
-		{
-			IElement element = null;
-
-			var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
-			string placeholder = null;
-			var keyboardType = UIKeyboardType.NumberPad;
-
-			if(entryAttribute != null)
-			{
-				placeholder = entryAttribute.Placeholder;
-				if(entryAttribute.KeyboardType != UIKeyboardType.Default)
-					keyboardType = entryAttribute.KeyboardType;
-
-				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
-			}
-			else
-			{
-				element = new StringElement(caption) { DataContext = member.GetValue(view).ToString() };
-			}
-
-			SetDefaultConverter(view, member, "DataContext", new IntConverter(), null, bindings);
-
-			return element;
-		}
+//		private IElement CreateIntElement(MemberInfo member, string caption, object view, List<Binding> bindings)
+//		{
+//			IElement element = null;
+//
+//			var entryAttribute = member.GetCustomAttribute<EntryAttribute>();
+//			string placeholder = null;
+//			var keyboardType = UIKeyboardType.NumberPad;
+//
+//			if(entryAttribute != null)
+//			{
+//				placeholder = entryAttribute.Placeholder;
+//				if(entryAttribute.KeyboardType != UIKeyboardType.Default)
+//					keyboardType = entryAttribute.KeyboardType;
+//
+//				element = new EntryElement(caption) { Placeholder = placeholder, KeyboardType = keyboardType};
+//			}
+//			else
+//			{
+//				element = new StringElement(caption) { DataContext = member.GetValue(view).ToString() };
+//			}
+//
+//			SetDefaultConverter(view, member, "DataContext", new IntConverter(), null, bindings);
+//
+//			return element;
+//		}
 
 		private void InitializeSearch(object view, UITableViewSource source)
 		{
@@ -1831,8 +1816,8 @@ namespace MonoMobile.Views
 			{
 				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
 				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
-				searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
-				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+			//	searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
+			//	searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
 		
 					
 				var methods = GetMethods(view);
@@ -1855,7 +1840,7 @@ namespace MonoMobile.Views
 		
 		private string GetCaption(MemberInfo member)
 		{
-			var caption = string.Empty;
+			var caption = member.Name;
 			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
 
 			if(captionAttribute != null)
@@ -1889,14 +1874,14 @@ namespace MonoMobile.Views
 			var reflectiveCommand = sender as ReflectiveCommand;
 			if (reflectiveCommand != null)
 			{
-				if (reflectiveCommand.CommandOption == CommandOption.Hide)
-				{
-					reflectiveCommand.Element.Visible = reflectiveCommand.CanExecute(null);
-				}
-				else
-				{
-					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
-				}
+//				if (reflectiveCommand.CommandOption == CommandOption.Hide)
+//				{
+//					reflectiveCommand.Element.Visible = reflectiveCommand.CanExecute(null);
+//				}
+//				else
+//				{
+//					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
+//				}
 			}
 		}
 	}

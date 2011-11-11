@@ -1,5 +1,5 @@
 // 
-//  NavigateToViewAttribute.cs
+//  CommandView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,24 +27,39 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
-	using System;
-
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class NavigateToViewAttribute: Attribute
+	using System.Drawing;
+	using System.Reflection;
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
+	
+	[Preserve(AllMembers = true)]
+	public class CommandView : CellView, ISelectable
 	{
-		public NavigateToViewAttribute()
+		public ICommand Command { get { return DataContext.Value as ICommand; } }
+		public object CommandParameter { get; set; }
+
+		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
+
+		public CommandView(RectangleF frame) : base(frame)
 		{
-		}
-		
-		public NavigateToViewAttribute(Type viewType)
-		{
-			ViewType = viewType;
 		}
 
-		public Type ViewType { get; set; }
+		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{
+			cell.TextLabel.TextAlignment = UITextAlignment.Center;
+			cell.Accessory = UITableViewCellAccessory.None;
+		}
+
+		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+		{
+			if (Command != null)
+			{
+				if (Command.CanExecute(CommandParameter))
+					Command.Execute(CommandParameter);
+			}
+		}
 	}
 }
 

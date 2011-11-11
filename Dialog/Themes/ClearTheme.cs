@@ -46,7 +46,7 @@ namespace MonoMobile.Views
 			TextColor = UIColor.DarkTextColor;
 		}
 
-		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
+		public void DrawElementView(RectangleF rect, CGContext context, UITableViewCell cell)
 		{
 			CellBackgroundColor.SetFill();
 			context.FillRect(rect);

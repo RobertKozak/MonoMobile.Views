@@ -30,11 +30,24 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
 
 	public static class TypeExtensions
 	{
+		private static Dictionary<bool, BindingFlags> _BindingFlagsMap= new Dictionary<bool, BindingFlags>() {  {true, _PrivateBindingFlags} , {false, _PublicBindingFlags} };
+
+		private static BindingFlags _PublicBindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+		private static BindingFlags _PrivateBindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+	
+		private static List<Func<Type, bool, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<Type, bool, MemberInfo[]>>() 
+		{
+			(T, allowPrivate) => GetFields(T, allowPrivate),
+			(T, allowPrivate) => GetProperties(T, allowPrivate),
+			(T, allowPrivate) => GetMethods(T, allowPrivate)
+		};
+
 		public static T GetCustomAttribute<T>(this MemberInfo member) where T: Attribute
 		{
 			return GetCustomAttribute<T>(member, false);
@@ -124,6 +137,11 @@ namespace MonoMobile.Views
 				return ((PropertyInfo)member).PropertyType;
 			}
 			
+			if (member is MethodInfo)
+			{
+				return typeof(MethodInfo);
+			}
+
 			return null;
 		}
 
@@ -201,6 +219,39 @@ namespace MonoMobile.Views
 				return false;
 			
 			return baseType.IsGenericType && baseType.GetGenericTypeDefinition() == genericType || IsAssignableToGenericType(baseType, genericType);
+		}
+
+		public static MemberInfo[] GetMembers(this Type type, bool allowPrivate = false)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			var members = new List<MemberInfo>();
+
+			foreach (var memberFunc in _ObjectMemberFuncMap)
+			{
+				members.AddRange(memberFunc(type, allowPrivate));
+			}
+			
+			var result = members.ToArray();
+			return result;
+		}
+
+		private static MemberInfo[] GetFields(Type type, bool allowPrivate)
+		{
+			return type.GetFields(_BindingFlagsMap[allowPrivate]);
+		}
+
+		private static MemberInfo[] GetProperties(Type type, bool allowPrivate)
+		{
+			return type.GetProperties(_BindingFlagsMap[allowPrivate]);
+		}
+
+		private static MemberInfo[] GetMethods(Type type, bool allowPrivate)
+		{
+			return type.GetMethods(_BindingFlagsMap[allowPrivate]).Where(m =>
+			{
+				var methodInfo = m as MethodBase;
+				return (methodInfo == null || !methodInfo.IsConstructor && !methodInfo.IsSpecialName);
+			}).ToArray();
 		}
 	}
 }

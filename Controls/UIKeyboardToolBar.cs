@@ -97,12 +97,12 @@ namespace MonoMobile.Views
 
 		public void PreviousField(object sender, EventArgs e)
 		{
-			FocusableElement.MovePrev();
+			FocusableView.MovePrev();
 		}
 
 		public void NextField(object sender, EventArgs e)
 		{
-			FocusableElement.MoveNext();
+			FocusableView.MoveNext();
 		}
 	}
 }

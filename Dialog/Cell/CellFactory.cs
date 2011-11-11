@@ -38,39 +38,39 @@ namespace MonoMobile.Views
 	{
 		private string _NibName;
 
-		public string CellId { get; set; }
+	//	public string CellId { get; set; }
     
-		public TableCellFactory(string cellId, string nibName)
+		public NSString CellId = new NSString("Cell");
+		public TableCellFactory(string cellId, string nibName) : this(cellId)
 		{
-			CellId = cellId;
 			_NibName = nibName;
 		}
     
 		public TableCellFactory(string cellId)
 		{
-			CellId = cellId;
+		//	CellId = new NSString(cellId);
 		}
 		
-		public TableCellFactory()
+		public TableCellFactory() : this(string.Empty)
 		{
 		}
 
-		public T GetCell(UITableView tableView, NSIndexPath indexPath, Func<NSString, NSIndexPath, T> newCell)
+		public T GetCell(UITableView tableView, NSIndexPath indexPath, NSString cellId, Func<NSString, NSIndexPath, T> newCell)
 		{
-			return GetCell(tableView, indexPath, string.Empty, newCell);
+			return GetCell(tableView, indexPath, cellId, string.Empty, newCell);
 		}
 
-		public T GetCell(UITableView tableView, NSIndexPath indexPath, string nibName, Func<NSString, NSIndexPath, T> newCell)
+		public T GetCell(UITableView tableView, NSIndexPath indexPath, NSString cellId, string nibName, Func<NSString, NSIndexPath, T> newCell)
 		{
 			_NibName = nibName;
  
-			var cell = tableView.DequeueReusableCell(CellId) as T;
-            
+			var cell = tableView.DequeueReusableCell(cellId) as T;
+
 			if (cell == null)
 			{
 				if (newCell != null)
 				{
-					cell = newCell(new NSString(CellId), indexPath) as T;
+					cell = newCell(cellId, indexPath) as T;
 				}
 				else if (!string.IsNullOrEmpty(_NibName))
 				{

@@ -166,6 +166,8 @@ namespace MonoMobile.Views
 		{
 			Title = title;
 			ViewTypes = new Type[] { mainViewType };
+
+			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
 
@@ -173,11 +175,14 @@ namespace MonoMobile.Views
 		{
 			Title = title;
 			ViewTypes = viewTypes;
+			
+			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
 
 		public static void Run(string delegateName, string[] args)
 		{
+			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", delegateName);
 		}
 
@@ -192,7 +197,7 @@ namespace MonoMobile.Views
 			}
 			
 			string title = null;
-			var hasCaption = view as IView;
+			var hasCaption = view as ICaption;
 			if (hasCaption != null)
 			{
 				title = hasCaption.Caption;

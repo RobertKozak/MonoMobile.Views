@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 
 	public interface ISizeable
 	{
-		float GetHeight(UITableView tableView, NSIndexPath indexPath);
+		float GetRowHeight();
 	}
 }
 

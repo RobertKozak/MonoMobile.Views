@@ -32,14 +32,19 @@ namespace MonoMobile.Views
 	using System;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	
+	public enum EditMode
+	{
+		ReadOnly,
+		NoCaption,
+		WithCaption
+	}
 
 	public interface IFocusable
 	{
-		UIView ElementView { get; }
+		UIView InputView { get; }
 		EditMode EditMode { get; }
 		bool IsNeedsFirstResponder { get; set; }
-
-		NSIndexPath IndexPath { get; }
 
 		void MoveNext();
 		void MovePrev();

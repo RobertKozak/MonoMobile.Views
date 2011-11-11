@@ -1,5 +1,5 @@
 // 
-//  ReflectionCellView.cs
+//  {filename}.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,48 +27,33 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+using System;
+
 namespace MonoMobile.Views
 {
-	using System;
-	using System.Reflection;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
-
-	public class ReflectionCellView : CellView, IUpdateable 
+	public class TypeData
 	{
-		public object Source { get; private set; }
-		public MemberInfo Member { get; private set; }
-
-		public ReflectionCellView(object source, MemberInfo member) : base(null)
+		private object _Value;
+		public object Value { get { return GetValue(); } set { SetValue(value); } }
+		
+		public Type Type { get; set; }
+		
+		public TypeData(object value)
 		{
-			Source = source;
-			Member = member;
+			_Value = value;
+		}
+		
+		protected virtual object GetValue()
+		{
+			return _Value;
 		}
 
-		public void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		protected virtual void SetValue(object value)
 		{
-			cell.TextLabel.Text = Member.Name.ToString();
-		}
-
-		protected override object GetDataContext()
-		{
-			if (Member != null && Source != null)
-			{
-				var view = Source as IDataContext<object>;
-				if (view != null && view.DataContext != null)
-				{
-
-				}
-	
-				return Member.GetValue(Source);
-			}
-
-			return base.GetDataContext();
-		}
-
-		protected override void SetDataContext(object value)
-		{
-			base.SetDataContext(value);
+			_Value = value;
+			
+			if (_Value != null)
+				Type = _Value.GetType();
 		}
 	}
 }

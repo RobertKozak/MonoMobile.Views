@@ -41,8 +41,8 @@ namespace MonoMobile.Views
 			if (value == null)
 				return string.Empty;
 			
-			if (parameter is FloatElement)
-				return value;
+		//	if (parameter is FloatElement)
+		//		return value;
 
 			return value.ToString();
 		}

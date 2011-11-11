@@ -109,10 +109,10 @@ namespace MonoMobile.Views
 		public static IBindingExpression[] GetBindingExpressionsForElement(object element)
 		{
 			UpdateBindings();
-			if (_BindingExpressions != null)
-			{
-				return _BindingExpressions.Where((b)=>b.Element == element).ToArray();
-			}
+//			if (_BindingExpressions != null)
+//			{
+//				return _BindingExpressions.Where((b)=>b.Element == element).ToArray();
+//			}
 
 			return null;
 		}
@@ -142,94 +142,94 @@ namespace MonoMobile.Views
 
 		public static IBindingExpression SetBinding(IBindable target, Binding binding)
 		{
-			if (target == null)
-				throw new ArgumentNullException("target");
-
-			if (binding == null)
-				throw new ArgumentNullException("binding");
-			
-			var targetProperty = binding.TargetPath;
-
+//			if (target == null)
+//				throw new ArgumentNullException("target");
+//
+//			if (binding == null)
+//				throw new ArgumentNullException("binding");
+//			
+//			var targetProperty = binding.TargetPath;
+//
 			IBindingExpression bindingExpression = null;
-			
-			object dataBinding = target.DataBinding;
-			object nestedTarget = dataBinding;
-			var element = target as IElement;
-
-			MemberInfo memberInfo = null;
-			FieldInfo bindablePropertyInfo = null;
-
-			if (dataBinding != null)
-			{
-				var name = string.Concat(targetProperty, "Property");
-				bindablePropertyInfo = dataBinding.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-				
-				name = string.Concat(name, ".ControlValue");			
-				memberInfo = dataBinding.GetType().GetNestedMember(ref nestedTarget, name, false);
-				if (memberInfo != null)
-				{
-					binding.TargetPath = name;
-					binding.Target = nestedTarget;
-				}
-			}
-
-			var targetReady = memberInfo != null && nestedTarget != null && binding.Source != null;
-
-			if (targetReady)
-			{
-				if (_BindingExpressions == null)
-					_BindingExpressions = new List<IBindingExpression>();
-				
-				bindingExpression = GetBindingExpression(binding);
-
-				if (bindingExpression != null)
-				{
-					_BindingExpressions.Remove(bindingExpression);
-				}
-			
-				bindingExpression = new BindingExpression(binding, memberInfo, nestedTarget) { Element = element };
-
-				_BindingExpressions.Add(bindingExpression);
-					
-				var vmINPC = bindingExpression.Binding.Source as INotifyPropertyChanged;
-				if (vmINPC != null)
-				{
-					vmINPC.PropertyChanged -= HandleDataContextPropertyChanged;
-					vmINPC.PropertyChanged += HandleDataContextPropertyChanged;
-				}
-
-				var viewINPC = bindingExpression.Binding.ViewSource as INotifyPropertyChanged;
-				if (viewINPC != null)
-				{
-					viewINPC.PropertyChanged -= HandleDataContextPropertyChanged;
-					viewINPC.PropertyChanged += HandleDataContextPropertyChanged;
-				}
-				
-				var sourceValue = bindingExpression.GetSourceValue();
-				 
-				var sourceCollection = sourceValue as INotifyCollectionChanged;
-				if (sourceCollection != null)
-				{	
-					SetNotificationCollectionHandler(bindingExpression, sourceCollection);
-				}	
-			}
-			else
-			{
-				var binderKey =_Bindings.SingleOrDefault((kvp)=>kvp.Key.Object == target && kvp.Key.Property == targetProperty).Key;
-
-				if (binderKey == null)
-					_Bindings.Add(new PropertyBinder() { Object = target, Property = targetProperty }, binding);
-				else
-					_Bindings[binderKey] = binding;
-			}
-			
-			if (bindablePropertyInfo != null)
-			{
-				var bindableProperty = bindablePropertyInfo.GetValue(dataBinding) as BindableProperty;
-				if (bindableProperty != null)
-					bindableProperty.BindingExpression = bindingExpression;
-			}
-
+//			
+//			object dataBinding = target.DataBinding;
+//			object nestedTarget = dataBinding;
+//			var element = target as IElement;
+//
+//			MemberInfo memberInfo = null;
+//			FieldInfo bindablePropertyInfo = null;
+//
+//			if (dataBinding != null)
+//			{
+//				var name = string.Concat(targetProperty, "Property");
+//				bindablePropertyInfo = dataBinding.GetType().GetField(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+//				
+//				name = string.Concat(name, ".ControlValue");			
+//				memberInfo = dataBinding.GetType().GetNestedMember(ref nestedTarget, name, false);
+//				if (memberInfo != null)
+//				{
+//					binding.TargetPath = name;
+//					binding.Target = nestedTarget;
+//				}
+//			}
+//
+//			var targetReady = memberInfo != null && nestedTarget != null && binding.Source != null;
+//
+//			if (targetReady)
+//			{
+//				if (_BindingExpressions == null)
+//					_BindingExpressions = new List<IBindingExpression>();
+//				
+//				bindingExpression = GetBindingExpression(binding);
+//
+//				if (bindingExpression != null)
+//				{
+//					_BindingExpressions.Remove(bindingExpression);
+//				}
+//			
+//				bindingExpression = new BindingExpression(binding, memberInfo, nestedTarget) { Element = element };
+//
+//				_BindingExpressions.Add(bindingExpression);
+//					
+//				var vmINPC = bindingExpression.Binding.Source as INotifyPropertyChanged;
+//				if (vmINPC != null)
+//				{
+//					vmINPC.PropertyChanged -= HandleDataContextPropertyChanged;
+//					vmINPC.PropertyChanged += HandleDataContextPropertyChanged;
+//				}
+//
+//				var viewINPC = bindingExpression.Binding.ViewSource as INotifyPropertyChanged;
+//				if (viewINPC != null)
+//				{
+//					viewINPC.PropertyChanged -= HandleDataContextPropertyChanged;
+//					viewINPC.PropertyChanged += HandleDataContextPropertyChanged;
+//				}
+//				
+//				var sourceValue = bindingExpression.GetSourceValue();
+//				 
+//				var sourceCollection = sourceValue as INotifyCollectionChanged;
+//				if (sourceCollection != null)
+//				{	
+//					SetNotificationCollectionHandler(bindingExpression, sourceCollection);
+//				}	
+//			}
+//			else
+//			{
+//				var binderKey =_Bindings.SingleOrDefault((kvp)=>kvp.Key.Object == target && kvp.Key.Property == targetProperty).Key;
+//
+//				if (binderKey == null)
+//					_Bindings.Add(new PropertyBinder() { Object = target, Property = targetProperty }, binding);
+//				else
+//					_Bindings[binderKey] = binding;
+//			}
+//			
+//			if (bindablePropertyInfo != null)
+//			{
+//				var bindableProperty = bindablePropertyInfo.GetValue(dataBinding) as BindableProperty;
+//				if (bindableProperty != null)
+//					bindableProperty.BindingExpression = bindingExpression;
+//			}
+//
 			return bindingExpression;
 		}
 		
@@ -237,8 +237,8 @@ namespace MonoMobile.Views
 		{
 			NotifyCollectionChangedEventHandler handler = (sender, e) => 
 			{
-				var section = bindingExpression.Element as ISection;
-				section.CollectionChanged(e);
+//				var section = bindingExpression.Element as ISection;
+//				section.CollectionChanged(e);
 
 //				bindingExpression.UpdateTarget();
 			};			

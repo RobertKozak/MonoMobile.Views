@@ -30,45 +30,65 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Reflection;
-
-	public class MemberData
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
+	public class MemberData : TypeData
 	{
-		private object _DataContext;
-		public object DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
+		public NSString Id { get; private set; }
+ 
+		public object DataContextSource { get; private set; }
+		public MemberInfo DataContextMember { get; private set; }
 
 		public object Source { get; private set; }
 		public MemberInfo Member { get; private set; }
-		
+ 
 		public int Order { get; set; }
 
-		public MemberData(object source, MemberInfo member)
+		public MemberData(object source, MemberInfo member): base(null)
 		{
 			Source = source;
 			Member = member;
+
+			Type = member.GetMemberType();
+			Id = new NSString(Type.ToString());
 		}
 
-		protected object GetDataContext()
+		protected override object GetValue()
 		{
 			if (Member != null && Source != null)
 			{
 				var view = Source as IDataContext<object>;
 				if (view != null && view.DataContext != null)
 				{
-
+					DataContextSource = view.DataContext;
+					DataContextMember = DataContextSource.GetType().GetMember(Member.Name).FirstOrDefault();
+					
+					if (DataContextMember != null)
+						return DataContextMember.GetValue(DataContextSource);
 				}
-	
+
 				return Member.GetValue(Source);
 			}
 
-			return _DataContext;
+			return base.GetValue();
 		}
 
-		protected void SetDataContext(object value)
+		protected override void SetValue(object value)
 		{
-			_DataContext = value;
-		}
+			base.SetValue(value);
+			
+			if (DataContextMember != null)
+				DataContextMember.SetValue(DataContextSource, value);
 
+			Member.SetValue(Source, value);
+
+			// Reset Type since the base TypeData sets it to the type of the DataContext 
+			Type = Member.GetMemberType();
+		}
 	}
 }
 

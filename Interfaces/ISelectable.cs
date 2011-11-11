@@ -18,7 +18,7 @@ namespace MonoMobile.Views
 		/// <param name="path">
 		/// The <see cref="NSIndexPath"/> that contains the Section and Row for the element.
 		/// </param>
-		void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath path);
+		void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath);
 	}	
 }
 
