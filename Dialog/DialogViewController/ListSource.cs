@@ -40,11 +40,13 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class ListSource : BaseDialogViewSource, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
-		private readonly NSString _CellId = new NSString("listCell");
 		private ListSource _NavigationSource;
 
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
+
+		public readonly NSString CellId = new NSString("listCell");
+		public MemberData MemberData { get; set; }
 
 		public IList SelectedItems { get; set; }
 		public object SelectedItem { get; set; }
@@ -63,7 +65,12 @@ namespace MonoMobile.Views
 		{	
 			Sections = new Dictionary<int, Section>();
 			var section = new Section(controller) { DataContext = list };
-			section.ViewTypes.Add(_CellId, viewTypes.ToList());
+
+			IList<Type> viewTypesList = null;
+			if (viewTypes != null)
+				viewTypesList = viewTypes.ToList();
+
+			section.ViewTypes.Add(CellId, viewTypesList);
 			
 			Sections.Add(0, section);
 
@@ -72,7 +79,7 @@ namespace MonoMobile.Views
 			Type[] generic = { genericType };		
 			SelectedItems = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
 
-			CellFactory = new TableCellFactory<UITableViewCell>(_CellId);
+			CellFactory = new TableCellFactory<UITableViewCell>(CellId);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -83,20 +90,38 @@ namespace MonoMobile.Views
 
 			base.Dispose(disposing);
 		}
+
+		public override int RowsInSection(UITableView tableview, int section)
+		{
+			if (IsRoot)
+			{
+				return 1;
+			}
+
+			return Sections != null ? Sections[section].NumberOfRows : 0;
+		}
+
+		public override int NumberOfSections(UITableView tableView)
+		{
+			return Sections != null ? Sections.Count : 0;
+		}
 	
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
-			var cell = CellFactory.GetCell(tableView, indexPath, _CellId, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
+			indexPath = NSIndexPath.FromRowSection(indexPath.Row, 0);
+
+			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
 
 			return cell;
 		}
 
-		protected override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{	
 			base.UpdateCell(cell, indexPath);
-
+			
+			cell.SelectionStyle = IsRoot || IsNavigateable ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;  
 			SetSelectionAccessory(cell, indexPath);
 
 			var section = Sections[indexPath.Section];
@@ -197,7 +222,7 @@ namespace MonoMobile.Views
 					Controller.NavigationController.PopViewControllerAnimated(true);
 				}
 				
-				if (IsSelectable || IsMultiselect)
+				if (IsSelectable || IsMultiselect || !IsRoot)
 				{
 					Controller.ReloadData();
 				}
@@ -227,9 +252,9 @@ namespace MonoMobile.Views
 		
 		public void NavigateToView(Type viewType)
 		{
-			if (NavigationView != null)
+			if (viewType != null)
 			{
-				var view = Activator.CreateInstance(NavigationView) as UIView;
+				var view = Activator.CreateInstance(viewType) as UIView;
 
 				var dc = view as IDataContext<object>;
 				if (dc != null)
@@ -244,14 +269,14 @@ namespace MonoMobile.Views
 		public void NavigateToList()
 		{
 			var section = Sections[0];
+			var data = GetSectionData(0);
+			
 			var dvc = new DialogViewController(Caption, Controller.RootView, true);
-			if (_NavigationSource == null)
-				_NavigationSource = new ListSource(dvc, GetSectionData(0), section.ViewTypes[_CellId]);
-
-			_NavigationSource.Controller = dvc;
-
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
+
+			if (_NavigationSource == null)
+				_NavigationSource = new ListSource(dvc, data, section.ViewTypes[CellId]);
 
 			_NavigationSource.SelectedItem = SelectedItem;
 			_NavigationSource.SelectedItems = SelectedItems;
@@ -266,7 +291,7 @@ namespace MonoMobile.Views
 			_NavigationSource.PopOnSelection = PopOnSelection;
 			_NavigationSource.NibName = NibName;
 
-			_NavigationSource.TableViewStyle= TableViewStyle;
+			_NavigationSource.TableViewStyle = TableViewStyle;
 	
 			_NavigationSource.IsSearchbarHidden = IsSearchbarHidden;
 			_NavigationSource.EnableSearch = EnableSearch;

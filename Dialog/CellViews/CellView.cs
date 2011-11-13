@@ -39,6 +39,8 @@ namespace MonoMobile.Views
 	{
 		private Type _Type { get; set; }
 
+		public UITableViewCell Cell { get; set; }
+
 		private MemberData _DataContext;
 		public MemberData DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }
 		
@@ -46,7 +48,7 @@ namespace MonoMobile.Views
 		public string Caption { get; set; }
 		public bool ShowCaption { get; set; } 
 
-		public virtual UITableViewCellStyle CellStyle { get; private set; }
+		public virtual UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
 
 		
 		public CellView(RectangleF frame) : base(frame)

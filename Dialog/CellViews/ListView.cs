@@ -1,5 +1,5 @@
 // 
-//  ButtonView.cs
+//  ListView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -29,37 +29,78 @@
 // 
 namespace MonoMobile.Views
 {
+	using System;
 	using System.Drawing;
-	using System.Reflection;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MethodView : CellView, ISelectable
+	public class ListView : CellView, ISelectable
 	{
 		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
+		
+		public UIModalTransitionStyle TransitionStyle { get; set; }
 
-		public MethodView(RectangleF frame) : base(frame)
+		public bool IsModel { get; set; }
+
+		public Type ViewType { get; set; }
+		
+		public ListView() : base(RectangleF.Empty)
+		{
+		}
+
+		public ListView(RectangleF frame) : base(frame)
 		{
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			cell.TextLabel.Text = Caption;
-			cell.TextLabel.TextAlignment = UITextAlignment.Center;
-			cell.Accessory = UITableViewCellAccessory.None;
+			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+
+			var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
+			if (navigateToView != null)
+			{
+				TransitionStyle = navigateToView.TransitionStyle;
+				IsModel = navigateToView.ShowModal;
+				ViewType = navigateToView.ViewType; 
+			}
 		}
 
 		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
 		{
-			if (DataContext != null)
+			if (DataContext.Value == null)
 			{
-				var method = DataContext.Member as MethodInfo;
-				method.Invoke(DataContext.Source, null);
+				DataContext.Value = Activator.CreateInstance(DataContext.Member.GetMemberType());
+			}
 
-				tableView.DeselectRow(indexPath, true);
+			if (DataContext.Value != null)
+			{
+				var view = DataContext.Value;
+				if (ViewType != null && !view.GetType().Equals(ViewType))
+				{
+					view = Activator.CreateInstance(ViewType); 
+				}
+
+				var dvc = new DialogViewController(Caption, view, true) { Autorotate = true };
+				var nav = controller.ParentViewController as UINavigationController;
+
+				if (IsModel)
+				{		
+					dvc.ModalTransitionStyle = TransitionStyle;
+ 
+					var navController = new UINavigationController();
+					navController.ViewControllers = new UIViewController[] { dvc };
+
+					nav.PresentModalViewController(navController, true);
+				}
+				else
+				{
+					nav.PushViewController(dvc, true);
+				}
 			}
 		}
 	}
 }
+
 

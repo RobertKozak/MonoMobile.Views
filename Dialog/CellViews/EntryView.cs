@@ -38,7 +38,6 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class EntryView: FocusableView
 	{	
-		public UITableViewCell Cell { get; set; }
 		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 
 		public EditMode EditMode { get; set; }
@@ -103,10 +102,13 @@ namespace MonoMobile.Views
 		public override void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
 			ShowCaption = EditMode != EditMode.NoCaption;
-			if (!ShowCaption)
+			cell.TextLabel.Text = string.Empty;
+
+			if (ShowCaption)
 			{
-				cell.TextLabel.TextAlignment = UITextAlignment.Left;
+				cell.TextLabel.Text = Caption;
 			}
+			
 			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 
 			InputView.Text = string.Empty;

@@ -75,7 +75,19 @@ namespace MonoMobile.Views
 			{
 				return _TypeViewMap[type];
 			}
-			else return GetView(type.BaseType);
+			else
+			{
+				var interfaces = type.GetInterfaces();
+				foreach(var i in interfaces)
+				{
+					if (_TypeViewMap.ContainsKey(i))
+					{
+						return _TypeViewMap[i];
+					}
+				}
+			}
+			
+			return GetView(type.BaseType);
 		}
 
 		public static Type GetView(MemberData memberData)

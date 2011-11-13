@@ -40,7 +40,6 @@ namespace MonoMobile.Views
 		}
 
 		public Type ViewType { get; set; }
-		public Type ElementType { get; set; }
 		public bool PopOnSelection { get; set; }
 		public bool HideCaptionOnSelection { get; set; }
 	}

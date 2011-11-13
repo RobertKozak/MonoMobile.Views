@@ -1,5 +1,5 @@
 // 
-//  ICellContent.cs
+//  IAccessoryView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,9 +30,8 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
 
-	public interface ICellContent
+	public interface IAccessoryView
 	{
 	}
 }

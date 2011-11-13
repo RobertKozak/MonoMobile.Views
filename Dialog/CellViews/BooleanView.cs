@@ -1,5 +1,5 @@
 // 
-//  ButtonView.cs
+//  BooleanView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -29,37 +29,72 @@
 // 
 namespace MonoMobile.Views
 {
+	using System;
 	using System.Drawing;
-	using System.Reflection;
-	using MonoTouch.Foundation;
+	using MonoMobile.Views;
 	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MethodView : CellView, ISelectable
+	public class BooleanView : CellView, ISelectable, IAccessoryView
 	{
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
+		private UISwitch Switch { get; set; }
+		
+		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
+		public bool HasCheckmark;
 
-		public MethodView(RectangleF frame) : base(frame)
-		{
+		public BooleanView(RectangleF frame) : base(new RectangleF(0, 0, 85, frame.Height))
+		{	
+			Switch = new UISwitch(new RectangleF(0, 9, frame.Width, frame.Height)) 
+			{
+				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
+				BackgroundColor = UIColor.Clear, 
+				Tag = 1 
+			};
+
+			Switch.ValueChanged += delegate 
+			{
+				DataContext.Value = Switch.On;
+			};
+
+			Add(Switch);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			var checkmarkAttribute = DataContext.Member.GetCustomAttribute<CheckmarkAttribute>();
+			HasCheckmark = checkmarkAttribute != null;
+
+			UpdateValue();
+
+			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 			cell.TextLabel.Text = Caption;
-			cell.TextLabel.TextAlignment = UITextAlignment.Center;
-			cell.Accessory = UITableViewCellAccessory.None;
+			Switch.On = (bool)DataContext.Value;
 		}
 
 		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
 		{
-			if (DataContext != null)
-			{
-				var method = DataContext.Member as MethodInfo;
-				method.Invoke(DataContext.Source, null);
+			DataContext.Value = !(bool)DataContext.Value;
+			UpdateValue();
+		}
 
-				tableView.DeselectRow(indexPath, true);
+		private void UpdateValue()
+		{
+			if (HasCheckmark)
+			{
+				Cell.Accessory = (bool)DataContext.Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && Switch != null)
+			{
+				Switch.Dispose();
+				Switch = null;
+			}
+			
+			base.Dispose(disposing);
 		}
 	}
 }
-

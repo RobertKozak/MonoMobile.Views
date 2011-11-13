@@ -45,7 +45,6 @@ namespace MonoMobile.Views
 		protected UIPlaceholderTextField InputView;
 
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
-		public UITableViewCell Cell { get; set; }
 		public EditMode EditMode { get; set; }
 
 		public bool IsNeedsFirstResponder { get; set; }
@@ -53,17 +52,13 @@ namespace MonoMobile.Views
 
 		public FocusableView(RectangleF frame) : base(frame)
 		{
-		}
-
-		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{
-			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-			InputView = new UIPlaceholderTextField(cell.Bounds) 
-			{ 
+			InputView = new UIPlaceholderTextField(frame) 
+			{ 	
 				BackgroundColor = UIColor.Clear, 
 				Tag = 1, 
-				Hidden = true
 			};
+			
+			InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
 
 			if (IsNeedsFirstResponder)
 			{
@@ -71,7 +66,12 @@ namespace MonoMobile.Views
 				InputView.BecomeFirstResponder();
 			}
 
-			cell.ContentView.Add(InputView);
+			Add(InputView);
+		}
+
+		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{
+			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 		}
 		
 		public virtual void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath indexPath)

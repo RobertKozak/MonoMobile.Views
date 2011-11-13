@@ -1,3 +1,4 @@
+using System.Reflection;
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
@@ -54,6 +55,8 @@ namespace MonoMobile.Views
 	//	private IRoot _Root;
 		private bool _Pushing;
 		private bool _Dirty;
+
+		private bool DisableScrolling;
 		
 		private UISearchBar _Searchbar;
 		private Section[] _OriginalSections;
@@ -462,7 +465,8 @@ namespace MonoMobile.Views
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
 		{
-			return new DialogViewTable(bounds, style) { Controller = this };
+			var tableView = new DialogViewTable(bounds, style) { Controller = this };
+			return tableView;
 		}
 
 		public override void LoadView()
@@ -791,16 +795,16 @@ return;
 
 		public void UpdateSource()
 		{			
-		//	if (Root != null)
-			{
-				if (_TableSource != null)
-				{
-					_TableSource.Dispose();
-				}
-			
-				_TableSource = new ViewSource(this);
-				TableView.Source = _TableSource;
-			}
+//		//	if (Root != null)
+//			{
+//				if (_TableSource != null)
+//				{
+//					_TableSource.Dispose();
+//				}
+//			
+//				_TableSource = new ViewSource(this);
+//				TableView.Source = _TableSource;
+//			}
 
 			TableView.ReloadData();
 			ConfigureNavbarItems();
@@ -904,14 +908,17 @@ return;
 
 		private void SetScrollEnabled()
 		{
-			var totalCells = 0;
-			var numberOfSections = TableView.Source.NumberOfSections(TableView);
-			for (var index = 0; index < numberOfSections; index++)
+			if (DisableScrolling)
 			{
-				totalCells += TableView.Source.RowsInSection(TableView, index);
-			}
+				var totalCells = 0;
+				var numberOfSections = TableView.Source.NumberOfSections(TableView);
+				for (var index = 0; index < numberOfSections; index++)
+				{
+					totalCells += TableView.Source.RowsInSection(TableView, index);
+				}
 
-			TableView.ScrollEnabled = TableView.VisibleCells.Length < totalCells || EnablePullToRefresh;
+				TableView.ScrollEnabled = TableView.VisibleCells.Length < totalCells || EnablePullToRefresh;
+			}
 		}
 
 		private void CreateTableView(object view)
@@ -931,6 +938,8 @@ return;
 			{
 				TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
 				TableView.Source = source;
+
+				DisableScrolling = view.GetType().GetCustomAttribute<DisableScrollingAttribute>() != null;
 			}
 			
 			SetDataContextChangeHandler(view);
@@ -940,20 +949,21 @@ return;
 		{
 			Title = title;
 			SetPushing(pushing);
-
+			
 			CreateTableView(view);	
 		}
 
-		public DialogViewController(string title, BaseDialogViewSource source, bool pushing) : base(UITableViewStyle.Grouped)
-		{
-			Title = title;
-			SetPushing(pushing);
 
-			if (source != null)
-			{
-				TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
-				TableView.Source = source;
-			}
-		}
+//		public DialogViewController(string title, BaseDialogViewSource source, bool pushing) : base(UITableViewStyle.Grouped)
+//		{
+//			Title = title;
+//			SetPushing(pushing);
+//
+//			if (source != null)
+//			{
+//				TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
+//				TableView.Source = source;
+//			}
+//		}
 	}
 }

@@ -49,9 +49,7 @@ namespace MonoMobile.Views
 		public string LoadingCaption { get; set; }
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
-		
-		public UITableViewCell Cell {get;set;}
-	
+			
 		public LoadMoreView(RectangleF frame) : base(frame)
 		{
 			_ActivityIndicator = new UIActivityIndicatorView(new RectangleF(indicatorSize * 2, pad, indicatorSize, indicatorSize))
@@ -172,7 +170,8 @@ namespace MonoMobile.Views
 			SizeF size = new SizeF(280, 37);
 			float height = size.Height;
 			
-			if (Cell.TextLabel.Font != null)
+			//TODO: fix this. memthodInfo types are sharing the same viewTypes
+			if (Cell.TextLabel.Font != null && !string.IsNullOrEmpty(NormalCaption))
 			{
 				var fontHeight = Cell.StringSize(NormalCaption, Cell.TextLabel.Font, size, UILineBreakMode.TailTruncation).Height;
 				if (fontHeight == 0) fontHeight = 17;

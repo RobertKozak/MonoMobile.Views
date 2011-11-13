@@ -61,7 +61,8 @@ namespace MonoMobile.Views
 			set { _DataContext = value;
 				SetNumberOfRows(); }
 		}
-
+		
+		public ListSource ListSource { get; set; }
 		public int Index { get; set; }
 		public int NumberOfRows { get; set; }
 
@@ -109,25 +110,25 @@ namespace MonoMobile.Views
 				yield return view;
 		}
 
-		public int Add(object value)
-		{
-			int count = 0;
-			
-//			var list = DataContext as IList;
-//			if (list != null)
-//			{
-//				list.Add(value);
-//			}
-//			var members = data.GetType().GetMembers();
-//			foreach (var item in data)
-//			{
-//				DataContext
-//				Add(item);
-//				count++;
-//			}
-
-			return count;
-		}
+//		public int Add(object value)
+//		{
+//			int count = 0;
+//			
+////			var list = DataContext as IList;
+////			if (list != null)
+////			{
+////				list.Add(value);
+////			}
+////			var members = data.GetType().GetMembers();
+////			foreach (var item in data)
+////			{
+////				DataContext
+////				Add(item);
+////				count++;
+////			}
+//
+//			return count;
+//		}
 
 		public void CollectionChanged(NotifyCollectionChangedEventArgs e)
 		{

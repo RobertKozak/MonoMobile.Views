@@ -33,13 +33,12 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public class ListAttribute : SectionAttribute
+	public class ListAttribute : Attribute
 	{
 		public ListAttribute()
 		{
 		}
 
 		public Type ViewType { get; set; }
-		public Type ElementType { get; set; }
 	}
 }

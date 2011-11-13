@@ -1,5 +1,5 @@
 // 
-//  ICellContent.cs
+//  DisableScrolling.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,9 +30,9 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
 
-	public interface ICellContent
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
+	public class DisableScrollingAttribute: Attribute
 	{
 	}
 }

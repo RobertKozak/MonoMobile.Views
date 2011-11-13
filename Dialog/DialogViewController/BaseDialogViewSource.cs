@@ -138,24 +138,37 @@ namespace MonoMobile.Views
 			var views = new List<UIView>();
 			var section = Sections[indexPath.Section];
 		
-			if (section.ViewTypes != null && section.ViewTypes.ContainsKey(cellId))
+			var key = cellId.ToString();
+
+			if (section.ViewTypes != null && section.ViewTypes.ContainsKey(key))
 			{
-				foreach (var viewType in section.ViewTypes[cellId])
+				var viewTypes = section.ViewTypes[key];
+				if (viewTypes != null)
 				{
-					var view = Activator.CreateInstance(viewType, new object[] { cell.ContentView.Bounds }) as UIView;
-			
-					var initializeCell = view as IInitializeCell;
-					if (initializeCell != null)
+					foreach (var viewType in viewTypes)
 					{
-						var newCellStyle = initializeCell.CellStyle;
-						if (newCellStyle != cellStyle)
+						UIView view = null;
+						var hasFrameCtor = viewType.GetConstructor(new Type[] { typeof(RectangleF) }) != null;
+						if (hasFrameCtor)
+							view = Activator.CreateInstance(viewType, new object[] { cell.ContentView.Bounds }) as UIView;
+						else
+							view = Activator.CreateInstance(viewType) as UIView;
+	
+						var initializeCell = view as IInitializeCell;
+						if (initializeCell != null)
 						{
-							// recreate cell with new style
-							cell = new UITableViewCell(newCellStyle, cellId) { };
+							var newCellStyle = initializeCell.CellStyle;
+							if (newCellStyle != cellStyle)
+							{
+								// recreate cell with new style
+								cell = new UITableViewCell(newCellStyle, cellId) { };
+							}
+	
+							initializeCell.Cell = cell;
 						}
+						
+						views.Add(view);
 					}
-					
-					views.Add(view);
 				}
 			}
 			
@@ -181,24 +194,31 @@ namespace MonoMobile.Views
 
 			foreach (var view in views)
 			{
-				var contentView = view as ICellContent;
-				if (contentView != null)
+				var accessoryView = view as IAccessoryView;
+				if (accessoryView != null)
 				{
-					contentView.Cell = cell;
-
-					view.Frame = cell.ContentView.Bounds;
 					view.Tag = 1;
-					view.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-					cell.ContentView.Add(view);
+					view.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin;
+					cell.AccessoryView = view;
+				}
+				else
+				{
+					var contentView = view as ICellContent;
+					if (contentView != null)
+					{
+						view.Tag = 1;
+						view.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin;
+						cell.ContentView.Add(view);
+					}
 				}
 			}
 
 			return cell;
 		}
 
-		protected virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			cell.AccessoryView = null;
+//			cell.AccessoryView = null;
 			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 	
 			cell.TextLabel.TextAlignment = UITextAlignment.Left;
@@ -213,21 +233,6 @@ namespace MonoMobile.Views
 		#endregion
 
 		#region Row support
-		public override int RowsInSection(UITableView tableview, int section)
-		{
-			if (IsRoot)
-			{
-				return 1;
-			}
-
-			return Sections != null ? Sections[section].NumberOfRows : 0;
-		}
-
-		public override int NumberOfSections(UITableView tableView)
-		{
-			return Sections != null ? Sections.Count : 0;
-		}
-		
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
 			if (!RowHeights.ContainsKey(indexPath))

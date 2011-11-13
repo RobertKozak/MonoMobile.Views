@@ -44,7 +44,7 @@ namespace MonoMobile.Views
 
 			var floatValue = System.Convert.ToSingle(value);
 
-			return string.Format("{0:C}", floatValue, culture);;
+			return string.Format("{0:C}", floatValue, culture);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

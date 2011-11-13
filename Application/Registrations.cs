@@ -43,6 +43,9 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(string), typeof(StringView));
 			ViewContainer.RegisterView(typeof(int), typeof(EntryView));
 			ViewContainer.RegisterView(typeof(float), typeof(EntryView));
+			ViewContainer.RegisterView(typeof(bool), typeof(BooleanView));	
+			ViewContainer.RegisterView(typeof(Enum), typeof(EnumView));
+
 			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectView));
 			ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
 			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandView));
@@ -61,6 +64,10 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(MapAttribute), typeof(MapView));
 			ViewContainer.RegisterView(typeof(RangeAttribute), typeof(SliderView));
 			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
+			ViewContainer.RegisterView(typeof(CheckmarkAttribute), typeof(BooleanView));
+
+			ViewContainer.RegisterView(typeof(IEnumerable<object>), typeof(ListView));
+
 		//	ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
 		}
 	}

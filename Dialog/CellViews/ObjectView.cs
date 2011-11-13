@@ -53,6 +53,7 @@ namespace MonoMobile.Views
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			cell.TextLabel.Text = Caption;
 			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
 			var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
@@ -71,6 +72,13 @@ namespace MonoMobile.Views
 				DataContext.Value = Activator.CreateInstance(DataContext.Member.GetMemberType());
 			}
 
+
+			if (typeof(Enum).IsAssignableFrom(DataContext.Type))
+			{
+				var parser = new ViewParser();
+				
+				var source = parser.ParseList(null, DataContext.Source, DataContext.Member, null);
+			}
 			if (DataContext.Value != null) 
 			{
 				var view = DataContext.Value;

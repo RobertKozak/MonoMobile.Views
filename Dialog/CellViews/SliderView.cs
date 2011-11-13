@@ -35,54 +35,63 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class SliderView : CellView, ICellContent
+	public class SliderView : CellView, IAccessoryView
 	{
 		private UILabel _TextLabel;
  
 		public UISlider Slider { get; set; }
 		
-		public UITableViewCell Cell { get; set; }
-
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
 
 		public SliderView(RectangleF frame) : base(frame) 
 		{
-			Slider = new UISlider(new RectangleF(100, 0, frame.Width - 110, frame.Height)) 
-			{ 
-				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
-				BackgroundColor = UIColor.Clear, 
-				Continuous = true,
-				
-				Tag = 1 
-			};
+//			Slider = new UISlider(new RectangleF(0, 0, 10, frame.Height)) 
+//			{ 
+//				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
+//				BackgroundColor = UIColor.Clear, 
+//				Continuous = true,
+//				
+//				Tag = 1 
+//			};
 
 
-			Slider.ValueChanged += delegate 
-			{
-				DataContext.Value = Slider.Value;
-			};
+//			Slider.ValueChanged += delegate 
+//			{
+//				DataContext.Value = Slider.Value;
+//			};
 
-			Add(Slider);
+	//		Add(Slider);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
 		{	
 			cell.TextLabel.Text = string.Empty;
-
+			
 			var rangeAttribute = DataContext.Member.GetCustomAttribute<RangeAttribute>();
 			if (rangeAttribute != null)
 			{
-				Slider.MaxValue = rangeAttribute.High;
-				Slider.MinValue = rangeAttribute.Low;
+			//	Slider.MaxValue = rangeAttribute.High;
+			//	Slider.MinValue = rangeAttribute.Low;
 				ShowCaption = rangeAttribute.ShowCaption;
 			}
 			
 			if (ShowCaption)
 				cell.TextLabel.Text = Caption;
 
-			Slider.Value = (float)DataContext.Value;
+		//	Slider.Value = (float)DataContext.Value;
 		}
-
+		
+//		public override void LayoutSubviews()
+//		{
+//			base.LayoutSubviews();
+//			float x = 10;
+//			if (ShowCaption)
+//			{	
+//				x = StringSize(Caption, Cell.TextLabel.Font, Bounds.Size, UILineBreakMode.TailTruncation).Width + 20;
+//			}
+//		
+//			Slider.Frame = new RectangleF(x, 0, Bounds.Width - x - 10, Bounds.Height); 
+//		}
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && Slider != null)

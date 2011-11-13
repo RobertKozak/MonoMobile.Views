@@ -94,16 +94,9 @@ namespace MonoMobile.Views
 
 			if (source == null)
 			{
-//				var actualView = view as IView;
-//				if (actualView != null)
-					source = ParseView(controller, view);
+				source = ParseView(controller, view);
 			}
-
-			if (source == null)
-			{
-				source = ParseObject(controller, view);
-			}
-
+	
 			InitializeSearch(view, source);
 			return source;
 		}
@@ -281,11 +274,11 @@ namespace MonoMobile.Views
 		
 		private object GetActualView(object view)
 		{
-			if (!(view is IView))
+			if (view != null && !(view is IView))
 			{
 				var type = view.GetType();
 				var actualView = ViewContainer.GetExactView(type);
-				
+
 				if (actualView != null)
 				{
 					var newView = Activator.CreateInstance(actualView);
@@ -304,8 +297,7 @@ namespace MonoMobile.Views
 
 		private List<Type> GetViewTypes(object view, MemberInfo memberInfo)
 		{
-			var dc = view as IDataContext<object>;
-			if (dc != null)
+			if (memberInfo != null)
 			{
 				var viewAttributes = memberInfo.GetCustomAttributes<ViewAttribute>();
 				if (viewAttributes.Length > 0)
@@ -317,25 +309,23 @@ namespace MonoMobile.Views
 			return null;
 		}
 
-		public UITableViewSource ParseObject(DialogViewController controller, object view)
-		{
-			return null;
-		}
-
 		public UITableViewSource ParseView(DialogViewController controller, object view)
 		{
 			var members = GetMembers(view);
 			var source = new ViewSource(controller);
-
+			
+			Section listSection = null;
 			var currentSection = new Section(controller);
 			var sections = new List<Section>();
 			var sectionMembers = new List<MemberData>();
 			var sectionIndex = 0;
+			var memberOrder = 0;
 
 			foreach (var member in members)
 			{
 				var memberData = new MemberData(view, member);
-
+				var viewTypes = GetViewTypes(view, member);
+				
 				var skipAttribute = member.GetCustomAttribute<SkipAttribute>();
 				if (skipAttribute != null)
 				{
@@ -345,12 +335,23 @@ namespace MonoMobile.Views
 				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 				if (orderAttribute != null)
 				{
-					memberData.Order = orderAttribute.Order;
+					// make sure assigned order is an even number to fit in between the default order 
+					// allowing the values int.MinValue and int.MaxValue for the first and Last positions
+					memberData.Order = orderAttribute.Order > int.MaxValue / 2 ? int.MaxValue : orderAttribute.Order * 2;
+				}
+				else
+				{				
+					// make sure all default memberOrder is odd;
+					memberOrder = memberOrder + (memberOrder % 2) + 1;
+					memberData.Order = memberOrder;
 				}
 
 				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
 				if (sectionAttribute != null)
 				{
+					memberOrder = 1;
+					memberData.Order = memberOrder;
+
 					sectionMembers = new List<MemberData>();
 					
 					currentSection = new Section(controller) { DataContext = sectionMembers };
@@ -359,23 +360,51 @@ namespace MonoMobile.Views
 					currentSection.FooterText = sectionAttribute.Footer;
 					currentSection.ExpandState = sectionAttribute.ExpandState;
 					currentSection.IsExpandable = sectionAttribute.IsExpandable;
-					currentSection.Index = sectionAttribute.Order == 0 ? sectionIndex++ : sectionAttribute.Order;
+
+					if (sectionAttribute.Order == 0)
+					{
+						if (orderAttribute != null)
+							currentSection.Index = orderAttribute.Order;
+						else
+							currentSection.Index = sectionIndex++;
+					}
+
+					currentSection.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
 
 					sections.Add(currentSection);
 				}
-				
-				if (sections.Count == 0)
-					sections.Add(currentSection);
 
+				if (sections.Count == 0)
+				{
+					currentSection.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
+					sections.Add(currentSection);
+				}
+				
+				if (typeof(Enum).IsAssignableFrom(memberData.Type))
+				{
+					var listAttribute = member.GetCustomAttribute<ListAttribute>();
+					if (listAttribute != null)
+					{
+						var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
+						currentSection.ListSource = listSource;
+						currentSection.Index = memberData.Order > -1 ? memberData.Order : currentSection.Index;
+						currentSection.ListSource.MemberData = memberData;
+					}
+				}
+				
 				sectionMembers.Add(memberData);
 				currentSection.DataContext = sectionMembers;
 			}
+			
 
+			// Resort the member list 
 			foreach (var section in sections)
 			{
-				Console.WriteLine(section.GetType().ToString());
-				var memberList = (List<MemberData>)section.DataContext;
+				var memberList = section.DataContext as List<MemberData>;
+
+				var order = 0;
 				var orderedList = memberList.OrderBy(data => data.Order).ToList();
+				orderedList.ForEach((data) => { data.Order = order++; });
 				section.DataContext = orderedList;
 			}
 			
@@ -383,98 +412,112 @@ namespace MonoMobile.Views
 			
 			sectionIndex = 0; 
 			source.Sections.Clear();
-			orderedSections.ForEach((section) => source.Sections.Add(sectionIndex++, section));
+			orderedSections.ForEach((section) => { source.Sections.Add(sectionIndex++, section); section.Index = sectionIndex; });
 
 			return source;
 		}
 
 		public UITableViewSource ParseList(DialogViewController controller, object view, MemberInfo member, List<Type> viewTypes)
 		{
+			Type type = null;
+			object memberValue = null;
+
 			var dc = view as IDataContext<object>;
 			if (dc != null && dc.DataContext != null)
 			{
-				var type = dc.DataContext.GetType();
-			
-				var isList = typeof(IEnumerable).IsAssignableFrom(type) || typeof(Enum).IsAssignableFrom(type);
-				if (isList)
+				memberValue = dc.DataContext;
+				type = dc.DataContext.GetType();
+			}
+			else
+			{
+				memberValue = member.GetValue(view);
+				type = member.GetMemberType();
+			}
+
+			var isList = typeof(IEnumerable).IsAssignableFrom(type) || typeof(Enum).IsAssignableFrom(type);
+			if (isList)
+			{
+				var data = CreateGenericListFromEnumerable(type, memberValue);
+				var source = new ListSource(controller, (IList)data, viewTypes);
+
+				if (source != null)
 				{
-					IList data = null;
-					ListSource source = null;
-					Type[] generic = { type };
-					var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
-					
 					if (type.IsEnum)
 					{
-						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
-		
-						var enumValues = Enum.GetValues(type);
-						foreach (Enum value in enumValues)
-						{
-							data.Add(value);
-						}
+						source.SelectedItem = memberValue;
+						source.SelectedItems.Add(source.SelectedItem);
 					}
 
-					if (type.IsGenericType)
+					source.Caption = GetCaption(member);
+
+					var multiselectionAttribute = member.GetCustomAttribute<MultiselectionAttribute>();
+					source.IsMultiselect = multiselectionAttribute != null;
+					if (multiselectionAttribute != null && !string.IsNullOrEmpty(multiselectionAttribute.MemberName))
 					{
-						var genericType = type.GetGenericArguments().FirstOrDefault();
-						generic = new Type[] { genericType };
-						data = (IList)dc.DataContext;
-						data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
+						source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
+						source.SelectedAccessoryViewType = multiselectionAttribute.SelectedAccessoryViewType;
+						source.UnselectedAccessoryViewType = multiselectionAttribute.UnselectedAccessoryViewType;
+						source.UnselectionBehavior = multiselectionAttribute.UnselectionBehavior;
 					}
-		
-					source = new ListSource(controller, (IList)data, viewTypes);
 
-					if (source != null)
+					var selectionAttribute = member.GetCustomAttribute<SelectionAttribute>();
+					if (selectionAttribute != null && !string.IsNullOrEmpty(selectionAttribute.MemberName))
 					{
-						if (type.IsEnum)
-						{
-							source.SelectedItem = dc.DataContext;
-							source.SelectedItems.Add(source.SelectedItem);
-						}
+						source.IsSelectable = true;
+						source.SelectedItemMemberName = selectionAttribute.MemberName;
+						source.NavigationView = selectionAttribute.NavigateToView;
+						source.IsNavigateable = selectionAttribute.NavigateToView != null || !type.IsEnum;
 
-						source.Caption = GetCaption(member);
-
-						var multiselectionAttribute = member.GetCustomAttribute<MultiselectionAttribute>();
-						source.IsMultiselect = multiselectionAttribute != null;
-						if (multiselectionAttribute != null && !string.IsNullOrEmpty(multiselectionAttribute.MemberName))
-						{
-							source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
-							source.SelectedAccessoryViewType = multiselectionAttribute.SelectedAccessoryViewType;
-							source.UnselectedAccessoryViewType = multiselectionAttribute.UnselectedAccessoryViewType;
-							source.UnselectionBehavior = multiselectionAttribute.UnselectionBehavior;
-						}
+						if (source.SelectedAccessoryViewType == null || selectionAttribute.SelectedAccessoryViewType != null)
+							source.SelectedAccessoryViewType = selectionAttribute.SelectedAccessoryViewType;
+						if (source.UnselectedAccessoryViewType == null || selectionAttribute.UnselectedAccessoryViewType != null)
+							source.UnselectedAccessoryViewType = selectionAttribute.UnselectedAccessoryViewType;
+					}						
 	
-						var selectionAttribute = member.GetCustomAttribute<SelectionAttribute>();
-						if (selectionAttribute != null && !string.IsNullOrEmpty(selectionAttribute.MemberName))
-						{
-							source.IsSelectable = true;
-							source.SelectedItemMemberName = selectionAttribute.MemberName;
-							source.NavigationView = selectionAttribute.NavigateToView;
-							source.IsNavigateable = selectionAttribute.NavigateToView != null || !type.IsEnum;
+					var listAttribute = member.GetCustomAttribute<ListAttribute>();
+					source.TableViewStyle = listAttribute != null ? UITableViewStyle.Plain : UITableViewStyle.Grouped;
 
-							if (source.SelectedAccessoryViewType == null || selectionAttribute.SelectedAccessoryViewType != null)
-								source.SelectedAccessoryViewType = selectionAttribute.SelectedAccessoryViewType;
-							if (source.UnselectedAccessoryViewType == null || selectionAttribute.UnselectedAccessoryViewType != null)
-								source.UnselectedAccessoryViewType = selectionAttribute.UnselectedAccessoryViewType;
-						}						
-		
-						var listAttribute = member.GetCustomAttribute<ListAttribute>();
-						source.TableViewStyle = listAttribute != null ? UITableViewStyle.Plain : UITableViewStyle.Grouped;
-	
-						var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-						source.IsRoot = rootAttribute != null;
-						if (rootAttribute != null)
-						{
-							source.PopOnSelection = rootAttribute.PopOnSelection;
-							source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
-						}	
+					var rootAttribute = member.GetCustomAttribute<RootAttribute>();
+					source.IsRoot = rootAttribute != null;
+					if (rootAttribute != null)
+					{
+						source.PopOnSelection = rootAttribute.PopOnSelection;
+						source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
+					}	
 
-						return source;
-					}
+					return source;
 				}
 			}
 
 			return null;
+		}
+		
+		private IList CreateGenericListFromEnumerable(Type type, object enumerable)
+		{
+			IList data = null;
+			Type[] generic = { type };
+			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
+			
+			if (type.IsEnum)
+			{
+				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+
+				var enumValues = Enum.GetValues(type);
+				foreach (Enum value in enumValues)
+				{
+					data.Add(value);
+				}
+			}
+
+			if (type.IsGenericType)
+			{
+				var genericType = type.GetGenericArguments().FirstOrDefault();
+				generic = new Type[] { genericType };
+				data = (IList)enumerable;
+				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
+			}
+
+			return data;
 		}
 
 //		public void Parse(UIView view, string caption, Theme theme)
@@ -1838,7 +1881,7 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		private string GetCaption(MemberInfo member)
+		public static string GetCaption(MemberInfo member)
 		{
 			var caption = member.Name;
 			var captionAttribute = member.GetCustomAttribute<CaptionAttribute>();
@@ -1849,7 +1892,6 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-				caption = member.Name;
 				if (caption == "DataContext")
 				{
 					var propertyInfo = member as PropertyInfo;
