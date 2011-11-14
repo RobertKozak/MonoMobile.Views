@@ -47,6 +47,7 @@ namespace MonoMobile.Views
 		public MemberInfo Member { get; private set; }
  
 		public int Order { get; set; }
+		public float RowHeight { get; set; }
 
 		public MemberData(object source, MemberInfo member): base(null)
 		{

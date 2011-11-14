@@ -318,6 +318,10 @@ namespace MonoMobile.Views
 					continue;
 				}
 				
+				var rowHeightAttribute = member.GetCustomAttribute<RowHeightAttribute>();
+				if (rowHeightAttribute != null)
+					memberData.RowHeight = rowHeightAttribute.RowHeight;
+
 				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 				if (orderAttribute != null)
 				{
@@ -366,15 +370,13 @@ namespace MonoMobile.Views
 					sections.Add(currentSection);
 				}
 				
-				if (typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type))
+				if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
 				{
 					var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
 					listSource.MemberData = memberData;
 					listSources.Add(memberData.Order, listSource);
 					currentSection.Index = memberData.Order > -1 ? memberData.Order : currentSection.Index;
 				}
-				else
-					listSources.Add(memberData.Order, null);
 				
 				sectionMembers.Add(memberData);
 				currentSection.DataContext = sectionMembers;
@@ -396,8 +398,6 @@ namespace MonoMobile.Views
 				foreach(var listSource in listSources.Values)
 				{
 					order++;
-					if (listSource == null) continue;
-					
 					section.ListSources.Add(order, listSource);
 				}
 			}

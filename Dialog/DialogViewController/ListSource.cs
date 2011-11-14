@@ -237,10 +237,8 @@ namespace MonoMobile.Views
 					}
 				}
 			}
-			
-			var data = SelectedItem;
-			if (data == null)
-				data = GetSectionData(0);
+
+			var data = GetSectionData(indexPath.Section);
 
 			if (IsRoot && (data is IEnumerable || data is Enum))
 			{
@@ -251,34 +249,25 @@ namespace MonoMobile.Views
 			if (IsNavigateable && (SelectedItem != null || NavigationViewType != null))
 			{
 				NavigateToView();
-		//		return;	
 			}
-
-//			if (IsRoot)
-//			{
-//				NavigateToList();
-//			}
 		}
 		
 		public void NavigateToView()
 		{
 			var view = SelectedItem;
 			var viewType = NavigationViewType;
-		
-			if (view is IEnumerable || view is Enum)
+					
+			if (viewType != null)
 			{
-				if (viewType != null)
+				view = Activator.CreateInstance(viewType);
+				
+				var dc = view as IDataContext<object>;
+				if (dc != null)
 				{
-					view = Activator.CreateInstance(viewType);
-	
-					var dc = view as IDataContext<object>;
-					if (dc != null)
-					{
-						dc.DataContext = SelectedItem;
-					}
+					dc.DataContext = SelectedItem;
 				}
 			}
-				
+
 			if (Caption == null)
 				Caption = SelectedItem.ToString();
 
@@ -304,8 +293,13 @@ namespace MonoMobile.Views
 			NavigationSource.IsRoot = false;
 			NavigationSource.NavigationViewType = null;
 			
-			var genericType = data.GetType().GetGenericArguments().FirstOrDefault();
-			var viewType = ViewContainer.GetView(genericType);
+			var viewType = NavigationViewType;
+			if (viewType == null)
+			{
+				var genericType = data.GetType().GetGenericArguments().FirstOrDefault();
+				viewType = ViewContainer.GetView(genericType);
+			}
+		
 			if (viewType != null)
 			{
 				NavigationSource.IsNavigateable = IsNavigateable;

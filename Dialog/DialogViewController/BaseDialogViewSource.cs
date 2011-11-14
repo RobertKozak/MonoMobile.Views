@@ -191,7 +191,8 @@ namespace MonoMobile.Views
 			}
 
 			section.Views.Add(cell, views);
-
+			var resizedRows = false;
+			
 			foreach (var view in views)
 			{
 				var accessoryView = view as IAccessoryView;
@@ -211,6 +212,35 @@ namespace MonoMobile.Views
 						cell.ContentView.Add(view);
 					}
 				}
+				
+				var sizeable = view as ISizeable;
+				if (sizeable != null)
+				{
+					var rowHeight = sizeable.GetRowHeight();
+
+					if (RowHeights.ContainsKey(indexPath))
+					{
+						if (RowHeights[indexPath] != rowHeight)
+						{
+							RowHeights[indexPath] = rowHeight;
+							resizedRows = true;
+						}
+					}
+					else
+					{
+						RowHeights.Add(indexPath, rowHeight);
+						resizedRows = true;
+					}
+				}
+			}
+
+			if (resizedRows)
+			{
+//				new Wait(new TimeSpan(0), () =>
+//				{
+//					Controller.TableView.BeginUpdates();
+//					Controller.TableView.EndUpdates();
+//				});
 			}
 
 			return cell;
@@ -235,6 +265,10 @@ namespace MonoMobile.Views
 		#region Row support
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
+			var memberData = GetMemberData(indexPath);
+			if (memberData != null && memberData.RowHeight != 0)
+				return memberData.RowHeight;
+
 			if (!RowHeights.ContainsKey(indexPath))
 			{
 				return tableView.RowHeight;

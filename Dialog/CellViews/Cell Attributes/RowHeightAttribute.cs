@@ -1,5 +1,5 @@
 // 
-//  ViewView.cs
+//  RowHeightAttribute.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,28 +30,16 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections;
-	using System.Drawing;
-	using MonoTouch.UIKit;
-	using MonoTouch.Foundation;
-	
-	[Preserve(AllMembers = true)]
-	public class ViewView : UIView, IDataContext<object>, IInitializeCell
+
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	public class RowHeightAttribute: Attribute
 	{
-		[List]
-		public object DataContext { get; set; }
-		
-		[Skip]
-		public UITableViewCell Cell { get; set; }
-		[Skip]
-		public DialogViewController Controller { get; set; }
-		
-		[Skip]
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
-		
-		public ViewView() : base(RectangleF.Empty)
+		public RowHeightAttribute(float rowHeight)
 		{
-		}	
+			RowHeight = rowHeight;
+		}
+
+		public float RowHeight { get; set; }
 	}
 }
 

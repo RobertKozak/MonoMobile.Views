@@ -173,8 +173,6 @@ namespace MonoMobile.Views
 			memberData = GetMemberData(indexPath);
 
 			base.UpdateCell(cell, indexPath);
-
-			var resizedRows = false;
 			
 			if (memberData.Value != null && cell.DetailTextLabel != null)
 				cell.DetailTextLabel.Text = memberData.Value.ToString();
@@ -206,31 +204,7 @@ namespace MonoMobile.Views
 						{
 							updateable.UpdateCell(cell, indexPath);
 						}
-
-						var sizeable = view as ISizeable;
-						if (sizeable != null)
-						{
-							var rowHeight = sizeable.GetRowHeight();
-
-							if (RowHeights.ContainsKey(indexPath))
-							{
-								RowHeights[indexPath] = rowHeight;
-							}
-							else
-								RowHeights.Add(indexPath, rowHeight);
-							
-							resizedRows = true;
-						}
 					}
-				}
-
-				if (resizedRows)
-				{
-					new Wait(new TimeSpan(0), ()=>
-					{
-						Controller.TableView.BeginUpdates();
-						Controller.TableView.EndUpdates();
-					});
 				}
 			}
 		}
