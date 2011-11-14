@@ -30,21 +30,18 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Drawing;
+	using System.Linq;
+	using System.Reflection;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
 	public class ListView : CellView, ISelectable
 	{
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
-		
-		public UIModalTransitionStyle TransitionStyle { get; set; }
+		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 
-		public bool IsModel { get; set; }
-
-		public Type ViewType { get; set; }
-		
 		public ListView() : base(RectangleF.Empty)
 		{
 		}
@@ -55,50 +52,34 @@ namespace MonoMobile.Views
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			var source = Controller.TableView.Source as ViewSource;
+			var listSource = source.GetListSource(indexPath);
+			
+			listSource.UpdateCell(cell, indexPath);
+
 			cell.TextLabel.Text = Caption;
 			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			cell.DetailTextLabel.Text = string.Empty;
+		}
+
+		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+		{	
+			var source = controller.TableView.Source as ViewSource;
+			var listSource = source.GetListSource(indexPath);
+							
+			var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
+			var selectionAttribute = DataContext.Member.GetCustomAttribute<SelectionAttribute>();
 
 			var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
 			if (navigateToView != null)
 			{
-				TransitionStyle = navigateToView.TransitionStyle;
-				IsModel = navigateToView.ShowModal;
-				ViewType = navigateToView.ViewType; 
-			}
-		}
-
-		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
-		{
-			if (DataContext.Value == null)
-			{
-				DataContext.Value = Activator.CreateInstance(DataContext.Member.GetMemberType());
+				listSource.ModalTransitionStyle = navigateToView.TransitionStyle;
+				listSource.IsModal = navigateToView.ShowModal;
+				listSource.NavigationViewType = navigateToView.ViewType;
+				listSource.IsNavigateable = selectionAttribute == null && multiselectionAttribute == null;
 			}
 
-			if (DataContext.Value != null)
-			{
-				var view = DataContext.Value;
-				if (ViewType != null && !view.GetType().Equals(ViewType))
-				{
-					view = Activator.CreateInstance(ViewType); 
-				}
-
-				var dvc = new DialogViewController(Caption, view, true) { Autorotate = true };
-				var nav = controller.ParentViewController as UINavigationController;
-
-				if (IsModel)
-				{		
-					dvc.ModalTransitionStyle = TransitionStyle;
- 
-					var navController = new UINavigationController();
-					navController.ViewControllers = new UIViewController[] { dvc };
-
-					nav.PresentModalViewController(navController, true);
-				}
-				else
-				{
-					nav.PushViewController(dvc, true);
-				}
-			}
+			listSource.RowSelected(tableView, indexPath);
 		}
 	}
 }

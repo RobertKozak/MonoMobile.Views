@@ -30,6 +30,7 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Reflection;
 	using MonoTouch.CoreLocation;
@@ -41,10 +42,11 @@ namespace MonoMobile.Views
 		{
 			ViewContainer.RegisterView(typeof(object), typeof(ObjectView));
 			ViewContainer.RegisterView(typeof(string), typeof(StringView));
-			ViewContainer.RegisterView(typeof(int), typeof(EntryView));
-			ViewContainer.RegisterView(typeof(float), typeof(EntryView));
+			ViewContainer.RegisterView(typeof(int), typeof(StringView));
+			ViewContainer.RegisterView(typeof(float), typeof(StringView));
 			ViewContainer.RegisterView(typeof(bool), typeof(BooleanView));	
-			ViewContainer.RegisterView(typeof(Enum), typeof(EnumView));
+			ViewContainer.RegisterView(typeof(Enum), typeof(ListView));
+			ViewContainer.RegisterView(typeof(IEnumerable), typeof(ListView));
 
 			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectView));
 			ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
@@ -53,7 +55,7 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(HtmlAttribute), typeof(HtmlView));
 			ViewContainer.RegisterView(typeof(EntryAttribute), typeof(EntryView));
 			ViewContainer.RegisterView(typeof(PasswordAttribute), typeof(EntryView));
-			ViewContainer.RegisterView(typeof(NavigateToViewAttribute), typeof(ObjectView));
+	//		ViewContainer.RegisterView(typeof(NavigateToViewAttribute), typeof(List));
 			ViewContainer.RegisterView(typeof(DateTime), typeof(DateView));
 			ViewContainer.RegisterView(typeof(DateAttribute), typeof(DateView));
 			ViewContainer.RegisterView(typeof(TimeAttribute), typeof(TimeView));
@@ -64,7 +66,6 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(MapAttribute), typeof(MapView));
 			ViewContainer.RegisterView(typeof(RangeAttribute), typeof(SliderView));
 			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
-			ViewContainer.RegisterView(typeof(CheckmarkAttribute), typeof(BooleanView));
 
 			ViewContainer.RegisterView(typeof(IEnumerable<object>), typeof(ListView));
 

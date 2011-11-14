@@ -30,8 +30,9 @@
 namespace MonoMobile.Views
 {
     using System;
+	using MonoTouch.Foundation;
 
-    public abstract class DisposableObject : IDisposable
+    public abstract class DisposableObject : NSObject, IDisposable
     {
         ~DisposableObject()
         {

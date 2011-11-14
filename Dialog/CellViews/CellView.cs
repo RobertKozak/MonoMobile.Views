@@ -40,6 +40,7 @@ namespace MonoMobile.Views
 		private Type _Type { get; set; }
 
 		public UITableViewCell Cell { get; set; }
+		public DialogViewController Controller { get; set; }
 
 		private MemberData _DataContext;
 		public MemberData DataContext { get { return GetDataContext(); } set { SetDataContext(value); } }

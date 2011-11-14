@@ -338,6 +338,7 @@
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\MultiselectionAttribute.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\RootAttribute.cs" />
     <Compile Include="Dialog\CellViews\Table Attributes\DisableScrollingAttribute.cs" />
+    <Compile Include="Dialog\CellViews\ViewView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

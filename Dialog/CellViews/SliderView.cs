@@ -43,24 +43,24 @@ namespace MonoMobile.Views
 		
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
 
-		public SliderView(RectangleF frame) : base(frame) 
+		public SliderView(RectangleF frame) : base(RectangleF.Empty) 
 		{
-//			Slider = new UISlider(new RectangleF(0, 0, 10, frame.Height)) 
-//			{ 
-//				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
-//				BackgroundColor = UIColor.Clear, 
-//				Continuous = true,
-//				
-//				Tag = 1 
-//			};
+			Slider = new UISlider(new RectangleF(0, 0, 100, frame.Height)) 
+			{ 
+				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
+				BackgroundColor = UIColor.Clear, 
+				Continuous = true,
+				
+				Tag = 1 
+			};
 
 
-//			Slider.ValueChanged += delegate 
-//			{
-//				DataContext.Value = Slider.Value;
-//			};
+			Slider.ValueChanged += delegate 
+			{
+				DataContext.Value = Slider.Value;
+			};
 
-	//		Add(Slider);
+			Add(Slider);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
@@ -70,15 +70,15 @@ namespace MonoMobile.Views
 			var rangeAttribute = DataContext.Member.GetCustomAttribute<RangeAttribute>();
 			if (rangeAttribute != null)
 			{
-			//	Slider.MaxValue = rangeAttribute.High;
-			//	Slider.MinValue = rangeAttribute.Low;
+				Slider.MaxValue = rangeAttribute.High;
+				Slider.MinValue = rangeAttribute.Low;
 				ShowCaption = rangeAttribute.ShowCaption;
 			}
 			
 			if (ShowCaption)
 				cell.TextLabel.Text = Caption;
 
-		//	Slider.Value = (float)DataContext.Value;
+			Slider.Value = (float)DataContext.Value;
 		}
 		
 //		public override void LayoutSubviews()

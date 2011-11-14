@@ -30,6 +30,7 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Drawing;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
@@ -38,9 +39,11 @@ namespace MonoMobile.Views
 	public class ObjectView : CellView, ISelectable
 	{
 		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
-		
+
 		public UIModalTransitionStyle TransitionStyle { get; set; }
+
 		public bool IsModel { get; set; }
+
 		public Type ViewType { get; set; }
 		
 		public ObjectView() : base(RectangleF.Empty)

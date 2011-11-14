@@ -40,12 +40,10 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class ListSource : BaseDialogViewSource, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
 	{
-		private ListSource _NavigationSource;
-
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
 
-		public readonly NSString CellId = new NSString("listCell");
+		public readonly NSString CellId;
 		public MemberData MemberData { get; set; }
 
 		public IList SelectedItems { get; set; }
@@ -60,7 +58,12 @@ namespace MonoMobile.Views
 		public bool IsMultiselect { get; set; }
 		public bool PopOnSelection { get; set; }
 		public bool HideCaptionOnSelection { get; set; }
-		
+
+		public Type NavigationViewType { get; set; }
+		public ListSource NavigationSource { get; set; }
+		public bool IsModal {get; set; }
+		public UIModalTransitionStyle ModalTransitionStyle { get; set; }
+
 		public ListSource(DialogViewController controller, IList list, IEnumerable<Type> viewTypes) : base(controller)
 		{	
 			Sections = new Dictionary<int, Section>();
@@ -70,14 +73,14 @@ namespace MonoMobile.Views
 			if (viewTypes != null)
 				viewTypesList = viewTypes.ToList();
 
+			var genericType = list.GetType().GetGenericArguments().FirstOrDefault();
+			CellId = new NSString(genericType.ToString());
+
 			section.ViewTypes.Add(CellId, viewTypesList);
 			
 			Sections.Add(0, section);
 
-			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
-			var genericType = list.GetType().GetGenericArguments().FirstOrDefault();
-			Type[] generic = { genericType };		
-			SelectedItems = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+			SelectedItems = list.GetType().CreateGenericListFromEnumerable(null);
 
 			CellFactory = new TableCellFactory<UITableViewCell>(CellId);
 		}
@@ -122,6 +125,7 @@ namespace MonoMobile.Views
 			base.UpdateCell(cell, indexPath);
 			
 			cell.SelectionStyle = IsRoot || IsNavigateable ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;  
+
 			SetSelectionAccessory(cell, indexPath);
 
 			var section = Sections[indexPath.Section];
@@ -146,33 +150,35 @@ namespace MonoMobile.Views
 						}
 					}
 				}
-				else if (IsRoot)
+			}
+			
+			if (IsRoot)
+			{
+				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				cell.TextLabel.Text = Caption;
+				if (IsMultiselect && cell.DetailTextLabel != null)
 				{
-					cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-					cell.TextLabel.Text = Caption;
-					if (IsMultiselect)
-					{
-						cell.DetailTextLabel.Text = SelectedItems.Count.ToString();
-					}
-					else
-					{
-						if (SelectedItem != null)
-						{
-							if (HideCaptionOnSelection)
-								cell.TextLabel.Text = SelectedItem.ToString();
-							else
-								cell.DetailTextLabel.Text = SelectedItem.ToString();
-						}
-					}
+					cell.DetailTextLabel.Text = SelectedItems.Count.ToString();
 				}
 				else
 				{
-					cell.TextLabel.Text = GetSectionData(indexPath.Section)[indexPath.Row].ToString();
+					if (SelectedItem != null)
+					{
+						if (HideCaptionOnSelection)
+							cell.TextLabel.Text = SelectedItem.ToString();
+						else
+							if (cell.DetailTextLabel != null)
+								cell.DetailTextLabel.Text = SelectedItem.ToString();
+					}
 				}
+			}
+			else
+			{
+				cell.TextLabel.Text = GetSectionData(indexPath.Section)[indexPath.Row].ToString();
 			}
 		}
 
-		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{			
 			if (!IsRoot)
 			{
@@ -184,24 +190,21 @@ namespace MonoMobile.Views
 
 					switch (UnselectionBehavior)
 					{
-						case UnselectionBehavior.SetSelectedToCurrentValue :
-							break;
-						case UnselectionBehavior.SetSelectedToNull :
-							SelectedItem = null;
-							break;
+						case UnselectionBehavior.SetSelectedToCurrentValue : break;
+						case UnselectionBehavior.SetSelectedToNull : SelectedItem = null; break;
 						case UnselectionBehavior.SetSelectedToPreviousValueOrNull :
+						{
+							if (SelectedItems.Count > 0)
 							{
-								if (SelectedItems.Count > 0)
-								{
-									SelectedItem = SelectedItems[SelectedItems.Count - 1];
-								}
-								else
-								{
-									SelectedItem = null;
-								}
-
-								break;
+								SelectedItem = SelectedItems[SelectedItems.Count - 1];
 							}
+							else
+							{
+								SelectedItem = null;
+							}
+
+							break;
+						}
 					}
 
 				}
@@ -211,98 +214,129 @@ namespace MonoMobile.Views
 				}
 
 				SetItems();
-	
+
 				if (Controller != null)
 				{
 					Controller.Selected(SelectedItem, indexPath);
-				}
 	
-				if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
-				{
-					Controller.NavigationController.PopViewControllerAnimated(true);
-				}
-				
-				if (IsSelectable || IsMultiselect || !IsRoot)
-				{
-					Controller.ReloadData();
-				}
-				else
-				{
-					new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+					if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
+					{
+						Controller.NavigationController.PopViewControllerAnimated(true);
+					}
+					
+					if (IsSelectable || IsMultiselect || !IsRoot)
 					{
 						Controller.ReloadData();
-					});
+					}
+					else
+					{
+						new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+						{
+							Controller.ReloadData();
+						});
+					}
 				}
 			}
 			
-			if (IsNavigateable || IsRoot)
+			var data = SelectedItem;
+			if (data == null)
+				data = GetSectionData(0);
+
+			if (IsRoot && (data is IEnumerable || data is Enum))
 			{
-				if (NavigationView != null)
-				{
-					NavigateToView(NavigationView);
-					//return;
-				}
+				NavigateToList();
+				return;
+			}			
 			
-				if (IsRoot)
-				{
-					NavigateToList();
-				}
+			if (IsNavigateable && (SelectedItem != null || NavigationViewType != null))
+			{
+				NavigateToView();
+		//		return;	
 			}
+
+//			if (IsRoot)
+//			{
+//				NavigateToList();
+//			}
 		}
 		
-		public void NavigateToView(Type viewType)
+		public void NavigateToView()
 		{
-			if (viewType != null)
+			var view = SelectedItem;
+			var viewType = NavigationViewType;
+		
+			if (view is IEnumerable || view is Enum)
 			{
-				var view = Activator.CreateInstance(viewType) as UIView;
-
-				var dc = view as IDataContext<object>;
-				if (dc != null)
+				if (viewType != null)
 				{
-					dc.DataContext = SelectedItem;
+					view = Activator.CreateInstance(viewType);
+	
+					var dc = view as IDataContext<object>;
+					if (dc != null)
+					{
+						dc.DataContext = SelectedItem;
+					}
 				}
-				
-				MonoMobileApplication.PushView(view);
 			}
+				
+			if (Caption == null)
+				Caption = SelectedItem.ToString();
+
+			var dvc = new DialogViewController(Caption, view, true);
+		
+			Controller.NavigationController.PushViewController(dvc, true);
 		}
 
 		public void NavigateToList()
 		{
 			var section = Sections[0];
 			var data = GetSectionData(0);
-			
+			var type = data.GetType();
+
 			var dvc = new DialogViewController(Caption, Controller.RootView, true);
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
 
-			if (_NavigationSource == null)
-				_NavigationSource = new ListSource(dvc, data, section.ViewTypes[CellId]);
-
-			_NavigationSource.SelectedItem = SelectedItem;
-			_NavigationSource.SelectedItems = SelectedItems;
-			_NavigationSource.UnselectionBehavior = UnselectionBehavior;
-
-			_NavigationSource.IsNavigateable = false;
-			_NavigationSource.IsRoot = false;
-			_NavigationSource.IsMultiselect = IsMultiselect;
-			_NavigationSource.IsSelectable = IsSelectable;
-			_NavigationSource.CellFactory = CellFactory;
-			_NavigationSource.NavigationView = null;
-			_NavigationSource.PopOnSelection = PopOnSelection;
-			_NavigationSource.NibName = NibName;
-
-			_NavigationSource.TableViewStyle = TableViewStyle;
-	
-			_NavigationSource.IsSearchbarHidden = IsSearchbarHidden;
-			_NavigationSource.EnableSearch = EnableSearch;
-			_NavigationSource.IncrementalSearch = IncrementalSearch;
-			_NavigationSource.SearchPlaceholder = SearchPlaceholder;
-			_NavigationSource.SearchCommand = SearchCommand;
-
-			_NavigationSource.SelectedAccessoryViewType = SelectedAccessoryViewType;
-			_NavigationSource.UnselectedAccessoryViewType = UnselectedAccessoryViewType;
+			if (NavigationSource == null)
+				NavigationSource = new ListSource(dvc, data, section.ViewTypes[CellId]);
 			
-			dvc.TableView.Source = _NavigationSource;
+			NavigationSource.IsNavigateable = false;
+			NavigationSource.IsRoot = false;
+			NavigationSource.NavigationViewType = null;
+			
+			var genericType = data.GetType().GetGenericArguments().FirstOrDefault();
+			var viewType = ViewContainer.GetView(genericType);
+			if (viewType != null)
+			{
+				NavigationSource.IsNavigateable = IsNavigateable;
+				NavigationSource.NavigationViewType = viewType;
+			}
+
+			NavigationSource.CellFactory = CellFactory;
+
+			NavigationSource.SelectedItem = SelectedItem;
+			NavigationSource.SelectedItems = SelectedItems;
+			NavigationSource.UnselectionBehavior = UnselectionBehavior;
+
+			NavigationSource.IsMultiselect = IsMultiselect;
+			NavigationSource.IsSelectable = IsSelectable;
+
+			NavigationSource.PopOnSelection = PopOnSelection;
+			NavigationSource.NibName = NibName;
+
+			NavigationSource.TableViewStyle = TableViewStyle;
+	
+			NavigationSource.IsSearchbarHidden = IsSearchbarHidden;
+			NavigationSource.EnableSearch = EnableSearch;
+			NavigationSource.IncrementalSearch = IncrementalSearch;
+			NavigationSource.SearchPlaceholder = SearchPlaceholder;
+			NavigationSource.SearchCommand = SearchCommand;
+
+			NavigationSource.SelectedAccessoryViewType = SelectedAccessoryViewType;
+			NavigationSource.UnselectedAccessoryViewType = UnselectedAccessoryViewType;
+			
+			NavigationSource.Controller = dvc;
+			dvc.TableView.Source = NavigationSource;
 			Controller.NavigationController.PushViewController(dvc, true);
 		}
 
@@ -331,10 +365,10 @@ namespace MonoMobile.Views
 
 		public void Activated()
 		{
-			if (_NavigationSource != null)
+			if (NavigationSource != null)
 			{
-				SelectedItem = _NavigationSource.SelectedItem;
-				SelectedItems = _NavigationSource.SelectedItems;
+				SelectedItem = NavigationSource.SelectedItem;
+				SelectedItems = NavigationSource.SelectedItems;
 				SetItems();
 			}
 			else
@@ -345,7 +379,7 @@ namespace MonoMobile.Views
 			Controller.ReloadData();
 		}
 
-		public void Deactived()
+		public void Deactivated()
 		{
 		}
 		
@@ -386,16 +420,24 @@ namespace MonoMobile.Views
 				
 				if (IsMultiselect)
 				{
+					if (!SelectedItems.Contains(SelectedItem))
+					{
+						cell.AccessoryView = null;
+						cell.Accessory = UITableViewCellAccessory.None;
+					}
+
 					foreach (var item in SelectedItems)
 					{
 						selectedIndex = GetSectionData(indexPath.Section).IndexOf(item);
 						
+						if (selectedIndex != indexPath.Row) continue;
+
 						if (selectedAccessoryView != null)
 						{
-							cell.AccessoryView = selectedIndex == indexPath.Row ? selectedAccessoryView : cell.AccessoryView;
+							cell.AccessoryView = selectedAccessoryView;
 						}
 						else
-							cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : cell.Accessory;
+							cell.Accessory = UITableViewCellAccessory.Checkmark;
 					}
 				}
 			}

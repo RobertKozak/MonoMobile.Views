@@ -2,7 +2,7 @@
 // Section.cs
 //
 // Author:
-//  Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak))
 //
 // Copyright 2010, Novell, Inc.
 //
@@ -58,11 +58,10 @@ namespace MonoMobile.Views
 		public IList DataContext
 		{ 
 			get { return _DataContext; } 
-			set { _DataContext = value;
-				SetNumberOfRows(); }
+			set { _DataContext = value; SetNumberOfRows(); }
 		}
 		
-		public ListSource ListSource { get; set; }
+		public IDictionary<int, ListSource> ListSources { get; set; }
 		public int Index { get; set; }
 		public int NumberOfRows { get; set; }
 
@@ -84,6 +83,7 @@ namespace MonoMobile.Views
 		
 		public Section(string title)
 		{
+			ListSources = new Dictionary<int, ListSource>(); 
 			ViewTypes = new Dictionary<string, IList<Type>>();
 			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}
@@ -92,6 +92,7 @@ namespace MonoMobile.Views
 		{
 			Controller = controller;
 
+			ListSources = new Dictionary<int, ListSource>(); 
 			ViewTypes = new Dictionary<string, IList<Type>>();
 			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}

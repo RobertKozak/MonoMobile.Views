@@ -76,12 +76,15 @@ namespace MonoMobile.Views
 		{
 			DataContext.Value = !(bool)DataContext.Value;
 			UpdateValue();
+
+			controller.UpdateSource();
 		}
 
 		private void UpdateValue()
 		{
 			if (HasCheckmark)
 			{
+				Cell.AccessoryView = null;
 				Cell.Accessory = (bool)DataContext.Value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 			}
 		}

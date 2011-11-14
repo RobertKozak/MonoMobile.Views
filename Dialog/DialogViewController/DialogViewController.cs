@@ -61,7 +61,7 @@ namespace MonoMobile.Views
 		private UISearchBar _Searchbar;
 		private Section[] _OriginalSections;
 		//private IElement[][] _OriginalElements;
-		private ViewSource _TableSource;
+		private UITableViewSource _TableSource;
 
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; }		
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
@@ -795,16 +795,15 @@ return;
 
 		public void UpdateSource()
 		{			
-//		//	if (Root != null)
+//			if (_TableSource != null)
 //			{
-//				if (_TableSource != null)
-//				{
-//					_TableSource.Dispose();
-//				}
-//			
-//				_TableSource = new ViewSource(this);
-//				TableView.Source = _TableSource;
+//				_TableSource.Dispose();
 //			}
+//			
+//			var parser = new ViewParser();
+//			_TableSource = parser.Parse(this, RootView);
+//			TableView.Source = _TableSource;
+
 
 			TableView.ReloadData();
 			ConfigureNavbarItems();
@@ -820,7 +819,7 @@ return;
 			
 //			if (TableView != null)
 //			{
-//				UpdateSource();
+			//	UpdateSource();
 				TableView.ReloadData();
 //			}
 
@@ -864,7 +863,7 @@ return;
 			var activation = TableView.Source as IActivation;
 			if (activation != null)
 			{
-				activation.Deactived();
+				activation.Deactivated();
 			}
 		}
 		
@@ -876,7 +875,7 @@ return;
 			{
 				var activation = RootView as IActivation;
 				if (activation != null)
-					activation.Deactived();
+					activation.Deactivated();
 			}
 		}
 
@@ -920,19 +919,24 @@ return;
 				TableView.ScrollEnabled = TableView.VisibleCells.Length < totalCells || EnablePullToRefresh;
 			}
 		}
-
+		
 		private void CreateTableView(object view)
 		{
+			CreateTableView(view, null);
+		}
+
+		private void CreateTableView(object view, MemberInfo member)
+		{
 			var parser = new ViewParser();
-			var source = parser.Parse(this, view);
+			var source = parser.Parse(this, view, member);
 
 			var tableViewStyle = UITableViewStyle.Grouped;
 
-			var tableStyle = source as ITableViewStyle;
-			if (tableStyle != null)
-			{
-				tableViewStyle = tableStyle.TableViewStyle;
-			}
+//			var tableStyle = source as ITableViewStyle;
+//			if (tableStyle != null)
+//			{
+//				tableViewStyle = tableStyle.TableViewStyle;
+//			}
 			
 			if (source != null)
 			{
@@ -951,6 +955,14 @@ return;
 			SetPushing(pushing);
 			
 			CreateTableView(view);	
+		}
+
+		public DialogViewController(string title, object view, MemberInfo member, bool pushing) : base(UITableViewStyle.Grouped)
+		{
+			Title = title;
+			SetPushing(pushing);
+			
+			CreateTableView(view, member);	
 		}
 
 

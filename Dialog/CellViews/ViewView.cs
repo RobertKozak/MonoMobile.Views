@@ -1,5 +1,5 @@
 // 
-//  IInitializeCell.cs
+//  ViewView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,15 +30,28 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.Foundation;
+	using System.Collections;
+	using System.Drawing;
 	using MonoTouch.UIKit;
-
-	public interface IInitializeCell
+	using MonoTouch.Foundation;
+	
+	[Preserve(AllMembers = true)]
+	public class ViewView : UIView, IDataContext<object>, IInitializeCell
 	{
-		UITableViewCellStyle CellStyle { get; }
-		UITableViewCell Cell { get; set; }
-		DialogViewController Controller { get; set; }
-		//UITableViewCellEditingStyle EditingStyle { get; set; }
+		[List]
+		public object DataContext { get; set; }
+		
+		[Skip]
+		public UITableViewCell Cell { get; set; }
+		[Skip]
+		public DialogViewController Controller { get; set; }
+		
+		[Skip]
+		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
+		
+		public ViewView() : base(RectangleF.Empty)
+		{
+		}	
 	}
 }
 

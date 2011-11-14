@@ -34,12 +34,22 @@ namespace MonoMobile.Views
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class OrderAttribute : Attribute
 	{
+		public OrderAttribute()
+		{
+		}
+
+		public OrderAttribute(int section, int order) : this(order)
+		{
+			Section = section;
+		}
+
 		public OrderAttribute (int order)
 		{
 			Order = order;
 		}
 
 		public int Order;
+		public int Section;
 	}
 }
 

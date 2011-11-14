@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 	public interface IActivation
 	{
 		void Activated();
-		void Deactived();
+		void Deactivated();
 	}
 }
 

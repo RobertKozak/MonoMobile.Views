@@ -83,7 +83,6 @@ namespace MonoMobile.Views
 		
 		public bool IsRoot { get; set; }
 		public bool IsNavigateable { get; set; }
-		public Type NavigationView { get; set; }
 
 		public string Caption { get; set; }
 		
@@ -165,6 +164,7 @@ namespace MonoMobile.Views
 							}
 	
 							initializeCell.Cell = cell;
+							initializeCell.Controller = Controller;
 						}
 						
 						views.Add(view);
@@ -560,6 +560,77 @@ namespace MonoMobile.Views
 			return memberInfo;
 		}
 		
+		public NSIndexPath ResetIndexPathRow(NSIndexPath indexPath)
+		{
+			int newRow = indexPath.Row;
+			var listCount = 0;
+			var listSource = GetListSource(indexPath);
+
+			if (listSource != null && !listSource.IsRoot)
+			{
+				listCount = listSource.Sections[0].DataContext.Count;
+
+				if (newRow > listCount)
+				{
+					newRow = newRow - listCount + 1;
+				}
+			}
+
+			return NSIndexPath.FromRowSection(newRow, indexPath.Section);
+		}
+		
+		public NSIndexPath UnsetIndexPathRow(NSIndexPath indexPath)
+		{
+			int newRow = indexPath.Row;
+			var listCount = 0;
+			var listSource = GetListSource(indexPath);
+
+			if (listSource != null && !listSource.IsRoot)
+			{
+				listCount = listSource.Sections[0].DataContext.Count;
+
+				if (listCount <= newRow)
+				{
+					newRow = newRow - listCount + 1;
+				}
+			}
+
+			return NSIndexPath.FromRowSection(newRow, indexPath.Section);
+		}
+
+		protected MemberData GetMemberData(NSIndexPath indexPath)
+		{
+			var sectionData = GetSectionData(indexPath.Section);
+			
+			var newIndexPath = UnsetIndexPathRow(indexPath);
+			
+			if (sectionData != null)
+			{
+				return sectionData[newIndexPath.Row] as MemberData;
+			}
+
+			return null;
+//			if (sectionData != null && sectionData.Count > indexPath.Row)
+//			{
+//				return sectionData[indexPath.Row] as MemberData;
+//			}
+//			else
+//			{
+//				return sectionData[newIndexPath.Row] as MemberData;
+//			}
+		}
+
+		public ListSource GetListSource(NSIndexPath indexPath)
+		{
+			var section = Sections[indexPath.Section];
+			var key = indexPath.Row;
+			
+			if (section.ListSources.ContainsKey(key))
+				return section.ListSources[key];
+
+			return null;
+		}
+
 		protected virtual void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			cell.AccessoryView = null;

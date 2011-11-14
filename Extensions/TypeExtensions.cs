@@ -30,17 +30,19 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
 
 	public static class TypeExtensions
 	{
-		private static Dictionary<bool, BindingFlags> _BindingFlagsMap= new Dictionary<bool, BindingFlags>() {  {true, _PrivateBindingFlags} , {false, _PublicBindingFlags} };
+		private static Dictionary<bool, BindingFlags> _BindingFlagsMap= new Dictionary<bool, BindingFlags>() 
+		{  
+			{true, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance }, 
+			{false, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance } 
+		};
 
-		private static BindingFlags _PublicBindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-		private static BindingFlags _PrivateBindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
-	
 		private static List<Func<Type, bool, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<Type, bool, MemberInfo[]>>() 
 		{
 			(T, allowPrivate) => GetFields(T, allowPrivate),
@@ -145,8 +147,53 @@ namespace MonoMobile.Views
 			return null;
 		}
 
+		public static IList CreateGenericListFromEnumerable(this Type type, object enumerable)
+		{
+			IList data = enumerable as IList;
+			Type[] generic = { type };
+			var genericTypeDefinition = typeof(List<>).GetGenericTypeDefinition();
+			
+			if (type.IsEnum)
+			{
+				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+
+				var enumValues = Enum.GetValues(type);
+				foreach (Enum value in enumValues)
+				{
+					data.Add(value);
+				}
+				
+				return data;
+			} 
+
+			if (type.IsGenericType)
+			{
+				var genericType = type.GetGenericArguments().FirstOrDefault();
+				generic = new Type[] { genericType };
+			}
+			
+			if (type.HasElementType)
+			{
+				generic = new Type[] { type.GetElementType() };
+			}
+			if (data == null)
+			{
+				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic)) as IList;			
+			}
+			else
+			{
+				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { data }) as IList;
+			}
+	
+			return data;
+		}
+
 		public static void SetValue(this MemberInfo member, object obj, object value)
 		{
+//			if (typeof(IEnumerable).IsAssignableFrom(type))
+//			{
+//				member.SetValue(
+//			}
 			if (member.MemberType == MemberTypes.Field)
 			{
 				((FieldInfo)member).SetValue(obj, value);
@@ -226,6 +273,7 @@ namespace MonoMobile.Views
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			var members = new List<MemberInfo>();
 
+		//	var result = type.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
 			foreach (var memberFunc in _ObjectMemberFuncMap)
 			{
 				members.AddRange(memberFunc(type, allowPrivate));
@@ -237,7 +285,8 @@ namespace MonoMobile.Views
 
 		private static MemberInfo[] GetFields(Type type, bool allowPrivate)
 		{
-			return type.GetFields(_BindingFlagsMap[allowPrivate]);
+			var fields =type.GetFields(_BindingFlagsMap[allowPrivate]); 
+			return fields;
 		}
 
 		private static MemberInfo[] GetProperties(Type type, bool allowPrivate)
