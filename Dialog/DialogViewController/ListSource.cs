@@ -254,7 +254,7 @@ namespace MonoMobile.Views
 		
 		public void NavigateToView()
 		{
-			var view = SelectedItem;
+			object view = null;
 			var viewType = NavigationViewType;
 					
 			if (viewType != null)
@@ -266,13 +266,16 @@ namespace MonoMobile.Views
 				{
 					dc.DataContext = SelectedItem;
 				}
+				else
+				{
+					view = SelectedItem;
+				}
 			}
-
+			
 			if (Caption == null)
 				Caption = SelectedItem.ToString();
 
 			var dvc = new DialogViewController(Caption, view, true);
-		
 			Controller.NavigationController.PushViewController(dvc, true);
 		}
 

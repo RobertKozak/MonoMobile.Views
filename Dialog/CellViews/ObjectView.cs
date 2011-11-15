@@ -41,9 +41,7 @@ namespace MonoMobile.Views
 		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
 
 		public UIModalTransitionStyle TransitionStyle { get; set; }
-
 		public bool IsModel { get; set; }
-
 		public Type ViewType { get; set; }
 		
 		public ObjectView() : base(RectangleF.Empty)
