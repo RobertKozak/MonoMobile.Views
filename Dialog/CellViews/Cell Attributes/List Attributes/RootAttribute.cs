@@ -31,6 +31,8 @@ namespace MonoMobile.Views
 {
 	using System;
 	using MonoTouch.UIKit;
+	
+	// NOTE: This attribute is the default state for Lists. You only need it to provide additional behavior.
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class RootAttribute: Attribute

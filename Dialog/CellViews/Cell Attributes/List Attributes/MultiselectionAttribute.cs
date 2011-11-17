@@ -38,6 +38,8 @@ namespace MonoMobile.Views
 		SetSelectedToNull
 	}
 
+	// NOTE: When this [Multiselection] is used with SelectionAttribute [Selection] this one will take precedence.
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public class MultiselectionAttribute : Attribute
 	{

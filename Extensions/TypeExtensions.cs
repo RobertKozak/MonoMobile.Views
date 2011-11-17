@@ -190,10 +190,6 @@ namespace MonoMobile.Views
 
 		public static void SetValue(this MemberInfo member, object obj, object value)
 		{
-//			if (typeof(IEnumerable).IsAssignableFrom(type))
-//			{
-//				member.SetValue(
-//			}
 			if (member.MemberType == MemberTypes.Field)
 			{
 				((FieldInfo)member).SetValue(obj, value);
@@ -273,7 +269,6 @@ namespace MonoMobile.Views
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			var members = new List<MemberInfo>();
 
-		//	var result = type.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
 			foreach (var memberFunc in _ObjectMemberFuncMap)
 			{
 				members.AddRange(memberFunc(type, allowPrivate));

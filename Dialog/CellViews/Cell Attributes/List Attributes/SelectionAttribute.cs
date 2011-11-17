@@ -30,6 +30,8 @@
 namespace MonoMobile.Views
 {
 	using System;
+	
+	// NOTE: When this [Selection] is used with MultiselectionAttribute the [Multiselection] will take precedence.
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public class SelectionAttribute : Attribute

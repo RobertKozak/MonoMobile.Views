@@ -332,7 +332,6 @@
     <Compile Include="Dialog\CellViews\BooleanView.cs" />
     <Compile Include="Interfaces\IAccessoryView.cs" />
     <Compile Include="Dialog\CellViews\ListView.cs" />
-    <Compile Include="Dialog\CellViews\EnumView.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\ListAttribute.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\SelectionAttribute.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\MultiselectionAttribute.cs" />

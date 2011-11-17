@@ -636,7 +636,7 @@ namespace MonoMobile.Views
 		{
 			var sectionData = GetSectionData(indexPath.Section);
 			
-			var newIndexPath = UnsetIndexPathRow(indexPath);
+			var newIndexPath = ResetIndexPathRow(indexPath);
 			
 			if (sectionData != null)
 			{
@@ -644,14 +644,6 @@ namespace MonoMobile.Views
 			}
 
 			return null;
-//			if (sectionData != null && sectionData.Count > indexPath.Row)
-//			{
-//				return sectionData[indexPath.Row] as MemberData;
-//			}
-//			else
-//			{
-//				return sectionData[newIndexPath.Row] as MemberData;
-//			}
 		}
 
 		public ListSource GetListSource(NSIndexPath indexPath)

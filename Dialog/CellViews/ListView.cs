@@ -60,6 +60,29 @@ namespace MonoMobile.Views
 			cell.TextLabel.Text = Caption;
 			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			cell.DetailTextLabel.Text = string.Empty;
+			
+			var text = Caption;
+			if (listSource.SelectedItem != null)
+				text = listSource.SelectedItem.ToString();
+
+			var rootAttribute = DataContext.Member.GetCustomAttribute<RootAttribute>();
+			if (rootAttribute != null)
+			{
+				if (rootAttribute.HideCaptionOnSelection)
+				{
+					cell.TextLabel.Text = text;
+				}
+				else
+				{
+					cell.DetailTextLabel.Text = text; 
+				}
+			}
+		
+			var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
+			if (multiselectionAttribute != null)
+			{
+				cell.DetailTextLabel.Text = listSource.SelectedItems.Count.ToString();
+			}
 		}
 
 		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
@@ -78,7 +101,7 @@ namespace MonoMobile.Views
 				listSource.NavigationViewType = navigateToView.ViewType;
 				listSource.IsNavigateable = selectionAttribute == null && multiselectionAttribute == null;
 			}
-
+			
 			listSource.RowSelected(tableView, indexPath);
 		}
 	}

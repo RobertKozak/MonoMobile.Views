@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using System.ComponentModel;
 	using MonoTouch.UIKit;
 
-	public abstract class View : DisposableObject, IView, IDataContext<object>, INotifyDataContextChanged, IInitializable, ICaption
+	public abstract class View : UIView, IView, IDataContext<object>, INotifyDataContextChanged, IInitializable, ICaption
 	{
 		private object _DataContext;
 		

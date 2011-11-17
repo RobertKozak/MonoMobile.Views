@@ -263,6 +263,13 @@ namespace MonoMobile.Views
 			{
 				var type = view.GetType();
 				var actualView = ViewContainer.GetExactView(type);
+				
+				if (actualView == null)
+				{
+					var viewAttribute = type.GetCustomAttribute<ViewAttribute>();
+					if (viewAttribute != null)
+						actualView = viewAttribute.ViewType;
+				}
 
 				if (actualView != null)
 				{
@@ -311,7 +318,7 @@ namespace MonoMobile.Views
 			{
 				var memberData = new MemberData(view, member);
 				var viewTypes = GetViewTypes(view, member);
-				
+			
 				var skipAttribute = member.GetCustomAttribute<SkipAttribute>();
 				if (skipAttribute != null)
 				{
@@ -377,6 +384,8 @@ namespace MonoMobile.Views
 					listSources.Add(memberData.Order, listSource);
 					currentSection.Index = memberData.Order > -1 ? memberData.Order : currentSection.Index;
 				}
+				else
+					listSources.Add(memberData.Order, null);
 				
 				sectionMembers.Add(memberData);
 				currentSection.DataContext = sectionMembers;
@@ -398,6 +407,8 @@ namespace MonoMobile.Views
 				foreach(var listSource in listSources.Values)
 				{
 					order++;
+					if (listSource == null) continue;
+
 					section.ListSources.Add(order, listSource);
 				}
 			}
