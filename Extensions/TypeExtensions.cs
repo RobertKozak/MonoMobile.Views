@@ -155,13 +155,22 @@ namespace MonoMobile.Views
 			
 			if (type.IsEnum)
 			{
-				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic), new object[] { }) as IList;
+				try
+				{
+					//NOTE: Attempt to create a generic list. Because of AOT on the device the user code must construct one
+					// of these types ot it will fail. If it fails we fall back to a regular List<object>.
+					// Some of the results of this is that any views belonging to a specific type wont be used and it will
+					// only use ObjectView.
+					data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic)) as IList;
+				}
+				catch (TargetInvocationException)
+				{
+					data = new List<object>();
+				}
 
 				var enumValues = Enum.GetValues(type);
-				foreach (Enum value in enumValues)
-				{
-					data.Add(value);
-				}
+				foreach (var item in enumValues)
+					data.Add(item);
 				
 				return data;
 			} 
@@ -176,6 +185,7 @@ namespace MonoMobile.Views
 			{
 				generic = new Type[] { type.GetElementType() };
 			}
+
 			if (data == null)
 			{
 				data = Activator.CreateInstance(genericTypeDefinition.MakeGenericType(generic)) as IList;			
@@ -190,8 +200,35 @@ namespace MonoMobile.Views
 
 		public static void SetValue(this MemberInfo member, object obj, object value)
 		{
-			if (member.MemberType == MemberTypes.Field)
+			var valueType = value.GetType();
+
+			if (!typeof(string).IsAssignableFrom(valueType) && (typeof(IEnumerable).IsAssignableFrom(valueType)))
 			{
+				IList list = null;
+				if (member.MemberType == MemberTypes.Field)
+				{
+					list = ((FieldInfo)member).GetValue(obj) as IList;
+				}
+				
+				if (member.MemberType == MemberTypes.Property)
+				{
+					list = ((PropertyInfo)member).GetValue(obj) as IList;
+				}
+
+				if (list == null)
+					return;
+
+				list.Clear();
+				foreach (var item in (IEnumerable)value)
+				{
+					list.Add(item);
+				}
+
+				value = list;
+			}
+
+			if (member.MemberType == MemberTypes.Field)
+			{	
 				((FieldInfo)member).SetValue(obj, value);
 			}
 			

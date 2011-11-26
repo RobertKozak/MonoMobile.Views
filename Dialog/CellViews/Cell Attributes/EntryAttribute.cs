@@ -49,5 +49,6 @@ namespace MonoMobile.Views
 		public EditMode EditMode = EditMode.WithCaption;
 		public UITextAutocorrectionType AutocorrectionType = UITextAutocorrectionType.Default;
 		public UITextAutocapitalizationType AutocapitalizationType = UITextAutocapitalizationType.None;
+		public bool ClearOnEdit = false;
 	}
 }

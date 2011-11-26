@@ -547,6 +547,13 @@ namespace MonoMobile.Views
 						source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
 					}	
 					
+					var navigateToViewAttribute = member.GetCustomAttribute<NavigateToViewAttribute>();	
+					if (navigateToViewAttribute != null)
+					{
+						source.IsNavigateable = true;
+						source.NavigationViewType = navigateToViewAttribute.ViewType;
+					}
+
 					source.IsRoot = rootAttribute != null || listAttribute == null;
 					
 					return source;

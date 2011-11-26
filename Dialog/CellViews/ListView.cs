@@ -82,7 +82,8 @@ namespace MonoMobile.Views
 				}
 				else
 				{
-					cell.DetailTextLabel.Text = text; 
+					if (cell.TextLabel.Text != text)
+						cell.DetailTextLabel.Text = text; 
 				}
 			}
 		

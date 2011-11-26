@@ -40,7 +40,6 @@ namespace MonoMobile.Views
 	{	
 		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 
-		public EditMode EditMode { get; set; }
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
 		public string Text { get; set; }
@@ -48,11 +47,12 @@ namespace MonoMobile.Views
 		public UIKeyboardType KeyboardType { get; set; }
 		public UITextAutocorrectionType AutocorrectionType { get; set; }
 		public UITextAutocapitalizationType AutocapitalizationType { get; set; }
+		public bool ClearOnEdit { get; set; }
 
 		public EntryView(RectangleF frame) : base(frame)
 		{
 			KeyboardType = UIKeyboardType.Default;
-			EditMode = EditMode.WithCaption;
+			EditModeValue = EditMode.WithCaption;
 
 			InputView = new UIPlaceholderTextField(new RectangleF(5, 0, frame.Width - 10, frame.Height)) 
 				{ 
@@ -70,6 +70,9 @@ namespace MonoMobile.Views
 		
 			InputView.Started += (s, e) =>
 			{
+				if (ClearOnEdit)
+					InputView.Text = string.Empty;
+
 				//DataContextProperty.ConvertBack<string>();				
 			};
 			
@@ -99,9 +102,11 @@ namespace MonoMobile.Views
 			base.Dispose(disposing);
 		}
 		
-		public override void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
+		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			ShowCaption = EditMode != EditMode.NoCaption;
+			base.UpdateCell(cell, indexPath);
+
+			ShowCaption = EditModeValue != EditMode.NoCaption;
 			cell.TextLabel.Text = string.Empty;
 
 			if (ShowCaption)
@@ -115,14 +120,17 @@ namespace MonoMobile.Views
 
 			SetKeyboard();
 
+			IsPassword = false;
+
 			var entryAttribute = DataContext.Member.GetCustomAttribute<EntryAttribute>();
 			if (entryAttribute != null)
 			{
 				AutocapitalizationType = entryAttribute.AutocapitalizationType;
 				AutocorrectionType = entryAttribute.AutocorrectionType;
-				EditMode = entryAttribute.EditMode;
+				EditModeValue = entryAttribute.EditMode;
 				KeyboardType = entryAttribute.KeyboardType;
 				Placeholder = entryAttribute.Placeholder;
+				ClearOnEdit = entryAttribute.ClearOnEdit;
 			}
 
 			var passwordAttribute = DataContext.Member.GetCustomAttribute<PasswordAttribute>();
@@ -130,19 +138,21 @@ namespace MonoMobile.Views
 			{
 				AutocapitalizationType = passwordAttribute.AutocapitalizationType;
 				AutocorrectionType = passwordAttribute.AutocorrectionType;
-				EditMode = passwordAttribute.EditMode;
+				EditModeValue = passwordAttribute.EditMode;
 				KeyboardType = passwordAttribute.KeyboardType;
 				Placeholder = passwordAttribute.Placeholder;
+				ClearOnEdit = passwordAttribute.ClearOnEdit;
+
 				IsPassword = true;
 			}
 			
 			var readOnlyAttribute = DataContext.Member.GetCustomAttribute<ReadOnlyAttribute>();
 			if (readOnlyAttribute != null)
 			{
-				EditMode = EditMode.ReadOnly;
+				EditModeValue = EditMode.ReadOnly;
 			}
 
-			if (EditMode != EditMode.ReadOnly)
+			if (EditModeValue != EditMode.ReadOnly)
 			{
 				cell.DetailTextLabel.Text = string.Empty;
 				cell.DetailTextLabel.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
@@ -150,7 +160,7 @@ namespace MonoMobile.Views
 
 			}
 			
-			if (EditMode == EditMode.NoCaption)
+			if (EditModeValue == EditMode.NoCaption)
 			{
 				InputView.Placeholder = Caption;
 			}
@@ -191,7 +201,7 @@ namespace MonoMobile.Views
 			var propertyInfo = DataContext.Member as PropertyInfo;
 			if (propertyInfo != null)
 			{
-				EditMode = !propertyInfo.CanWrite ? EditMode.ReadOnly : EditMode;
+				EditModeValue = !propertyInfo.CanWrite ? EditMode.ReadOnly : EditModeValue;
 			}
 
 			SetKeyboard();

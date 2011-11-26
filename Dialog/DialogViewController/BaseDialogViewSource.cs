@@ -606,18 +606,6 @@ namespace MonoMobile.Views
 			if (indexPath.Row >= listCount && listCount != 0)
 				indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
 
-//			var listSource = GetListSource(indexPath);
-//
-//			if (listSource != null )
-//			{
-//				listCount = listSource.Sections[0].DataContext.Count - 1;
-//
-//				if (newRow > listCount)
-//				{
-//					newRow = newRow - listCount + 1;
-//				}
-//			}
-
 			return indexPath;
 		}
 

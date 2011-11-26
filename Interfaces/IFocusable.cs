@@ -43,8 +43,12 @@ namespace MonoMobile.Views
 	public interface IFocusable
 	{
 		UIView InputView { get; }
-		EditMode EditMode { get; }
+		EditMode EditModeValue { get; }
 		bool IsNeedsFirstResponder { get; set; }
+		NSIndexPath IndexPath { get; set; }
+
+		void DismissKeyboard();
+		void BecomeFirstResponder();
 
 		void MoveNext();
 		void MovePrev();

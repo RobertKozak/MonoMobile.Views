@@ -45,10 +45,12 @@ namespace MonoMobile.Views
 		protected UIPlaceholderTextField InputView;
 
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
-		public EditMode EditMode { get; set; }
+		public EditMode EditModeValue { get; set; }
 
 		public bool IsNeedsFirstResponder { get; set; }
 		public UIControl Control { get; set; }
+
+		public NSIndexPath IndexPath { get; set; }
 
 		public FocusableView(RectangleF frame) : base(frame)
 		{
@@ -71,6 +73,8 @@ namespace MonoMobile.Views
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			IndexPath = indexPath;
+
 			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 		}
 		
@@ -86,51 +90,86 @@ namespace MonoMobile.Views
 
 			tableView.DeselectRow(indexPath, true);
 		}
+		
+		public void BecomeFirstResponder()
+		{
+			InputView.BecomeFirstResponder();
+		}
+
+		public void DismissKeyboard()
+		{
+			var views = GetFocusableList();
+			foreach(var view in views)
+			{
+				view.IsNeedsFirstResponder = false;
+			}
+
+			InputView.ResignFirstResponder();
+		}
 
 		public void MoveNext()
 		{
-//			var elements = from section in Controller.Sections 
-//				from element in section.Elements
-//					where (element is IFocusable && ((IFocusable)element).EditMode != EditMode.ReadOnly)
-//					select element as IFocusable; 
-//					
-//			MoveFocus(elements.ToList());
+			var views = GetFocusableList();	
+			
+			MoveFocus(views);
 		}
 
 		public void MovePrev()
 		{
-//			var elements = (from section in Root.Sections
-//				from element in section.Elements
-//				where (element is IFocusable && ((IFocusable)element).EditMode != EditMode.ReadOnly)
-//				select element as IFocusable).Reverse();
-//
-//			MoveFocus(elements.ToList());
+			var views = GetFocusableList();
+			views.Reverse();
+
+			MoveFocus(views);
+		}
+		
+		private IList<IFocusable> GetFocusableList()
+		{
+			var sections = ((BaseDialogViewSource)Controller.TableView.Source).Sections;
+			
+			var views = new List<IFocusable>();
+			foreach (var section in sections.Values)
+			{
+				foreach (var viewList in section.Views.Values)
+				{
+					foreach (var view in viewList)
+					{
+						var focusable = view as IFocusable;
+						if (focusable != null && focusable.EditModeValue != EditMode.ReadOnly && focusable != this)
+						{
+							views.Add(focusable);
+						}
+					}
+				}
+			}
+
+			return views;
 		}
 
-		private void MoveFocus(IList<IFocusable> elements)
+		private void MoveFocus(IList<IFocusable> focusables)
 		{
-//			_Focus = null;
-//			
-//			var nextElements = elements.SkipWhile(e => e != this);
-//			_Focus = nextElements.Skip(1).FirstOrDefault();
-//			if (_Focus == null)
-//			{
-//				_Focus = elements.FirstOrDefault();
-//				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-//			}
-//			else
-//			{
-//				TableView.ScrollToRow(_Focus.IndexPath, UITableViewScrollPosition.Top, true);
-//				
-//			}
-//			
-//			_Focus.IsNeedsFirstResponder = true;
-//
-//			if (_Focus.ElementView != null)
-//			{
-//				_Focus.ElementView.BecomeFirstResponder();		
-//				_Focus.IsNeedsFirstResponder = !_Focus.ElementView.IsFirstResponder;
-//			}
+			_Focus = null;
+			
+			_Focus = focusables.Skip(1).FirstOrDefault();
+
+			if (_Focus == null)
+			{
+				_Focus = focusables.FirstOrDefault();
+			}
+		
+			if (_Focus != null)
+			{
+				var indexPath = _Focus.IndexPath;
+				Controller.TableView.ScrollToRow(indexPath, UITableViewScrollPosition.Top, true);
+
+				_Focus.IsNeedsFirstResponder = true;
+				
+				_Focus.BecomeFirstResponder();	
+
+				if (_Focus.InputView != null)
+				{
+					_Focus.IsNeedsFirstResponder = !_Focus.InputView.IsFirstResponder;
+				}
+			}
 		}
 	}
 }

@@ -159,7 +159,8 @@ namespace MonoMobile.Views
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			MemberData memberData = null;
-			var listSource = GetListSource(indexPath);
+			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);
+			var listSource = GetListSource(listIndexPath);
 
 			if (listSource != null && !listSource.IsRoot)
 			{
@@ -175,9 +176,13 @@ namespace MonoMobile.Views
 					}
 				}
 
-				if (indexPath.Row > 0)
+				if (indexPath.Row - listCount + 1 > 0)
 				{
 					indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
+				}
+				else
+				{
+					indexPath = NSIndexPath.FromRowSection(listCount - indexPath.Row + 1, indexPath.Section);
 				}
 			}
 			

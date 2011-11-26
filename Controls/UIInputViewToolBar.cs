@@ -80,7 +80,7 @@ namespace MonoMobile.Views
 
 		public void DismissKeyboard(object sender, EventArgs e)
 		{
-			//FocusableView.InputView.ResignFirstResponder();
+			FocusableView.DismissKeyboard();
 		}
 	}
 }

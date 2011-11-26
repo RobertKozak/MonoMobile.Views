@@ -73,19 +73,25 @@ namespace MonoMobile.Views
 				DataContext.Value = Activator.CreateInstance(DataContext.Member.GetMemberType());
 			}
 
-
 			if (typeof(Enum).IsAssignableFrom(DataContext.Type))
 			{
 				var parser = new ViewParser();
 				
 				var source = parser.ParseList(null, DataContext.Source, DataContext.Member, null);
 			}
+
 			if (DataContext.Value != null) 
 			{
 				var view = DataContext.Value;
 				if (ViewType != null && !view.GetType().Equals(ViewType))
 				{
 					view = Activator.CreateInstance(ViewType); 
+				}
+
+				var dc = view as IDataContext<object>;
+				if (dc != null)
+				{
+					dc.DataContext = DataContext.Value;
 				}
 
 				var dvc = new DialogViewController(Caption, view, true) { Autorotate = true };
