@@ -46,6 +46,7 @@ namespace MonoMobile.Views
 		public object Source { get; private set; }
 		public MemberInfo Member { get; private set; }
  
+		public int Section { get; set; }
 		public int Order { get; set; }
 		public float RowHeight { get; set; }
 

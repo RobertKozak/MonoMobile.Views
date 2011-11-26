@@ -55,6 +55,10 @@ namespace MonoMobile.Views
 			var source = Controller.TableView.Source as ViewSource;
 			var listSource = source.GetListSource(indexPath);
 			
+//TODO: fix this
+			if (listSource == null)
+				return;
+			
 			listSource.UpdateCell(cell, indexPath);
 
 			cell.TextLabel.Text = Caption;
@@ -63,7 +67,10 @@ namespace MonoMobile.Views
 			
 			var text = Caption;
 			if (listSource.SelectedItem != null)
+			{
 				text = listSource.SelectedItem.ToString();
+				cell.DetailTextLabel.Text = text;
+			}
 
 			var rootAttribute = DataContext.Member.GetCustomAttribute<RootAttribute>();
 			if (rootAttribute != null)
@@ -71,6 +78,7 @@ namespace MonoMobile.Views
 				if (rootAttribute.HideCaptionOnSelection)
 				{
 					cell.TextLabel.Text = text;
+					cell.DetailTextLabel.Text = string.Empty;
 				}
 				else
 				{

@@ -58,7 +58,7 @@ namespace MonoMobile.Views
 			var listCount = 0;
 			if (Sections != null)
 			{
-				var listSource = GetListSource(NSIndexPath.FromRowSection(0, section));
+				var listSource = Sections[section].ListSources[0];
 
 				if (listSource != null && !listSource.IsRoot)
 				{
@@ -66,7 +66,7 @@ namespace MonoMobile.Views
 				}
 			}
 
-			return Sections != null ? Sections[section].NumberOfRows + listCount : 0;
+			return Sections != null ? Sections[section].NumberOfRows + listCount: 0;
 		}
 
 		public override int NumberOfSections(UITableView tableView)
@@ -77,20 +77,27 @@ namespace MonoMobile.Views
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
 			MemberData memberData = null;
-			var listSource = GetListSource(indexPath);
+
+			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section); 
+			var listSource = GetListSource(listIndexPath);
 
 			if (listSource != null && !listSource.IsRoot)
 			{
 				var listCount = listSource.Sections[0].DataContext.Count;
-				memberData = listSource.MemberData;
-
-				if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && indexPath.Row >= memberData.Order && indexPath.Row < memberData.Order + listCount) 
+				if (indexPath.Row <= listCount)
 				{
-					return listSource.GetCell(tableView, NSIndexPath.FromRowSection(indexPath.Row -  memberData.Order, indexPath.Section));
+					memberData = listSource.MemberData;
+
+					if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && indexPath.Row >= memberData.Order && indexPath.Row < memberData.Order + listCount) 
+					{
+						return listSource.GetCell(tableView, NSIndexPath.FromRowSection(indexPath.Row -  memberData.Order, indexPath.Section));
+					}
 				}
+
+				if (indexPath.Row > 0)
+					indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
 			}
 			
-			indexPath = ResetIndexPathRow(indexPath);
 
 			memberData = GetMemberData(indexPath);
 
@@ -124,10 +131,6 @@ namespace MonoMobile.Views
 				var viewType = ViewContainer.GetView(memberData);
 				if (viewType != null)
 				{
-					if (section.ViewTypes == null)
-					{
-
-					}
 					var key = memberData.Id.ToString();
 
 					if (section.ViewTypes.ContainsKey(key))
@@ -156,17 +159,25 @@ namespace MonoMobile.Views
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			MemberData memberData = null;
-			var section = Sections[indexPath.Section];
 			var listSource = GetListSource(indexPath);
 
 			if (listSource != null && !listSource.IsRoot)
 			{
-				memberData = listSource.MemberData;
-								
-				if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && indexPath.Row == memberData.Order)
+				var listCount = listSource.Sections[0].DataContext.Count;
+				if (indexPath.Row <= listCount)
 				{
-					listSource.UpdateCell(cell, indexPath);
-					return;
+					memberData = listSource.MemberData;
+								
+					if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && indexPath.Row == memberData.Order)
+					{
+						listSource.UpdateCell(cell, indexPath);
+						return;
+					}
+				}
+
+				if (indexPath.Row > 0)
+				{
+					indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
 				}
 			}
 			
@@ -177,32 +188,34 @@ namespace MonoMobile.Views
 			if (memberData.Value != null && cell.DetailTextLabel != null)
 				cell.DetailTextLabel.Text = memberData.Value.ToString();
 
-
-			if (section.Views.ContainsKey(cell))
+			foreach(var section in Sections.Values)
 			{
-				var views = section.Views[cell];
-	
-				if (views.Count > 0)
+				if (section.Views.ContainsKey(cell))
 				{
-					foreach (var view in views)
+					var views = section.Views[cell];
+		
+					if (views.Count > 0)
 					{
-						var viewCaption = view as ICaption;
-						if (viewCaption != null)
+						foreach (var view in views)
 						{
-							viewCaption.Caption = ViewParser.GetCaption(memberData.Member);
-						}
-		
-						var dc = view as IDataContext<MemberData>;
-						if (dc != null)
-						{
-							var item = GetMemberData(indexPath);
-							dc.DataContext = item;
-						}
-		
-						var updateable = view as IUpdateable;
-						if (updateable != null)
-						{
-							updateable.UpdateCell(cell, indexPath);
+							var viewCaption = view as ICaption;
+							if (viewCaption != null)
+							{
+								viewCaption.Caption = ViewParser.GetCaption(memberData.Member);
+							}
+			
+							var dc = view as IDataContext<MemberData>;
+							if (dc != null)
+							{
+								var item = GetMemberData(indexPath);
+								dc.DataContext = item;
+							}
+			
+							var updateable = view as IUpdateable;
+							if (updateable != null)
+							{
+								updateable.UpdateCell(cell, indexPath);
+							}
 						}
 					}
 				}
@@ -211,38 +224,45 @@ namespace MonoMobile.Views
 
 		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
-			var path = ResetIndexPathRow(indexPath);
 			MemberData memberData = null;
 
 			var section = Sections[indexPath.Section];
-			var listSource = GetListSource(indexPath);
+			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);
+			var listSource = GetListSource(listIndexPath);
 			
 			if (listSource != null && !listSource.IsRoot)
 			{
-				memberData = listSource.MemberData;
-								
-				if (typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type))
+				var listCount = listSource.Sections[0].DataContext.Count;
+				
+				if (indexPath.Row < listCount)
 				{
-					var listCount = listSource.Sections[0].DataContext.Count;
-
-					if (indexPath.Row >= memberData.Order && indexPath.Row < memberData.Order + listCount)
+					memberData = listSource.MemberData;
+									
+					if (typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type))
 					{
-						indexPath = ResetIndexPathRow(NSIndexPath.FromRowSection(indexPath.Row - memberData.Order, indexPath.Section));				
-						listSource.RowSelected(tableView, indexPath);
-						
-						// Special case: Since Enums don't have MemberInfo for individual items we only keep track of the base 
-						// type and set the actual value based on the row since we display them in the section in value order
-						if (typeof(Enum).IsAssignableFrom(memberData.Type))
+						if (indexPath.Row >= memberData.Order && indexPath.Row < memberData.Order + listCount)
 						{
-							memberData.Value = indexPath.Row;
+							indexPath = ResetIndexPathRow(NSIndexPath.FromRowSection(indexPath.Row - memberData.Order, indexPath.Section));				
+							listSource.RowSelected(tableView, indexPath);
+							
+							// Special case: Since Enums don't have MemberInfo for individual items we only keep track of the base 
+							// type and set the actual value based on the row since we display them in the section in value order
+							if (typeof(Enum).IsAssignableFrom(memberData.Type))
+							{
+								memberData.Value = indexPath.Row;
+							}
+	
+							return;
 						}
 
-						return;
+						if (indexPath.Row > 0)
+						{
+							indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
+						}
 					}
 				}
 			}
  
-			memberData = GetMemberData(path);
 			var cell = GetCell(tableView, indexPath);
 			if (section.Views.ContainsKey(cell))
 			{
@@ -251,7 +271,8 @@ namespace MonoMobile.Views
 				if (views.Count > 0)
 				{
 					memberData = GetMemberData(indexPath);
-
+					
+					indexPath = ResetIndexPathRow(indexPath);
 					foreach (var view in views)
 					{
 						var selectable = view as ISelectable;

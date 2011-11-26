@@ -128,7 +128,7 @@ namespace MonoMobile.Views
 
 			SetSelectionAccessory(cell, indexPath);
 
-			var section = Sections[indexPath.Section];
+			var section = Sections[0];
 			if (section.Views.ContainsKey(cell))
 			{
 				var views = section.Views[cell];
@@ -140,7 +140,7 @@ namespace MonoMobile.Views
 						var dc = view as IDataContext<object>;
 						if (dc != null)
 						{
-							dc.DataContext = GetSectionData(indexPath.Section)[indexPath.Row];
+							dc.DataContext = GetSectionData(0)[indexPath.Row];
 						}
 		
 						var updateable = view as IUpdateable;
@@ -174,7 +174,7 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-				cell.TextLabel.Text = GetSectionData(indexPath.Section)[indexPath.Row].ToString();
+				cell.TextLabel.Text = GetSectionData(0)[indexPath.Row].ToString();
 			}
 		}
 
@@ -182,7 +182,7 @@ namespace MonoMobile.Views
 		{			
 			if (!IsRoot)
 			{
-				SelectedItem = GetSectionData(indexPath.Section)[indexPath.Row]; 
+				SelectedItem = GetSectionData(0)[indexPath.Row]; 
 
 				if (SelectedItems.Contains(SelectedItem))
 				{
@@ -238,7 +238,7 @@ namespace MonoMobile.Views
 				}
 			}
 
-			var data = GetSectionData(indexPath.Section);
+			var data = GetSectionData(0);
 
 			if (IsRoot && (data is IEnumerable || data is Enum))
 			{
@@ -285,7 +285,7 @@ namespace MonoMobile.Views
 			var data = GetSectionData(0);
 			var type = data.GetType();
 
-			var dvc = new DialogViewController(Caption, Controller.RootView, true);
+			var dvc = new DialogViewController(Caption, null, true);
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
 
@@ -402,7 +402,7 @@ namespace MonoMobile.Views
 			
 			if (!IsNavigateable)
 			{	
-				var selectedIndex = GetSectionData(indexPath.Section).IndexOf(SelectedItem);
+				var selectedIndex = GetSectionData(0).IndexOf(SelectedItem);
 				UIView selectedAccessoryView = SelectedAccessoryViews.Count > 0 ? SelectedAccessoryViews[cell] : null;
 				UIView unselectedAccessoryView = UnselectedAccessoryViews.Count > 0 ? UnselectedAccessoryViews[cell] : null;
 
@@ -425,7 +425,7 @@ namespace MonoMobile.Views
 
 					foreach (var item in SelectedItems)
 					{
-						selectedIndex = GetSectionData(indexPath.Section).IndexOf(item);
+						selectedIndex = GetSectionData(0).IndexOf(item);
 						
 						if (selectedIndex != indexPath.Row) continue;
 

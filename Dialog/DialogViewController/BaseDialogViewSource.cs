@@ -119,15 +119,6 @@ namespace MonoMobile.Views
 			return section.Index;
 		}
 
-//		public BaseDialogViewSource(DialogViewController controller, IEnumerable<Type> viewTypes) : this(controller)
-//		{
-//			Sections.Add(0, new Section<T>(controller, viewTypes));
-//		}
-		
-//		public BaseDialogViewSource(DialogViewController controller, Type viewType) : this(controller, new Type[] { viewType })
-//		{
-//		}
-
 		#region Cells
 		protected virtual UITableViewCell NewCell(NSString cellId, NSIndexPath indexPath)
 		{
@@ -248,6 +239,12 @@ namespace MonoMobile.Views
 
 		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			var viewToRemove = cell.ContentView.ViewWithTag(1);
+			if (viewToRemove != null)
+			{
+			//	viewToRemove.RemoveFromSuperview();
+			}
+
 //			cell.AccessoryView = null;
 			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 	
@@ -598,47 +595,39 @@ namespace MonoMobile.Views
 		{
 			int newRow = indexPath.Row;
 			var listCount = 0;
-			var listSource = GetListSource(indexPath);
 
+			var listSource = GetListSource(NSIndexPath.FromRowSection(0, indexPath.Section));
 			if (listSource != null && !listSource.IsRoot)
 			{
 				listCount = listSource.Sections[0].DataContext.Count;
-
-				if (newRow > listCount)
-				{
-					newRow = newRow - listCount + 1;
-				}
 			}
 
-			return NSIndexPath.FromRowSection(newRow, indexPath.Section);
-		}
-		
-		public NSIndexPath UnsetIndexPathRow(NSIndexPath indexPath)
-		{
-			int newRow = indexPath.Row;
-			var listCount = 0;
-			var listSource = GetListSource(indexPath);
+			
+			if (indexPath.Row >= listCount && listCount != 0)
+				indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
 
-			if (listSource != null && !listSource.IsRoot)
-			{
-				listCount = listSource.Sections[0].DataContext.Count;
+//			var listSource = GetListSource(indexPath);
+//
+//			if (listSource != null )
+//			{
+//				listCount = listSource.Sections[0].DataContext.Count - 1;
+//
+//				if (newRow > listCount)
+//				{
+//					newRow = newRow - listCount + 1;
+//				}
+//			}
 
-				if (listCount <= newRow)
-				{
-					newRow = newRow - listCount + 1;
-				}
-			}
-
-			return NSIndexPath.FromRowSection(newRow, indexPath.Section);
+			return indexPath;
 		}
 
 		protected MemberData GetMemberData(NSIndexPath indexPath)
 		{
-			var sectionData = GetSectionData(indexPath.Section);
-			
 			var newIndexPath = ResetIndexPathRow(indexPath);
 			
-			if (sectionData != null)
+			var sectionData = GetSectionData(indexPath.Section);
+
+			if (sectionData != null && sectionData.Count > newIndexPath.Row)
 			{
 				return sectionData[newIndexPath.Row] as MemberData;
 			}
@@ -649,11 +638,10 @@ namespace MonoMobile.Views
 		public ListSource GetListSource(NSIndexPath indexPath)
 		{
 			var section = Sections[indexPath.Section];
-			var key = indexPath.Row;
-			
-			if (section.ListSources.ContainsKey(key))
-				return section.ListSources[key];
 
+			if (indexPath.Row < section.ListSources.Count)
+				return section.ListSources[indexPath.Row];
+		
 			return null;
 		}
 

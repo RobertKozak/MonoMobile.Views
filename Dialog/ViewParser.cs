@@ -75,28 +75,32 @@ namespace MonoMobile.Views
 			object dataContext = null;
 			UITableViewSource source = null;
 			
-			view = GetActualView(view);
-			controller.RootView = view;
+			if (view != null)
+			{
+				view = GetActualView(view);
+				controller.RootView = view;
 
-			controller.Theme = new Theme();
-			var themeable = view as IThemeable;
-			if (themeable != null)
-				themeable.Theme = Theme.CreateTheme(controller.Theme);
+				controller.Theme = new Theme();
+				var themeable = view as IThemeable;
+				if (themeable != null)
+					themeable.Theme = Theme.CreateTheme(controller.Theme);
 			
-			controller.ToolbarButtons = CheckForToolbarItems(view);
-			controller.NavbarButtons = CheckForNavbarItems(view);
+				controller.ToolbarButtons = CheckForToolbarItems(view);
+				controller.NavbarButtons = CheckForNavbarItems(view);
+			
 
-			if (member != null)
-			{
-				source = ParseList(controller, view, member, null); 
-			}
+				if (member != null)
+				{
+					source = ParseList(controller, view, member, null); 
+				}
 					
-			if (source == null)
-			{
-				source = ParseView(controller, view);
-			}
+				if (source == null)
+				{
+					source = ParseView(controller, view);
+				}
 
-			InitializeSearch(view, source);
+				InitializeSearch(view, source);
+			}
 			return source;
 		}
 
@@ -303,22 +307,18 @@ namespace MonoMobile.Views
 
 		public UITableViewSource ParseView(DialogViewController controller, object view)
 		{
-			var listSources = new SortedList<int, ListSource>();
 			var members = view.GetType().GetMembers(false);
-			var source = new ViewSource(controller);
-			
-			Section listSection = null;
-			var currentSection = new Section(controller);
-			var sections = new List<Section>();
-			var sectionMembers = new List<MemberData>();
+
+			var sections = new SortedList<int, Section>();
+			var memberLists = new SortedList<int, SortedList<int, MemberData>>();
 			var sectionIndex = 0;
 			var memberOrder = 0;
-
+			
 			foreach (var member in members)
 			{
-				var memberData = new MemberData(view, member);
-				var viewTypes = GetViewTypes(view, member);
-			
+				var memberData = new MemberData(view, member);				
+				memberData.Section = sectionIndex;
+
 				var skipAttribute = member.GetCustomAttribute<SkipAttribute>();
 				if (skipAttribute != null)
 				{
@@ -328,13 +328,30 @@ namespace MonoMobile.Views
 				var rowHeightAttribute = member.GetCustomAttribute<RowHeightAttribute>();
 				if (rowHeightAttribute != null)
 					memberData.RowHeight = rowHeightAttribute.RowHeight;
+				
+				var listAttribute = member.GetCustomAttribute<ListAttribute>();
+				var isList = listAttribute != null && !typeof(string).IsAssignableFrom(memberData.Type) && (typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type));
 
+				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
+				if (sectionAttribute != null || isList)
+				{
+					if (sections.Count > 0) sectionIndex++;
+					memberData.Section = sectionIndex;
+
+					if (sectionAttribute != null)
+						memberData.Section = sectionAttribute.Order == 0 ? sectionIndex : sectionAttribute.Order;
+
+//					if (isList)
+//						sectionIndex++;
+				}
+				
 				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 				if (orderAttribute != null)
 				{
 					// make sure assigned order is an even number to fit in between the default order 
 					// allowing the values int.MinValue and int.MaxValue for the first and Last positions
 					memberData.Order = orderAttribute.Order > int.MaxValue / 2 ? int.MaxValue : orderAttribute.Order * 2;
+					memberData.Section = orderAttribute.Section == 0 ? memberData.Section : orderAttribute.Section;
 				}
 				else
 				{				
@@ -342,82 +359,124 @@ namespace MonoMobile.Views
 					memberOrder = memberOrder + (memberOrder % 2) + 1;
 					memberData.Order = memberOrder;
 				}
-
-				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
-				if (sectionAttribute != null)
-				{
-					memberOrder = 1;
-					memberData.Order = memberOrder;
-
-					sectionMembers = new List<MemberData>();
-					
-					currentSection = new Section(controller) { DataContext = sectionMembers };
-					
-					currentSection.HeaderText = sectionAttribute.Caption;
-					currentSection.FooterText = sectionAttribute.Footer;
-					currentSection.ExpandState = sectionAttribute.ExpandState;
-					currentSection.IsExpandable = sectionAttribute.IsExpandable;
-
-					if (sectionAttribute.Order == 0)
-					{
-						if (orderAttribute != null)
-							currentSection.Index = orderAttribute.Order;
-						else
-							currentSection.Index = sectionIndex++;
-					}
-
-					currentSection.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
-
-					sections.Add(currentSection);
-				}
-
-				if (sections.Count == 0)
-				{
-					currentSection.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
-					sections.Add(currentSection);
-				}
 				
-				if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
+				var viewTypes = GetViewTypes(view, memberData.Member);
+
+				if (!sections.ContainsKey(memberData.Section))
 				{
-					var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
-					listSource.MemberData = memberData;
-					listSources.Add(memberData.Order, listSource);
-					currentSection.Index = memberData.Order > -1 ? memberData.Order : currentSection.Index;
+					sections.Add(memberData.Section, CreateSection(controller, memberData, viewTypes));
+				}
+
+				if (memberLists.ContainsKey(memberData.Section))
+				{
+					memberLists[memberData.Section].Add(memberData.Order, memberData); 
 				}
 				else
-					listSources.Add(memberData.Order, null);
-				
-				sectionMembers.Add(memberData);
-				currentSection.DataContext = sectionMembers;
-			}
-			
-
-			// Resort the member list 
-			foreach (var section in sections)
-			{
-				var memberList = section.DataContext as List<MemberData>;
-
-				var order = 0;
-				var orderedList = memberList.OrderBy(data => data.Order).ToList();
-	//TODO: Fix sorting
-				orderedList.ForEach((data) => { data.Order = order++; });
-				section.DataContext = orderedList;
-				
-				order = -1;
-				foreach(var listSource in listSources.Values)
 				{
-					order++;
-					if (listSource == null) continue;
-
-					section.ListSources.Add(order, listSource);
+					var sortedList = new SortedList<int, MemberData>();
+					sortedList.Add(memberData.Order, memberData);
+					memberLists.Add(memberData.Section, sortedList);
 				}
 			}
- 
-			var orderedSections = sections.Where(s => s.DataContext.Count > 0).Cast<Section>().OrderBy(section => section.Index).ToList();
 			
-			sectionIndex = 0; 
-			source.Sections.Clear();
-			orderedSections.ForEach((section) => { source.Sections.Add(sectionIndex++, section); section.Index = sectionIndex; });
+			foreach(var kvp in memberLists)
+			{
+				var listSources = new SortedList<int, ListSource>();	
+
+				var index = 0;
+				var list = kvp.Value.Values.ToList();
+				list.ForEach(data => data.Order = index++);
+
+				foreach(var memberData in list)
+				{
+					var viewTypes = GetViewTypes(view, memberData.Member);
+
+					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
+					{
+						var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
+						listSource.MemberData = memberData;
+						
+//						listSource.IsRoot = memberData.Order != 0;
+						listSources.Add(memberData.Order, listSource);
+					}
+					else
+						listSources.Add(memberData.Order, null);
+		
+
+					sections[memberData.Section].ListSources = listSources;
+				}
+
+				sections[kvp.Key].DataContext = list;
+			}
+
+//			var sections = new SortedList<int, Section>();
+//			foreach (var memberList in memberLists.Values)
+//			{
+//				sections.Add(memberData.Section, CreateSection(controller, memberData, viewTypes));
+//
+//				foreach(var memberData in memberList.Values)
+//				{
+//					var viewTypes = GetViewTypes(view, memberData.Member);
+//			
+//					if (!sections.ContainsKey(memberData.Section))
+//					{
+//						sections.Add(memberData.Section, CreateSection(controller, memberData, viewTypes));
+//					}				
+//					
+//					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
+//					{
+//						var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
+//						listSource.MemberData = memberData;
+//						if (sections[memberData.Section].ListSources.ContainsKey(memberData.Order))
+//						{
+//							sections[memberData.Section].ListSources[memberData.Order] = listSource;
+//						}
+//						else
+//						{
+//							sections[memberData.Section].ListSources.Add(memberData.Order, listSource);
+//						}
+//						sections[memberData.Section].Index = memberData.Order > 0 ? memberData.Order : sections[memberData.Section].Index;
+//					}
+//				}
+//
+//				sections[memberData.Section].DataContext = memberList;
+//			}
+
+
+			var source = new ViewSource(controller);
+			source.Sections = sections;
+
+//			// Resort the member list 
+//			foreach (var section in sections.Values)
+//			{
+//				var memberList = section.DataContext as List<MemberData>;
+//
+//				var order = 0;
+//				var orderedList = memberList.OrderBy(data => data.Order).ToList();
+//
+//				orderedList.ForEach((data) => 
+//				{ 
+//					var newOrder = order++;
+//					if (listSources.ContainsKey(data.Order)) 
+//					{ 
+//						section.ListSources.Add(newOrder, listSources[data.Order]); 
+//					};
+//					
+//					data.Order = newOrder; 
+//				});
+//
+//				section.DataContext = orderedList;
+//			}
+// 
+//			var orderedSections = sections.Values.Where(section => section.DataContext.Count > 0).Cast<Section>().OrderBy(section => section.Index).ToList();
+//			
+//			sectionIndex = 0; 
+//			source.Sections.Clear();
+//			orderedSections.ForEach((section) => 
+//			{ 
+//				source.Sections.Add(sectionIndex++, section); 
+//				section.Index = sectionIndex; 
+//			});
 
 			return source;
 		}
@@ -471,7 +530,7 @@ namespace MonoMobile.Views
 						source.IsSelectable = true;
 						source.SelectedItemMemberName = selectionAttribute.MemberName;
 						source.NavigationViewType = selectionAttribute.NavigateToView;
-						source.IsNavigateable = selectionAttribute.NavigateToView != null;// || !type.IsEnum;
+						source.IsNavigateable = selectionAttribute.NavigateToView != null;
 
 						if (source.SelectedAccessoryViewType == null || selectionAttribute.SelectedAccessoryViewType != null)
 							source.SelectedAccessoryViewType = selectionAttribute.SelectedAccessoryViewType;
@@ -480,7 +539,6 @@ namespace MonoMobile.Views
 					}						
 	
 					var listAttribute = member.GetCustomAttribute<ListAttribute>();
-				//	source.TableViewStyle = listAttribute != null ? UITableViewStyle.Plain : UITableViewStyle.Grouped;
 
 					var rootAttribute = member.GetCustomAttribute<RootAttribute>();
 					if (rootAttribute != null)
@@ -498,6 +556,30 @@ namespace MonoMobile.Views
 			return null;
 		}
 		
+		private Section CreateSection(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
+		{
+			var listSources = new SortedList<int, ListSource>();
+			listSources.Add(memberData.Order, null);
+
+			var memberOrder = 1;
+			memberData.Order = memberOrder;
+
+			var sectionMembers = new List<MemberData>();
+					
+			var section = new Section(controller) { DataContext = sectionMembers };
+					
+			var sectionAttribute = memberData.Member.GetCustomAttribute<SectionAttribute>();
+			if (sectionAttribute != null)
+			{
+				section.HeaderText = sectionAttribute.Caption;
+				section.FooterText = sectionAttribute.Footer;
+				section.ExpandState = sectionAttribute.ExpandState;
+				section.IsExpandable = sectionAttribute.IsExpandable;
+			}
+			section.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
+			return section;
+		}
+
 //		public void Parse(UIView view, string caption, Theme theme)
 //		{
 //			Type viewType = view.GetType();

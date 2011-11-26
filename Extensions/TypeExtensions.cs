@@ -268,7 +268,9 @@ namespace MonoMobile.Views
 		{
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			var members = new List<MemberInfo>();
-
+			
+//			members = type.GetMembers(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static).ToList();
+//			members = (from m in members where (m is MethodBase && !((MethodBase)m).IsSpecialName || !(m is MethodBase)) select m).ToList();
 			foreach (var memberFunc in _ObjectMemberFuncMap)
 			{
 				members.AddRange(memberFunc(type, allowPrivate));
