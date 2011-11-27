@@ -143,7 +143,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void SetNumberOfRows()
+		public void SetNumberOfRows()
 		{
 			var count = 0;
 			//TODO: Come back and fix this for objects (member count)

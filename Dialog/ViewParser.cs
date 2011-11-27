@@ -393,8 +393,8 @@ namespace MonoMobile.Views
 					{
 						var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
 						listSource.MemberData = memberData;
-						
-//						listSource.IsRoot = memberData.Order != 0;
+						listSource.Sections[0].Index = memberData.Section;
+
 						listSources.Add(memberData.Order, listSource);
 					}
 					else
@@ -402,6 +402,7 @@ namespace MonoMobile.Views
 		
 
 					sections[memberData.Section].ListSources = listSources;
+					sections[memberData.Section].Index = memberData.Section;
 				}
 
 				sections[kvp.Key].DataContext = list;

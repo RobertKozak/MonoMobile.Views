@@ -391,58 +391,72 @@ namespace MonoMobile.Views
 		}
 		
 		public void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			Console.WriteLine("Collection changed");
-			
-//			if (e.Action == NotifyCollectionChangedAction.Add)
-//			{
-//				foreach (var item in e.NewItems)
-//				{
-//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					
-//					Add(element);
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Remove)
-//			{
-//				foreach (var item in e.OldItems)
-//				{
-//					Remove(e.OldStartingIndex);
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Reset)
-//			{
-//				Clear();
-//				if (e.NewItems != null)
-//				{
-//					foreach (var item in e.NewItems)
-//					{
-//						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//						Add(element);
-//					}
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Move)
-//			{
-//				var index = 0;
-//				foreach (var item in e.NewItems)
-//				{
-//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					Remove(e.OldStartingIndex);
-//					Insert(e.NewStartingIndex + index, element);
-//					index++;
-//				}
-//				
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Replace)
-//			{
-//				var index = 0;
-//				foreach (var item in e.NewItems)
-//				{
-//					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					index++;
-//				}
-//			}
+		{	
+			var section = Sections[0];
+
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (var item in e.NewItems)
+				{
+					section.DataContext.Add(item);
+					section.SetNumberOfRows();
+					
+					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(section.DataContext.Count - 1, section.Index) };
+					Controller.TableView.InsertRows(indexPaths, UITableViewRowAnimation.Fade);
+				}
+			}
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				foreach (var item in e.OldItems)
+				{
+					var row = section.DataContext.IndexOf(item);
+					section.DataContext.Remove(item);
+					section.SetNumberOfRows();
+					
+					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+					Controller.TableView.DeleteRows(indexPaths, UITableViewRowAnimation.Fade);
+				}
+			}
+			if (e.Action == NotifyCollectionChangedAction.Reset)
+			{
+				section.DataContext.Clear();
+				section.SetNumberOfRows();
+				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(section.Index), UITableViewRowAnimation.Automatic);
+			}
+			if (e.Action == NotifyCollectionChangedAction.Move)
+			{
+				var index = 0;
+				foreach (var item in e.NewItems)
+				{
+					var row = e.OldStartingIndex;
+					section.DataContext.RemoveAt(row);
+					section.SetNumberOfRows();
+					
+					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+					Controller.TableView.DeleteRows(indexPaths, UITableViewRowAnimation.Bottom);
+
+					section.DataContext.Add(item);
+					section.SetNumberOfRows();
+					
+					indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(section.DataContext.Count - 1, section.Index) };
+					Controller.TableView.InsertRows(indexPaths, UITableViewRowAnimation.Top);
+					
+					index++;
+				}				
+			}
+			if (e.Action == NotifyCollectionChangedAction.Replace)
+			{
+				var index = 0;
+				foreach (var item in e.NewItems)
+				{
+					var row = e.NewStartingIndex + index;
+					section.DataContext[e.NewStartingIndex + index] = item;
+					section.SetNumberOfRows();
+					
+					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+					Controller.TableView.ReloadRows(indexPaths, UITableViewRowAnimation.Fade);
+				}
+			}
 		}
 
 		private void SetItems()
