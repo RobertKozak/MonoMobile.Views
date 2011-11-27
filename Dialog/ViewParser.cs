@@ -32,6 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
@@ -340,9 +341,6 @@ namespace MonoMobile.Views
 
 					if (sectionAttribute != null)
 						memberData.Section = sectionAttribute.Order == 0 ? sectionIndex : sectionAttribute.Order;
-
-//					if (isList)
-//						sectionIndex++;
 				}
 				
 				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
@@ -556,6 +554,11 @@ namespace MonoMobile.Views
 
 					source.IsRoot = rootAttribute != null || listAttribute == null;
 					
+					var notifyCollectionChanged = memberValue as INotifyCollectionChanged;
+					if (notifyCollectionChanged != null)
+					{
+						notifyCollectionChanged.CollectionChanged += source.HandleCollectionChanged;
+					}
 					return source;
 				}
 			}

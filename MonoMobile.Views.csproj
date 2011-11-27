@@ -283,7 +283,6 @@
     <Compile Include="Dialog\DialogViewController\ViewSource.cs" />
     <Compile Include="Dialog\CellViews\CellView.cs" />
     <Compile Include="Dialog\DialogViewController\MemberData.cs" />
-    <Compile Include="Dialog\DialogViewController\TypeData.cs" />
     <Compile Include="Dialog\DialogViewController\ViewContainer.cs" />
     <Compile Include="Application\Registrations.cs" />
     <Compile Include="Dialog\CellViews\ObjectView.cs" />

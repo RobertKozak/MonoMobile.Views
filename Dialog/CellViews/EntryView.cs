@@ -1,4 +1,3 @@
-using System.Reflection;
 // 
 //  EntryView.cs
 // 
@@ -32,9 +31,10 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
+	using System.Reflection;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
 	[Preserve(AllMembers = true)]
 	public class EntryView: FocusableView
 	{	
@@ -55,18 +55,18 @@ namespace MonoMobile.Views
 			EditModeValue = EditMode.WithCaption;
 
 			InputView = new UIPlaceholderTextField(new RectangleF(5, 0, frame.Width - 10, frame.Height)) 
-				{ 
-					AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-		
-					BackgroundColor = UIColor.Clear, 
-			//PlaceholderColor = Theme.PlaceholderColor, 
-			//PlaceholderAlignment = Theme.PlaceholderAlignment,
-					PlaceholderAlignment = UITextAlignment.Right,
-					VerticalAlignment = UIControlContentVerticalAlignment.Center,
-					AutocorrectionType = AutocorrectionType,
-					AutocapitalizationType = AutocapitalizationType,
-					Tag = 1 
-				};
+			{ 
+				AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
+	
+				BackgroundColor = UIColor.Clear, 
+		//PlaceholderColor = Theme.PlaceholderColor, 
+		//PlaceholderAlignment = Theme.PlaceholderAlignment,
+				PlaceholderAlignment = UITextAlignment.Right,
+				VerticalAlignment = UIControlContentVerticalAlignment.Center,
+				AutocorrectionType = AutocorrectionType,
+				AutocapitalizationType = AutocapitalizationType,
+				Tag = 1 
+			};
 		
 			InputView.Started += (s, e) =>
 			{
@@ -104,6 +104,8 @@ namespace MonoMobile.Views
 		
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			InputView.TableView = Controller.TableView;
+			
 			base.UpdateCell(cell, indexPath);
 
 			ShowCaption = EditModeValue != EditMode.NoCaption;

@@ -39,6 +39,9 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class UIPlaceholderTextField: UITextField
 	{
+		public UITableView TableView { get; set; }
+		public NSIndexPath IndexPath { get; set; }
+
 		public UIColor PlaceholderColor { get; set; }
 		public UITextAlignment PlaceholderAlignment { get; set; }
 

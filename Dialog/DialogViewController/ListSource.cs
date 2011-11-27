@@ -32,6 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -89,6 +90,15 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
+				foreach(var section in Sections.Values)
+				{
+					var notifyCollectionChanged = section.DataContext as INotifyCollectionChanged;
+					if (notifyCollectionChanged != null)
+					{
+						notifyCollectionChanged.CollectionChanged -= HandleCollectionChanged;
+					}
+					section.DataContext = null;
+				}
 			}
 
 			base.Dispose(disposing);
@@ -380,6 +390,61 @@ namespace MonoMobile.Views
 		{
 		}
 		
+		public void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			Console.WriteLine("Collection changed");
+			
+//			if (e.Action == NotifyCollectionChangedAction.Add)
+//			{
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					
+//					Add(element);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Remove)
+//			{
+//				foreach (var item in e.OldItems)
+//				{
+//					Remove(e.OldStartingIndex);
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Reset)
+//			{
+//				Clear();
+//				if (e.NewItems != null)
+//				{
+//					foreach (var item in e.NewItems)
+//					{
+//						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//						Add(element);
+//					}
+//				}
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Move)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					Remove(e.OldStartingIndex);
+//					Insert(e.NewStartingIndex + index, element);
+//					index++;
+//				}
+//				
+//			}
+//			if (e.Action == NotifyCollectionChangedAction.Replace)
+//			{
+//				var index = 0;
+//				foreach (var item in e.NewItems)
+//				{
+//					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
+//					index++;
+//				}
+//			}
+		}
+
 		private void SetItems()
 		{
 			if (_SelectedItemMember != null)

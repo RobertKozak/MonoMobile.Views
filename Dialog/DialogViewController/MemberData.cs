@@ -36,8 +36,13 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MemberData : TypeData
+	public class MemberData
 	{
+		private object _Value;
+
+		public object Value { get { return GetValue(); } set { SetValue(value); } }
+		public Type Type { get; set; }
+
 		public NSString Id { get; private set; }
  
 		public object DataContextSource { get; private set; }
@@ -50,7 +55,7 @@ namespace MonoMobile.Views
 		public int Order { get; set; }
 		public float RowHeight { get; set; }
 
-		public MemberData(object source, MemberInfo member): base(null)
+		public MemberData(object source, MemberInfo member)
 		{
 			Source = source;
 			Member = member;
@@ -59,7 +64,7 @@ namespace MonoMobile.Views
 			Id = new NSString(Type.ToString());
 		}
 
-		protected override object GetValue()
+		protected virtual object GetValue()
 		{
 			if (Member != null && Source != null)
 			{
@@ -76,12 +81,17 @@ namespace MonoMobile.Views
 				return Member.GetValue(Source);
 			}
 
-			return base.GetValue();
+			return _Value;
 		}
 
-		protected override void SetValue(object value)
+		protected virtual void SetValue(object value)
 		{
-			base.SetValue(value);
+			_Value = value;
+			
+			if (_Value != null)
+			{
+				Type = _Value.GetType();
+			}
 			
 			if (DataContextMember != null)
 				DataContextMember.SetValue(DataContextSource, value);

@@ -47,7 +47,7 @@ namespace MonoMobile.Views
 	}
 
 	[Preserve(AllMembers = true)]
-	public class Section: IDataContext<IList>, IEnumerable
+	public class Section: DisposableObject, IDataContext<IList>, IEnumerable
 	{
 		internal DialogViewController Controller;
 
@@ -130,59 +130,6 @@ namespace MonoMobile.Views
 //
 //			return count;
 //		}
-
-		public void CollectionChanged(NotifyCollectionChangedEventArgs e)
-		{
-//			if (e.Action == NotifyCollectionChangedAction.Add)
-//			{
-//				foreach (var item in e.NewItems)
-//				{
-//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					
-//					Add(element);
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Remove)
-//			{
-//				foreach (var item in e.OldItems)
-//				{
-//					Remove(e.OldStartingIndex);
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Reset)
-//			{
-//				Clear();
-//				if (e.NewItems != null)
-//				{
-//					foreach (var item in e.NewItems)
-//					{
-//						var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//						Add(element);
-//					}
-//				}
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Move)
-//			{
-//				var index = 0;
-//				foreach (var item in e.NewItems)
-//				{
-//					var element = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					Remove(e.OldStartingIndex);
-//					Insert(e.NewStartingIndex + index, element);
-//					index++;
-//				}
-//				
-//			}
-//			if (e.Action == NotifyCollectionChangedAction.Replace)
-//			{
-//				var index = 0;
-//				foreach (var item in e.NewItems)
-//				{
-//					Elements[e.NewStartingIndex + index] = BindingContext.CreateElementFromObject(item, Root, elementType);
-//					index++;
-//				}
-//			}
-		}
 
 		public void SetExpandState(ExpandState state)
 		{

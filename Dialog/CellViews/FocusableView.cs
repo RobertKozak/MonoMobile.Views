@@ -38,7 +38,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[Preserve(AllMembers = true)]
-	public abstract class FocusableView : CellView, ISelectable, IFocusable, ICellContent
+	public abstract class FocusableView : CellView, IFocusable, ICellContent
 	{
 		protected IFocusable _Focus;
 		
@@ -62,33 +62,21 @@ namespace MonoMobile.Views
 			
 			InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
 
-			if (IsNeedsFirstResponder)
-			{
-				IsNeedsFirstResponder = false;
-				InputView.BecomeFirstResponder();
-			}
-
 			Add(InputView);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			IndexPath = indexPath;
+			InputView.IndexPath = indexPath;
+			
+//			if (IsNeedsFirstResponder)
+//			{
+//				IsNeedsFirstResponder = false;
+//				InputView.BecomeFirstResponder();
+//			}
 
 			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-		}
-		
-		public virtual void Selected(DialogViewController dvc, UITableView tableView, object item, NSIndexPath indexPath)
-		{
-			if (InputView != null)
-			{
-				InputView.InvokeOnMainThread(() => 
-				{ 
-					InputView.BecomeFirstResponder(); 
-				});
-			}
-
-			tableView.DeselectRow(indexPath, true);
 		}
 		
 		public void BecomeFirstResponder()
