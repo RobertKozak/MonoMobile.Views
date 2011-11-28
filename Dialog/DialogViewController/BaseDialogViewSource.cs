@@ -47,9 +47,6 @@ namespace MonoMobile.Views
 		private const float _SnapBoundary = 65;
 		private bool _CheckForRefresh;
 
-		private HeaderTapGestureRecognizer tapRecognizer;
-		private Selector _HeaderSelector = new Selector("headerTap");
-
 		protected TableCellFactory<UITableViewCell> CellFactory;
 		protected DialogViewController Controller;
 		
@@ -383,20 +380,6 @@ namespace MonoMobile.Views
 						section.HeaderView = CreateHeaderView(tableView, section.HeaderText);
 					}
 		
-					if (section.HeaderView != null)
-					{
-						if (section.IsExpandable)
-						{
-							section.ArrowView.Bounds = new RectangleF(0, 0, 16, 16);
-							section.ArrowView.Frame = new RectangleF(5, 8, 16, 16);
-							section.HeaderView.Add(section.ArrowView);
-						
-							tapRecognizer = new HeaderTapGestureRecognizer(section, this, _HeaderSelector);
-					
-							section.HeaderView.AddGestureRecognizer(tapRecognizer);
-							Flip(section);
-						}
-					}
 					return section.HeaderView;
 				}
 			}
@@ -442,7 +425,7 @@ namespace MonoMobile.Views
 					}
 					
 					// Use an empty UIView to Eliminate Extra separators for blank items
-					if (section.FooterView == null || section.ExpandState == ExpandState.Closed)
+					if (section.FooterView == null)
 					{
 						return new UIView(RectangleF.Empty) { BackgroundColor = UIColor.Clear };
 					}
@@ -451,27 +434,6 @@ namespace MonoMobile.Views
 				}
 			}
 			return null;
-		}
-
-		[Export("headerTap")]
-		public void HeaderTap(HeaderTapGestureRecognizer recognizer)
-		{
-			var section = recognizer.Section;
-			var state = section.ExpandState;
-			
-			if (section.IsExpandable)
-			{
-				if (state == ExpandState.Opened)
-				{
-					section.ExpandState = ExpandState.Closed;
-				}
-				else
-				{
-					section.ExpandState = ExpandState.Opened;
-				}
-			
-				Flip(section);
-			}
 		}
 
 		private UIView CreateHeaderView(UITableView tableView, string caption)
@@ -544,15 +506,6 @@ namespace MonoMobile.Views
 			footerLabel.Lines = footerLabel.Font.NumberOfLines(caption, width);
 
 			return footerLabel;
-		}
-
-		private void Flip(Section section)
-		{
-			UIView.BeginAnimations(null);
-			UIView.SetAnimationDuration(0.18f);
-			section.ArrowView.Layer.Transform = section.ExpandState == ExpandState.Closed ? CATransform3D.MakeRotation((float)Math.PI * 1.5f, 0, 0, 1) : CATransform3D.MakeRotation((float)Math.PI * 2f, 0, 0, 1);
-			
-			UIView.CommitAnimations();
 		}
 		#endregion
 

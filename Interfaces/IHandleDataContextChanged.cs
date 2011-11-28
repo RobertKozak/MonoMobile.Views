@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 	
 	public interface IHandleDataContextChanged
 	{
-		void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e);
+		void HandleNotifyDataContextChanged(object sender, DataContextChangedEventArgs e);
 	}
 }
 

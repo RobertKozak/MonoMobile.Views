@@ -560,6 +560,20 @@ namespace MonoMobile.Views
 					{
 						notifyCollectionChanged.CollectionChanged += source.HandleCollectionChanged;
 					}
+
+					var list = memberValue as IList;
+					if (list != null)
+					{
+						foreach(var item in list)
+						{
+							var notifyPropertyChanged = item as INotifyPropertyChanged;
+							if (notifyPropertyChanged != null)
+							{
+								notifyPropertyChanged.PropertyChanged += source.HandlePropertyChanged;
+							}
+						}
+					}
+
 					return source;
 				}
 			}
@@ -584,8 +598,6 @@ namespace MonoMobile.Views
 			{
 				section.HeaderText = sectionAttribute.Caption;
 				section.FooterText = sectionAttribute.Footer;
-				section.ExpandState = sectionAttribute.ExpandState;
-				section.IsExpandable = sectionAttribute.IsExpandable;
 			}
 			section.ViewTypes.Add(memberData.Id.ToString(), viewTypes);
 			return section;

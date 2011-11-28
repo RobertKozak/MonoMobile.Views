@@ -53,7 +53,5 @@ namespace MonoMobile.Views
 		public string Caption, Footer;
 		public int Order = 0;
 		public Type ThemeType { get; set; }
-		public bool IsExpandable { get; set;}
-		public ExpandState ExpandState { get; set; }
 	}
 }

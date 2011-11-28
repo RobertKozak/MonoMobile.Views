@@ -900,7 +900,7 @@ return;
 				var handleDataContextChanged = TableView.Source as IHandleDataContextChanged;
 				if (handleDataContextChanged != null)
 				{
-					notifyDataContextChanged.DataContextChanged += handleDataContextChanged.HandleNotifyDataContextChangedDataContextChanged;
+					notifyDataContextChanged.DataContextChanged += handleDataContextChanged.HandleNotifyDataContextChanged;
 				}
 			}
 		}

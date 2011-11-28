@@ -33,6 +33,7 @@ namespace MonoMobile.Views
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.Specialized;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -347,7 +348,7 @@ namespace MonoMobile.Views
 			Controller.NavigationController.PushViewController(dvc, true);
 		}
 
-		public void HandleNotifyDataContextChangedDataContextChanged(object sender, DataContextChangedEventArgs e)
+		public void HandleNotifyDataContextChanged(object sender, DataContextChangedEventArgs e)
 		{
 			SetSectionData(0, e.NewDataContext as IList);
 
@@ -389,32 +390,32 @@ namespace MonoMobile.Views
 		public void Deactivated()
 		{
 		}
-		
+
+		public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var section = Sections[0];
+			
+			Controller.TableView.ReloadSections(NSIndexSet.FromIndex(section.Index), UITableViewRowAnimation.Automatic);
+		}
+
 		public void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{	
 			var section = Sections[0];
 
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
+				var index = 0;
 				foreach (var item in e.NewItems)
 				{
-					section.DataContext.Add(item);
-					section.SetNumberOfRows();
-					
-					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(section.DataContext.Count - 1, section.Index) };
-					Controller.TableView.InsertRows(indexPaths, UITableViewRowAnimation.Fade);
+					AddRow(section, e.NewStartingIndex + index, item);
+					index++;
 				}
 			}
 			if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
 				foreach (var item in e.OldItems)
 				{
-					var row = section.DataContext.IndexOf(item);
-					section.DataContext.Remove(item);
-					section.SetNumberOfRows();
-					
-					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-					Controller.TableView.DeleteRows(indexPaths, UITableViewRowAnimation.Fade);
+					RemoveRow(section, item);
 				}
 			}
 			if (e.Action == NotifyCollectionChangedAction.Reset)
@@ -426,21 +427,15 @@ namespace MonoMobile.Views
 			if (e.Action == NotifyCollectionChangedAction.Move)
 			{
 				var index = 0;
-				foreach (var item in e.NewItems)
+				foreach (var newItem in e.NewItems)
 				{
-					var row = e.OldStartingIndex;
-					section.DataContext.RemoveAt(row);
-					section.SetNumberOfRows();
-					
-					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-					Controller.TableView.DeleteRows(indexPaths, UITableViewRowAnimation.Bottom);
+					var row = e.OldStartingIndex + index;
+					var oldItem = section.DataContext[row];
 
-					section.DataContext.Add(item);
-					section.SetNumberOfRows();
-					
-					indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(section.DataContext.Count - 1, section.Index) };
-					Controller.TableView.InsertRows(indexPaths, UITableViewRowAnimation.Top);
-					
+					row = e.NewStartingIndex + index;
+
+					RemoveRow(section, oldItem, UITableViewRowAnimation.Fade);
+					InsertRow(section, row, newItem, UITableViewRowAnimation.Left);
 					index++;
 				}				
 			}
@@ -449,14 +444,77 @@ namespace MonoMobile.Views
 				var index = 0;
 				foreach (var item in e.NewItems)
 				{
-					var row = e.NewStartingIndex + index;
-					section.DataContext[e.NewStartingIndex + index] = item;
-					section.SetNumberOfRows();
-					
-					var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-					Controller.TableView.ReloadRows(indexPaths, UITableViewRowAnimation.Fade);
+					var row = e.OldStartingIndex + index;
+					ReplaceRow(section, e.OldItems[row], item);
+					index++;
 				}
 			}
+		}
+		
+		private void AddPropertyChangedHandler(object item)
+		{
+			var notifyPropertyChanged = item as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null)
+			{
+				notifyPropertyChanged.PropertyChanged += HandlePropertyChanged;
+			}
+		}
+
+		private void RemovePropertyChangedHandler(object item)
+		{
+			var notifyPropertyChanged = item as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null)
+			{
+				notifyPropertyChanged.PropertyChanged -= HandlePropertyChanged;
+			}
+		}
+		
+		private void AddRow(Section section, int row, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+		{
+			AddPropertyChangedHandler(item);
+
+			section.DataContext.Insert(row, item);
+			section.SetNumberOfRows();
+					
+			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+			Controller.TableView.InsertRows(indexPaths, animation);
+		}
+
+		private void InsertRow(Section section, int row, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+		{
+			AddPropertyChangedHandler(item);
+
+			section.DataContext.Insert(row, item); 
+			section.SetNumberOfRows();
+					
+			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+			Controller.TableView.InsertRows(indexPaths, animation);
+		}
+
+		private void RemoveRow(Section section, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+		{
+			RemovePropertyChangedHandler(item);
+
+			var row = section.DataContext.IndexOf(item);
+			section.DataContext.Remove(item);
+			section.SetNumberOfRows();
+					
+			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+			Controller.TableView.DeleteRows(indexPaths, animation);
+		}
+
+		private void ReplaceRow(Section section, object oldItem, object newItem, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+		{
+			RemovePropertyChangedHandler(oldItem);
+			AddPropertyChangedHandler(newItem);
+
+			var row = section.DataContext.IndexOf(oldItem);
+
+			section.DataContext[row] = newItem;
+			section.SetNumberOfRows();
+					
+			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+			Controller.TableView.ReloadRows(indexPaths, animation);
 		}
 
 		private void SetItems()
