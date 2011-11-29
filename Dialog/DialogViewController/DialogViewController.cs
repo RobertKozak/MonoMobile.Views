@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Collections.Specialized;
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
@@ -33,10 +33,11 @@ using System.Reflection;
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
+	using System.Reflection;
 	using System.Threading;
 	using MonoMobile.Views;
 	using MonoMobile.Views.Utilities;
@@ -61,7 +62,6 @@ namespace MonoMobile.Views
 		private UISearchBar _Searchbar;
 		private Section[] _OriginalSections;
 		//private IElement[][] _OriginalElements;
-		private UITableViewSource _TableSource;
 
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; }		
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
@@ -427,7 +427,7 @@ namespace MonoMobile.Views
 			else
 				DismissModalViewControllerAnimated(animated);
 		}
-
+		
 		public void Selected(object item, NSIndexPath indexPath)
 		{
 			var selectable = RootView as ISelectable;
@@ -508,6 +508,71 @@ namespace MonoMobile.Views
 //			EnablePullToRefresh = Root.PullToRefreshCommand != null;
 		}
 		
+		public override void ViewWillAppear(bool animated)
+		{
+			base.ViewWillAppear(animated);
+			
+			var activation = TableView.Source as IActivation;
+			if (activation != null)
+			{
+				activation.Activated();
+			}			
+
+//			if (Root == null)
+//				return;
+//			
+//			Root.Prepare();
+
+//			if (Root.Caption != null)
+//				NavigationItem.Title = Root.Caption;
+
+			if (_Dirty)
+			{
+				TableView.ReloadData();
+				_Dirty = false;
+			}
+			
+			SetScrollEnabled();
+
+//			if (Root != null)
+//			{
+//				var index = Root.Index;
+//				if (index > -1)
+//				{
+//					var path = Root.PathForRadio();
+//					if (path != null)
+//						TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
+//				}
+//			}
+			
+			var nav = ParentViewController as UINavigationController;
+			if (nav != null)
+			{
+				nav.NavigationBar.Opaque = false;
+	
+//				var themeable = Root as IThemeable;
+//				if (themeable != null)
+//				{
+//					if (themeable.Theme.BarStyle.HasValue)
+//					{
+//						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
+//					}
+//	
+//	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
+//	//				{
+//	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
+//	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
+//	//					nav.NavigationBar.InsertSubview(view, 0);
+//	//				}
+//	//				else
+//					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
+//					nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
+//				}
+			}
+
+			ConfigureBackgroundImage();
+		}
+
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
@@ -529,6 +594,40 @@ namespace MonoMobile.Views
 				var activation = RootView as IActivation;
 				if (activation != null)
 					activation.Activated();
+			}
+
+			var source = TableView.Source as BaseDialogViewSource;
+			if (source != null)
+			{
+				foreach (var section in source.Sections.Values)
+				{
+					foreach (var viewList in section.Views.Values)
+					{
+						foreach(var view in viewList)
+						{
+							var dc = view as IDataContext<MemberData>;
+							if (dc != null)
+							{
+								var notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
+								if (notifyPropertyChanged != null)
+								{
+									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
+								}
+							}
+						}
+					}
+
+					foreach (MemberData memberData in section.DataContext)
+					{
+						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
+						if (notifyCollectionChanged != null)
+						{
+							notifyCollectionChanged.CollectionChanged -= section.ListSources[0].HandleCollectionChanged;
+							notifyCollectionChanged.CollectionChanged += section.ListSources[0].HandleCollectionChanged;
+						}
+					}
+				}	
 			}
 		}
 
@@ -728,83 +827,8 @@ return;
 			_Searchbar.Hidden = false;
 		}
 		
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-			
-			var activation = TableView.Source as IActivation;
-			if (activation != null)
-			{
-				activation.Activated();
-			}			
-
-//			if (Root == null)
-//				return;
-//			
-//			Root.Prepare();
-
-//			if (Root.Caption != null)
-//				NavigationItem.Title = Root.Caption;
-
-			if (_Dirty)
-			{
-				TableView.ReloadData();
-				_Dirty = false;
-			}
-			
-			SetScrollEnabled();
-
-//			if (Root != null)
-//			{
-//				var index = Root.Index;
-//				if (index > -1)
-//				{
-//					var path = Root.PathForRadio();
-//					if (path != null)
-//						TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
-//				}
-//			}
-			
-			var nav = ParentViewController as UINavigationController;
-			if (nav != null)
-			{
-				nav.NavigationBar.Opaque = false;
-	
-//				var themeable = Root as IThemeable;
-//				if (themeable != null)
-//				{
-//					if (themeable.Theme.BarStyle.HasValue)
-//					{
-//						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
-//					}
-//	
-//	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-//	//				{
-//	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-//	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-//	//					nav.NavigationBar.InsertSubview(view, 0);
-//	//				}
-//	//				else
-//					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-//					nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-//				}
-			}
-
-			ConfigureBackgroundImage();
-		}
-
 		public void UpdateSource()
 		{			
-//			if (_TableSource != null)
-//			{
-//				_TableSource.Dispose();
-//			}
-//			
-//			var parser = new ViewParser();
-//			_TableSource = parser.Parse(this, RootView);
-//			TableView.Source = _TableSource;
-
-
 			TableView.ReloadData();
 			ConfigureNavbarItems();
 			ConfigureToolbarItems();
@@ -877,6 +901,38 @@ return;
 				if (activation != null)
 					activation.Deactivated();
 			}
+
+			var source = TableView.Source as ViewSource;
+			if (source != null)
+			{
+				foreach (var section in source.Sections.Values)
+				{
+					foreach (var viewList in section.Views.Values)
+					{
+						foreach(var view in viewList)
+						{
+							var dc = view as IDataContext<MemberData>;
+							if (dc != null)
+							{
+								var notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
+								if (notifyPropertChanged != null)
+								{
+									notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+								}
+							}
+						}
+					}
+
+					foreach(MemberData memberData in section.DataContext)
+					{
+						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
+						if (notifyCollectionChanged != null)
+						{
+							notifyCollectionChanged.CollectionChanged -= section.ListSources[0].HandleCollectionChanged;
+						}
+					}
+				}
+			}
 		}
 
 //		public void PrepareRoot(IRoot root)
@@ -890,19 +946,6 @@ return;
 		{
 			_Pushing = pushing;
 			NavigationItem.HidesBackButton = !_Pushing;
-		}
-
-		private void SetDataContextChangeHandler(object view)
-		{
-			var notifyDataContextChanged = view as INotifyDataContextChanged;
-			if (notifyDataContextChanged != null)
-			{
-				var handleDataContextChanged = TableView.Source as IHandleDataContextChanged;
-				if (handleDataContextChanged != null)
-				{
-					notifyDataContextChanged.DataContextChanged += handleDataContextChanged.HandleNotifyDataContextChanged;
-				}
-			}
 		}
 
 		private void SetScrollEnabled()
@@ -920,6 +963,29 @@ return;
 			}
 		}
 		
+		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var source = TableView.Source as BaseDialogViewSource;
+			foreach (var section in source.Sections.Values)
+			{
+				foreach (var viewList in section.Views.Values)
+				{
+					foreach(var view in viewList)
+					{
+						var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
+						var dc = view as IDataContext<MemberData>;
+						if (dc != null)
+						{
+							if (dc.DataContext.Member.Name == e.PropertyName && handleNotifyPropertyChange != null)
+							{
+								handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		private void CreateTableView(object view)
 		{
 			CreateTableView(view, null);
@@ -940,13 +1006,14 @@ return;
 			
 			if (source != null)
 			{
-				TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
-				TableView.Source = source;
-
+				_TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
+				_TableView.Source = source;
+				
+				TableView = _TableView;
 				DisableScrolling = view.GetType().GetCustomAttribute<DisableScrollingAttribute>() != null;
 			}
 			
-			SetDataContextChangeHandler(view);
+	//		SetDataContextChangeHandler(view);
 		}
 
 		public DialogViewController(string title, object view, bool pushing) : base(UITableViewStyle.Grouped)
@@ -964,7 +1031,16 @@ return;
 			
 			CreateTableView(view, member);	
 		}
+		
+		public void Dispose ()
+		{
+			throw new NotImplementedException ();
+		}
 
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
 
 //		public DialogViewController(string title, BaseDialogViewSource source, bool pushing) : base(UITableViewStyle.Grouped)
 //		{

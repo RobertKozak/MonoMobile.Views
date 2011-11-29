@@ -1,5 +1,5 @@
 // 
-//  IHandleDataContextChanged.cs
+//  IHandleNotifyPropertyChanged.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,14 +27,20 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections.Specialized;
+	using System.ComponentModel;
 	
-	public interface IHandleDataContextChanged
+	public interface IHandleNotifyPropertyChanged
 	{
-		void HandleNotifyDataContextChanged(object sender, DataContextChangedEventArgs e);
+		void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e);
+	}
+
+	public interface IHandleNotifyCollectionChanged
+	{
+		void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
 	}
 }
 

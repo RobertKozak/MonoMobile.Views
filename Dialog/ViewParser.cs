@@ -90,6 +90,20 @@ namespace MonoMobile.Views
 				controller.NavbarButtons = CheckForNavbarItems(view);
 			
 
+				var dc = view as IDataContext<object>;
+				if (dc != null)
+				{
+					var notifyPropertyChanged = dc.DataContext as INotifyPropertyChanged;
+					if (notifyPropertyChanged != null)
+					{
+						var handleNotifyPropertyChanged = view as IHandleNotifyPropertyChanged;
+						if (handleNotifyPropertyChanged != null)
+						{
+							notifyPropertyChanged.PropertyChanged += handleNotifyPropertyChanged.HandleNotifyPropertyChanged;
+						}
+					}
+				}
+
 				if (member != null)
 				{
 					source = ParseList(controller, view, member, null); 
@@ -102,8 +116,10 @@ namespace MonoMobile.Views
 
 				InitializeSearch(view, source);
 			}
+
 			return source;
 		}
+
 
 //		public UITableViewSource ParseSections(DialogViewController controller, UIView view)
 //		{
@@ -485,16 +501,25 @@ namespace MonoMobile.Views
 			Type type = null;
 			object memberValue = null;
 
-			var dc = view as IDataContext<object>;
-			if (dc != null && dc.DataContext != null)
+			if (member != null && view != null)
 			{
-				memberValue = dc.DataContext;
-				type = dc.DataContext.GetType();
-			}
-			else
-			{
-				memberValue = member.GetValue(view);
-				type = member.GetMemberType();
+				var dc = view as IDataContext<object>;
+				if (dc != null && dc.DataContext != null)
+				{
+					var dataContextSource = dc.DataContext;
+					var dataContextMember = dataContextSource.GetType().GetMember(member.Name).FirstOrDefault();
+					
+					if (dataContextMember != null)
+					{
+						memberValue = dataContextMember.GetValue(dataContextSource);
+						type = dataContextMember.GetMemberType();
+					}
+				}
+				else
+				{	
+					memberValue = member.GetValue(view);
+					type = member.GetMemberType();
+				}
 			}
 
 			var isList = typeof(IEnumerable).IsAssignableFrom(type) || typeof(Enum).IsAssignableFrom(type);
@@ -554,25 +579,6 @@ namespace MonoMobile.Views
 					}
 
 					source.IsRoot = rootAttribute != null || listAttribute == null;
-					
-					var notifyCollectionChanged = memberValue as INotifyCollectionChanged;
-					if (notifyCollectionChanged != null)
-					{
-						notifyCollectionChanged.CollectionChanged += source.HandleCollectionChanged;
-					}
-
-					var list = memberValue as IList;
-					if (list != null)
-					{
-						foreach(var item in list)
-						{
-							var notifyPropertyChanged = item as INotifyPropertyChanged;
-							if (notifyPropertyChanged != null)
-							{
-								notifyPropertyChanged.PropertyChanged += source.HandlePropertyChanged;
-							}
-						}
-					}
 
 					return source;
 				}

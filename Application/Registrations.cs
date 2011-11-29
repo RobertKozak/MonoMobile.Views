@@ -50,12 +50,13 @@ namespace MonoMobile.Views
 
 			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectView));
 			ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
+			ViewContainer.RegisterView(typeof(ButtonAttribute), typeof(MethodView));
 			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandView));
 			ViewContainer.RegisterView(typeof(Uri), typeof(HtmlView));
 			ViewContainer.RegisterView(typeof(HtmlAttribute), typeof(HtmlView));
 			ViewContainer.RegisterView(typeof(EntryAttribute), typeof(EntryView));
 			ViewContainer.RegisterView(typeof(PasswordAttribute), typeof(EntryView));
-	//		ViewContainer.RegisterView(typeof(NavigateToViewAttribute), typeof(List));
+
 			ViewContainer.RegisterView(typeof(DateTime), typeof(DateView));
 			ViewContainer.RegisterView(typeof(DateAttribute), typeof(DateView));
 			ViewContainer.RegisterView(typeof(TimeAttribute), typeof(TimeView));
@@ -69,7 +70,7 @@ namespace MonoMobile.Views
 
 			ViewContainer.RegisterView(typeof(IEnumerable<object>), typeof(ListView));
 
-		//	ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
+			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(StringView));
 		}
 	}
 }

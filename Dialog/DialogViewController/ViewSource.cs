@@ -32,6 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -120,7 +121,8 @@ namespace MonoMobile.Views
 				var viewType = ViewContainer.GetView(memberData);
 				if (viewType != null)
 				{
-					var key = memberData.Id.ToString();
+					id = new NSString(viewType.ToString());
+					var key = id;
 
 					if (section.ViewTypes.ContainsKey(key))
 					{
@@ -147,6 +149,8 @@ namespace MonoMobile.Views
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			base.UpdateCell(cell, indexPath);
+
 			MemberData memberData = null;
 
 			if (PerformActionIfCellListElement(cell, indexPath, (listSource) => listSource.UpdateCell(cell, indexPath)))

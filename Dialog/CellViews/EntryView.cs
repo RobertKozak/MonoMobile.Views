@@ -191,9 +191,9 @@ namespace MonoMobile.Views
 			}
 		}
 
-		protected override MemberData GetDataContext()
+		public override void HandleNotifyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			return base.GetDataContext ();
+			InputView.Text = (string)DataContext.Value;
 		}
 
 		protected override void SetDataContext(MemberData value)

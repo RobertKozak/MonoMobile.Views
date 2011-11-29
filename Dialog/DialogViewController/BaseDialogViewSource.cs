@@ -33,6 +33,7 @@ namespace MonoMobile.Views
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Collections.Specialized;
+	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
@@ -95,6 +96,21 @@ namespace MonoMobile.Views
 			Sections = new Dictionary<int, Section>();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			foreach(var section in Sections.Values)
+			{
+				var disposable = section as IDisposable;
+				if (disposable != null)
+				{
+					disposable.Dispose();
+					disposable = null;
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public virtual IEnumerator GetEnumerator()
 		{
 			foreach (var section in Sections)
@@ -154,7 +170,7 @@ namespace MonoMobile.Views
 							initializeCell.Cell = cell;
 							initializeCell.Controller = Controller;
 						}
-						
+
 						views.Add(view);
 					}
 				}
@@ -621,16 +637,6 @@ namespace MonoMobile.Views
 					}
 				}
 			}
-		}
-	}
-
-	public class HeaderTapGestureRecognizer : UITapGestureRecognizer
-	{
-		public Section Section { get; set; }
- 
-		public HeaderTapGestureRecognizer(Section section, NSObject target, Selector selector): base(target, selector)
-		{
-			Section = section;
 		}
 	}
 }

@@ -30,12 +30,13 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.ComponentModel;
 	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption
+	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IHandleNotifyPropertyChanged
 	{
 		private Type _Type { get; set; }
 
@@ -60,6 +61,12 @@ namespace MonoMobile.Views
 		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 		}
+		
+		public virtual void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			Console.WriteLine("Property changed: " + e.PropertyName);
+			//Controller.TableView.ReloadData();
+		}
 
 		protected virtual MemberData GetDataContext()
 		{
@@ -69,7 +76,11 @@ namespace MonoMobile.Views
 		protected virtual void SetDataContext(MemberData value)
 		{
 			_Type = value != null ? value.GetType() : null;
-			_DataContext = value;
+			
+			if (_DataContext != value)
+			{
+				_DataContext = value;
+			}
 		}
 	}
 }

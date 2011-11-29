@@ -234,7 +234,6 @@
     <Compile Include="Converters\ViewModelConverter.cs" />
     <Compile Include="Dialog\Themes\PlainTheme.cs" />
     <Compile Include="Dialog\Themes\GroupedTheme.cs" />
-    <Compile Include="Interfaces\INotifyDataContextChanged.cs" />
     <Compile Include="Dialog\ContainerElement.cs" />
     <Compile Include="Interfaces\IContainer.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -277,7 +276,6 @@
     <Compile Include="Interfaces\IActivation.cs" />
     <Compile Include="Interfaces\IInitializeCell.cs" />
     <Compile Include="Interfaces\ICellContent.cs" />
-    <Compile Include="Interfaces\IHandleDataContextChanged.cs" />
     <Compile Include="Interfaces\ITableViewStyle.cs" />
     <Compile Include="Dialog\DialogViewController\BaseDialogViewSource.cs" />
     <Compile Include="Dialog\DialogViewController\ViewSource.cs" />
@@ -337,6 +335,7 @@
     <Compile Include="Dialog\CellViews\Cell Attributes\List Attributes\RootAttribute.cs" />
     <Compile Include="Dialog\CellViews\Table Attributes\DisableScrollingAttribute.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\RowHeightAttribute.cs" />
+    <Compile Include="Interfaces\IHandleNotifyPropertyChanged.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

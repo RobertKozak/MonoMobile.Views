@@ -80,6 +80,24 @@ namespace MonoMobile.Views
 			ViewTypes = new Dictionary<string, IList<Type>>();
 			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			foreach (var viewList in Views.Values)
+			{
+				foreach (var view in viewList)
+				{
+					var disposable = view as IDisposable;
+					if (disposable != null)
+					{
+						disposable.Dispose();
+						disposable = null;
+					}
+				}
+			}
+
+			base.Dispose(disposing);
+		}
 
 //		public Section(DialogViewController controller, IEnumerable<Type> viewTypes)
 //		{

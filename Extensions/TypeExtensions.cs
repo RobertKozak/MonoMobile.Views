@@ -200,31 +200,34 @@ namespace MonoMobile.Views
 
 		public static void SetValue(this MemberInfo member, object obj, object value)
 		{
-			var valueType = value.GetType();
-
-			if (!typeof(string).IsAssignableFrom(valueType) && (typeof(IEnumerable).IsAssignableFrom(valueType)))
+			if (value != null)
 			{
-				IList list = null;
-				if (member.MemberType == MemberTypes.Field)
+				var valueType = value.GetType();
+	
+				if (!typeof(string).IsAssignableFrom(valueType) && (typeof(IEnumerable).IsAssignableFrom(valueType)))
 				{
-					list = ((FieldInfo)member).GetValue(obj) as IList;
+					IList list = null;
+					if (member.MemberType == MemberTypes.Field)
+					{
+						list = ((FieldInfo)member).GetValue(obj) as IList;
+					}
+					
+					if (member.MemberType == MemberTypes.Property)
+					{
+						list = ((PropertyInfo)member).GetValue(obj) as IList;
+					}
+	
+					if (list == null)
+						return;
+	
+					list.Clear();
+					foreach (var item in (IEnumerable)value)
+					{
+						list.Add(item);
+					}
+	
+					value = list;
 				}
-				
-				if (member.MemberType == MemberTypes.Property)
-				{
-					list = ((PropertyInfo)member).GetValue(obj) as IList;
-				}
-
-				if (list == null)
-					return;
-
-				list.Clear();
-				foreach (var item in (IEnumerable)value)
-				{
-					list.Add(item);
-				}
-
-				value = list;
 			}
 
 			if (member.MemberType == MemberTypes.Field)

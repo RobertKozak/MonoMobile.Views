@@ -40,7 +40,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 				
 	[Preserve(AllMembers = true)]
-	public class ListSource : BaseDialogViewSource, IHandleDataContextChanged, ISearchBar, ITableViewStyle, IActivation
+	public class ListSource : BaseDialogViewSource, ISearchBar, ITableViewStyle, IActivation
 	{
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
@@ -62,6 +62,7 @@ namespace MonoMobile.Views
 		public bool HideCaptionOnSelection { get; set; }
 
 		public Type NavigationViewType { get; set; }
+		public object NavigationView { get; set; }
 		public ListSource NavigationSource { get; set; }
 		public bool IsModal {get; set; }
 		public UIModalTransitionStyle ModalTransitionStyle { get; set; }
@@ -265,29 +266,34 @@ namespace MonoMobile.Views
 		
 		public void NavigateToView()
 		{
-			object view = null;
 			var viewType = NavigationViewType;
 					
 			if (viewType != null)
 			{
-				view = Activator.CreateInstance(viewType);
+				var disposable = NavigationView as IDisposable;
+				if (disposable != null)
+				{
+					disposable.Dispose();
+				}
+
+				NavigationView = Activator.CreateInstance(viewType);
 				
-				var dc = view as IDataContext<object>;
+				var dc = NavigationView as IDataContext<object>;
 				if (dc != null)
 				{
 					dc.DataContext = SelectedItem;
 				}
 				else
 				{
-					view = SelectedItem;
+					NavigationView = SelectedItem;
 				}
+				
+				if (Caption == null)
+					Caption = SelectedItem.ToString();
+	
+				var dvc = new DialogViewController(Caption, NavigationView, true);
+				Controller.NavigationController.PushViewController(dvc, true);
 			}
-			
-			if (Caption == null)
-				Caption = SelectedItem.ToString();
-
-			var dvc = new DialogViewController(Caption, view, true);
-			Controller.NavigationController.PushViewController(dvc, true);
 		}
 
 		public void NavigateToList()
@@ -346,15 +352,6 @@ namespace MonoMobile.Views
 			NavigationSource.Controller = dvc;
 			dvc.TableView.Source = NavigationSource;
 			Controller.NavigationController.PushViewController(dvc, true);
-		}
-
-		public void HandleNotifyDataContextChanged(object sender, DataContextChangedEventArgs e)
-		{
-			SetSectionData(0, e.NewDataContext as IList);
-
-			SelectedItems.Clear();
-
-			Controller.UpdateSource();
 		}
 
 		public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
@@ -444,7 +441,7 @@ namespace MonoMobile.Views
 				var index = 0;
 				foreach (var item in e.NewItems)
 				{
-					var row = e.OldStartingIndex + index;
+					var row = index;
 					ReplaceRow(section, e.OldItems[row], item);
 					index++;
 				}

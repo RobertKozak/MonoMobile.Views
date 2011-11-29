@@ -45,7 +45,7 @@ namespace MonoMobile.Views
             GC.SuppressFinalize(this); 
         }
     
-        protected virtual void Dispose(bool calledExplicitly)
+        protected virtual void Dispose(bool disposing)
         {
         }
     }

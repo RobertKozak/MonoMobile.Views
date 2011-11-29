@@ -88,17 +88,11 @@ namespace MonoMobile.Views
 		{
 			_Value = value;
 			
-			if (_Value != null)
-			{
-				Type = _Value.GetType();
-			}
-			
 			if (DataContextMember != null)
 				DataContextMember.SetValue(DataContextSource, value);
 
 			Member.SetValue(Source, value);
 
-			// Reset Type since the base TypeData sets it to the type of the DataContext 
 			Type = Member.GetMemberType();
 		}
 	}

@@ -29,20 +29,20 @@
 //
 namespace MonoMobile.Views
 {
+	using System;
 	using System.Drawing;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
+	using System.Linq;
 	using MonoTouch.UIKit;
 
-	public abstract class View : UIView, IView, IDataContext<object>, INotifyDataContextChanged, IInitializable, ICaption
+	public abstract class View : UIView, IView, IDataContext<object>, IHandleNotifyPropertyChanged, IInitializable, ICaption
 	{
 		private object _DataContext;
 		
 		public UITableView TableView { get; set; }
 
 		public string Caption { get; set; }
-	//	public BindingContext BindingContext { get; set; }
-
-		public event DataContextChangedEvent DataContextChanged;
 
 		public object DataContext 
 		{ 
@@ -61,17 +61,24 @@ namespace MonoMobile.Views
 			{
 				var oldDataContext = _DataContext;
 				_DataContext = dataContext;
+			}
+		}
 
-				if (DataContextChanged != null)
+		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (DataContext != null)
+			{
+				var sourceMember = DataContext.GetType().GetMember(e.PropertyName).FirstOrDefault();
+				if (sourceMember != null)
 				{
-					DataContextChanged(this, new DataContextChangedEventArgs(oldDataContext, _DataContext));
-				}
+					var sourceValue = sourceMember.GetValue(DataContext);
 
-//				var viewModel = DataContext as IViewModel;
-//				if (viewModel != null)
-//				{
-//					viewModel.BindingContext = BindingContext;
-//				}
+					var targetMember = GetType().GetMember(e.PropertyName).FirstOrDefault();
+					if (targetMember != null)
+					{
+						targetMember.SetValue(this, sourceValue);
+					}
+				}
 			}
 		}
 

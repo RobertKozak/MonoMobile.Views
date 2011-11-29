@@ -1,4 +1,3 @@
-using System.Reflection;
 // 
 //  LoadMoreView.cs
 // 
@@ -30,14 +29,14 @@ using System.Reflection;
 // 
 namespace MonoMobile.Views
 {
-	using System;
 	using System.Drawing;
 	using System.Linq;
+	using System.Reflection;
 	using System.Threading;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
 	using MonoMobile.Views;
-
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;	
+	
 	[Preserve(AllMembers = true)]
 	public class LoadMoreView : CellView, ISelectable, ICellContent, ISizeable
 	{

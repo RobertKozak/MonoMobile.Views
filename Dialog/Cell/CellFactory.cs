@@ -37,21 +37,14 @@ namespace MonoMobile.Views
 	public class TableCellFactory<T> where T : UITableViewCell
 	{
 		private string _NibName;
-
-	//	public string CellId { get; set; }
     
 		public NSString CellId = new NSString("Cell");
-		public TableCellFactory(string cellId, string nibName) : this(cellId)
+		public TableCellFactory(string nibName)
 		{
 			_NibName = nibName;
 		}
-    
-		public TableCellFactory(string cellId)
-		{
-		//	CellId = new NSString(cellId);
-		}
 		
-		public TableCellFactory() : this(string.Empty)
+		public TableCellFactory()
 		{
 		}
 

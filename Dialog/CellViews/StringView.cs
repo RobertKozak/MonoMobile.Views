@@ -30,6 +30,7 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.ComponentModel;
 	using System.Drawing;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
@@ -56,6 +57,11 @@ namespace MonoMobile.Views
 			
 			if (DataContext.Value != null)
 				cell.DetailTextLabel.Text = DataContext.Value.ToString();
+		}
+
+		public override void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			Cell.DetailTextLabel.Text = (string)DataContext.Value;
 		}
 	}
 }
