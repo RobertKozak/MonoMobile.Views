@@ -41,7 +41,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class Section: DisposableObject, IDataContext<IList>, IEnumerable
+	public class Section: NSObject, IDataContext<IList>, IEnumerable
 	{
 		internal DialogViewController Controller;
 

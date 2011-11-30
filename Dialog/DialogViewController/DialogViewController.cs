@@ -51,7 +51,6 @@ namespace MonoMobile.Views
 		private CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
 
 		private UITableView _TableView;
-		private object _DataContext;
 
 	//	private IRoot _Root;
 		private bool _Pushing;
@@ -618,15 +617,24 @@ namespace MonoMobile.Views
 						}
 					}
 
-					foreach (MemberData memberData in section.DataContext)
-					{
-						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
-						if (notifyCollectionChanged != null)
-						{
-							notifyCollectionChanged.CollectionChanged -= section.ListSources[0].HandleCollectionChanged;
-							notifyCollectionChanged.CollectionChanged += section.ListSources[0].HandleCollectionChanged;
-						}
-					}
+//					foreach (MemberData memberData in section.DataContext)
+//					{
+//						if (section.ListSources[0] != null)
+//						{
+//							var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
+//							if (notifyCollectionChanged != null)
+//							{
+////								notifyCollectionChanged.CollectionChanged -= memberData.DataContextBinder.HandleCollectionChanged;
+//								//notifyCollectionChanged.CollectionChanged += memberData.DataContextBinder.HandleCollectionChanged;
+//							}
+//							var notifyPropertyChanged = memberData.Value as INotifyPropertyChanged;
+//							if (notifyPropertyChanged != null)
+//							{
+//								//notifyPropertyChanged.PropertyChanged -= memberData.DataContextBinder.HandlePropertyChanged;
+//								//notifyPropertyChanged.PropertyChanged += memberData.DataContextBinder.HandlePropertyChanged;
+//							}
+//						}
+//					}
 				}	
 			}
 		}
@@ -923,14 +931,17 @@ return;
 						}
 					}
 
-					foreach(MemberData memberData in section.DataContext)
-					{
-						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
-						if (notifyCollectionChanged != null)
-						{
-							notifyCollectionChanged.CollectionChanged -= section.ListSources[0].HandleCollectionChanged;
-						}
-					}
+//					foreach(MemberData memberData in section.DataContext)
+//					{
+//						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
+//						if (notifyCollectionChanged != null)
+//						{
+//							if (section.ListSources[0] != null)
+//							{
+//							//	notifyCollectionChanged.CollectionChanged -= memberData.DataContextBinder.HandleCollectionChanged;
+//							}
+//						}
+//					}
 				}
 			}
 		}
@@ -1032,11 +1043,6 @@ return;
 			CreateTableView(view, member);	
 		}
 		
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);

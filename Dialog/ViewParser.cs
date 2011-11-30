@@ -50,12 +50,12 @@ namespace MonoMobile.Views
 //			}
 //		}
 
-		private List<Func<object, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
-		{
-			(T)=>GetFields(T),
-			(T)=>GetProperties(T),
-			(T)=>GetMethods(T)
-		};
+//		private List<Func<object, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<object, MemberInfo[]>>() 
+//		{
+//			(T)=>GetFields(T),
+//			(T)=>GetProperties(T),
+//			(T)=>GetMethods(T)
+//		};
 		
 		private CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
 		private CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
@@ -72,8 +72,6 @@ namespace MonoMobile.Views
 		
 		public UITableViewSource Parse(DialogViewController controller, object view, MemberInfo member)
 		{
-			List<Type> viewTypes = null;
-			object dataContext = null;
 			UITableViewSource source = null;
 			
 			if (view != null)
@@ -90,23 +88,24 @@ namespace MonoMobile.Views
 				controller.NavbarButtons = CheckForNavbarItems(view);
 			
 
-				var dc = view as IDataContext<object>;
-				if (dc != null)
-				{
-					var notifyPropertyChanged = dc.DataContext as INotifyPropertyChanged;
-					if (notifyPropertyChanged != null)
-					{
-						var handleNotifyPropertyChanged = view as IHandleNotifyPropertyChanged;
-						if (handleNotifyPropertyChanged != null)
-						{
-							notifyPropertyChanged.PropertyChanged += handleNotifyPropertyChanged.HandleNotifyPropertyChanged;
-						}
-					}
-				}
+//				var dc = view as IDataContext<object>;
+//				if (dc != null)
+//				{
+//					var notifyPropertyChanged = dc.DataContext as INotifyPropertyChanged;
+//					if (notifyPropertyChanged != null)
+//					{
+//						var handleNotifyPropertyChanged = view as IHandleNotifyPropertyChanged;
+//						if (handleNotifyPropertyChanged != null)
+//						{
+//							notifyPropertyChanged.PropertyChanged += handleNotifyPropertyChanged.HandleNotifyPropertyChanged;
+//						}
+//					}
+//				}
 
 				if (member != null)
 				{
-					source = ParseList(controller, view, member, null); 
+					var memberData = new MemberData(view, member);
+					source = ParseList(controller, view, memberData, null); 
 				}
 					
 				if (source == null)
@@ -391,6 +390,12 @@ namespace MonoMobile.Views
 					sortedList.Add(memberData.Order, memberData);
 					memberLists.Add(memberData.Section, sortedList);
 				}
+
+//				var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
+//				if (notifyCollectionChanged != null)
+//				{
+//					notifyCollectionChanged.CollectionChanged += memberData.HandleNotifyCollectionChanged;
+//				}
 			}
 			
 			foreach(var kvp in memberLists)
@@ -407,7 +412,7 @@ namespace MonoMobile.Views
 
 					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
 					{
-						var listSource = ParseList(controller, view, memberData.Member, viewTypes) as ListSource; 
+						var listSource = ParseList(controller, view, memberData, viewTypes) as ListSource; 
 						listSource.MemberData = memberData;
 						listSource.Sections[0].Index = memberData.Section;
 
@@ -419,6 +424,8 @@ namespace MonoMobile.Views
 
 					sections[memberData.Section].ListSources = listSources;
 					sections[memberData.Section].Index = memberData.Section;
+					if (listSources[0] != null)
+						memberData.DataContextBinder = new DataContextBinder(controller, listSources[0].Sections[0]);
 				}
 
 				sections[kvp.Key].DataContext = list;
@@ -496,31 +503,11 @@ namespace MonoMobile.Views
 			return source;
 		}
 
-		public UITableViewSource ParseList(DialogViewController controller, object view, MemberInfo member, List<Type> viewTypes)
+		public UITableViewSource ParseList(DialogViewController controller, object view, MemberData memberData, List<Type> viewTypes)
 		{
-			Type type = null;
-			object memberValue = null;
-
-			if (member != null && view != null)
-			{
-				var dc = view as IDataContext<object>;
-				if (dc != null && dc.DataContext != null)
-				{
-					var dataContextSource = dc.DataContext;
-					var dataContextMember = dataContextSource.GetType().GetMember(member.Name).FirstOrDefault();
-					
-					if (dataContextMember != null)
-					{
-						memberValue = dataContextMember.GetValue(dataContextSource);
-						type = dataContextMember.GetMemberType();
-					}
-				}
-				else
-				{	
-					memberValue = member.GetValue(view);
-					type = member.GetMemberType();
-				}
-			}
+			object memberValue = memberData.Value;
+			var member = memberData.Member;
+			var type = memberData.Type;
 
 			var isList = typeof(IEnumerable).IsAssignableFrom(type) || typeof(Enum).IsAssignableFrom(type);
 			if (isList)

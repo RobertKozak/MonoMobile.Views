@@ -562,7 +562,6 @@ namespace MonoMobile.Views
 		
 		public NSIndexPath ResetIndexPathRow(NSIndexPath indexPath)
 		{
-			int newRow = indexPath.Row;
 			var listCount = 0;
 
 			var listSource = GetListSource(NSIndexPath.FromRowSection(0, indexPath.Section));
@@ -570,7 +569,6 @@ namespace MonoMobile.Views
 			{
 				listCount = listSource.Sections[0].DataContext.Count;
 			}
-
 			
 			if (indexPath.Row >= listCount && listCount != 0)
 				indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);

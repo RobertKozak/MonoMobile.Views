@@ -48,7 +48,7 @@ namespace MonoMobile.Views
 		NSIndexPath IndexPath { get; set; }
 
 		void DismissKeyboard();
-		void BecomeFirstResponder();
+		bool BecomeFirstResponder();
 
 		void MoveNext();
 		void MovePrev();

@@ -73,9 +73,9 @@ namespace MonoMobile.Views
 			{
 				// Doesn't work due to a bug in MonoTouch that should be fixed in 4.0 
 				//float hue, saturation, brightness, alpha;
-				//TextColor.GetHSBA(out hue, out saturation, out brightness, out alpha);
+				//Cell.TextLabel.TextColor.GetHSBA(out hue, out saturation, out brightness, out alpha);
 				var textColor = Cell.TextLabel.TextColor;
-				var brightness = 1 - textColor.CGColor.Components.FirstOrDefault();
+				var brightness = 1 - textColor.CGColor.Components[0];
 
 
 				if (brightness > 0.5f)

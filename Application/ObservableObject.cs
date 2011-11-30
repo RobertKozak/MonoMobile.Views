@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-    public class ObservableObject : DisposableObject, IObservableObject
+    public class ObservableObject : NSObject, IObservableObject
     {
 		private bool _SuspendNotifications { get; set; }
 		private List<string> _BatchedNotifications { get; set; }

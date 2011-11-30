@@ -336,6 +336,7 @@
     <Compile Include="Dialog\CellViews\Table Attributes\DisableScrollingAttribute.cs" />
     <Compile Include="Dialog\CellViews\Cell Attributes\RowHeightAttribute.cs" />
     <Compile Include="Interfaces\IHandleNotifyPropertyChanged.cs" />
+    <Compile Include="Dialog\DialogViewController\DataContextBinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

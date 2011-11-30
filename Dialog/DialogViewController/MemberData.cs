@@ -30,15 +30,20 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MemberData
+	public class MemberData: IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
 	{
 		private object _Value;
+		private object _DataContextValue;
+		private DataContextBinder _DataContextBinder;
 
 		public object Value { get { return GetValue(); } set { SetValue(value); } }
 		public Type Type { get; set; }
@@ -55,13 +60,25 @@ namespace MonoMobile.Views
 		public int Order { get; set; }
 		public float RowHeight { get; set; }
 
+		public DataContextBinder DataContextBinder 
+		{
+			get { return _DataContextBinder; } 
+			set { SetDataContextBinder(value); }
+		}
+
 		public MemberData(object source, MemberInfo member)
 		{
 			Source = source;
 			Member = member;
 
-			Type = member.GetMemberType();
+			UpdateValue();
 			Id = new NSString(Type.ToString());
+			
+		//	RemoveNotifyPropertyChangedHandler(Source, this);
+			AddNotifyPropertyChangedHandler(Source, this);
+			
+		//	RemoveNotifyPropertyChangedHandler(DataContextSource, this);
+			AddNotifyPropertyChangedHandler(DataContextSource, this);
 		}
 
 		protected virtual object GetValue()
@@ -75,25 +92,145 @@ namespace MonoMobile.Views
 					DataContextMember = DataContextSource.GetType().GetMember(Member.Name).FirstOrDefault();
 					
 					if (DataContextMember != null)
-						return DataContextMember.GetValue(DataContextSource);
+					{
+						var _DataContextValue = DataContextMember.GetValue(DataContextSource);
+						return _DataContextValue;
+					}
 				}
 
+				//_Value = 
 				return Member.GetValue(Source);
+				//return _Value;
 			}
 
 			return _Value;
 		}
 
 		protected virtual void SetValue(object value)
-		{
-			_Value = value;
-			
-			if (DataContextMember != null)
-				DataContextMember.SetValue(DataContextSource, value);
+		{	
+			var shouldSetHandlers = false;		
+			object oldValue = null;
 
-			Member.SetValue(Source, value);
+			if (_DataContextValue != value)
+			{
+				if (DataContextMember != null)
+				{
+					oldValue = DataContextMember.GetValue(DataContextSource);
+					if (oldValue != value)
+					{
+						RemoveNotifyCollectionChangedHandler(_DataContextValue, this);
+						RemoveNotifyPropertyChangedHandler(_DataContextValue, this);
+					
+						shouldSetHandlers = true;
+						
+						ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
+
+						DataContextMember.SetValue(DataContextSource, value);
+					}
+
+					_DataContextValue = value;
+				}
+			}
+
+			if (_Value != value)
+			{
+				oldValue = Member.GetValue(Source);
+				if (oldValue != value)
+				{
+					RemoveNotifyCollectionChangedHandler(_Value, this);
+					RemoveNotifyPropertyChangedHandler(_Value, this);
+					
+					shouldSetHandlers = true;
+
+					ResetCollection(_Value as INotifyCollectionChanged, value as IList);
+
+					Member.SetValue(Source, value);
+				}
+
+				_Value = value;
+			}
+
+			if (shouldSetHandlers)
+			{
+				AddNotifyCollectionChangedHandler(value, this);
+				AddNotifyPropertyChangedHandler(value, this); 
+			}
 
 			Type = Member.GetMemberType();
+		}
+		
+		protected void SetDataContextBinder(DataContextBinder binder)
+		{
+			AddNotifyCollectionChangedHandler(Value, binder);
+			AddNotifyPropertyChangedHandler(Value, binder);
+
+			_DataContextBinder = binder;
+		}
+		
+		public void UpdateValue()
+		{
+			SetValue(GetValue());
+		}
+
+		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			UpdateValue();
+		}
+
+		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			UpdateValue();
+		}
+
+		private void RemoveNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		{
+			var notifyCollectionChanged = value as INotifyCollectionChanged;
+			if (notifyCollectionChanged != null && handler != null)
+			{
+				notifyCollectionChanged.CollectionChanged -= handler.HandleNotifyCollectionChanged;
+			}
+		}
+
+		private void RemoveNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		{
+			var notifyPropertyChanged = value as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null && handler != null)
+			{
+				notifyPropertyChanged.PropertyChanged -= handler.HandleNotifyPropertyChanged;
+			}
+		}
+
+		private void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		{
+			var notifyCollectionChanged = value as INotifyCollectionChanged;
+			if (notifyCollectionChanged != null && handler != null)
+			{
+				notifyCollectionChanged.CollectionChanged += handler.HandleNotifyCollectionChanged;
+			}
+		}
+
+		private void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		{
+			var notifyPropertyChanged = value as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null && handler != null)
+			{
+				notifyPropertyChanged.PropertyChanged += handler.HandleNotifyPropertyChanged;
+			}
+		}
+
+		private void ResetCollection(INotifyCollectionChanged collection, IList newCollection)
+		{	
+			if (collection != null)
+			{
+				var collectionChangedMethod = collection.GetType().GetMethod("OnCollectionChanged", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance);
+				if (collectionChangedMethod != null)
+				{
+					collectionChangedMethod.Invoke(collection, new object[] { new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, null) });
+					collectionChangedMethod.Invoke(collection, new object[] { new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newCollection) });
+
+					SetDataContextBinder(DataContextBinder);
+				}
+			}
 		}
 	}
 }

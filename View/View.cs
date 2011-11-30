@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Reflection;
 //
 // View.cs: Base class for MVVM Views
 //
@@ -36,8 +38,10 @@ namespace MonoMobile.Views
 	using System.Linq;
 	using MonoTouch.UIKit;
 
-	public abstract class View : UIView, IView, IDataContext<object>, IHandleNotifyPropertyChanged, IInitializable, ICaption
+	public abstract class View : UIView, IView, IDataContext<object>, IInitializable, ICaption, IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
 	{
+	//	public T ViewModel { get { return (T)DataContext; } set {DataContext = value; } }
+
 		private object _DataContext;
 		
 		public UITableView TableView { get; set; }
@@ -59,7 +63,6 @@ namespace MonoMobile.Views
 		{
 			if (_DataContext != dataContext)
 			{
-				var oldDataContext = _DataContext;
 				_DataContext = dataContext;
 			}
 		}
@@ -68,17 +71,28 @@ namespace MonoMobile.Views
 		{
 			if (DataContext != null)
 			{
-				var sourceMember = DataContext.GetType().GetMember(e.PropertyName).FirstOrDefault();
-				if (sourceMember != null)
-				{
-					var sourceValue = sourceMember.GetValue(DataContext);
-
-					var targetMember = GetType().GetMember(e.PropertyName).FirstOrDefault();
-					if (targetMember != null)
-					{
-						targetMember.SetValue(this, sourceValue);
-					}
-				}
+//				var sourceMember = DataContext.GetType().GetMember(e.PropertyName).FirstOrDefault();
+//				if (sourceMember != null)
+//				{
+//					var sourceValue = sourceMember.GetValue(DataContext);
+//
+//					var targetMember = GetType().GetMember(e.PropertyName).FirstOrDefault();
+//					if (targetMember != null)
+//					{
+//						targetMember.SetValue(this, sourceValue);
+//						
+//						var notifyCollectionChanged = sourceValue as INotifyCollectionChanged;
+//						if (notifyCollectionChanged != null)
+//						{
+//							var collectionChangedMethod = sourceValue.GetType().GetMethod("OnCollectionChanged",BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance);
+//							if (collectionChangedMethod != null)
+//							{
+//	//							collectionChangedMethod.Invoke(sourceValue, new object[] { new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset) });
+//								Console.WriteLine("Is observableCollection");
+//							}
+//						} 
+//					}
+//				}
 			}
 		}
 
@@ -98,6 +112,13 @@ namespace MonoMobile.Views
 		public virtual void Initialize()
 		{
 		}
+
+		#region IHandleNotifyCollectionChanged implementation
+		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+
+		}
+		#endregion
 	}
 }
 

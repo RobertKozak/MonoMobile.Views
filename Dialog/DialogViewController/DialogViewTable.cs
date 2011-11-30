@@ -47,15 +47,11 @@ namespace MonoMobile.Views
 		{
 		}
 
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-
-protected override void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
+
 		public override void TouchesBegan(NSSet touches, UIEvent evt)
 		{
 			ResetTextShadow(false, touches);

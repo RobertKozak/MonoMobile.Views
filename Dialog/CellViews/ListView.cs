@@ -54,15 +54,12 @@ namespace MonoMobile.Views
 		{
 			var source = Controller.TableView.Source as ViewSource;
 			var listSource = source.GetListSource(indexPath);
-			
-//TODO: fix this
-			if (listSource == null)
-				return;
-			
+
 			listSource.UpdateCell(cell, indexPath);
 
 			cell.TextLabel.Text = Caption;
-			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			cell.Accessory = listSource.Sections[0].DataContext.Count > 0 ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+			cell.SelectionStyle = listSource.Sections[0].DataContext.Count > 0 ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None; 
 			cell.DetailTextLabel.Text = string.Empty;
 			
 			var text = Caption;
@@ -99,19 +96,22 @@ namespace MonoMobile.Views
 			var source = controller.TableView.Source as ViewSource;
 			var listSource = source.GetListSource(indexPath);
 							
-			var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
-			var selectionAttribute = DataContext.Member.GetCustomAttribute<SelectionAttribute>();
-
-			var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
-			if (navigateToView != null)
+			if (listSource.Sections[0].DataContext.Count > 0)
 			{
-				listSource.ModalTransitionStyle = navigateToView.TransitionStyle;
-				listSource.IsModal = navigateToView.ShowModal;
-				listSource.NavigationViewType = navigateToView.ViewType;
-				listSource.IsNavigateable = selectionAttribute == null && multiselectionAttribute == null;
+				var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
+				var selectionAttribute = DataContext.Member.GetCustomAttribute<SelectionAttribute>();
+	
+				var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
+				if (navigateToView != null)
+				{
+					listSource.ModalTransitionStyle = navigateToView.TransitionStyle;
+					listSource.IsModal = navigateToView.ShowModal;
+					listSource.NavigationViewType = navigateToView.ViewType;
+					listSource.IsNavigateable = selectionAttribute == null && multiselectionAttribute == null;
+				}
+				
+				listSource.RowSelected(tableView, indexPath);
 			}
-			
-			listSource.RowSelected(tableView, indexPath);
 		}
 	}
 }

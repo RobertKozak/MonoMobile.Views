@@ -259,7 +259,7 @@ namespace MonoMobile.Views
 			}
 			catch(TargetInvocationException ex)
 			{
-				throw new Exception(string.Format("{0} is null. It needs to have a value.", member.Name), ex);
+//				throw new Exception(string.Format("{0} is null. It needs to have a value.", member.Name), ex);
 			}
 			
 			return result;

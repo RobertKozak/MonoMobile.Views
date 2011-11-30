@@ -88,6 +88,9 @@ namespace MonoMobile.Views
 				DataContext.Value = InputView.Text;
 			};
 							
+			InputView.EditingDidEndOnExit += delegate {
+				InputView.ResignFirstResponder();
+			};
 			Add(InputView);
 		}
 

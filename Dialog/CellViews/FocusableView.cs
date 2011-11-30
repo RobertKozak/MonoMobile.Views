@@ -42,7 +42,7 @@ namespace MonoMobile.Views
 	{
 		protected IFocusable _Focus;
 		
-		protected UIPlaceholderTextField InputView;
+		protected new UIPlaceholderTextField InputView;
 
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 		public EditMode EditModeValue { get; set; }
@@ -79,9 +79,9 @@ namespace MonoMobile.Views
 			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 		}
 		
-		public void BecomeFirstResponder()
+		public override bool BecomeFirstResponder()
 		{
-			InputView.BecomeFirstResponder();
+			return InputView.BecomeFirstResponder();
 		}
 
 		public void DismissKeyboard()

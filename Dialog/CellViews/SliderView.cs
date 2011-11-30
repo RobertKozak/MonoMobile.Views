@@ -36,9 +36,7 @@ namespace MonoMobile.Views
 	
 	[Preserve(AllMembers = true)]
 	public class SliderView : CellView, IAccessoryView
-	{
-		private UILabel _TextLabel;
- 
+	{ 
 		public UISlider Slider { get; set; }
 		
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
