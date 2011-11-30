@@ -88,20 +88,6 @@ namespace MonoMobile.Views
 				controller.NavbarButtons = CheckForNavbarItems(view);
 			
 
-//				var dc = view as IDataContext<object>;
-//				if (dc != null)
-//				{
-//					var notifyPropertyChanged = dc.DataContext as INotifyPropertyChanged;
-//					if (notifyPropertyChanged != null)
-//					{
-//						var handleNotifyPropertyChanged = view as IHandleNotifyPropertyChanged;
-//						if (handleNotifyPropertyChanged != null)
-//						{
-//							notifyPropertyChanged.PropertyChanged += handleNotifyPropertyChanged.HandleNotifyPropertyChanged;
-//						}
-//					}
-//				}
-
 				if (member != null)
 				{
 					var memberData = new MemberData(view, member);
@@ -390,12 +376,6 @@ namespace MonoMobile.Views
 					sortedList.Add(memberData.Order, memberData);
 					memberLists.Add(memberData.Section, sortedList);
 				}
-
-//				var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
-//				if (notifyCollectionChanged != null)
-//				{
-//					notifyCollectionChanged.CollectionChanged += memberData.HandleNotifyCollectionChanged;
-//				}
 			}
 			
 			foreach(var kvp in memberLists)

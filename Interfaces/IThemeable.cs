@@ -35,6 +35,7 @@ namespace MonoMobile.Views
 	{
 		Theme Theme { get; set; }
 		void InitializeTheme();
+		void ApplyTheme();
 	}
 }
 

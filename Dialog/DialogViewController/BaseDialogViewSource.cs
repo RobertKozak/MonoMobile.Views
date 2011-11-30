@@ -43,7 +43,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public abstract class BaseDialogViewSource : UITableViewSource, ISearchBar, IEnumerable
+	public abstract class BaseDialogViewSource : UITableViewSource, ISearchBar, IEnumerable, ITableViewStyle
 	{
 		private const float _SnapBoundary = 65;
 		private bool _CheckForRefresh;
@@ -94,6 +94,8 @@ namespace MonoMobile.Views
 			UnselectedAccessoryViews = new Dictionary<UITableViewCell, UIView>();
 
 			Sections = new Dictionary<int, Section>();
+
+			TableViewStyle = UITableViewStyle.Grouped;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -334,7 +336,7 @@ namespace MonoMobile.Views
 		#region Headers and Footers
 		public override string TitleForHeader(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				if (section != null)
@@ -348,7 +350,7 @@ namespace MonoMobile.Views
 
 		public override string TitleForFooter(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				if (section != null)
@@ -362,7 +364,7 @@ namespace MonoMobile.Views
 
 		public override float GetHeightForHeader(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				
@@ -386,7 +388,7 @@ namespace MonoMobile.Views
 
 		public override UIView GetViewForHeader(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				if (section != null)
@@ -404,7 +406,7 @@ namespace MonoMobile.Views
 
 		public override float GetHeightForFooter(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				if (section != null && !string.IsNullOrEmpty(section.FooterText))
@@ -430,7 +432,7 @@ namespace MonoMobile.Views
 		
 		public override UIView GetViewForFooter(UITableView tableView, int sectionIndex)
 		{
-			if (Sections.Count > sectionIndex)
+			if (Sections.Count > sectionIndex && Sections.ContainsKey(sectionIndex))
 			{
 				var section = Sections[sectionIndex];
 				if (section != null)

@@ -36,9 +36,11 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IHandleNotifyPropertyChanged
+	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
 	{
 		private Type _Type { get; set; }
+
+		public Theme Theme { get; set; }
 
 		public UITableViewCell Cell { get; set; }
 		public DialogViewController Controller { get; set; }
@@ -81,6 +83,14 @@ namespace MonoMobile.Views
 			{
 				_DataContext = value;
 			}
+		}
+
+		public virtual void InitializeTheme()
+		{
+		}
+
+		public virtual void ApplyTheme()
+		{
 		}
 	}
 }

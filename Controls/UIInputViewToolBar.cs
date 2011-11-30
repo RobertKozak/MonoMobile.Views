@@ -48,7 +48,7 @@ namespace MonoMobile.Views
 			FocusableView = focusableView;
 						
 			var themeable = FocusableView as IThemeable;
-			if (themeable != null)
+			if (themeable != null && themeable.Theme != null)
 				TintColor = themeable.Theme.BarTintColor;
 				
 			Translucent = true;

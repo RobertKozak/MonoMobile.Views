@@ -40,7 +40,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 				
 	[Preserve(AllMembers = true)]
-	public class ListSource : BaseDialogViewSource, ISearchBar, ITableViewStyle, IActivation
+	public class ListSource : BaseDialogViewSource, ISearchBar, IActivation
 	{
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
@@ -106,14 +106,20 @@ namespace MonoMobile.Views
 			base.Dispose(disposing);
 		}
 
-		public override int RowsInSection(UITableView tableview, int section)
+		public override int RowsInSection(UITableView tableview, int sectionIndex)
 		{
 			if (IsRoot)
 			{
 				return 1;
 			}
+			
+			var numberOfRows =0;
+			if (Sections.ContainsKey(sectionIndex))
+			{
+				numberOfRows = Sections[sectionIndex].NumberOfRows;
+			}
 
-			return Sections != null ? Sections[section].NumberOfRows : 0;
+			return Sections != null ? numberOfRows : 0;
 		}
 
 		public override int NumberOfSections(UITableView tableView)

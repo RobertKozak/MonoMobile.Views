@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
@@ -34,6 +33,7 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
@@ -52,7 +52,6 @@ namespace MonoMobile.Views
 
 		private UITableView _TableView;
 
-	//	private IRoot _Root;
 		private bool _Pushing;
 		private bool _Dirty;
 
@@ -76,30 +75,6 @@ namespace MonoMobile.Views
 		public object RootView { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
-
-//		/// <summary>
-//		/// The _Root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
-//		/// </summary>
-//		public IRoot Root
-//		{
-//			get { return _Root; }
-//			set {
-//				if (_Root == value)
-//					return;
-//				if (_Root != null)
-//					_Root.Dispose();
-//
-//				_Root = value;
-//				_Root.Controller = this;
-//				_Root.TableView = TableView;
-//
-//				var view = RootView as IView;
-//				if (view != null)
-//					view.TableView = TableView;
-//
-//				ReloadData();
-//			}
-//		}
 
 		public bool ReloadCompleted
 		{
@@ -436,30 +411,6 @@ namespace MonoMobile.Views
 			}
 			
 			TableView.DeselectRow(indexPath, true);
-
-//			if (element != null)
-//			{
-//				selectable = element as ISelectable;
-//	
-//				if (selectable != null)
-//				{
-//					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
-//					{
-//						TableView.DeselectRow(indexPath, false);
-//						
-//						UIView.Animate(0.3f, delegate { element.Cell.Highlighted = true;  }, delegate { element.Cell.Highlighted = false; });
-//					}
-//					
-//					selectable.Selected(this, TableView, item, indexPath);
-//				}
-//			}
-//			else
-//			{
-//				TableView.DeselectRow(indexPath, true);
-//				selectable = RootView as ISelectable;
-//				if(selectable != null)
-//					selectable.Selected(this, TableView, item, indexPath);
-//			}
 		}
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
@@ -616,25 +567,6 @@ namespace MonoMobile.Views
 							}
 						}
 					}
-
-//					foreach (MemberData memberData in section.DataContext)
-//					{
-//						if (section.ListSources[0] != null)
-//						{
-//							var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
-//							if (notifyCollectionChanged != null)
-//							{
-////								notifyCollectionChanged.CollectionChanged -= memberData.DataContextBinder.HandleCollectionChanged;
-//								//notifyCollectionChanged.CollectionChanged += memberData.DataContextBinder.HandleCollectionChanged;
-//							}
-//							var notifyPropertyChanged = memberData.Value as INotifyPropertyChanged;
-//							if (notifyPropertyChanged != null)
-//							{
-//								//notifyPropertyChanged.PropertyChanged -= memberData.DataContextBinder.HandlePropertyChanged;
-//								//notifyPropertyChanged.PropertyChanged += memberData.DataContextBinder.HandlePropertyChanged;
-//							}
-//						}
-//					}
 				}	
 			}
 		}
@@ -675,11 +607,11 @@ namespace MonoMobile.Views
 				{
 					nav.NavigationBar.Opaque = false;
  
-//					var themeable = Root as IThemeable;
-//					if (themeable != null)
-//					{
-//						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
-//					}
+					var themeable = RootView as IThemeable;
+					if (themeable != null && themeable.Theme != null)
+					{
+						nav.Toolbar.TintColor = themeable.Theme.BarTintColor;
+					}
 				}
 			}
 		}
@@ -1009,11 +941,11 @@ return;
 
 			var tableViewStyle = UITableViewStyle.Grouped;
 
-//			var tableStyle = source as ITableViewStyle;
-//			if (tableStyle != null)
-//			{
-//				tableViewStyle = tableStyle.TableViewStyle;
-//			}
+			var tableStyle = source as ITableViewStyle;
+			if (tableStyle != null)
+			{
+				tableViewStyle = tableStyle.TableViewStyle;
+			}
 			
 			if (source != null)
 			{

@@ -49,7 +49,7 @@ namespace MonoMobile.Views
 		{
 		}
 		
-		public override int RowsInSection(UITableView tableview, int section)
+		public override int RowsInSection(UITableView tableview, int sectionIndex)
 		{
 			if (IsRoot)
 			{
@@ -57,17 +57,20 @@ namespace MonoMobile.Views
 			}
 		
 			var listCount = 0;
-			if (Sections != null)
+			var numberOfRows = 0;
+			if (Sections != null && Sections.ContainsKey(sectionIndex))
 			{
-				var listSource = Sections[section].ListSources[0];
+				var listSource = Sections[sectionIndex].ListSources[0];
 
 				if (listSource != null && !listSource.IsRoot)
 				{
 					listCount = listSource.RowsInSection(tableview, 0) - 1;
 				}
+
+				numberOfRows = Sections[sectionIndex].NumberOfRows;
 			}
 
-			return Sections != null ? Sections[section].NumberOfRows + listCount: 0;
+			return Sections != null ? numberOfRows + listCount: 0;
 		}
 
 		public override int NumberOfSections(UITableView tableView)
@@ -186,10 +189,21 @@ namespace MonoMobile.Views
 								dc.DataContext = item;
 							}
 			
+							var themeable = view as IThemeable;
+							if (themeable != null)
+							{
+								themeable.InitializeTheme();
+							}
+
 							var updateable = view as IUpdateable;
 							if (updateable != null)
 							{
 								updateable.UpdateCell(cell, indexPath);
+							}
+
+							if (themeable != null)
+							{
+								themeable.ApplyTheme();
 							}
 						}
 					}
@@ -309,100 +323,5 @@ namespace MonoMobile.Views
 			return false;
 		}
 	}
-
-//	public class DialogViewDataSource : BaseDialogViewSource<object>
-//	{
-//		protected IRoot Root {get; set; }
-//
-//		public DialogViewDataSource(DialogViewController controller): base(controller, null)
-//		{
-//			Root = controller.Root;
-//		}
-//		
-//		public override int RowsInSection(UITableView tableview, int section)
-//		{
-//			var s = Root.Sections[section];
-//			var count = s.Elements.Count;
-//			
-//			return s.ExpandState == ExpandState.Opened ? count : 0;
-//		}
-//
-//		public override int NumberOfSections(UITableView tableView)
-//		{
-//			return Root.Sections.Count;
-//		}
-//
-//		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-//		{
-////			var sw = System.Diagnostics.Stopwatch.StartNew();
-//
-//			var element = GetElement(indexPath);
-//			
-//			//if no element return an empty cell since GetCell must return a cell
-//			if (element == null)
-//			{
-//				Console.WriteLine("Creating empty Cell");
-//				return new UITableViewCell();
-//			}
-//				
-////			sw.Stop();
-////			Console.WriteLine("GetCell: "+sw.Elapsed.TotalMilliseconds);
-//			return element.GetCell(tableView) as UITableViewElementCell;
-//		}
-//
-//		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
-//		{
-//			var element = GetElement(indexPath);
-//
-//			if (element != null)
-//			{
-//				var selectable = element as ISelectable;
-//	
-//				if (selectable != null)
-//				{
-//					if (element.Cell.SelectionStyle != UITableViewCellSelectionStyle.None)
-//					{
-//						tableView.DeselectRow(indexPath, false);
-//						
-//						UIView.Animate(0.3f, delegate {
-//							element.Cell.Highlighted = true;  }, delegate {
-//							element.Cell.Highlighted = false; });
-//					}
-//					
-//					selectable.Selected(Controller, tableView, element.DataContext, indexPath);
-//				}
-//			}
-//			else
-//			{
-////				tableView.DeselectRow(indexPath, true);
-////				var selectable = RootView as ISelectable;
-////				if (selectable != null)
-////				{
-////					selectable.Selected(Container, tableView, indexPath);
-////				}
-//
-//				throw new Exception("Find out why we are here!");
-//			}
-//		}
-//
-//		public ISection GetSection(int sectionIndex)
-//		{
-//			ISection section = null;
-//			if (Root.Sections.Count > sectionIndex)
-//				section = Root.Sections[sectionIndex];
-//			
-//			return section;
-//		}
-//
-//		public IElement GetElement(NSIndexPath indexPath)
-//		{					
-//			IElement element = null;
-//			var section = GetSection(indexPath.Section);
-//			if (section != null && section.Elements != null && section.Elements.Count > indexPath.Row)
-//				element = section.Elements[indexPath.Row];
-//
-//			return element;
-//		}
-//	}
 }
 
