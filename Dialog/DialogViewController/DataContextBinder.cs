@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  DataContextBinder.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,14 +27,14 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-using System.Collections.Specialized;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.ComponentModel;
-
 namespace MonoMobile.Views
 {
+	using System;
+	using System.Collections.Specialized;
+	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
+	using System.ComponentModel;
+
 	public class DataContextBinder: IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
 	{
 		public Section Section { get; set; }
@@ -48,7 +48,10 @@ namespace MonoMobile.Views
 
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{		
-			Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+			if (e.PropertyName != "Count" && e.PropertyName != "Item[]")
+			{
+				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+			}
 		}
 
 		//TODO: Double check each one of these for out of bounds conditions

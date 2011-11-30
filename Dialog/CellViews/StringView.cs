@@ -39,6 +39,10 @@ namespace MonoMobile.Views
 	public class StringView : CellView
 	{
 		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
+		
+		public StringView() : this(RectangleF.Empty)
+		{
+		}
 
 		public StringView(RectangleF frame) : base(frame)
 		{

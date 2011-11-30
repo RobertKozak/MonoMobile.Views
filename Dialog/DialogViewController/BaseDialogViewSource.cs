@@ -568,10 +568,10 @@ namespace MonoMobile.Views
 			if (listSource != null && !listSource.IsRoot)
 			{
 				listCount = listSource.Sections[0].DataContext.Count;
-			}
 			
-			if (indexPath.Row >= listCount && listCount != 0)
-				indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
+				if (indexPath.Row >= listCount)
+					indexPath = NSIndexPath.FromRowSection(indexPath.Row - listCount + 1, indexPath.Section);
+			}
 
 			return indexPath;
 		}

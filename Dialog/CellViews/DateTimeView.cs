@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using System.Drawing;
 
-	public class DateTimeView: FocusableView
+	public class DateTimeView: FocusableView, IHandleNotifyPropertyChanged
 	{
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
 
@@ -77,6 +77,12 @@ namespace MonoMobile.Views
 
 			if (cell.DetailTextLabel != null)
 				cell.DetailTextLabel.Text = FormatDate(DatePicker.Date.ToDateTime());
+		}
+		
+		public override void HandleNotifyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			DatePicker.Date = (DateTime)DataContext.Value;
+			base.HandleNotifyPropertyChanged(sender, e);
 		}
 
 		public virtual string FormatDate(DateTime dt)
