@@ -1,3 +1,4 @@
+using System.Diagnostics;
 // 
 //  ViewSource.cs
 // 
@@ -51,7 +52,7 @@ namespace MonoMobile.Views
 		
 		public override int RowsInSection(UITableView tableview, int sectionIndex)
 		{
-			if (IsRoot)
+			if (IsRootCell)
 			{
 				return 1;
 			}
@@ -62,7 +63,7 @@ namespace MonoMobile.Views
 			{
 				var listSource = Sections[sectionIndex].ListSources[0];
 
-				if (listSource != null && !listSource.IsRoot)
+				if (listSource != null)
 				{
 					listCount = listSource.RowsInSection(tableview, 0) - 1;
 				}
@@ -80,6 +81,9 @@ namespace MonoMobile.Views
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
+			var sw = new Stopwatch();
+			sw.Start();
+
 			MemberData memberData = null;
 			UITableViewCell cell = null;
 
@@ -97,7 +101,9 @@ namespace MonoMobile.Views
 			cell = CellFactory.GetCell(tableView, indexPath, memberData.Id, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
-
+			
+			sw.Stop();
+			Console.WriteLine("View Source - Get Cell time: {0} ms", sw.Elapsed.Milliseconds);
 			return cell;
 		}
 
@@ -114,7 +120,7 @@ namespace MonoMobile.Views
 			var section = Sections[indexPath.Section];
 			var listSource = GetListSource(indexPath);
 
-			if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && listSource != null && !listSource.IsRoot) 
+			if ((typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type)) && listSource != null && !listSource.IsRootCell) 
 			{
 				id = listSource.CellId;
 			}
@@ -124,7 +130,9 @@ namespace MonoMobile.Views
 				var viewType = ViewContainer.GetView(memberData);
 				if (viewType != null)
 				{
-					id = new NSString(viewType.ToString());
+					if (viewType != typeof(ObjectView))
+						id = new NSString(viewType.ToString());
+					
 					var key = id;
 
 					if (section.ViewTypes.ContainsKey(key))
@@ -151,18 +159,14 @@ namespace MonoMobile.Views
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{
+		{			
 			base.UpdateCell(cell, indexPath);
-
-			MemberData memberData = null;
-
+			
 			if (PerformActionIfCellListElement(cell, indexPath, (listSource) => listSource.UpdateCell(cell, indexPath)))
 				return;
-			
-			memberData = GetMemberData(indexPath);
 
-			base.UpdateCell(cell, indexPath);
-			
+			var memberData = GetMemberData(indexPath);
+
 			if (memberData.Value != null && cell.DetailTextLabel != null)
 				cell.DetailTextLabel.Text = memberData.Value.ToString();
 
@@ -218,7 +222,7 @@ namespace MonoMobile.Views
 			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);
 			var listSource = GetListSource(listIndexPath);
 			
-			if (listSource != null && !listSource.IsRoot)
+			if (listSource != null && !listSource.IsRootCell)
 			{
 				var listCount = listSource.Sections[0].DataContext.Count;
 				
@@ -262,6 +266,7 @@ namespace MonoMobile.Views
 							if (selectable != null)
 							{
 								selectable.Selected(Controller, tableView, memberData, indexPath);
+								break;
 							}
 						}
 					}
@@ -302,7 +307,7 @@ namespace MonoMobile.Views
 			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);
 			var listSource = GetListSource(listIndexPath);
 
-			if (listSource != null && !listSource.IsRoot)
+			if (listSource != null && !listSource.IsRootCell)
 			{
 				var listCount = listSource.Sections[0].DataContext.Count;
 				if (indexPath.Row < listCount)

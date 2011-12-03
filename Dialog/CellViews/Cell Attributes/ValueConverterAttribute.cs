@@ -1,5 +1,5 @@
 // 
-//  DataTemplate.cs
+//  ValueConverterAttribute.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,18 +30,31 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Generic;
 
-	public abstract class DataTemplate : IDataTemplate
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	public class ValueConverterAttribute : Attribute
 	{
-		public DataTemplate()
+		public ValueConverterAttribute(Type valueConverterType)
 		{
+			if (valueConverterType != null)
+			{
+				ValueConverter = Activator.CreateInstance(valueConverterType) as IValueConverter;
+			}
+		}
+		
+		public ValueConverterAttribute(Type valueConverterType, object converterParameter): this (valueConverterType)
+		{
+			ConverterParameter = converterParameter;
+		}
+		
+		public ValueConverterAttribute(Type valueConverterType, string converterParameterPropertyName): this (valueConverterType)
+		{
+			ConverterParameterPropertyName = converterParameterPropertyName;
 		}
 
-//		public virtual List<Binding> Bind()
-//		{
-//			return new List<Binding>();
-//		}
+		public string ConverterParameterPropertyName { get; set; }
+		public object ConverterParameter { get; set; }
+		public IValueConverter ValueConverter { get; set; }
 	}
 }
 

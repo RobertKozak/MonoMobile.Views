@@ -75,7 +75,6 @@ namespace MonoMobile.Views
 
 		public static T[] GetCustomAttributes<T>(this MemberInfo member, bool inherited) where T: Attribute
 		{
-			Attribute attribute = default(T);
 			var attributes = Attribute.GetCustomAttributes(member, typeof(T), inherited);
 
 			return (T[])attributes;
@@ -145,6 +144,26 @@ namespace MonoMobile.Views
 			}
 
 			return null;
+		}
+		
+		public static string GetMemberTypeName(this MemberInfo member)
+		{
+			if (member.MemberType == MemberTypes.Field)
+			{
+				return "Field";
+			}
+			
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return "Property";
+			}
+			
+			if (member is MethodInfo)
+			{
+				return "Method";
+			}
+
+			return string.Empty;
 		}
 
 		public static IList CreateGenericListFromEnumerable(this Type type, object enumerable)
@@ -257,7 +276,7 @@ namespace MonoMobile.Views
 					result = ((PropertyInfo)member).GetValue(obj, null);
 				}
 			}
-			catch(TargetInvocationException ex)
+			catch(TargetInvocationException)
 			{
 //				throw new Exception(string.Format("{0} is null. It needs to have a value.", member.Name), ex);
 			}
@@ -288,6 +307,26 @@ namespace MonoMobile.Views
 			return result;
 		}
 
+		public static bool CanRead(this MemberInfo member)
+		{
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).CanRead;
+			} 
+
+			return true;
+		}
+		
+		public static bool CanWrite(this MemberInfo member)
+		{
+			if (member.MemberType == MemberTypes.Property)
+			{
+				return ((PropertyInfo)member).CanWrite;
+			} 
+
+			return true;
+		}
+
 		public static bool IsAssignableToGenericType(this Type givenType, Type genericType)
 		{
 			var interfaceTypes = givenType.GetInterfaces();
@@ -306,7 +345,6 @@ namespace MonoMobile.Views
 
 		public static MemberInfo[] GetMembers(this Type type, bool allowPrivate = false)
 		{
-			var sw = System.Diagnostics.Stopwatch.StartNew();
 			var members = new List<MemberInfo>();
 			
 //			members = type.GetMembers(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static).ToList();

@@ -1,11 +1,10 @@
-using MonoTouch.UIKit;
 //
 // PasswordAttribute.cs
 //
 // Author:
-//  Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corportation
 //
 // Code licensed under the MIT X11 license
 //
@@ -31,6 +30,7 @@ using MonoTouch.UIKit;
 namespace MonoMobile.Views
 {
 	using System;
+	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public class PasswordAttribute : EntryAttribute

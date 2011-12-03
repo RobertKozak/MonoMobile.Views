@@ -38,6 +38,7 @@ namespace MonoMobile.Views
 		{
 			Caption = caption;
 		}
+
 		public string Caption;
 	}
 }

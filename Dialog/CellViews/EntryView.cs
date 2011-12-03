@@ -38,7 +38,7 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class EntryView: FocusableView
 	{	
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
+		public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 
 		public string Placeholder { get; set; }
 		public bool IsPassword { get; set; }
@@ -86,6 +86,7 @@ namespace MonoMobile.Views
 			InputView.EditingDidEnd += delegate 
 			{
 				DataContext.Value = InputView.Text;
+				InputView.Text = DataContext.Value.ToString();
 			};
 							
 			InputView.EditingDidEndOnExit += delegate {
@@ -123,8 +124,6 @@ namespace MonoMobile.Views
 
 			InputView.Text = string.Empty;
 
-			SetKeyboard();
-
 			IsPassword = false;
 
 			var entryAttribute = DataContext.Member.GetCustomAttribute<EntryAttribute>();
@@ -151,6 +150,8 @@ namespace MonoMobile.Views
 				IsPassword = true;
 			}
 			
+			SetKeyboard();
+
 			var readOnlyAttribute = DataContext.Member.GetCustomAttribute<ReadOnlyAttribute>();
 			if (readOnlyAttribute != null)
 			{
@@ -196,7 +197,7 @@ namespace MonoMobile.Views
 
 		public override void HandleNotifyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			InputView.Text = (string)DataContext.Value;
+			InputView.Text = DataContext.Value.ToString();
 		}
 
 		protected override void SetDataContext(MemberData value)
@@ -214,22 +215,23 @@ namespace MonoMobile.Views
 		
 		private void SetKeyboard()
 		{
-			KeyboardType = UIKeyboardType.Default;
-
-			var typeCode = Convert.GetTypeCode(DataContext.Value);
-			switch (typeCode)
+			if (KeyboardType == UIKeyboardType.Default)
 			{
-				case TypeCode.Decimal : KeyboardType = UIKeyboardType.DecimalPad; break;
-				case TypeCode.Double : KeyboardType = UIKeyboardType.DecimalPad; break;
-				case TypeCode.Single : KeyboardType = UIKeyboardType.DecimalPad; break;
-
-				case TypeCode.Int16 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.Int32 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.Int64 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.UInt16 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.UInt32 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.UInt64 : KeyboardType = UIKeyboardType.NumberPad; break;
-				case TypeCode.DateTime : KeyboardType = UIKeyboardType.NumbersAndPunctuation; break;	
+				var typeCode = Convert.GetTypeCode(DataContext.Value);
+				switch (typeCode)
+				{
+					case TypeCode.Decimal : KeyboardType = UIKeyboardType.DecimalPad; break;
+					case TypeCode.Double : KeyboardType = UIKeyboardType.DecimalPad; break;
+					case TypeCode.Single : KeyboardType = UIKeyboardType.DecimalPad; break;
+	
+					case TypeCode.Int16 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.Int32 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.Int64 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.UInt16 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.UInt32 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.UInt64 : KeyboardType = UIKeyboardType.NumberPad; break;
+					case TypeCode.DateTime : KeyboardType = UIKeyboardType.NumbersAndPunctuation; break;	
+				}
 			}
 		}
 	}

@@ -37,10 +37,5 @@ namespace MonoMobile.Views
 	{
 		void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e);
 	}
-
-	public interface IHandleNotifyCollectionChanged
-	{
-		void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
-	}
 }
 

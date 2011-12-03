@@ -34,6 +34,7 @@ namespace MonoMobile.Views
 	using System.Collections.Generic;
 	using System.Collections.Specialized;
 	using System.ComponentModel;
+	using System.Globalization;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -59,6 +60,10 @@ namespace MonoMobile.Views
 		public int Section { get; set; }
 		public int Order { get; set; }
 		public float RowHeight { get; set; }
+
+		public IValueConverter ValueConverter { get; set; }
+		public object ConverterParameter { get; set; }
+		public string ConverterParameterName { get; set; }
 
 		public DataContextBinder DataContextBinder 
 		{
@@ -93,21 +98,22 @@ namespace MonoMobile.Views
 					
 					if (DataContextMember != null)
 					{
-						var _DataContextValue = DataContextMember.GetValue(DataContextSource);
-						return _DataContextValue;
+						var dataContextValue = DataContextMember.GetValue(DataContextSource);
+						return ConvertValue(dataContextValue);
 					}
 				}
 
-				//_Value = 
-				return Member.GetValue(Source);
-				//return _Value;
+				var value = Member.GetValue(Source);
+				return ConvertValue(value);
 			}
 
-			return _Value;
+			return ConvertValue(_Value);
 		}
 
 		protected virtual void SetValue(object value)
 		{	
+			var convertedValue = ConvertbackValue(value);
+
 			var shouldSetHandlers = false;		
 			object oldValue = null;
 
@@ -124,11 +130,12 @@ namespace MonoMobile.Views
 						shouldSetHandlers = true;
 						
 						ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
-
-						DataContextMember.SetValue(DataContextSource, value);
+						
+						if (DataContextMember.CanWrite())
+							DataContextMember.SetValue(DataContextSource, convertedValue);
 					}
 
-					_DataContextValue = value;
+					_DataContextValue = convertedValue;
 				}
 			}
 
@@ -143,11 +150,12 @@ namespace MonoMobile.Views
 					shouldSetHandlers = true;
 
 					ResetCollection(_Value as INotifyCollectionChanged, value as IList);
-
-					Member.SetValue(Source, value);
+					
+					if (Member.CanWrite())
+						Member.SetValue(Source, convertedValue);
 				}
 
-				_Value = value;
+				_Value = convertedValue;
 			}
 
 			if (shouldSetHandlers)
@@ -171,7 +179,7 @@ namespace MonoMobile.Views
 		{
 			SetValue(GetValue());
 		}
-
+		
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			UpdateValue();
@@ -231,6 +239,101 @@ namespace MonoMobile.Views
 					SetDataContextBinder(DataContextBinder);
 				}
 			}
+		}
+
+		private object ConvertValue(object value)
+		{
+			object convertedValue = value;
+			var memberType = Member.GetMemberType();
+
+			if (ValueConverter != null)
+			{
+				var parameter = GetConverterParameter();
+				convertedValue = ValueConverter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
+			}
+
+			var typeCode = Convert.GetTypeCode(convertedValue);
+			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+			{
+				try 
+				{
+					convertedValue = Convert.ChangeType(convertedValue, memberType);
+				}
+				catch(InvalidCastException)
+				{
+				}
+			}
+
+			return convertedValue;
+		}
+
+		private object ConvertbackValue(object value)
+		{
+			object convertedValue = value;
+			var memberType = Member.GetMemberType();
+			
+			try
+			{
+				if (ValueConverter != null)
+				{
+					var parameter = GetConverterParameter();
+					convertedValue = ValueConverter.ConvertBack(value, memberType, parameter, CultureInfo.CurrentUICulture);
+				}
+
+				var typeCode = Convert.GetTypeCode(convertedValue);
+				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
+				{
+					try
+					{
+						convertedValue = Convert.ChangeType(convertedValue, memberType);
+					}
+					catch(InvalidCastException)
+					{
+					}
+				}
+			}
+			catch (FormatException)
+			{
+				var message = string.Format("The value \"{0}\" is of type {1} but the {2} \"{3}\" is of type {4}. You need to specify an IValueConverter to convert it.", 
+					convertedValue, convertedValue.GetType(), Member.GetMemberTypeName(), Member.Name, memberType);
+				throw new FormatException(message);
+			}
+
+			return convertedValue;
+		}
+
+		public object GetConverterParameter()
+		{
+			object parameter = null;
+			if (ConverterParameter != null)
+			{
+				parameter = ConverterParameter;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(ConverterParameterName))
+				{
+					MemberInfo[] parameterMember = null;
+					if (DataContextSource != null)
+					{
+						parameterMember = DataContextSource.GetType().GetMember(ConverterParameterName);
+						if (parameterMember.Length > 0)
+						{
+							parameter = parameterMember[0].GetValue(DataContextSource);
+						}
+						else
+						{
+							parameterMember = Source.GetType().GetMember(ConverterParameterName);
+							if (parameterMember.Length > 0)
+							{
+								parameter = parameterMember[0].GetValue(Source);
+							}
+						}
+					}
+				}
+			}
+
+			return parameter;
 		}
 	}
 }

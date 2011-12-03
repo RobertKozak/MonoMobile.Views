@@ -34,6 +34,7 @@ namespace MonoMobile.Views
 	using System.Collections.Generic;
 	using System.Reflection;
 	using MonoTouch.CoreLocation;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
 	public static class Registrations
@@ -49,8 +50,9 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(IEnumerable), typeof(ListView));
 
 			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectView));
-			ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
+	//		ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
 			ViewContainer.RegisterView(typeof(ButtonAttribute), typeof(MethodView));
+			ViewContainer.RegisterView(typeof(LoadMoreAttribute), typeof(LoadMoreView));
 			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandView));
 			ViewContainer.RegisterView(typeof(Uri), typeof(HtmlView));
 			ViewContainer.RegisterView(typeof(HtmlAttribute), typeof(HtmlView));
@@ -58,10 +60,10 @@ namespace MonoMobile.Views
 			ViewContainer.RegisterView(typeof(PasswordAttribute), typeof(EntryView));
 
 			ViewContainer.RegisterView(typeof(DateTime), typeof(DateView));
+			ViewContainer.RegisterView(typeof(NSDate), typeof(DateView));
 			ViewContainer.RegisterView(typeof(DateAttribute), typeof(DateView));
 			ViewContainer.RegisterView(typeof(TimeAttribute), typeof(TimeView));
 			
-			ViewContainer.RegisterView(typeof(LoadMoreAttribute), typeof(LoadMoreView));
 			ViewContainer.RegisterView(typeof(CLLocationCoordinate2D), typeof(MapView));
 			ViewContainer.RegisterView(typeof(IEnumerable<CLLocationCoordinate2D>), typeof(MapView));
 			ViewContainer.RegisterView(typeof(MapAttribute), typeof(MapView));

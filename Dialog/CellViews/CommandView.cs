@@ -40,8 +40,6 @@ namespace MonoMobile.Views
 		public ICommand Command { get { return DataContext.Value as ICommand; } }
 		public object CommandParameter { get; set; }
 
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
-
 		public CommandView(RectangleF frame) : base(frame)
 		{
 		}

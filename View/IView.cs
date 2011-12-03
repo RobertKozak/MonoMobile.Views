@@ -31,7 +31,7 @@ namespace MonoMobile.Views
 {
 	using MonoTouch.UIKit;
 
-	public interface IView: IBindingContext
+	public interface IView
 	{
 		string Caption { get; set; }
 		UITableView TableView { get; set; }

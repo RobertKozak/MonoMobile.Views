@@ -574,11 +574,7 @@ namespace MonoMobile.Views
 			{
 				var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
 				
-				if (themeAttribute.ThemeUsage == ThemeUsage.Merge)
-				{
-					themeableElement.Theme.MergeTheme(theme);
-				} else
-					themeableElement.Theme = Theme.CreateTheme(theme);
+				themeableElement.Theme = Theme.CreateTheme(theme);
 			}
 		}
 

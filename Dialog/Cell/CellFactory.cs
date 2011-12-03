@@ -27,13 +27,13 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.ObjCRuntime;
-
 namespace MonoMobile.Views
 {
+	using System;
+	using MonoTouch.UIKit;
+	using MonoTouch.Foundation;
+	using MonoTouch.ObjCRuntime;
+
 	public class TableCellFactory<T> where T : UITableViewCell
 	{
 		private string _NibName;

@@ -32,16 +32,12 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Collections.Specialized;
-	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
-	using MonoTouch.CoreAnimation;
 	using MonoTouch.Foundation;
-	using MonoTouch.ObjCRuntime;
 	using MonoTouch.UIKit;
-	
+
 	[Preserve(AllMembers = true)]
 	public abstract class BaseDialogViewSource : UITableViewSource, ISearchBar, IEnumerable, ITableViewStyle
 	{
@@ -79,8 +75,9 @@ namespace MonoMobile.Views
 		public string SearchPlaceholder { get; set; }
 		public SearchCommand SearchCommand { get; set; }
 		
-		public bool IsRoot { get; set; }
-		public bool IsNavigateable { get; set; }
+		public bool IsRootCell { get; set; }
+		public bool IsSelectable { get; set; }
+		public bool IsNavigable { get; set; }
 
 		public string Caption { get; set; }
 		
@@ -159,6 +156,13 @@ namespace MonoMobile.Views
 						else
 							view = Activator.CreateInstance(viewType) as UIView;
 	
+						var dc = view as IDataContext<MemberData>;
+						if (dc != null)
+						{
+							var item = GetMemberData(indexPath);
+							dc.DataContext = item;
+						}
+
 						var initializeCell = view as IInitializeCell;
 						if (initializeCell != null)
 						{
@@ -172,8 +176,20 @@ namespace MonoMobile.Views
 							initializeCell.Cell = cell;
 							initializeCell.Controller = Controller;
 						}
+						
+						var initalizable = view as IInitializable;
+						if (initalizable != null)
+						{
+							initalizable.Initialize();
+						}
 
 						views.Add(view);
+
+						var composable = view as IComposable;
+						if (composable == null)
+						{
+							break;
+						}
 					}
 				}
 			}
@@ -242,11 +258,11 @@ namespace MonoMobile.Views
 
 			if (resizedRows)
 			{
-//				new Wait(new TimeSpan(0), () =>
-//				{
-//					Controller.TableView.BeginUpdates();
-//					Controller.TableView.EndUpdates();
-//				});
+				new Wait(new TimeSpan(0), () =>
+				{
+					Controller.TableView.BeginUpdates();
+					Controller.TableView.EndUpdates();
+				});
 			}
 
 			return cell;
@@ -261,8 +277,9 @@ namespace MonoMobile.Views
 			}
 
 //			cell.AccessoryView = null;
-			cell.Accessory = IsRoot || IsNavigateable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-	
+			cell.Accessory = IsSelectable ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator;	
+			cell.Accessory = IsNavigable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+
 			cell.TextLabel.TextAlignment = UITextAlignment.Left;
 			cell.TextLabel.Text = string.Empty;
 
@@ -567,7 +584,7 @@ namespace MonoMobile.Views
 			var listCount = 0;
 
 			var listSource = GetListSource(NSIndexPath.FromRowSection(0, indexPath.Section));
-			if (listSource != null && !listSource.IsRoot)
+			if (listSource != null && !listSource.IsRootCell)
 			{
 				listCount = listSource.Sections[0].DataContext.Count;
 			
@@ -606,7 +623,7 @@ namespace MonoMobile.Views
 		{
 			cell.AccessoryView = null;
 
-			if (!IsNavigateable)
+			if (IsSelectable)
 			{
 				UIView selectedAccessoryView = null;
 				UIView unselectedAccessoryView = null;

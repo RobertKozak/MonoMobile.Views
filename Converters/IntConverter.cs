@@ -31,6 +31,7 @@ namespace MonoMobile.Views
 {
     using System;
 	using System.Globalization;
+	using System.Text.RegularExpressions;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
@@ -40,7 +41,7 @@ namespace MonoMobile.Views
         {
             if (value == null)
                 return string.Empty;
-
+			
 			return value.ToString();
         }
 
@@ -48,10 +49,11 @@ namespace MonoMobile.Views
         {
 			if (value != null && System.Convert.GetTypeCode(value) == TypeCode.String)
 			{
-				var intValue = System.Convert.ToInt64(value);
+				var stringValue = Regex.Replace((string)value, "[^0-9]", "");
+				var intValue = System.Convert.ToInt64(stringValue);
 				return System.Convert.ChangeType(intValue, targetType);
 			}
-			return 0;
+			return value;
         }
     }
 }

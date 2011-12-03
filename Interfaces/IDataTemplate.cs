@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 
 	public interface IDataTemplate
 	{
-		List<Binding> Bind();
+		//List<Binding> Bind();
 	}
 }
 

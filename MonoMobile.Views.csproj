@@ -9,6 +9,8 @@
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>MonoMobile.Views</RootNamespace>
+    <ReleaseVersion>1.0b</ReleaseVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -134,13 +136,6 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <Compile Include="Binding\BindingBase.cs" />
-    <Compile Include="Binding\Binding.cs" />
-    <Compile Include="Binding\IValueConverter.cs" />
-    <Compile Include="Binding\BindingMode.cs" />
-    <Compile Include="Binding\IBindable.cs" />
-    <Compile Include="Binding\BindingExpression.cs" />
-    <Compile Include="Binding\BindingOperations.cs" />
     <Compile Include="Commands\UICommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ReflectiveCommand.cs" />
@@ -150,11 +145,6 @@
     <Compile Include="View\IView.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
     <Compile Include="ViewModel\IViewModel.cs" />
-    <Compile Include="Application\DisposableObject.cs" />
-    <Compile Include="Binding\IBindingExpression.cs" />
-    <Compile Include="Dialog\Group.cs" />
-    <Compile Include="Dialog\RadioGroup.cs" />
-    <Compile Include="Dialog\Reflection API\BindAttribute.cs" />
     <Compile Include="Dialog\RefreshTableHeaderView.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
@@ -163,79 +153,43 @@
     <Compile Include="Converters\PercentConverter.cs" />
     <Compile Include="Converters\UriConverter.cs" />
     <Compile Include="Controls\CommandBarButtonItem.cs" />
-    <Compile Include="Dialog\DataContextCode.cs" />
-    <Compile Include="Dialog\BindingContext.cs" />
     <Compile Include="Extensions\UIImageExtensions.cs" />
-    <Compile Include="Dialog\Element.cs" />
-    <Compile Include="Dialog\Elements\ActivityElement.cs" />
-    <Compile Include="Dialog\Elements\LoadMoreElement.cs" />
-    <Compile Include="Dialog\Elements\OwnerDrawnElement.cs" />
-    <Compile Include="Dialog\Elements\BoolElement.cs" />
-    <Compile Include="Dialog\Elements\BaseBooleanImageElement.cs" />
-    <Compile Include="Dialog\Elements\BooleanImageElement.cs" />
-    <Compile Include="Dialog\Elements\MultilineElement.cs" />
-    <Compile Include="Dialog\Elements\ImageElement.cs" />
-    <Compile Include="Dialog\Elements\DateTimeElement.cs" />
-    <Compile Include="Dialog\Elements\DateElement.cs" />
-    <Compile Include="Dialog\Elements\TimeElement.cs" />
-    <Compile Include="Dialog\Elements\UIViewElement.cs" />
-    <Compile Include="Dialog\Elements\MapViewElement.cs" />
-    <Compile Include="Dialog\Elements\RadioElement.cs" />
-    <Compile Include="Dialog\Elements\CheckboxElement.cs" />
-    <Compile Include="Dialog\Elements\BooleanElement.cs" />
-    <Compile Include="Dialog\Elements\FloatElement.cs" />
-    <Compile Include="Dialog\RootElement.cs" />
     <Compile Include="Dialog\Section.cs" />
     <Compile Include="Dialog\SearchChangedEventArgs.cs" />
     <Compile Include="Dialog\ImageLoader.cs" />
     <Compile Include="Dialog\LRUCache.cs" />
-    <Compile Include="Dialog\Elements\StyledMultilineElement.cs" />
-    <Compile Include="Dialog\Elements\StringElement.cs" />
-    <Compile Include="Dialog\Cell\UITableViewElementCell.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Application\SuspendNotificationContext.cs" />
-    <Compile Include="Dialog\ViewBinding.cs" />
-    <Compile Include="Binding\BindableProperty.cs" />
     <Compile Include="Converters\IntConverter.cs" />
     <Compile Include="Converters\FloatConverter.cs" />
     <Compile Include="Dialog\Cell\Theme.cs" />
     <Compile Include="Dialog\Reflection API\ThemeAttribute.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
-    <Compile Include="Application\UrlConnection.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Interfaces\IElement.cs" />
     <Compile Include="Interfaces\IFocusable.cs" />
     <Compile Include="Interfaces\ISelectable.cs" />
     <Compile Include="Interfaces\ITappable.cs" />
-    <Compile Include="Interfaces\IRoot.cs" />
     <Compile Include="Interfaces\ISizeable.cs" />
     <Compile Include="Interfaces\ISearchable.cs" />
     <Compile Include="Interfaces\ISearchBar.cs" />
     <Compile Include="Interfaces\IThemeable.cs" />
-    <Compile Include="Interfaces\ISection.cs" />
     <Compile Include="Interfaces\IDataContext.cs" />
-    <Compile Include="Interfaces\IBindingContext.cs" />
     <Compile Include="Application\ObservableObject.cs" />
     <Compile Include="Application\IObservableObject.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
-    <Compile Include="Dialog\Elements\FocusableElement.cs" />
     <Compile Include="Extensions\UIDevice.cs" />
     <Compile Include="Dialog\Themes\ClearTheme.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
-    <Compile Include="Dialog\Reflection API\CheckmarkAttribute.cs" />
     <Compile Include="Extensions\DateExtentions.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\EnumCollectionConverter.cs" />
-    <Compile Include="Binding\DataBindingException.cs" />
     <Compile Include="Converters\ViewConverter.cs" />
     <Compile Include="Converters\ViewModelConverter.cs" />
     <Compile Include="Dialog\Themes\PlainTheme.cs" />
     <Compile Include="Dialog\Themes\GroupedTheme.cs" />
-    <Compile Include="Dialog\ContainerElement.cs" />
-    <Compile Include="Interfaces\IContainer.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Application\Alert.cs" />
     <Compile Include="Application\MonoMobileApplication.cs" />
@@ -245,32 +199,11 @@
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Application\Wait.cs" />
     <Compile Include="Dialog\DialogViewController\DialogViewController.cs" />
-    <Compile Include="Dialog\DialogViewController\DialogViewTable.cs" />
     <Compile Include="Dialog\DialogViewController\DialogViewSearchDelegate.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Dialog\Reflection API\CellEditingStyleAttribute.cs" />
     <Compile Include="View\ObservableView.cs" />
-    <Compile Include="Interfaces\IDataBinder.cs" />
-    <Compile Include="Dialog\DataBindings\RadioElementBinding.cs" />
-    <Compile Include="Dialog\DataBindings\ActivityElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\BooleanElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\CheckboxElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\ContainerElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\DateTimeElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\ElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\EntryElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\FloatElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\HtmlElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\ImageElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\MapElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\MultilineElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\RootElementDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\SectionDataBinding.cs" />
-    <Compile Include="Dialog\DataBindings\StringElementDataBinding.cs" />
-    <Compile Include="Interfaces\IDataTemplate.cs" />
-    <Compile Include="Dialog\DataTemplate.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
-    <Compile Include="Dialog\Elements\ProgressElement.cs" />
     <Compile Include="Application\Reachablity.cs" />
     <Compile Include="Dialog\Cell\CellFactory.cs" />
     <Compile Include="Interfaces\IActivation.cs" />
@@ -290,9 +223,6 @@
     <Compile Include="Dialog\CellViews\MethodView.cs" />
     <Compile Include="Dialog\CellViews\CommandView.cs" />
     <Compile Include="Interfaces\ICaption.cs" />
-    <Compile Include="Dialog\Elements\ButtonElement.cs" />
-    <Compile Include="Dialog\Elements\EntryElement.cs" />
-    <Compile Include="Dialog\Elements\HtmlElement.cs" />
     <Compile Include="Dialog\DialogViewController\ListSource.cs" />
     <Compile Include="Dialog\CellViews\DateTimeView.cs" />
     <Compile Include="Dialog\CellViews\FocusableView.cs" />
@@ -337,10 +267,16 @@
     <Compile Include="Dialog\CellViews\Cell Attributes\RowHeightAttribute.cs" />
     <Compile Include="Interfaces\IHandleNotifyPropertyChanged.cs" />
     <Compile Include="Dialog\DialogViewController\DataContextBinder.cs" />
+    <Compile Include="Interfaces\IHandleNotifyCollectionChanged.cs" />
+    <Compile Include="Dialog\CellViews\Cell Attributes\CheckmarkAttribute.cs" />
+    <Compile Include="Dialog\DialogViewController\DialogViewTable.cs" />
+    <Compile Include="Dialog\CellViews\Cell Attributes\ValueConverterAttribute.cs" />
+    <Compile Include="Application\IValueConverter.cs" />
+    <Compile Include="Interfaces\IComposable.cs" />
+    <Compile Include="Interfaces\IRequestImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Binding\" />
     <Folder Include="Commands\" />
     <Folder Include="Extensions\" />
     <Folder Include="View\" />
@@ -350,13 +286,11 @@
     <Folder Include="Dialog\Reflection API\" />
     <Folder Include="Converters\" />
     <Folder Include="Controls\" />
-    <Folder Include="Dialog\Elements\" />
     <Folder Include="Dialog\Cell\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Dialog\Themes\" />
     <Folder Include="Controllers\" />
     <Folder Include="Dialog\DialogViewController\" />
-    <Folder Include="Dialog\DataBindings\" />
     <Folder Include="Dialog\CellViews\" />
     <Folder Include="Dialog\CellViews\Cell Attributes\" />
     <Folder Include="Dialog\CellViews\Table Attributes\" />

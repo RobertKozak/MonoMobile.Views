@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  HtmlView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)

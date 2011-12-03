@@ -43,7 +43,6 @@ namespace MonoMobile.Views
 				collection.Add(item);
 			}
 			return collection;
-		
 
 //			return new ObservableCollection<T>(collection);
 		}

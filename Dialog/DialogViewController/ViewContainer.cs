@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  ViewContainer.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)

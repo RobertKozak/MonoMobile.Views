@@ -31,23 +31,52 @@ namespace MonoMobile.Views
 {
 	using System;
 	
+	public enum DisplayMode
+	{
+		List,
+		RootCell,
+		Collapsable,
+	}
+
+	public enum SelectionAction
+	{
+		NavigateToView,
+		PopOnSelection,
+		Selection,
+		Multiselection,
+		Custom
+	} 
+
+	public enum UnselectionBehavior
+	{
+		SetSelectedToCurrentValue,
+		SetSelectedToPreviousValueOrNull,
+		SetSelectedToNull
+	}
+
 	// NOTE: When this [Selection] is used with MultiselectionAttribute the [Multiselection] will take precedence.
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public class SelectionAttribute : Attribute
+	public class ListAttribute : Attribute
 	{
-		public SelectionAttribute()
+		public ListAttribute()
 		{
 		}
-
-		public SelectionAttribute(string memberName)
+		
+		public ListAttribute(DisplayMode displayMode)
 		{
-			MemberName = memberName;
+			DisplayMode = displayMode;
 		}
 
-		public string MemberName { get; set; }
-		public Type NavigateToView { get; set; }
+		public string SelectedItemMemberName { get; set; }
+		public string SelectedItemsMemberName { get; set; }
+		public Type ViewType { get; set; }
+		public Type NavigateToViewType { get; set; }
 		public Type SelectedAccessoryViewType { get; set; }		
 		public Type UnselectedAccessoryViewType { get; set; }
+		public DisplayMode DisplayMode { get; set; }
+		public SelectionAction SelectionAction { get; set; }
+		public UnselectionBehavior UnselectionBehavior { get; set; }
+		public bool ReplaceCaptionWithSelection { get; set; }
 	}
 }

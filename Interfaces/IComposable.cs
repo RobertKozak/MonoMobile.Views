@@ -1,5 +1,5 @@
 // 
-//  DataTemplate.cs
+//  IComposable.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,18 +30,9 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Generic;
-
-	public abstract class DataTemplate : IDataTemplate
+	
+	public interface IComposable
 	{
-		public DataTemplate()
-		{
-		}
-
-//		public virtual List<Binding> Bind()
-//		{
-//			return new List<Binding>();
-//		}
 	}
 }
 

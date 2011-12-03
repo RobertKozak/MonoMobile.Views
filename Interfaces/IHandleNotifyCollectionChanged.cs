@@ -1,5 +1,5 @@
 // 
-//  DataTemplate.cs
+//  IHandleNotifyCollectionChanged.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,18 +30,12 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Generic;
-
-	public abstract class DataTemplate : IDataTemplate
+	using System.Collections.Specialized;
+	using System.ComponentModel;
+	
+	public interface IHandleNotifyCollectionChanged
 	{
-		public DataTemplate()
-		{
-		}
-
-//		public virtual List<Binding> Bind()
-//		{
-//			return new List<Binding>();
-//		}
+		void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
 	}
 }
 

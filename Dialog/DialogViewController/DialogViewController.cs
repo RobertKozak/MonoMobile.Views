@@ -1,9 +1,12 @@
 //
 // DialogViewController.cs: drives MonoMobile.Views
 //
-// Author:
-//   Miguel de Icaza
-//   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
+//  Author:
+//    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+// 
+//  Copyright 2011, Nowcom Corporation.
+//
+//  Code licensed under the MIT X11 license
 //
 // Code to support pull-to-refresh based on Martin Bowling's TweetTableView
 // which is based in turn in EGOTableViewPullRefresh code which was created
@@ -33,7 +36,6 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Drawing;
 	using System.Linq;
@@ -95,7 +97,7 @@ namespace MonoMobile.Views
 			{
 				if (value && RefreshView == null)
 				{
-					var bounds = View.Bounds;
+		//			var bounds = View.Bounds;
 		//			RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), Root.DefaultSettingsKey);
 
 					if (Reloading)
@@ -410,7 +412,7 @@ namespace MonoMobile.Views
 				selectable.Selected(this, TableView, item, indexPath);
 			}
 			
-			TableView.DeselectRow(indexPath, true);
+	//		TableView.DeselectRow(indexPath, true);
 		}
 
 		public virtual UITableView MakeTableView(RectangleF bounds, UITableViewStyle style)
@@ -436,11 +438,7 @@ namespace MonoMobile.Views
 			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
 			TableView.AutosizesSubviews = true;
 		
-		//	Root.TableView = TableView;
 			View = TableView;
-
-//			if (Root == null)
-//				return;
 			
 			UpdateSource();
 
@@ -468,11 +466,6 @@ namespace MonoMobile.Views
 				activation.Activated();
 			}			
 
-//			if (Root == null)
-//				return;
-//			
-//			Root.Prepare();
-
 //			if (Root.Caption != null)
 //				NavigationItem.Title = Root.Caption;
 
@@ -483,17 +476,6 @@ namespace MonoMobile.Views
 			}
 			
 			SetScrollEnabled();
-
-//			if (Root != null)
-//			{
-//				var index = Root.Index;
-//				if (index > -1)
-//				{
-//					var path = Root.PathForRadio();
-//					if (path != null)
-//						TableView.ScrollToRow(path, UITableViewScrollPosition.Top, false);
-//				}
-//			}
 			
 			var nav = ParentViewController as UINavigationController;
 			if (nav != null)
@@ -862,18 +844,6 @@ return;
 							}
 						}
 					}
-
-//					foreach(MemberData memberData in section.DataContext)
-//					{
-//						var notifyCollectionChanged = memberData.Value as INotifyCollectionChanged;
-//						if (notifyCollectionChanged != null)
-//						{
-//							if (section.ListSources[0] != null)
-//							{
-//							//	notifyCollectionChanged.CollectionChanged -= memberData.DataContextBinder.HandleCollectionChanged;
-//							}
-//						}
-//					}
 				}
 			}
 		}
@@ -955,8 +925,6 @@ return;
 				TableView = _TableView;
 				DisableScrolling = view.GetType().GetCustomAttribute<DisableScrollingAttribute>() != null;
 			}
-			
-	//		SetDataContextChangeHandler(view);
 		}
 
 		public DialogViewController(string title, object view, bool pushing) : base(UITableViewStyle.Grouped)
@@ -979,17 +947,5 @@ return;
 		{
 			base.Dispose (disposing);
 		}
-
-//		public DialogViewController(string title, BaseDialogViewSource source, bool pushing) : base(UITableViewStyle.Grouped)
-//		{
-//			Title = title;
-//			SetPushing(pushing);
-//
-//			if (source != null)
-//			{
-//				TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
-//				TableView.Source = source;
-//			}
-//		}
 	}
 }

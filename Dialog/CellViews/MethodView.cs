@@ -37,8 +37,6 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class MethodView : CellView, ISelectable
 	{
-		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
-
 		public MethodView(RectangleF frame) : base(frame)
 		{
 		}

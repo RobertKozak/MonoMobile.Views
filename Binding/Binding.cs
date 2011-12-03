@@ -1,72 +1,72 @@
+////
+//// Binding.cs:
+////
+//// Author:
+////   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
+////
+//// Copyright 2011, Nowcom Corporation
+////
+//// Code licensed under the MIT X11 license
+////
+//// Permission is hereby granted, free of charge, to any person obtaining
+//// a copy of this software and associated documentation files (the
+//// "Software"), to deal in the Software without restriction, including
+//// without limitation the rights to use, copy, modify, merge, publish,
+//// distribute, sublicense, and/or sell copies of the Software, and to
+//// permit persons to whom the Software is furnished to do so, subject to
+//// the following conditions:
+////
+//// The above copyright notice and this permission notice shall be
+//// included in all copies or substantial portions of the Software.
+////
+//// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+//// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+//// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+//// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+//// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+////
+//namespace MonoMobile.Views
+//{
+//	using System;
+//	using System.Globalization;
+//	using System.ComponentModel;
 //
-// Binding.cs:
+//	public class Binding: BindingBase
+//	{
+//		public Binding(): this(null, null)
+//		{
+//		}
 //
-// Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
+//		public Binding(string targetPath) : this(null, targetPath)
+//		{
+//		}
 //
-// Copyright 2011, Nowcom Corporation
+//		public Binding(string sourcePath, string targetPath)
+//		{
+//			SourcePath = sourcePath;
+//			TargetPath = targetPath;
+//			Mode = BindingMode.TwoWay;
+//		}
 //
-// Code licensed under the MIT X11 license
+//		public Binding(object source, string sourcePath, object target, string targetPath) : this(sourcePath, targetPath)
+//		{
+//			Source = source;
+//			Target = target;
+//		}
 //
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
+//		public string TargetPath { get; set; }
+//		public object Target { get; set;}
+//		public string SourcePath { get; set; }
+//		public object Source { get; set; }
+//		public object ViewSource { get; set; }
 //
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
+//        public IValueConverter Converter { get; set; }
+//        public CultureInfo ConverterCulture { get; set; }
+//        public object ConverterParameter { get; set; }
+//        public BindingMode Mode { get; set; }
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//	}
+//}
 //
-namespace MonoMobile.Views
-{
-	using System;
-	using System.Globalization;
-	using System.ComponentModel;
-
-	public class Binding: BindingBase
-	{
-		public Binding(): this(null, null)
-		{
-		}
-
-		public Binding(string targetPath) : this(null, targetPath)
-		{
-		}
-
-		public Binding(string sourcePath, string targetPath)
-		{
-			SourcePath = sourcePath;
-			TargetPath = targetPath;
-			Mode = BindingMode.TwoWay;
-		}
-
-		public Binding(object source, string sourcePath, object target, string targetPath) : this(sourcePath, targetPath)
-		{
-			Source = source;
-			Target = target;
-		}
-
-		public string TargetPath { get; set; }
-		public object Target { get; set;}
-		public string SourcePath { get; set; }
-		public object Source { get; set; }
-		public object ViewSource { get; set; }
-
-        public IValueConverter Converter { get; set; }
-        public CultureInfo ConverterCulture { get; set; }
-        public object ConverterParameter { get; set; }
-        public BindingMode Mode { get; set; }
-
-	}
-}
-

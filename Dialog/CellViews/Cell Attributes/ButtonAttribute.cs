@@ -43,7 +43,6 @@ namespace MonoMobile.Views
 	{
 		public ButtonAttribute()
 		{
-		//	ViewType = typeof(ButtonElement);
 		}
 		
 		public ButtonAttribute(Type viewType)

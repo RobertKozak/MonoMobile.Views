@@ -1,5 +1,3 @@
-using MonoTouch.CoreGraphics;
-using MonoTouch.CoreAnimation;
 //
 // UIImageExtensions.cs:
 //
@@ -32,8 +30,8 @@ using MonoTouch.CoreAnimation;
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
 	using System.Drawing;
+	using MonoTouch.UIKit;
 
 	public static class UIImageExtensions
 	{

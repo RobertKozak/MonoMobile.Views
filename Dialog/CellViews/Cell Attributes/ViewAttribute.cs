@@ -33,8 +33,8 @@ namespace MonoMobile.Views
 	
 	public enum ViewUsage
 	{
-		Replace,
-		Compose
+		Compose,
+		Replace
 	}
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]

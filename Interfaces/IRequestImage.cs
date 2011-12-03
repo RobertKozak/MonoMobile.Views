@@ -1,5 +1,5 @@
 // 
-//  DataTemplate.cs
+//  IRequestImage.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,18 +30,12 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Generic;
+	using MonoTouch.UIKit;
 
-	public abstract class DataTemplate : IDataTemplate
+	public interface IRequestImage
 	{
-		public DataTemplate()
-		{
-		}
-
-//		public virtual List<Binding> Bind()
-//		{
-//			return new List<Binding>();
-//		}
+		Uri ImageUri { get; }
+		void UpdateImage(UIImage image);
 	}
 }
 

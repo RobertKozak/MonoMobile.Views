@@ -40,8 +40,6 @@ namespace MonoMobile.Views
 			get { return GetDataModel(); } 
 			set { SetDataModel(value); }
 		}
- 
-	//	public BindingContext BindingContext { get; set; }
 
 		public ViewModel()
 		{

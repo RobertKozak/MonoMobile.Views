@@ -31,7 +31,7 @@ namespace MonoMobile.Views
 {
 	using System.ComponentModel;
 
-	public interface IViewModel: INotifyPropertyChanged, IBindingContext
+	public interface IViewModel: INotifyPropertyChanged
 	{
 		string Load(string key);
 		string Load(string key, string defaultValue);

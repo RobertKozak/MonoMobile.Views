@@ -30,7 +30,7 @@
 namespace MonoMobile.Views
 {
 	using System;
-
+	
 	public interface IDataContext<T>
 	{
 		T DataContext { get; set; }

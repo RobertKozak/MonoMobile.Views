@@ -68,11 +68,12 @@ namespace MonoMobile.Views
 				text = listSource.SelectedItem.ToString();
 				cell.DetailTextLabel.Text = text;
 			}
-
-			var rootAttribute = DataContext.Member.GetCustomAttribute<RootAttribute>();
-			if (rootAttribute != null)
+			
+			if (listSource.IsRootCell)
+//			var rootAttribute = DataContext.Member.GetCustomAttribute<RootAttribute>();
+//			if (rootAttribute != null)
 			{
-				if (rootAttribute.HideCaptionOnSelection)
+				if (listSource.ReplaceCaptionWithSelection)
 				{
 					cell.TextLabel.Text = text;
 					cell.DetailTextLabel.Text = string.Empty;
@@ -84,8 +85,9 @@ namespace MonoMobile.Views
 				}
 			}
 		
-			var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
-			if (multiselectionAttribute != null)
+			if (listSource.IsMultiselect) 
+//			var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
+//			if (multiselectionAttribute != null)
 			{
 				cell.DetailTextLabel.Text = listSource.SelectedItems.Count.ToString();
 			}
@@ -98,8 +100,8 @@ namespace MonoMobile.Views
 							
 			if (listSource.Sections[0].DataContext.Count > 0)
 			{
-				var multiselectionAttribute = DataContext.Member.GetCustomAttribute<MultiselectionAttribute>();
-				var selectionAttribute = DataContext.Member.GetCustomAttribute<SelectionAttribute>();
+				var isMultiselect = listSource.SelectionAction == SelectionAction.Multiselection;
+				var listAttribute = DataContext.Member.GetCustomAttribute<ListAttribute>();
 	
 				var navigateToView = DataContext.Member.GetCustomAttribute<NavigateToViewAttribute>();
 				if (navigateToView != null)
@@ -107,9 +109,9 @@ namespace MonoMobile.Views
 					listSource.ModalTransitionStyle = navigateToView.TransitionStyle;
 					listSource.IsModal = navigateToView.ShowModal;
 					listSource.NavigationViewType = navigateToView.ViewType;
-					listSource.IsNavigateable = selectionAttribute == null && multiselectionAttribute == null;
+					listSource.IsSelectable = listAttribute != null && isMultiselect;
 				}
-				
+
 				listSource.RowSelected(tableView, indexPath);
 			}
 		}

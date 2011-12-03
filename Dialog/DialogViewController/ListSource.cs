@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using MonoMobile.Views.Utilities;
 // 
 //  ListSource.cs
 // 
@@ -55,11 +57,15 @@ namespace MonoMobile.Views
 		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); } }
 				
 		public UnselectionBehavior UnselectionBehavior { get; set; }
-
-		public bool IsSelectable { get; set; }
+		
 		public bool IsMultiselect { get; set; }
 		public bool PopOnSelection { get; set; }
-		public bool HideCaptionOnSelection { get; set; }
+		public bool ReplaceCaptionWithSelection { get; set; }
+		public DisplayMode DisplayMode { get; set; }
+
+		public SelectionAction SelectionAction { get; set; }
+		public bool IsCollapsed { get; set; }
+		public IList CollapsedList { get; set; }
 
 		public Type NavigationViewType { get; set; }
 		public object NavigationView { get; set; }
@@ -86,6 +92,16 @@ namespace MonoMobile.Views
 			SelectedItems = list.GetType().CreateGenericListFromEnumerable(null);
 
 			CellFactory = new TableCellFactory<UITableViewCell>(CellId);
+
+//SelectionDisplayMode = SelectionDisplayMode.Collapsed;
+//CollapsedList = new List<object>();
+//			foreach(var item in Sections[0].DataContext)
+//			{
+//				CollapsedList.Add(item);
+//			}
+//			Sections[0].DataContext.Clear();
+//
+//IsCollapsed = true;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -94,11 +110,6 @@ namespace MonoMobile.Views
 			{
 				foreach(var section in Sections.Values)
 				{
-					var notifyCollectionChanged = section.DataContext as INotifyCollectionChanged;
-					if (notifyCollectionChanged != null)
-					{
-						//notifyCollectionChanged.CollectionChanged -= HandleCollectionChanged;
-					}
 					section.DataContext = null;
 				}
 			}
@@ -108,15 +119,15 @@ namespace MonoMobile.Views
 
 		public override int RowsInSection(UITableView tableview, int sectionIndex)
 		{
-			if (IsRoot)
+			if (IsRootCell || IsCollapsed)
 			{
 				return 1;
 			}
 			
-			var numberOfRows =0;
+			var numberOfRows = IsCollapsed ? 0 : 0;
 			if (Sections.ContainsKey(sectionIndex))
 			{
-				numberOfRows = Sections[sectionIndex].NumberOfRows;
+				numberOfRows += Sections[sectionIndex].NumberOfRows;
 			}
 
 			return Sections != null ? numberOfRows : 0;
@@ -129,20 +140,44 @@ namespace MonoMobile.Views
 	
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
+			var sw = new Stopwatch();
+			sw.Start();
+
 			indexPath = NSIndexPath.FromRowSection(indexPath.Row, 0);
 
 			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
 
+			sw.Stop();
+			Console.WriteLine("Get Cell time: {0} ms", sw.Elapsed.Milliseconds);
 			return cell;
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{	
+			var sectionData = GetSectionData(0);
+			if (DisplayMode != DisplayMode.RootCell)
+			{
+				if (sectionData.Count > 0)
+				{
+					var dataType = sectionData[0].GetType();
+					if ((dataType.IsPrimitive || dataType.IsEnum) && (SelectionAction == SelectionAction.NavigateToView || SelectionAction == SelectionAction.Custom))
+					{
+						IsSelectable = false;
+						SelectionAction = SelectionAction.Custom;
+					}
+				}
+			}
+
 			base.UpdateCell(cell, indexPath);
 			
-			cell.SelectionStyle = IsRoot || IsNavigateable ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;  
+			cell.Accessory = SelectionAction == SelectionAction.Custom ? UITableViewCellAccessory.None : cell.Accessory;
+
+			cell.SelectionStyle = IsNavigable ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;  
+			cell.SelectionStyle = IsSelectable ? UITableViewCellSelectionStyle.None : cell.SelectionStyle;  
+
+			cell.SelectionStyle = SelectionAction == SelectionAction.Custom ? UITableViewCellSelectionStyle.Blue : cell.SelectionStyle;
 
 			SetSelectionAccessory(cell, indexPath);
 
@@ -170,7 +205,7 @@ namespace MonoMobile.Views
 				}
 			}
 			
-			if (IsRoot)
+			if (IsRootCell)
 			{
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 				cell.TextLabel.Text = Caption;
@@ -182,7 +217,7 @@ namespace MonoMobile.Views
 				{
 					if (SelectedItem != null)
 					{
-						if (HideCaptionOnSelection)
+						if (ReplaceCaptionWithSelection)
 							cell.TextLabel.Text = SelectedItem.ToString();
 						else
 							if (cell.DetailTextLabel != null)
@@ -192,15 +227,48 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-				var sectionData = GetSectionData(0);
 				if (sectionData.Count > 0)
 					cell.TextLabel.Text = sectionData[indexPath.Row].ToString();
 			}
 		}
 
 		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
-		{			
-			if (!IsRoot)
+		{	
+			object data = null;
+
+			if (DisplayMode == DisplayMode.Collapsable)
+			{
+				var section = Sections[0];
+				var list = section.DataContext;	
+				var indexPaths = new List<NSIndexPath>();
+				
+				if (IsCollapsed)
+				{
+					foreach(var item in CollapsedList)
+					{
+						var row = list.Add(item);
+						indexPaths.Add(NSIndexPath.FromRowSection(row, section.Index));
+					}
+					IsCollapsed  = false;
+					CollapsedList.Clear();
+					Controller.TableView.InsertRows(indexPaths.ToArray(), UITableViewRowAnimation.Top);
+				}
+				else
+				{
+					foreach(var item in list)
+					{
+						var row = CollapsedList.Add(item);
+						indexPaths.Add(NSIndexPath.FromRowSection(row, section.Index));
+					}
+					IsCollapsed = true;
+					list.Clear();
+					Controller.TableView.DeleteRows(indexPaths.ToArray(), UITableViewRowAnimation.Top);
+				}
+
+			//	Controller.TableView.ReloadRows(new NSIndexPath[] { NSIndexPath.FromRowSection(0, section.Index) }, UITableViewRowAnimation.Fade);
+				return;
+			}
+			if (!IsRootCell)
 			{
 				SelectedItem = GetSectionData(0)[indexPath.Row]; 
 
@@ -237,14 +305,12 @@ namespace MonoMobile.Views
 
 				if (Controller != null)
 				{
-					Controller.Selected(SelectedItem, indexPath);
-	
-					if (PopOnSelection && !(IsNavigateable || IsRoot || IsMultiselect))
+					if (PopOnSelection && !(!IsSelectable || IsNavigable || IsMultiselect))
 					{
 						Controller.NavigationController.PopViewControllerAnimated(true);
 					}
 					
-					if (IsSelectable || IsMultiselect || !IsRoot)
+					if (IsSelectable || IsMultiselect || !IsNavigable)
 					{
 						Controller.ReloadData();
 					}
@@ -256,17 +322,35 @@ namespace MonoMobile.Views
 						});
 					}
 				}
+
+				data = SelectedItem;
+			}
+			else
+				data = GetSectionData(0);
+
+			if (SelectionAction == SelectionAction.Custom)
+			{
+				IsSelectable = false;
+				IsMultiselect = false;
+				IsNavigable = false;
+				Controller.Selected(SelectedItem, indexPath);
+				return;
 			}
 
-			var data = GetSectionData(0);
+			var dataType = data.GetType();
+			if ((dataType.IsPrimitive || dataType.IsEnum) && SelectionAction == SelectionAction.NavigateToView)
+			{
+				IsSelectable = true;
+				SelectionAction = SelectionAction.Selection;
+			}
 
-			if (IsRoot && (data is IEnumerable || data is Enum))
+			if (IsNavigable && (data is IEnumerable))
 			{
 				NavigateToList();
 				return;
 			}			
 			
-			if (IsNavigateable && (SelectedItem != null || NavigationViewType != null))
+			if (SelectionAction == SelectionAction.NavigateToView && (SelectedItem != null))
 			{
 				NavigateToView();
 			}
@@ -275,7 +359,11 @@ namespace MonoMobile.Views
 		public void NavigateToView()
 		{
 			var viewType = NavigationViewType;
-					
+			if (viewType == null)
+			{
+				viewType = ViewContainer.GetView(SelectedItem.GetType());
+			}
+
 			if (viewType != null)
 			{
 				var disposable = NavigationView as IDisposable;
@@ -309,6 +397,11 @@ namespace MonoMobile.Views
 			var section = Sections[0];
 			var data = GetSectionData(0);
 
+			if (string.IsNullOrEmpty(Caption))
+			{
+				Caption = data.ToString();
+			}
+
 			var dvc = new DialogViewController(Caption, null, true);
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
@@ -316,8 +409,9 @@ namespace MonoMobile.Views
 			if (NavigationSource == null)
 				NavigationSource = new ListSource(dvc, data, section.ViewTypes[CellId]);
 			
-			NavigationSource.IsNavigateable = false;
-			NavigationSource.IsRoot = false;
+			NavigationSource.SelectionAction = SelectionAction;
+
+			NavigationSource.IsSelectable = true;
 			NavigationSource.NavigationViewType = null;
 			
 			var viewType = NavigationViewType;
@@ -329,9 +423,11 @@ namespace MonoMobile.Views
 		
 			if (viewType != null)
 			{
-				NavigationSource.IsNavigateable = IsNavigateable;
+				NavigationSource.IsNavigable = viewType == typeof(ObjectView);
 				NavigationSource.NavigationViewType = viewType;
 			}
+
+			NavigationSource.IsNavigable = !PopOnSelection && NavigationSource.IsNavigable && SelectionAction != SelectionAction.Custom;
 
 			NavigationSource.CellFactory = CellFactory;
 
@@ -341,6 +437,9 @@ namespace MonoMobile.Views
 
 			NavigationSource.IsMultiselect = IsMultiselect;
 			NavigationSource.IsSelectable = IsSelectable;
+	
+			if (data.Count > 0 && (data[0].GetType().IsPrimitive || data[0].GetType().IsEnum))
+				NavigationSource.IsSelectable = true;
 
 			NavigationSource.PopOnSelection = PopOnSelection;
 			NavigationSource.NibName = NibName;
@@ -355,7 +454,7 @@ namespace MonoMobile.Views
 
 			NavigationSource.SelectedAccessoryViewType = SelectedAccessoryViewType;
 			NavigationSource.UnselectedAccessoryViewType = UnselectedAccessoryViewType;
-			
+							
 			NavigationSource.Controller = dvc;
 			dvc.TableView.Source = NavigationSource;
 			Controller.NavigationController.PushViewController(dvc, true);
@@ -415,7 +514,7 @@ namespace MonoMobile.Views
 		{
 			base.SetSelectionAccessory(cell, indexPath);
 			
-			if (!IsNavigateable)
+			if (IsSelectable)
 			{	
 				var selectedIndex = GetSectionData(0).IndexOf(SelectedItem);
 				UIView selectedAccessoryView = SelectedAccessoryViews.Count > 0 ? SelectedAccessoryViews[cell] : null;

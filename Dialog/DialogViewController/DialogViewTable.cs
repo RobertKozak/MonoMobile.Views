@@ -70,21 +70,26 @@ namespace MonoMobile.Views
 		{
 			base.TouchesEnded(touches, evt);
 			
-//			if (Controller != null)
-//			{
-//				foreach (var section in Controller.TableView.Source)
-//				{
-//					foreach (var element in section.Elements)
-//					{
-//						var selected = element as IFocusable;
-//						if (selected != null && selected.ElementView != null && selected.ElementView.IsFirstResponder)
-//						{
-//							selected.ElementView.ResignFirstResponder();
-//							break;
-//						}
-//					}
-//				}
-//			}
+			//TODO : check this to make sure Control is ok or do we need another on like InputControl
+			var source = Controller.TableView.Source as BaseDialogViewSource;
+			if (source != null)
+			{
+				foreach (var section in source.Sections.Values)
+				{
+					foreach (var viewList in section.Views.Values)
+					{
+						foreach(var view in viewList)
+						{
+							var focusable = view as IFocusable;
+							if (focusable != null && focusable.Control != null && focusable.Control.IsFirstResponder)
+							{
+								focusable.Control.ResignFirstResponder();
+								break;
+							}
+						}
+					}
+				}
+			}
 			
 			ResetTextShadow(true, touches);
 		}

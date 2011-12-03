@@ -27,17 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-
 namespace MonoMobile.Views
 {
-	public enum ThemeUsage
-	{
-		Replace,
-		Merge
-	}
+	using System;
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class, Inherited = true)]
 	public class ThemeAttribute: Attribute
 	{
 		public ThemeAttribute(Type themeType)
@@ -46,11 +40,9 @@ namespace MonoMobile.Views
 				throw new ArgumentException("Type must derive from Theme");
 
 			ThemeType = themeType;
-			ThemeUsage = ThemeUsage.Merge;
 		}
 
 		public Type ThemeType { get; set; }
-		public ThemeUsage ThemeUsage { get; set; }
 	}
 }
 

@@ -2,11 +2,11 @@
 // HtmlAttribute.cs
 //
 // Author:
-//  Miguel de Icaza (miguel@gnome.org)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
-// Copyright 2010, Novell, Inc.
+// Copyright 2011, Nowcom Corportation
 //
-// Code licensed under the MIT X11 license
+// Code licensed under the MIT X11 licensese
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
