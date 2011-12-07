@@ -81,9 +81,6 @@ namespace MonoMobile.Views
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
-			var sw = new Stopwatch();
-			sw.Start();
-
 			MemberData memberData = null;
 			UITableViewCell cell = null;
 
@@ -101,9 +98,7 @@ namespace MonoMobile.Views
 			cell = CellFactory.GetCell(tableView, indexPath, memberData.Id, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
-			
-			sw.Stop();
-			Console.WriteLine("View Source - Get Cell time: {0} ms", sw.Elapsed.Milliseconds);
+
 			return cell;
 		}
 
@@ -129,11 +124,8 @@ namespace MonoMobile.Views
 			{
 				var viewType = ViewContainer.GetView(memberData);
 				if (viewType != null)
-				{
-					if (viewType != typeof(ObjectView))
-						id = new NSString(viewType.ToString());
-					
-					var key = id;
+				{					
+					var key = id.ToString();
 
 					if (section.ViewTypes.ContainsKey(key))
 					{
@@ -142,12 +134,12 @@ namespace MonoMobile.Views
 						if (viewTypeList == null)
 						{
 							viewTypeList = new List<Type>();
-							section.ViewTypes[key] =viewTypeList;
-						}
+							section.ViewTypes[key] = viewTypeList;
 
-						if (!viewTypeList.Contains(viewType))
-						{
-							viewTypeList.Add(viewType);
+							if (!viewTypeList.Contains(viewType))
+							{
+								viewTypeList.Add(viewType);
+							}
 						}
 					}
 					else
@@ -192,22 +184,56 @@ namespace MonoMobile.Views
 								var item = GetMemberData(indexPath);
 								dc.DataContext = item;
 							}
-			
-							var themeable = view as IThemeable;
-							if (themeable != null)
-							{
-								themeable.InitializeTheme();
-							}
 
 							var updateable = view as IUpdateable;
 							if (updateable != null)
 							{
 								updateable.UpdateCell(cell, indexPath);
 							}
-
+			
+							var themeable = view as IThemeable;
 							if (themeable != null)
 							{
-								themeable.ApplyTheme();
+								themeable.InitializeTheme(cell);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+		{
+			if (PerformActionIfCellListElement(cell, indexPath, (listSource) => listSource.WillDisplay(tableView, cell, indexPath)))
+			{
+				return;
+			}
+
+			foreach (var section in Sections.Values)
+			{
+				if (section.Views.ContainsKey(cell))
+				{
+					var views = section.Views[cell];
+		
+					if (views.Count > 0)
+					{
+						foreach (var view in views)
+						{
+							var updateable = view as IUpdateable;
+							if (updateable != null)
+							{
+								updateable.UpdateCell(cell, indexPath);
+							}
+
+							var themeable = view as IThemeable;
+							if (themeable != null)
+							{
+								if (themeable.Theme != null)
+								{
+									themeable.Theme.Cell = cell;
+								}
+
+								themeable.ApplyTheme(cell);
 							}
 						}
 					}

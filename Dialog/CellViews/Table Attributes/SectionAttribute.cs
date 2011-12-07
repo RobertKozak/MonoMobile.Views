@@ -51,7 +51,6 @@ namespace MonoMobile.Views
 		}
 
 		public string Caption, Footer;
-		public int Order = 0;
 		public Type ThemeType { get; set; }
 	}
 }

@@ -55,7 +55,6 @@ namespace MonoMobile.Views
 		}
 
 		public UIInputViewToolbar(NSCoder coder) : base(coder) { }
-		public UIInputViewToolbar(NSObjectFlag t) : base(t) { }
 		public UIInputViewToolbar(IntPtr handle) : base(handle) { }
 		public UIInputViewToolbar(RectangleF frame) : base(frame) { }
 

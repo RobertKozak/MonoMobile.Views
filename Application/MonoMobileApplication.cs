@@ -193,6 +193,8 @@ namespace MonoMobile.Views
 			if (CurrentDialogViewController != null)
 			{
 				theme = CurrentDialogViewController.Theme;
+				if (theme == null)
+					theme = new Theme();
 				theme.TableViewStyle = UITableViewStyle.Grouped;
 			}
 			
@@ -205,8 +207,8 @@ namespace MonoMobile.Views
 			
 			if (string.IsNullOrEmpty(title))
 				title = MonoMobileApplication.Title;
-
-			var dvc = new DialogViewController(title, view, pushing) { Autorotate = true };
+			
+			var dvc = new DialogViewController(title, view, theme, pushing) { Autorotate = true };
 			dvc.IsModal = isModal;
 			
 			return dvc;

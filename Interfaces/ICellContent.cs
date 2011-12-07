@@ -34,6 +34,9 @@ namespace MonoMobile.Views
 
 	public interface ICellContent
 	{
+		UIView CellContentView { get; set; }
+		UIView CellBackgroundView { get; set; }
+		UIView CellSelectedBackgroundView { get; set; }
 	}
 }
 

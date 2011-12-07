@@ -45,13 +45,14 @@ namespace MonoMobile.Views
 
 		public DialogViewTable(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
 		{
+			AlwaysBounceVertical = true;
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
-
+		
 		public override void TouchesBegan(NSSet touches, UIEvent evt)
 		{
 			ResetTextShadow(false, touches);

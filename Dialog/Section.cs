@@ -45,8 +45,7 @@ namespace MonoMobile.Views
 	{
 		internal DialogViewController Controller;
 
-		private IList _DataContext;
-		
+		private IList _DataContext;	
 		public IList DataContext
 		{ 
 			get { return _DataContext; } 
@@ -98,14 +97,6 @@ namespace MonoMobile.Views
 
 			base.Dispose(disposing);
 		}
-
-//		public Section(DialogViewController controller, IEnumerable<Type> viewTypes)
-//		{
-//			_Controller = controller;
-//
-//			ViewTypes = new Dictionary<NSString, IList<Type>>();
-//			Views = new Dictionary<UITableViewCell, IList<UIView>>();
-//		}
 
 		public IEnumerator GetEnumerator()
 		{

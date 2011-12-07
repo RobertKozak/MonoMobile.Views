@@ -30,12 +30,13 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using MonoTouch.UIKit;
 
 	public interface IThemeable
 	{
 		Theme Theme { get; set; }
-		void InitializeTheme();
-		void ApplyTheme();
+		void InitializeTheme(UITableViewCell cell);
+		void ApplyTheme(UITableViewCell cell);
 	}
 }
 

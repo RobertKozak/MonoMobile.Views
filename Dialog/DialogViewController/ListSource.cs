@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using MonoMobile.Views.Utilities;
 // 
 //  ListSource.cs
 // 
@@ -34,13 +32,11 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Collections.Specialized;
-	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
-				
+	using MonoTouch.UIKit;	
+	
 	[Preserve(AllMembers = true)]
 	public class ListSource : BaseDialogViewSource, ISearchBar, IActivation
 	{
@@ -138,24 +134,52 @@ namespace MonoMobile.Views
 			return Sections != null ? Sections.Count : 0;
 		}
 	
+		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+		{
+			if (MemberData != null && MemberData.RowHeight != 0)
+				return MemberData.RowHeight;
+
+			return base.GetHeightForRow(tableView, indexPath);
+		}
+
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
-			var sw = new Stopwatch();
-			sw.Start();
-
 			indexPath = NSIndexPath.FromRowSection(indexPath.Row, 0);
 
-			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewCell(cellId, idxPath));
+			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewListCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
 
-			sw.Stop();
-			Console.WriteLine("Get Cell time: {0} ms", sw.Elapsed.Milliseconds);
 			return cell;
 		}
+		
+		private UITableViewCell NewListCell(NSString cellId, NSIndexPath indexPath)
+		{
+			var cellStyle = UITableViewCellStyle.Subtitle;		
 
+			var section = Sections[indexPath.Section];
+		
+			IList<Type> viewTypes = null;
+
+			var key = cellId.ToString();
+
+			if (section.ViewTypes != null && section.ViewTypes.ContainsKey(key))
+			{
+				viewTypes = section.ViewTypes[key];
+			}
+ 
+			var cell = new ComposableViewListCell(cellStyle, cellId, indexPath, viewTypes, this);
+			return cell;
+		}
+		
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{	
+			var composableListCell = cell as ComposableViewListCell;
+			if (composableListCell != null)
+			{
+				composableListCell.IndexPath = indexPath;
+			}
+
 			var sectionData = GetSectionData(0);
 			if (DisplayMode != DisplayMode.RootCell)
 			{
@@ -181,6 +205,14 @@ namespace MonoMobile.Views
 
 			SetSelectionAccessory(cell, indexPath);
 
+			cell.SetNeedsDisplay();
+		}
+
+		public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+		{
+			var updated = false;
+
+			var sectionData = GetSectionData(0);
 			var section = Sections[0];
 			if (section.Views.ContainsKey(cell))
 			{
@@ -200,35 +232,41 @@ namespace MonoMobile.Views
 						if (updateable != null)
 						{
 							updateable.UpdateCell(cell, indexPath);
+							cell.SetNeedsDisplay();
+							updated = true;
 						}
 					}
 				}
 			}
-			
-			if (IsRootCell)
+		
+			// Do default is no views have done an update
+			if (!updated)
 			{
-				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-				cell.TextLabel.Text = Caption;
-				if (IsMultiselect && cell.DetailTextLabel != null)
+				if (IsRootCell)
 				{
-					cell.DetailTextLabel.Text = SelectedItems.Count.ToString();
+					cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+					cell.TextLabel.Text = Caption;
+					if (IsMultiselect && cell.DetailTextLabel != null)
+					{
+						cell.DetailTextLabel.Text = SelectedItems.Count.ToString();
+					}
+					else
+					{
+						if (SelectedItem != null)
+						{
+							if (ReplaceCaptionWithSelection)
+								cell.TextLabel.Text = SelectedItem.ToString();
+							else
+								if (cell.DetailTextLabel != null)
+									cell.DetailTextLabel.Text = SelectedItem.ToString();
+						}
+					}
 				}
 				else
 				{
-					if (SelectedItem != null)
-					{
-						if (ReplaceCaptionWithSelection)
-							cell.TextLabel.Text = SelectedItem.ToString();
-						else
-							if (cell.DetailTextLabel != null)
-								cell.DetailTextLabel.Text = SelectedItem.ToString();
-					}
+					if (sectionData.Count > 0)
+						cell.TextLabel.Text = sectionData[indexPath.Row].ToString();
 				}
-			}
-			else
-			{
-				if (sectionData.Count > 0)
-					cell.TextLabel.Text = sectionData[indexPath.Row].ToString();
 			}
 		}
 
@@ -384,10 +422,15 @@ namespace MonoMobile.Views
 					NavigationView = SelectedItem;
 				}
 				
-				if (Caption == null)
-					Caption = SelectedItem.ToString();
+				var initializable = NavigationView as IInitializable;
+				if (initializable != null)
+				{
+					initializable.Initialize();
+				}
+
+				Caption = SelectedItem.ToString();
 	
-				var dvc = new DialogViewController(Caption, NavigationView, true);
+				var dvc = new DialogViewController(Caption, NavigationView, Controller.Theme, true);
 				Controller.NavigationController.PushViewController(dvc, true);
 			}
 		}
@@ -402,7 +445,7 @@ namespace MonoMobile.Views
 				Caption = data.ToString();
 			}
 
-			var dvc = new DialogViewController(Caption, null, true);
+			var dvc = new DialogViewController(Caption, null, Controller.Theme, true);
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
 
@@ -423,7 +466,7 @@ namespace MonoMobile.Views
 		
 			if (viewType != null)
 			{
-				NavigationSource.IsNavigable = viewType == typeof(ObjectView);
+				NavigationSource.IsNavigable = viewType == typeof(ObjectCellView);
 				NavigationSource.NavigationViewType = viewType;
 			}
 

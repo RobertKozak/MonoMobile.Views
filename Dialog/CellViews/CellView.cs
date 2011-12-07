@@ -36,12 +36,14 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class CellView : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
+	public class CellView<T> : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
 	{
-		private Type _Type { get; set; }
+		public T Value { get; set; }
+		public Type ValueType { get { return typeof(T); } }
 
 		public Theme Theme { get; set; }
 
+		public virtual UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
 		public UITableViewCell Cell { get; set; }
 		public DialogViewController Controller { get; set; }
 
@@ -51,9 +53,6 @@ namespace MonoMobile.Views
 		public int Order { get; set; }
 		public string Caption { get; set; }
 		public bool ShowCaption { get; set; } 
-
-		public virtual UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } }
-
 		
 		public CellView(RectangleF frame) : base(frame)
 		{
@@ -66,6 +65,7 @@ namespace MonoMobile.Views
 		
 		public virtual void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			Value = (T)_DataContext.Value; 
 			Console.WriteLine("Property changed: " + e.PropertyName);
 			//Controller.TableView.ReloadData();
 		}
@@ -76,20 +76,21 @@ namespace MonoMobile.Views
 		}
 		
 		protected virtual void SetDataContext(MemberData value)
-		{
-			_Type = value != null ? value.GetType() : null;
-			
+		{			
 			if (_DataContext != value)
 			{
 				_DataContext = value;
+				_DataContext.TargetType = ValueType;
+				Value = (T)_DataContext.Value;
+				Console.WriteLine("Member {0}  -- ValueType {1}", _DataContext.Member.Name, ValueType);
 			}
 		}
 
-		public virtual void InitializeTheme()
+		public virtual void InitializeTheme(UITableViewCell cell)
 		{
 		}
 
-		public virtual void ApplyTheme()
+		public virtual void ApplyTheme(UITableViewCell cell)
 		{
 		}
 	}

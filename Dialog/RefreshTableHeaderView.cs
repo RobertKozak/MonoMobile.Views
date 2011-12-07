@@ -156,6 +156,7 @@ namespace MonoMobile.Views
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			
 			BackgroundColor = new UIColor(0.88f, 0.9f, 0.92f, 1);
+			BackgroundColor = UIColor.Red;
 
 			_LastUpdateLabel = new UILabel()
 			{

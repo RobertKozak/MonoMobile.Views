@@ -41,12 +41,11 @@ namespace MonoMobile.Views
 		private UIBarButtonItem _TodayButton;
 		private UIDatePicker _DatePicker { get; set; }
 
-		public UIDatePickerToolbar(IFocusable focusableElement) : base(focusableElement)
+		public UIDatePickerToolbar(IFocusable focusableView) : base(focusableView)
 		{
 		}
 
 		public UIDatePickerToolbar(NSCoder coder) : base(coder) { }
-		public UIDatePickerToolbar(NSObjectFlag t) : base(t) { }
 		public UIDatePickerToolbar(IntPtr handle) : base(handle) { }
 		public UIDatePickerToolbar(RectangleF frame) : base(frame) { }
 

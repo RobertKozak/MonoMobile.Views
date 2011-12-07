@@ -47,7 +47,6 @@ namespace MonoMobile.Views
 
 		public UIPlaceholderTextField(): base() { Initialize(); }
 		public UIPlaceholderTextField(NSCoder coder): base(coder) {}
-		public UIPlaceholderTextField(NSObjectFlag t): base(t) {}
 		public UIPlaceholderTextField(IntPtr handle): base (handle) {}
 		public UIPlaceholderTextField(RectangleF frame): base(frame) { Initialize(); }
 		

@@ -89,7 +89,7 @@ namespace MonoMobile.Views
 
 			foreach(var view in MonoMobileApplication.Views)
 			{	
-				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, true) { Autorotate = true } );
+				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, new Theme(), true) { Autorotate = true } );
 			}
 	
 			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();

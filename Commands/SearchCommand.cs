@@ -46,14 +46,14 @@ namespace MonoMobile.Views
 			_Execute = execute;
 		}
 
-		public List<Section> Execute(Section[] sections, string searchText)
+		public Dictionary<int, Section> Execute(IDictionary<int, Section> sections, string searchText)
 		{
-			List<Section> result = null;
+			Dictionary<int, Section> result = null;
 			
 			try
 			{
 				if (_Execute.GetParameters().Any())
-					result = _Execute.Invoke(_ViewModel, new object[] { sections, searchText }) as List<Section>;
+					result = _Execute.Invoke(_ViewModel, new object[] { sections, searchText }) as Dictionary<int, Section>;
 			}
 			catch(Exception ex) 
 			{

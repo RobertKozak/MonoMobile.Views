@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using System.ComponentModel;
 	using MonoTouch.UIKit;	
 
-	public abstract class View : UIView, IView, IDataContext<object>, IInitializable, ICaption
+	public abstract class View : UIView, IView, IDataContext<object>, IInitializable, ICaption, IThemeable
 	{
 		private object _DataContext;
 		
@@ -76,6 +76,18 @@ namespace MonoMobile.Views
 		public virtual void Initialize()
 		{
 		}
+
+		#region IThemeable implementation
+		public void InitializeTheme(UITableViewCell cell)
+		{
+		}
+
+		public void ApplyTheme(UITableViewCell cell)
+		{
+		}
+
+		public Theme Theme { get; set; }
+		#endregion
 	}
 }
 

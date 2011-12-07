@@ -45,7 +45,6 @@ namespace MonoMobile.Views
 		private bool _CheckForRefresh;
 
 		protected TableCellFactory<UITableViewCell> CellFactory;
-		protected DialogViewController Controller;
 		
 		protected string NibName { get; set; }
 		
@@ -80,6 +79,8 @@ namespace MonoMobile.Views
 		public bool IsNavigable { get; set; }
 
 		public string Caption { get; set; }
+
+		public DialogViewController Controller { get; set; }
 		
 		public BaseDialogViewSource(DialogViewController controller)
 		{
@@ -147,6 +148,8 @@ namespace MonoMobile.Views
 				var viewTypes = section.ViewTypes[key];
 				if (viewTypes != null)
 				{
+					var memberData = GetMemberData(indexPath);
+
 					foreach (var viewType in viewTypes)
 					{
 						UIView view = null;
@@ -159,8 +162,7 @@ namespace MonoMobile.Views
 						var dc = view as IDataContext<MemberData>;
 						if (dc != null)
 						{
-							var item = GetMemberData(indexPath);
-							dc.DataContext = item;
+							dc.DataContext = memberData;
 						}
 
 						var initializeCell = view as IInitializeCell;
@@ -177,31 +179,46 @@ namespace MonoMobile.Views
 							initializeCell.Controller = Controller;
 						}
 						
+						var themeable = view as IThemeable;
+						if (themeable != null)
+						{
+							var theme = Theme.CreateTheme(Controller.Theme);
+
+							var themeAttribute = viewType.GetCustomAttribute<ThemeAttribute>();
+							if (themeAttribute != null)
+							{
+								var viewTypeTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+								theme.MergeTheme(viewTypeTheme);
+							}
+
+							themeAttribute = memberData.Member.GetCustomAttribute<ThemeAttribute>();
+							if (themeAttribute != null)
+							{
+								var memberTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+								theme.MergeTheme(memberTheme);
+							}
+
+							themeable.Theme = theme;
+							themeable.Theme.Cell = cell;
+						}
+
 						var initalizable = view as IInitializable;
 						if (initalizable != null)
 						{
 							initalizable.Initialize();
 						}
-
+						
 						views.Add(view);
-
-						var composable = view as IComposable;
-						if (composable == null)
-						{
-							break;
-						}
 					}
 				}
 			}
 			
 			cell.TextLabel.Text = Caption;
 			cell.TextLabel.BackgroundColor = UIColor.Clear;
-			cell.TextLabel.AdjustsFontSizeToFitWidth = true;
 			
 			if (cell.DetailTextLabel != null)
 			{
 				cell.DetailTextLabel.BackgroundColor = UIColor.Clear;
-				cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
 			}
 			
 			var selectable = this as ISelectable;
@@ -270,24 +287,9 @@ namespace MonoMobile.Views
 
 		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
-			var viewToRemove = cell.ContentView.ViewWithTag(1);
-			if (viewToRemove != null)
-			{
-			//	viewToRemove.RemoveFromSuperview();
-			}
-
 //			cell.AccessoryView = null;
 			cell.Accessory = IsSelectable ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator;	
 			cell.Accessory = IsNavigable ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-
-			cell.TextLabel.TextAlignment = UITextAlignment.Left;
-			cell.TextLabel.Text = string.Empty;
-
-			if (cell.DetailTextLabel != null)
-			{
-				cell.DetailTextLabel.TextAlignment = UITextAlignment.Right;
-				cell.DetailTextLabel.Text = string.Empty;
-			}
 		}
 		#endregion
 
@@ -296,7 +298,9 @@ namespace MonoMobile.Views
 		{
 			var memberData = GetMemberData(indexPath);
 			if (memberData != null && memberData.RowHeight != 0)
+			{
 				return memberData.RowHeight;
+			}
 
 			if (!RowHeights.ContainsKey(indexPath))
 			{
@@ -502,16 +506,23 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-//				var theme = Container.Theme;
-//				var background = theme.HeaderBackgroundColor;
-//				if (background != null)
-//				{
-//					headerLabel.BackgroundColor = background;
-//				}
+				var background = Controller.Theme.HeaderBackgroundColor;
+				if (background != null)
+				{
+					headerLabel.BackgroundColor = background;
+				}
 			}
 
 			view.BackgroundColor = headerLabel.BackgroundColor;
 			
+			if (Controller.Theme != null)
+			{
+				headerLabel.TextAlignment = Controller.Theme.HeaderTextAlignment;
+				headerLabel.TextColor = Controller.Theme.HeaderTextColor;
+				headerLabel.ShadowColor = Controller.Theme.HeaderTextShadowColor;
+				headerLabel.ShadowOffset = Controller.Theme.HeaderTextShadowOffset;
+			}
+
 			view.AddSubview(headerLabel);
 			
 			return view;
@@ -539,7 +550,27 @@ namespace MonoMobile.Views
 			footerLabel.ShadowOffset = new SizeF(0, 1);
 			footerLabel.Text = caption;
 			footerLabel.Lines = footerLabel.Font.NumberOfLines(caption, width);
+			
+			if (tableView.Style == UITableViewStyle.Grouped)
+			{
+				footerLabel.BackgroundColor = UIColor.Clear;
+			}
+			else
+			{
+				var background = Controller.Theme.FooterBackgroundColor;
+				if (background != null)
+				{
+					footerLabel.BackgroundColor = background;
+				}
+			}
 
+			if (Controller.Theme != null)
+			{
+				footerLabel.TextAlignment = Controller.Theme.FooterTextAlignment;
+				footerLabel.TextColor = Controller.Theme.FooterTextColor;
+				footerLabel.ShadowColor = Controller.Theme.FooterTextShadowColor;
+				footerLabel.ShadowOffset = Controller.Theme.FooterTextShadowOffset;
+			}
 			return footerLabel;
 		}
 		#endregion

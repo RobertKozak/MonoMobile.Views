@@ -69,14 +69,13 @@ namespace MonoMobile.Views
 			}
 		}
 
-		public UIKeyboardToolbar(IFocusable focusableElement) : base(focusableElement)
+		public UIKeyboardToolbar(IFocusable focusableView) : base(focusableView)
 		{		
 			PreviousButtonVisible = true;
 			NextButtonVisible = true;
 		}
 		
 		public UIKeyboardToolbar(NSCoder coder) : base(coder) { }
-		public UIKeyboardToolbar(NSObjectFlag t) : base(t) { }
 		public UIKeyboardToolbar(IntPtr handle) : base(handle) { }
 		public UIKeyboardToolbar(RectangleF frame) : base(frame) { }
 		

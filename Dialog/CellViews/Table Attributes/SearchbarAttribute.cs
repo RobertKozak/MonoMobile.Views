@@ -32,8 +32,10 @@ namespace MonoMobile.Views
 	using System;
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-	public class SearchbarAttribute : BaseControlAttribute
+	public class SearchbarAttribute : CellViewTemplate
 	{
+		public override Type CellViewType { get { return typeof(ObjectCellView); } }
+
 		public SearchbarAttribute()
 		{
 		}

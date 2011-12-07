@@ -46,7 +46,6 @@ namespace MonoMobile.Views
 		public CommandBarButtonItem(UIBarButtonSystemItem systemItem): base(systemItem, delegate { Command.Execute(null); }) {}
 		public CommandBarButtonItem(): base() { }
 		public CommandBarButtonItem(NSCoder coder): base(coder) {}
-		public CommandBarButtonItem(NSObjectFlag t): base(t) {}
 		public CommandBarButtonItem(IntPtr handle): base(handle) {}
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, NSObject target, Selector action): base(image, style, target, action) {}
 		public CommandBarButtonItem(string title, UIBarButtonItemStyle style, NSObject target, Selector action): base(title, style, target, action) {}

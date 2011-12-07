@@ -33,8 +33,10 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
-	public class ToolbarButtonAttribute: BaseControlAttribute
+	public class ToolbarButtonAttribute: CellViewTemplate
 	{
+		public override Type CellViewType { get { return typeof(ObjectCellView); } }
+
 		public ToolbarButtonAttribute()
 		{
 			Style = UIBarButtonItemStyle.Bordered;

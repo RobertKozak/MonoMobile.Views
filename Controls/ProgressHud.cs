@@ -257,7 +257,7 @@ namespace MonoMobile.Views
 			
 			TitleText = null;
 			DetailText = null;
-			Opacity = 0.9f;
+			Opacity = 0.7f;
 			TitleFont = UIFont.BoldSystemFontOfSize(LABELFONTSIZE);
 			DetailFont = UIFont.BoldSystemFontOfSize(LABELDETAILSFONTSIZE);
 

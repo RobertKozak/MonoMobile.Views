@@ -35,6 +35,7 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Drawing;
@@ -60,8 +61,8 @@ namespace MonoMobile.Views
 		private bool DisableScrolling;
 		
 		private UISearchBar _Searchbar;
-		private Section[] _OriginalSections;
-		//private IElement[][] _OriginalElements;
+		private Dictionary<int, Section> _OriginalSections;
+		private List<object> _OriginalDataContext;
 
 		public List<CommandBarButtonItem> ToolbarButtons { get; set; }		
 		public List<CommandBarButtonItem> NavbarButtons { get; set; }
@@ -75,6 +76,9 @@ namespace MonoMobile.Views
 		public UIColor BackgroundColor { get; set; }
 		public bool CanDeleteCells { get; set; }
 		public object RootView { get; set; }
+		
+		public ICommand PullToRefreshCommand { get; set; }
+		public string RefreshKey { get; set; }
 
 		public UITableViewStyle Style = UITableViewStyle.Grouped;
 
@@ -97,9 +101,10 @@ namespace MonoMobile.Views
 			{
 				if (value && RefreshView == null)
 				{
-		//			var bounds = View.Bounds;
-		//			RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), Root.DefaultSettingsKey);
+					var bounds = View.Bounds;
+					RefreshView = MakeRefreshTableHeaderView(new RectangleF(0, -bounds.Height, bounds.Width, bounds.Height), RefreshKey);
 
+					RefreshView.Frame = new RectangleF(0,0, 320, 300);
 					if (Reloading)
 						RefreshView.SetActivity(true);
 
@@ -131,8 +136,8 @@ namespace MonoMobile.Views
 
 		public void TriggerRefresh(bool showStatus)
 		{
-//			if (Root == null && Root.PullToRefreshCommand == null)
-//				return;
+			if (PullToRefreshCommand == null)
+				return;
 			
 			if (Reloading)
 				return;
@@ -158,16 +163,16 @@ namespace MonoMobile.Views
 
 		private void RefreshThread()
 		{
-//			using (var pool = new NSAutoreleasePool())
-//			{
-//				if (Root.PullToRefreshCommand != null)
-//					Root.PullToRefreshCommand.Execute(this);
-//	
-//				InvokeOnMainThread(delegate
-//				{
-//					ReloadComplete();
-//				});
-//			}
+			using (var pool = new NSAutoreleasePool())
+			{
+				if (PullToRefreshCommand != null)
+					PullToRefreshCommand.Execute(this);
+	
+				InvokeOnMainThread(delegate
+				{
+					ReloadComplete();
+				});
+			}
 		}
 
 		/// <summary>
@@ -219,8 +224,8 @@ namespace MonoMobile.Views
 		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
 		{
 			base.DidRotate(fromInterfaceOrientation);
-			ReloadData();
 			ConfigureBackgroundImage();
+			ReloadData();
 		}
 
 		/// <summary>
@@ -244,11 +249,12 @@ namespace MonoMobile.Views
 
 				if (_OriginalSections == null)
 				{
-			//		_OriginalSections = Root.Sections.ToArray();
-			//		_OriginalElements = new IElement[_OriginalSections.Length][];
-//		
-//					for (int i = 0; i < _OriginalSections.Length; i++)
-//						_OriginalElements[i] = _OriginalSections[i].Elements.ToArray();
+					_OriginalSections = new Dictionary<int, Section>(((BaseDialogViewSource)TableView.Source).Sections);
+					_OriginalDataContext = new List<object>();
+					foreach(var section in _OriginalSections.Values)
+					{
+						_OriginalDataContext.Add(section.DataContext);
+					}
 				}
 			
 				UIView.CommitAnimations();
@@ -261,12 +267,21 @@ namespace MonoMobile.Views
 		public virtual void FinishSearch(bool hide)
 		{
 			if (_Searchbar == null) return;
+							
 			if (_OriginalSections != null)
 			{
-//				Root.Sections = new List<Section>(_OriginalSections);
-//				_OriginalSections = null;
-//				_OriginalElements = null;
+				var index = 0;
+				foreach(var section in _OriginalSections.Values)
+				{
+					var list = section.DataContext as IEnumerable;
+					if (list != null)
+					{
+						section.DataContext = _OriginalDataContext[index++] as IList;
+					}
+				}
+				((BaseDialogViewSource)TableView.Source).Sections = _OriginalSections;
 				
+				_OriginalSections = null;
 				ReloadData();
 			}
 			
@@ -280,7 +295,7 @@ namespace MonoMobile.Views
 				UIView.SetAnimationDidStopSelector(new Selector("fadeOutDidFinish"));
 				
 				if (_Searchbar != null)
-				_Searchbar.Frame = new RectangleF(0, -45, _Searchbar.Frame.Width, 45);
+					_Searchbar.Frame = new RectangleF(0, -45, _Searchbar.Frame.Width, 45);
 				
 				TableView.ContentOffset = new PointF(0, 45);
 				UIView.CommitAnimations();
@@ -310,47 +325,64 @@ namespace MonoMobile.Views
 
 		public void PerformFilter(string text)
 		{
-//			if (_OriginalSections == null)
-//				return;
-//			
-//			OnSearchTextChanged(text);
-//			
-//			var newSections = new List<ISection>();
-//			
-//			var searchable = TableView.Source as ISearchBar;
-//			if (searchable != null)
-//			{
-//				if (searchable.SearchCommand == null)
-//				{
-//					for (int sidx = 0; sidx < _OriginalSections.Length; sidx++)
-//					{
-//						ISection newSection = null;
-//						var section = _OriginalSections[sidx];
-//						IElement[] elements = _OriginalElements[sidx];
-//						
-//						for (int eidx = 0; eidx < elements.Length; eidx++)
-//						{
-//							var searchableView = elements[eidx] as ISearchable;
-//							
-//							if ((searchableView != null && searchableView.Matches(text)) || (elements[eidx].Caption != null) && elements[eidx].Caption.Contains(text))
-//							{
-//								if (newSection == null)
-//								{
-//									newSection = new Section(section.HeaderText, section.FooterText) { FooterView = section.FooterView, HeaderView = section.HeaderView };
-//									newSections.Add(newSection);
-//								}
-//								newSection.Add(elements[eidx]);
-//							}
-//						}
-//					}
-//				}
-//				else
-//				{
-//					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
-//				}
-//			}
-//			
-//			Root.Sections = newSections;
+			if (_OriginalSections == null)
+				return;
+			
+			var index = 0;
+			foreach(var section in _OriginalSections.Values)
+			{
+				section.DataContext = _OriginalDataContext[index++] as IList;
+			}
+			
+			OnSearchTextChanged(text);
+			
+			var newSections = new Dictionary<int, Section>();
+			
+			var searchable = TableView.Source as ISearchBar;
+			if (searchable != null)
+			{
+				if (searchable.SearchCommand == null)
+				{
+					index = 0;
+					foreach(var section in _OriginalSections.Values)
+					{
+						if (TableView.Source is ListSource)
+						{
+							var newList = new List<object>();
+							var list = section.DataContext as IEnumerable;
+							if (list != null)
+							{
+								foreach(var item in list)
+								{
+									var caption = item as ICaption;
+									var searchableItem = item as ISearchable;
+									if ((searchableItem != null && searchableItem.Matches(text)) || 
+										(caption != null && !string.IsNullOrEmpty(caption.Caption)) || 
+										item.ToString().ToLower().Contains(text.ToLower()))
+									{
+										newList.Add(item);
+
+										if (!newSections.ContainsKey(index))
+										{
+											newSections.Add(index, section);
+										}
+									}
+								}
+							}
+
+							section.DataContext = newList;
+						}
+
+						index++;
+					}
+				}
+				else
+				{
+					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
+				}
+			}
+			
+			((BaseDialogViewSource)TableView.Source).Sections = newSections;
 
 			ReloadData();
 		}
@@ -421,40 +453,41 @@ namespace MonoMobile.Views
 			return tableView;
 		}
 
-		public override void LoadView()
-		{
-//			var themeable = Root as IThemeable; 
-//			if (themeable != null)
-//			{
-//				if (themeable.Theme.TableViewStyle.HasValue)
-//				{
-//					Style = themeable.Theme.TableViewStyle.Value;
-//				}
-//			}
-
-			_TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
-			TableView = _TableView;
-
-			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
-			TableView.AutosizesSubviews = true;
-		
-			View = TableView;
-			
-			UpdateSource();
-
-//			if (themeable != null)
-//			{
-//				var separatorColor = themeable.Theme.SeparatorColor;
-//				if (separatorColor != null)
-//					TableView.SeparatorColor = separatorColor;
+//		public override void LoadView()
+//		{
+////			var themeable = Root as IThemeable; 
+////			if (themeable != null)
+////			{
+////				if (themeable.Theme.TableViewStyle.HasValue)
+////				{
+////					Style = themeable.Theme.TableViewStyle.Value;
+////				}
+////			}
 //
-//				var separatorStyle = themeable.Theme.SeparatorStyle;
-//				if (separatorStyle.HasValue)
-//					TableView.SeparatorStyle = separatorStyle.Value;
-//			}
-
-//			EnablePullToRefresh = Root.PullToRefreshCommand != null;
-		}
+//			_TableView = MakeTableView(UIScreen.MainScreen.Bounds, Style);
+//			TableView = _TableView;
+//
+//			TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
+//			TableView.AutosizesSubviews = true;
+//		
+//			View = TableView;
+//			
+//			UpdateSource();
+//
+////			if (themeable != null)
+////			{
+////				var separatorColor = themeable.Theme.SeparatorColor;
+////				if (separatorColor != null)
+////					TableView.SeparatorColor = separatorColor;
+////
+////				var separatorStyle = themeable.Theme.SeparatorStyle;
+////				if (separatorStyle.HasValue)
+////					TableView.SeparatorStyle = separatorStyle.Value;
+////			}
+//
+//			var pullToRefreshAttribute = RootView.GetType().GetCustomAttribute<PullToRefreshAttribute>();
+//			EnablePullToRefresh = pullToRefreshAttribute != null; //|| RootView.PullToRefreshCommand
+//		}
 		
 		public override void ViewWillAppear(bool animated)
 		{
@@ -482,27 +515,30 @@ namespace MonoMobile.Views
 			{
 				nav.NavigationBar.Opaque = false;
 	
-//				var themeable = Root as IThemeable;
-//				if (themeable != null)
-//				{
-//					if (themeable.Theme.BarStyle.HasValue)
-//					{
-//						nav.NavigationBar.BarStyle = themeable.Theme.BarStyle.Value;
-//					}
-//	
-//	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-//	//				{
-//	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-//	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-//	//					nav.NavigationBar.InsertSubview(view, 0);
-//	//				}
-//	//				else
-//					nav.NavigationBar.Translucent = themeable.Theme.BarTranslucent;
-//					nav.NavigationBar.TintColor = themeable.Theme.BarTintColor;
-//				}
+				if (Theme != null)
+				{
+					if (Theme.BarStyle.HasValue)
+					{
+						nav.NavigationBar.BarStyle = Theme.BarStyle.Value;
+					}
+	
+	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
+	//				{
+	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
+	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
+	//					nav.NavigationBar.InsertSubview(view, 0);
+	//				}
+	//				else
+					nav.NavigationBar.Translucent = Theme.BarTranslucent;
+					nav.NavigationBar.TintColor = Theme.BarTintColor;
+
+					nav.Toolbar.Translucent = Theme.BarTranslucent;
+					nav.Toolbar.TintColor = Theme.BarTintColor;
+				}
 			}
 
 			ConfigureBackgroundImage();
+			ReloadData();
 		}
 
 		public override void ViewDidAppear(bool animated)
@@ -540,7 +576,14 @@ namespace MonoMobile.Views
 							var dc = view as IDataContext<MemberData>;
 							if (dc != null)
 							{
-								var notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
+								var notifyPropertyChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
+								if (notifyPropertyChanged != null)
+								{
+									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
+								}
+
+								notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
 								if (notifyPropertyChanged != null)
 								{
 									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
@@ -582,7 +625,6 @@ namespace MonoMobile.Views
 
 				CommandBarButtonItem[] buttons = buttonList.ToArray();	
 				SetToolbarItems(buttons, false);
-
  
 				var nav = ParentViewController as UINavigationController;
 				if (nav != null)
@@ -702,7 +744,6 @@ namespace MonoMobile.Views
 
 		public void ToggleSearchbar()
 		{
-return;
 			var searchbar = TableView.Source as ISearchBar;
 			if (searchbar != null)
 			{
@@ -757,12 +798,7 @@ return;
 		}
 
 		public void ReloadData()
-		{
-//			if (Root != null)
-//			{
-//				Root.Prepare();
-//			}
-			
+		{			
 //			if (TableView != null)
 //			{
 			//	UpdateSource();
@@ -848,13 +884,6 @@ return;
 			}
 		}
 
-//		public void PrepareRoot(IRoot root)
-//		{
-//			Root = root;
-//			if (Root != null)
-//				Root.Prepare();
-//		}
-
 		private void SetPushing(bool pushing)
 		{
 			_Pushing = pushing;
@@ -889,9 +918,9 @@ return;
 						var dc = view as IDataContext<MemberData>;
 						if (dc != null)
 						{
-							if (dc.DataContext.Member.Name == e.PropertyName && handleNotifyPropertyChange != null)
+							if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
 							{
-								handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e);
+								new Wait(TimeSpan.FromMilliseconds(150), ()=>handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e));
 							}
 						}
 					}
@@ -899,18 +928,29 @@ return;
 			}
 		}
 
-		private void CreateTableView(object view)
+		private void CreateTableView(object view, Theme theme)
 		{
-			CreateTableView(view, null);
+			CreateTableView(view, null, theme);
 		}
 
-		private void CreateTableView(object view, MemberInfo member)
+		private void CreateTableView(object view, MemberInfo member, Theme theme)
 		{
 			var parser = new ViewParser();
 			var source = parser.Parse(this, view, member);
+			
+			Theme = Theme.CreateTheme(theme);
+			var themeable = view as IThemeable;
+			if (themeable != null)
+			{
+				var themeAttribute = view.GetType().GetCustomAttribute<ThemeAttribute>();
+				if (themeAttribute != null)
+				{
+					var viewTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+					Theme = Theme.CreateTheme(viewTheme);
+				}
+			}
 
-			var tableViewStyle = UITableViewStyle.Grouped;
-
+			var tableViewStyle = Theme.TableViewStyle;
 			var tableStyle = source as ITableViewStyle;
 			if (tableStyle != null)
 			{
@@ -927,20 +967,20 @@ return;
 			}
 		}
 
-		public DialogViewController(string title, object view, bool pushing) : base(UITableViewStyle.Grouped)
+		public DialogViewController(string title, object view, Theme theme, bool pushing) : base(UITableViewStyle.Grouped)
 		{
 			Title = title;
 			SetPushing(pushing);
 			
-			CreateTableView(view);	
+			CreateTableView(view, theme);	
 		}
 
-		public DialogViewController(string title, object view, MemberInfo member, bool pushing) : base(UITableViewStyle.Grouped)
+		public DialogViewController(string title, object view, MemberInfo member, Theme theme, bool pushing) : base(UITableViewStyle.Grouped)
 		{
 			Title = title;
 			SetPushing(pushing);
 			
-			CreateTableView(view, member);	
+			CreateTableView(view, member, theme);	
 		}
 		
 		protected override void Dispose (bool disposing)

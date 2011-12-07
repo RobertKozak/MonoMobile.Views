@@ -53,8 +53,6 @@ namespace MonoMobile.Views
 		
 		public UITableViewSource Parse(DialogViewController controller, object view, MemberInfo member)
 		{
-			var sw = new Stopwatch();
-			sw.Start();
 			UITableViewSource source = null;
 			
 			if (view != null)
@@ -62,14 +60,8 @@ namespace MonoMobile.Views
 				view = GetActualView(view);
 				controller.RootView = view;
 
-				controller.Theme = new Theme();
-				var themeable = view as IThemeable;
-				if (themeable != null)
-					themeable.Theme = Theme.CreateTheme(controller.Theme);
-			
 				controller.ToolbarButtons = CheckForToolbarItems(view);
 				controller.NavbarButtons = CheckForNavbarItems(view);
-			
 
 				if (member != null)
 				{
@@ -85,8 +77,6 @@ namespace MonoMobile.Views
 				InitializeSearch(view, source);
 			}
 			
-			sw.Stop();
-			Console.WriteLine("ViewParser: Parse time {0} ms", sw.Elapsed.Milliseconds);
 			return source;
 		}
 		
@@ -106,11 +96,23 @@ namespace MonoMobile.Views
 				var memberData = new MemberData(view, member);				
 				memberData.Section = sectionIndex;
 				
+				var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
+				if (pullToRefreshAttribute != null)
+				{
+					((DialogViewController)controller).PullToRefreshCommand = GetCommandForMember(view, member);
+					((DialogViewController)controller).RefreshKey = pullToRefreshAttribute.SettingsKey;
+					((DialogViewController)controller).EnablePullToRefresh = true;
+				}
+
 				var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
 				var navbarButtonAttribute = member.GetCustomAttribute<NavbarButtonAttribute>();
 				var skipAttribute = member.GetCustomAttribute<SkipAttribute>();
 
-				if (skipAttribute != null || toolbarButtonAttribute != null || navbarButtonAttribute != null || (attributes.Length == 0 && typeof(MethodInfo) == memberData.Type))
+				if (skipAttribute != null || 
+					toolbarButtonAttribute != null || 
+					navbarButtonAttribute != null || 	
+					pullToRefreshAttribute != null || 
+					(attributes.Length == 0 && typeof(MethodInfo) == memberData.Type))
 				{
 					continue;
 				}
@@ -123,13 +125,18 @@ namespace MonoMobile.Views
 					memberData.ConverterParameter = valueConverterAttribute.ConverterParameter;
 					memberData.ConverterParameterName  = valueConverterAttribute.ConverterParameterPropertyName; 					
 				}
+				
+				var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
+				if (themeAttribute != null)
+				{
+					var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+					if (theme != null && theme.CellHeight > 0)
+						memberData.RowHeight = theme.CellHeight;
+				}
 
 				var rowHeightAttribute = member.GetCustomAttribute<RowHeightAttribute>();
 				if (rowHeightAttribute != null)
 					memberData.RowHeight = rowHeightAttribute.RowHeight;
-				
-//				var listAttribute = member.GetCustomAttribute<ListAttribute>();
-//				var isList = listAttribute != null && !typeof(string).IsAssignableFrom(memberData.Type) && (typeof(IEnumerable).IsAssignableFrom(memberData.Type) || typeof(Enum).IsAssignableFrom(memberData.Type));
 				
 				var listAttribute = member.GetCustomAttribute<ListAttribute>();
 				var isList = (listAttribute != null && listAttribute.DisplayMode == DisplayMode.List) && 
@@ -137,6 +144,20 @@ namespace MonoMobile.Views
 					(typeof(IEnumerable).IsAssignableFrom(memberData.Type) || 
 					typeof(Enum).IsAssignableFrom(memberData.Type));
 				
+				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
+				if (orderAttribute != null)
+				{
+					// make sure assigned order is an even number to fit in between the default order 
+					// allowing the values int.MinValue and int.MaxValue for the first and Last positions
+					memberData.Order = orderAttribute.Order > int.MaxValue / 2 ? int.MaxValue : orderAttribute.Order * 2;
+				}
+				else
+				{				
+					// make sure all default memberOrder is odd;
+					memberOrder = memberOrder + (memberOrder % 2) + 1;
+					memberData.Order = memberOrder;
+				}
+
 				var sectionAttribute = member.GetCustomAttribute<SectionAttribute>();
 				if (sectionAttribute != null || isList)
 				{
@@ -147,30 +168,48 @@ namespace MonoMobile.Views
 
 					memberData.Section = sectionIndex;
 
-					if (sectionAttribute != null)
-						memberData.Section = sectionAttribute.Order == 0 ? sectionIndex : sectionAttribute.Order;
+					if (sectionAttribute != null && orderAttribute != null)
+					{
+						memberData.Section = orderAttribute.Order == 0 ? sectionIndex : orderAttribute.Order;
+					}
+					else
+					{
+						memberData.Section = sectionIndex;
+					}
 				}
 				
-				var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
-				if (orderAttribute != null)
-				{
-					// make sure assigned order is an even number to fit in between the default order 
-					// allowing the values int.MinValue and int.MaxValue for the first and Last positions
-					memberData.Order = orderAttribute.Order > int.MaxValue / 2 ? int.MaxValue : orderAttribute.Order * 2;
-					memberData.Section = orderAttribute.Section == 0 ? memberData.Section : orderAttribute.Section;
-				}
-				else
-				{				
-					// make sure all default memberOrder is odd;
-					memberOrder = memberOrder + (memberOrder % 2) + 1;
-					memberData.Order = memberOrder;
-				}
-				
-				var viewTypes = GetViewTypes(view, memberData.Member);
+				var viewTypes = GetViewTypes(view, memberData);
 
 				if (!sections.ContainsKey(memberData.Section))
 				{
 					sections.Add(memberData.Section, CreateSection(controller, memberData, viewTypes));
+				}
+				else
+				{ 
+					if (viewTypes != null)
+					{
+						IList<Type> list = null;
+						var key = memberData.Id.ToString();
+	
+						var viewTypesList = sections[memberData.Section].ViewTypes;
+						if (viewTypesList.ContainsKey(key))
+						{
+							list = viewTypesList[key];
+						}
+						else
+						{
+							list = new List<Type>();
+							viewTypesList.Add(key, list);
+						}
+	
+						foreach(var viewType in viewTypes)
+						{
+							if (!list.Contains(viewType))
+							{
+								list.Add(viewType);
+							}	
+						}
+					}
 				}
 
 				if (memberLists.ContainsKey(memberData.Section))
@@ -195,11 +234,14 @@ namespace MonoMobile.Views
 
 				foreach(var memberData in list)
 				{
-					var viewTypes = GetViewTypes(view, memberData.Member);
+					var viewTypes = GetViewTypes(view, memberData);
 
 					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
 					{
 						var listSource = ParseList(controller, view, memberData, viewTypes) as ListSource; 
+			//			listSource.IsRootCell = listSource.IsRootCell || listSources.Count > 0;
+			//			listSource.IsNavigable = listSource.IsRootCell;
+
 						listSource.MemberData = memberData;
 						listSource.Sections[0].Index = memberData.Section;
 
@@ -218,15 +260,18 @@ namespace MonoMobile.Views
 				sections[kvp.Key].DataContext = list;
 			}
 			
+			var keyIndex = 0;
+			var sectionList = sections.Select(kvp => kvp.Value).ToDictionary((value) => keyIndex++);
+
 			// If there is only one list property return the ListSource rather than create a ViewSource
-			if (sections.Count == 1 && sections[0].DataContext.Count == 1 && sections[0].ListSources[0] != null && !sections[0].ListSources[0].IsRootCell)
+			if (sectionList.Count == 1 && sectionList[0].DataContext.Count == 1 && sectionList[0].ListSources[0] != null && !sectionList[0].ListSources[0].IsRootCell)
 			{
-				sections[0].ListSources[0].TableViewStyle = UITableViewStyle.Plain;
-				return sections[0].ListSources[0];
+				sectionList[0].ListSources[0].TableViewStyle = UITableViewStyle.Plain;
+				return sectionList[0].ListSources[0];
 			}
 
 			var source = new ViewSource(controller);
-			source.Sections = sections;
+			source.Sections = sectionList;
 
 			return source;
 		}
@@ -253,16 +298,6 @@ namespace MonoMobile.Views
 
 					source.Caption = GetCaption(member);
 
-//					var multiselectionAttribute = member.GetCustomAttribute<MultiselectionAttribute>();
-//					source.IsMultiselect = multiselectionAttribute != null;
-//					if (multiselectionAttribute != null && !string.IsNullOrEmpty(multiselectionAttribute.MemberName))
-//					{
-//						source.SelectedItemsMemberName = multiselectionAttribute.MemberName;
-//						source.SelectedAccessoryViewType = multiselectionAttribute.SelectedAccessoryViewType;
-//						source.UnselectedAccessoryViewType = multiselectionAttribute.UnselectedAccessoryViewType;
-//						source.UnselectionBehavior = multiselectionAttribute.UnselectionBehavior;
-//					}
-
 					var listAttribute = member.GetCustomAttribute<ListAttribute>();
 					if (listAttribute != null)
 					{
@@ -273,7 +308,6 @@ namespace MonoMobile.Views
 						source.IsSelectable = source.SelectionAction != SelectionAction.NavigateToView;
 						source.IsNavigable = listAttribute.DisplayMode != DisplayMode.Collapsable || listAttribute.SelectionAction == SelectionAction.NavigateToView;
 
-						source.NavigationViewType = listAttribute.NavigateToViewType;
 						source.SelectedAccessoryViewType = listAttribute.SelectedAccessoryViewType;
 						source.UnselectedAccessoryViewType = listAttribute.UnselectedAccessoryViewType;
 						source.UnselectionBehavior = listAttribute.UnselectionBehavior;
@@ -291,15 +325,6 @@ namespace MonoMobile.Views
 					}						
 	
 					source.PopOnSelection = source.SelectionAction == SelectionAction.PopOnSelection;
-
-//					var listAttribute = member.GetCustomAttribute<ListAttribute>();
-
-//					var rootAttribute = member.GetCustomAttribute<RootAttribute>();
-//					if (rootAttribute != null)
-//					{
-//						source.PopOnSelection = rootAttribute.PopOnSelection;
-//						source.HideCaptionOnSelection = rootAttribute.HideCaptionOnSelection;
-//					}	
 					
 					var navigateToViewAttribute = member.GetCustomAttribute<NavigateToViewAttribute>();	
 					if (navigateToViewAttribute != null)
@@ -309,8 +334,6 @@ namespace MonoMobile.Views
 					}
 					
 					source.IsRootCell = source.DisplayMode != DisplayMode.List;
-
-//					source.IsRoot = rootAttribute != null || listAttribute == null;
 
 					return source;
 				}
@@ -519,9 +542,11 @@ namespace MonoMobile.Views
 						caption = fieldInfo.FieldType.Name.Split('.').LastOrDefault();
 					}
 				}
+
+				caption = caption.Capitalize();
 			}
 
-			return caption.Capitalize();
+			return caption;
 		}
 		
 		private Section CreateSection(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
@@ -529,13 +554,13 @@ namespace MonoMobile.Views
 			var listSources = new SortedList<int, ListSource>();
 			listSources.Add(memberData.Order, null);
 
-			var memberOrder = 1;
+			var memberOrder = 0;
 			memberData.Order = memberOrder;
 
 			var sectionMembers = new List<MemberData>();
 					
 			var section = new Section(controller) { DataContext = sectionMembers };
-					
+			
 			var sectionAttribute = memberData.Member.GetCustomAttribute<SectionAttribute>();
 			if (sectionAttribute != null)
 			{
@@ -594,8 +619,8 @@ namespace MonoMobile.Views
 			{
 				searchbar.SearchPlaceholder = searchbarAttribute.Placeholder;
 				searchbar.IncrementalSearch = searchbarAttribute.IncrementalSearch;
-			//	searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
-			//	searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
+				searchbar.EnableSearch = searchbarAttribute.ShowImmediately;
+				searchbar.IsSearchbarHidden = !searchbarAttribute.ShowImmediately;
 		
 					
 				var methods = GetMethods(view);
@@ -648,14 +673,26 @@ namespace MonoMobile.Views
 			return view;
 		}
 
-		private List<Type> GetViewTypes(object view, MemberInfo memberInfo)
+		private List<Type> GetViewTypes(object view, MemberData memberData)
 		{
+			var memberInfo = memberData.Member;
 			if (memberInfo != null)
 			{
 				var viewAttributes = memberInfo.GetCustomAttributes<ViewAttribute>();
 				if (viewAttributes.Length > 0)
 				{
-					return (from attribute in viewAttributes select attribute.ViewType).ToList();
+					var viewTypeList = (from attribute in viewAttributes select attribute.ViewType).ToList();
+					var viewAttributesList = viewAttributes.ToList();
+					viewAttributesList.ForEach((attribute) => 
+					{
+						var sizeable = attribute as ISizeable;
+						if (sizeable != null)
+						{
+							memberData.RowHeight = sizeable.GetRowHeight();
+						}
+					});
+					
+					return viewTypeList;
 				}
 			}
 
@@ -678,12 +715,12 @@ namespace MonoMobile.Views
 
 		private void CheckForInstanceProperties(object view, MemberInfo member, UIView elementView)
 		{
-			var baseControlAttribute = member.GetCustomAttribute<BaseControlAttribute>(true);
-			if (baseControlAttribute != null)// && element != _NoElement)
+			var cellViewTemplate = member.GetCustomAttribute<CellViewTemplate>(true);
+			if (cellViewTemplate != null)// && element != _NoElement)
 			{
-				if (!string.IsNullOrEmpty(baseControlAttribute.InstancePropertyName))
+				if (!string.IsNullOrEmpty(cellViewTemplate.InstancePropertyName))
 				{
-					var instanceProperty = view.GetType().GetProperty(baseControlAttribute.InstancePropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+					var instanceProperty = view.GetType().GetProperty(cellViewTemplate.InstancePropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 					if (instanceProperty != null)
 					{
 						UIView instanceView = elementView;

@@ -48,6 +48,7 @@ namespace MonoMobile.Views
 
 		public object Value { get { return GetValue(); } set { SetValue(value); } }
 		public Type Type { get; set; }
+		public Type TargetType { get; set; }
 
 		public NSString Id { get; private set; }
  
@@ -77,7 +78,7 @@ namespace MonoMobile.Views
 			Member = member;
 
 			UpdateValue();
-			Id = new NSString(Type.ToString());
+			Id = CreateId();
 			
 		//	RemoveNotifyPropertyChangedHandler(Source, this);
 			AddNotifyPropertyChangedHandler(Source, this);
@@ -165,6 +166,7 @@ namespace MonoMobile.Views
 			}
 
 			Type = Member.GetMemberType();
+			Id = CreateId();
 		}
 		
 		protected void SetDataContextBinder(DataContextBinder binder)
@@ -244,23 +246,25 @@ namespace MonoMobile.Views
 		private object ConvertValue(object value)
 		{
 			object convertedValue = value;
-			var memberType = Member.GetMemberType();
 
 			if (ValueConverter != null)
 			{
 				var parameter = GetConverterParameter();
-				convertedValue = ValueConverter.Convert(value, memberType, parameter, CultureInfo.CurrentUICulture);
+				convertedValue = ValueConverter.Convert(value, TargetType, parameter, CultureInfo.CurrentUICulture);
 			}
-
-			var typeCode = Convert.GetTypeCode(convertedValue);
-			if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+			
+			if (TargetType != null)
 			{
-				try 
+				var typeCode = Convert.GetTypeCode(convertedValue);
+				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
 				{
-					convertedValue = Convert.ChangeType(convertedValue, memberType);
-				}
-				catch(InvalidCastException)
-				{
+					try 
+					{
+						convertedValue = Convert.ChangeType(convertedValue, TargetType);
+					}
+					catch(InvalidCastException)
+					{
+					}
 				}
 			}
 
@@ -279,7 +283,7 @@ namespace MonoMobile.Views
 					var parameter = GetConverterParameter();
 					convertedValue = ValueConverter.ConvertBack(value, memberType, parameter, CultureInfo.CurrentUICulture);
 				}
-
+				
 				var typeCode = Convert.GetTypeCode(convertedValue);
 				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
 				{
@@ -335,6 +339,19 @@ namespace MonoMobile.Views
 
 			return parameter;
 		}
+
+		public NSString CreateId()
+		{
+			if (Id != null)
+				Id.Dispose();
+
+			if (Type == typeof(MethodInfo))
+			{
+				return new NSString(Member.Name);
+			}
+
+			return new NSString(Type.ToString());
+		} 
 	}
 }
 

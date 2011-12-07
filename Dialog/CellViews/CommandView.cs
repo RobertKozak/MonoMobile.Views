@@ -1,5 +1,5 @@
 // 
-//  CommandView.cs
+//  CommandCellView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -35,12 +35,12 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class CommandView : CellView, ISelectable
+	public class CommandCellView : CellView<ICommand>, ISelectable
 	{
 		public ICommand Command { get { return DataContext.Value as ICommand; } }
 		public object CommandParameter { get; set; }
 
-		public CommandView(RectangleF frame) : base(frame)
+		public CommandCellView(RectangleF frame) : base(frame)
 		{
 		}
 

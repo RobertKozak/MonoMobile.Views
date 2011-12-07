@@ -33,8 +33,10 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method, Inherited = false)]
-	public class NavbarButtonAttribute : BaseControlAttribute
+	public class NavbarButtonAttribute : CellViewTemplate
 	{
+		public override Type CellViewType { get { return typeof(ObjectCellView); } }
+
 		public NavbarButtonAttribute() : base()
 		{
 			Style = UIBarButtonItemStyle.Bordered;

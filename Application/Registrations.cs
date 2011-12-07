@@ -41,38 +41,39 @@ namespace MonoMobile.Views
 	{
 		public static void InitializeViewContainer()
 		{
-			ViewContainer.RegisterView(typeof(object), typeof(ObjectView));
-			ViewContainer.RegisterView(typeof(string), typeof(StringView));
-			ViewContainer.RegisterView(typeof(int), typeof(StringView));
-			ViewContainer.RegisterView(typeof(float), typeof(StringView));
-			ViewContainer.RegisterView(typeof(bool), typeof(BooleanView));	
-			ViewContainer.RegisterView(typeof(Enum), typeof(ListView));
-			ViewContainer.RegisterView(typeof(IEnumerable), typeof(ListView));
+			ViewContainer.RegisterView(typeof(object), typeof(ObjectCellView));
+			ViewContainer.RegisterView(typeof(string), typeof(StringCellView));
+			ViewContainer.RegisterView(typeof(int), typeof(StringCellView));
+			ViewContainer.RegisterView(typeof(float), typeof(StringCellView));
+			ViewContainer.RegisterView(typeof(double), typeof(StringCellView));
+			ViewContainer.RegisterView(typeof(bool), typeof(BooleanCellView));	
+			ViewContainer.RegisterView(typeof(Enum), typeof(ListCellView));
+			ViewContainer.RegisterView(typeof(IEnumerable), typeof(ListCellView));
 
-			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectView));
+			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectCellView));
 	//		ViewContainer.RegisterView(typeof(MethodInfo), typeof(MethodView));
-			ViewContainer.RegisterView(typeof(ButtonAttribute), typeof(MethodView));
-			ViewContainer.RegisterView(typeof(LoadMoreAttribute), typeof(LoadMoreView));
-			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandView));
-			ViewContainer.RegisterView(typeof(Uri), typeof(HtmlView));
-			ViewContainer.RegisterView(typeof(HtmlAttribute), typeof(HtmlView));
-			ViewContainer.RegisterView(typeof(EntryAttribute), typeof(EntryView));
-			ViewContainer.RegisterView(typeof(PasswordAttribute), typeof(EntryView));
+	//		ViewContainer.RegisterView(typeof(ButtonAttribute), typeof(MethodView));
+	//		ViewContainer.RegisterView(typeof(LoadMoreAttribute), typeof(LoadMoreView));
+			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandCellView));
+			ViewContainer.RegisterView(typeof(Uri), typeof(HtmlCellView));
+	//		ViewContainer.RegisterView(typeof(HtmlAttribute), typeof(HtmlView));
+	//		ViewContainer.RegisterView(typeof(EntryAttribute), typeof(EntryView));
+	//		ViewContainer.RegisterView(typeof(PasswordAttribute), typeof(EntryView));
 
-			ViewContainer.RegisterView(typeof(DateTime), typeof(DateView));
-			ViewContainer.RegisterView(typeof(NSDate), typeof(DateView));
-			ViewContainer.RegisterView(typeof(DateAttribute), typeof(DateView));
-			ViewContainer.RegisterView(typeof(TimeAttribute), typeof(TimeView));
+			ViewContainer.RegisterView(typeof(DateTime), typeof(DateCellView));
+			ViewContainer.RegisterView(typeof(NSDate), typeof(DateCellView));
+	//		ViewContainer.RegisterView(typeof(DateAttribute), typeof(DateView));
+	//		ViewContainer.RegisterView(typeof(TimeAttribute), typeof(TimeView));
 			
-			ViewContainer.RegisterView(typeof(CLLocationCoordinate2D), typeof(MapView));
-			ViewContainer.RegisterView(typeof(IEnumerable<CLLocationCoordinate2D>), typeof(MapView));
-			ViewContainer.RegisterView(typeof(MapAttribute), typeof(MapView));
-			ViewContainer.RegisterView(typeof(RangeAttribute), typeof(SliderView));
-			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
+			ViewContainer.RegisterView(typeof(CLLocationCoordinate2D), typeof(MapCellView));
+			ViewContainer.RegisterView(typeof(IEnumerable<CLLocationCoordinate2D>), typeof(MapCellView));
+	//		ViewContainer.RegisterView(typeof(MapAttribute), typeof(MapView));
+	//		ViewContainer.RegisterView(typeof(RangeAttribute), typeof(SliderView));
+	//		ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(EntryView));
 
-			ViewContainer.RegisterView(typeof(IEnumerable<object>), typeof(ListView));
+			ViewContainer.RegisterView(typeof(IEnumerable<object>), typeof(ListCellView));
 
-			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(StringView));
+			ViewContainer.RegisterView(typeof(ReadOnlyAttribute), typeof(StringCellView));
 		}
 	}
 }
