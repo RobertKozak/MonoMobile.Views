@@ -194,6 +194,11 @@ namespace MonoMobile.Views
 							var themeable = view as IThemeable;
 							if (themeable != null)
 							{
+								if (themeable.Theme != null)
+								{
+									themeable.Theme.Cell = cell;
+								}
+								
 								themeable.InitializeTheme(cell);
 							}
 						}
@@ -228,11 +233,6 @@ namespace MonoMobile.Views
 							var themeable = view as IThemeable;
 							if (themeable != null)
 							{
-								if (themeable.Theme != null)
-								{
-									themeable.Theme.Cell = cell;
-								}
-
 								themeable.ApplyTheme(cell);
 							}
 						}
