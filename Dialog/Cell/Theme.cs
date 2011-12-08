@@ -450,156 +450,81 @@ namespace MonoMobile.Views
 			}
 		}
 
-//		private void InitializePropertiesFromCell(UITableViewCell cell)
-//		{
-//			if (cell != null)
-//			{
-//				_Cell = cell;
-// 
-//				if (Cell.Accessory != UITableViewCellAccessory.None && Accessory == UITableViewCellAccessory.None)
-//					Accessory = Cell.Accessory;
-//
-//				if (Cell.ImageView != null && CellImageIcon == null)
-//					CellImageIcon = Cell.ImageView.Image;
-//				
-//				if (cell.TextLabel != null)
-//				{
-//					if (cell.TextLabel.Font.PointSize > 0)
-//						TextFont = cell.TextLabel.Font;
-//	
-//					TextAlignment = cell.TextLabel.TextAlignment;
-//	
-//					TextColor = cell.TextLabel.TextColor;
-//
-//					TextShadowOffset = cell.TextLabel.ShadowOffset;
-//	
-//					if (cell.TextLabel.ShadowColor != null)
-//						TextShadowColor = cell.TextLabel.ShadowColor;
-//				}
-//				
-//				if (cell.DetailTextLabel != null)
-//				{
-//					if (cell.DetailTextLabel.Font.PointSize > 0)
-//						DetailTextFont = cell.DetailTextLabel.Font;
-//					
-//					DetailTextAlignment = cell.DetailTextLabel.TextAlignment;
-//	
-//					DetailTextColor = cell.DetailTextLabel.TextColor;
-//
-//					DetailTextShadowOffset = cell.DetailTextLabel.ShadowOffset;
-//					
-//					if (cell.DetailTextLabel.ShadowColor != null)
-//						DetailTextShadowColor = cell.DetailTextLabel.ShadowColor;
-//				}
-//				
-//				cell.BackgroundColor = CellBackgroundColor;
-//
-//				Cell.SetNeedsDisplay();
-//			}
-//		}
-
 		public void ThemeChanged(UITableViewCell cell)
 		{
-			if (cell == null)
+			_Cell = cell;
+
+			if (_Cell == null)
 			{
 				return;
 			}
 
-			if (cell.TextLabel != null)
+			if (_Cell.TextLabel != null)
 			{
 				if (TextFont != null)
 				{
-					cell.TextLabel.Font = TextFont;
+					_Cell.TextLabel.Font = TextFont;
 				}
 				
-				cell.TextLabel.TextAlignment = TextAlignment;
-				cell.TextLabel.TextColor = TextColor ?? cell.TextLabel.TextColor;
+				_Cell.TextLabel.TextAlignment = TextAlignment;
+				_Cell.TextLabel.TextColor = TextColor ?? _Cell.TextLabel.TextColor;
 				
 				if (TextShadowColor != null)
 				{
-					cell.TextLabel.ShadowColor = TextShadowColor;
+					_Cell.TextLabel.ShadowColor = TextShadowColor;
 				}
 				
 				if (TextShadowOffset != SizeF.Empty)
 				{
-					cell.TextLabel.ShadowOffset = TextShadowOffset;
+					_Cell.TextLabel.ShadowOffset = TextShadowOffset;
 				}
 				
 				if (TextHighlightColor != null)
 				{
-					cell.TextLabel.HighlightedTextColor = TextHighlightColor;
+					_Cell.TextLabel.HighlightedTextColor = TextHighlightColor;
 				}
 			}
 			
-			if (cell.DetailTextLabel != null)
+			if (_Cell.DetailTextLabel != null)
 			{
 				if (DetailTextFont != null)
 				{
-					cell.DetailTextLabel.Font = DetailTextFont;
+					_Cell.DetailTextLabel.Font = DetailTextFont;
 				}
 				
-				cell.DetailTextLabel.TextAlignment = DetailTextAlignment;
-				cell.DetailTextLabel.TextColor = DetailTextColor ?? cell.DetailTextLabel.TextColor;
+				_Cell.DetailTextLabel.TextAlignment = DetailTextAlignment;
+				_Cell.DetailTextLabel.TextColor = DetailTextColor ?? _Cell.DetailTextLabel.TextColor;
 				
 				if (DetailTextShadowColor != null)
 				{
-					cell.DetailTextLabel.ShadowColor = DetailTextShadowColor;
+					_Cell.DetailTextLabel.ShadowColor = DetailTextShadowColor;
 				}
 				
 				if (DetailTextShadowOffset != SizeF.Empty)
 				{
-					cell.DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
+					_Cell.DetailTextLabel.ShadowOffset = DetailTextShadowOffset;
 				}
 				
 				if (DetailTextHighlightColor != null)
 				{
-					cell.DetailTextLabel.HighlightedTextColor = DetailTextHighlightColor;
+					_Cell.DetailTextLabel.HighlightedTextColor = DetailTextHighlightColor;
 				}
 			}
-			
-//			var elementCell = cell as UITableViewCell;
-//			IImageUpdated element = null;
-//			if (elementCell != null)
-//				element = elementCell.Element as IImageUpdated;
 
 			if (CellBackgroundColor != null)
 			{
-				cell.BackgroundColor = CellBackgroundColor;
+				_Cell.BackgroundColor = CellBackgroundColor;
 			}
-//			else if (element != null && CellBackgroundUri != null)
-//			{
-//				var img = ImageLoader.DefaultRequestImage(CellBackgroundUri, element);
-//				cell.BackgroundColor = img != null ? UIColor.FromPatternImage(img) : UIColor.White;
-//			}
 			else if (CellBackgroundImage != null)
-				{
-					cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
-				}
-				else
-				{
-					cell.BackgroundColor = UIColor.White;
-				}
+			{
+				_Cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
+			}
+			else
+			{
+				_Cell.BackgroundColor = UIColor.White;
+			}
 			
-//			if (element != null && CellImageIconUri != null)
-//			{
-//				var img = ImageLoader.DefaultRequestImage(CellImageIconUri, element);
-//				
-//				if (img != null)
-//				{
-//					var small = img.Scale(new SizeF(32, 32));
-//					small = small.RemoveSharpEdges(5);
-//					
-//					cell.ImageView.Image = small;
-//					cell.ImageView.Layer.MasksToBounds = false;
-//					cell.ImageView.Layer.ShadowOffset = new SizeF(2, 2);
-//					cell.ImageView.Layer.ShadowRadius = 2f;
-//					cell.ImageView.Layer.ShadowOpacity = 0.8f;
-//				}
-//			}
-//			else if (CellImageIcon != null)
-//				cell.ImageView.Image = CellImageIcon;
-			
-			cell.SetNeedsDisplay();
+			_Cell.SetNeedsDisplay();
 		}
 
 		public override string ToString()

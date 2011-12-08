@@ -271,7 +271,6 @@
     <Folder Include="ViewModel\" />
     <Folder Include="Application\" />
     <Folder Include="Dialog\" />
-    <Folder Include="Dialog\Reflection API\" />
     <Folder Include="Converters\" />
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Cell\" />
