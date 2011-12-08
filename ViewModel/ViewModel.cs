@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public abstract class ViewModel: ObservableObject, IViewModel, IInitializable
+	public abstract class ViewModel: ObservableObject, IInitializable
 	{
 		private object _DataModel;
 		public object DataModel 

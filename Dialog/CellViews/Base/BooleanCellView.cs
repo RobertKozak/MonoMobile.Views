@@ -100,4 +100,9 @@ namespace MonoMobile.Views
 			base.Dispose(disposing);
 		}
 	}
+
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	public class CheckmarkAttribute : Attribute
+	{
+	}
 }

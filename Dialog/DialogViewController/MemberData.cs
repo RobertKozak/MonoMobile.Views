@@ -343,15 +343,17 @@ namespace MonoMobile.Views
 		public NSString CreateId()
 		{
 			if (Id != null)
-				Id.Dispose();
-
-			if (Type == typeof(MethodInfo))
 			{
-				return new NSString(Member.Name);
+				if (string.Compare(Id.ToString(), Member.Name, true) == 0)
+				{
+					return Id;
+				}
+
+				Id.Dispose();
 			}
 
-			return new NSString(Type.ToString());
-		} 
+			return new NSString(Member.Name);
+		}
 	}
 }
 

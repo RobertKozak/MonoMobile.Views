@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 	{
 		public NavigateToViewAttribute()
 		{
-			ViewType = typeof(ObjectCellView);
+			ViewType = typeof(ObjectCellView<object>);
 		}
 		
 		public NavigateToViewAttribute(Type viewType)

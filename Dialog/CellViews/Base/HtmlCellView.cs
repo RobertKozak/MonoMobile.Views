@@ -3,6 +3,9 @@
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//  
+//  based on code by
+//    Miguel de Icaza (miguel@gnome.org)
 // 
 //  Copyright 2011, Nowcom Corporation.
 // 
@@ -37,12 +40,17 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class HtmlCellView : CellView<Uri>, ISelectable
 	{
+		private WebViewController _WebViewController;
 		public UIWebView Web { get; set; }
-
-		public Uri Uri { get { return DataContext.Value is Uri ? DataContext.Value as Uri : new Uri(DataContext.Value.ToString()); } }
 
 		public HtmlCellView(RectangleF frame) : base(frame)
 		{
+		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			_WebViewController.Dispose();
+			base.Dispose(disposing);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
@@ -50,7 +58,7 @@ namespace MonoMobile.Views
 			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			cell.TextLabel.Text = Caption;
 		}
-
+		
 		static bool NetworkActivity
 		{
 			set { UIApplication.SharedApplication.NetworkActivityIndicatorVisible = value; }
@@ -68,16 +76,25 @@ namespace MonoMobile.Views
 				_Container = container;
 			}
 
+			protected override void Dispose(bool disposing)
+			{
+				_Container.Dispose();
+
+				base.Dispose(disposing);
+			}
+
 			public override void ViewWillDisappear(bool animated)
 			{
-				base.ViewWillDisappear(animated);
 				NetworkActivity = false;
-				if (_Container.Web == null)
-					return;
-				
-				_Container.Web.StopLoading();
-				_Container.Web.Dispose();
-				_Container.Web = null;
+				if (_Container.Web != null)
+				{
+					_Container.Web.StopLoading();
+					_Container.Web.RemoveFromSuperview();
+					_Container.Web.Dispose();
+					_Container.Web = null;
+				}
+	
+				base.ViewWillDisappear(animated);
 			}
 
 			public bool Autorotate { get; set; }
@@ -90,7 +107,6 @@ namespace MonoMobile.Views
 
 		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
 		{
-			var vc = new WebViewController(this) { Autorotate = controller.Autorotate };
 			var frame = UIScreen.MainScreen.Bounds;
 
 			Web = new UIWebView(frame) { BackgroundColor = UIColor.White, ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight };
@@ -103,12 +119,13 @@ namespace MonoMobile.Views
 					Web.LoadHtmlString(String.Format("<html><center><font size=+5 color='red'>An error occurred:<br>{0}</font></center></html>", args.Error.LocalizedDescription), null);
 			};
 
-			vc.Title = Caption;
-			vc.View.AddSubview(Web);
+			_WebViewController = new WebViewController(this) { Autorotate = controller.Autorotate };
+			_WebViewController.Title = Caption;
+			_WebViewController.View.AddSubview(Web);
 			
-			controller.ActivateController(vc, controller);
+			controller.ActivateController(_WebViewController, controller);
 
-			var url = new NSUrl(Uri.AbsoluteUri);
+			var url = new NSUrl(Value.AbsoluteUri);
 			Web.LoadRequest(NSUrlRequest.FromUrl(url));
 		}
 	}

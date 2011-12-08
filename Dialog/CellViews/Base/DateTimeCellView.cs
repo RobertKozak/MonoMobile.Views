@@ -1,5 +1,5 @@
 // 
-//  DateTimeView.cs
+//  DateTimeCellView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -34,13 +34,13 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using System.Drawing;
 
-	public class DateTimeView: FocusableCellView, IHandleNotifyPropertyChanged
+	public class DateTimeCellView: FocusableCellView, IHandleNotifyPropertyChanged
 	{
 		protected NSDateFormatter fmt = new NSDateFormatter { DateStyle = NSDateFormatterStyle.Short };
 
 		public UIDatePicker DatePicker;
 		
-		public DateTimeView(RectangleF frame) : base(frame)
+		public DateTimeCellView(RectangleF frame) : base(frame)
 		{
 		}
 

@@ -1,5 +1,5 @@
 // 
-//  MethodCellView.cs
+//  DateCellView.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -29,34 +29,29 @@
 // 
 namespace MonoMobile.Views
 {
+	using System;
 	using System.Drawing;
-	using System.Reflection;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	
+
 	[Preserve(AllMembers = true)]
-	public class MethodCellView : CellView<MethodInfo>, ISelectable
+	public class DateCellView : DateTimeCellView
 	{
-		public MethodCellView(RectangleF frame) : base(frame)
+		public DateCellView(RectangleF frame) : base(frame)
 		{
+			fmt.DateStyle = NSDateFormatterStyle.Medium;
 		}
 
-		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		public override string FormatDate(DateTime dt)
 		{
-			cell.TextLabel.Text = Caption;
-			cell.TextLabel.TextAlignment = UITextAlignment.Center;
-			cell.Accessory = UITableViewCellAccessory.None;
+			return fmt.ToString(dt);
 		}
 
-		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+		public override UIDatePicker CreatePicker()
 		{
-			if (DataContext != null)
-			{
-				var method = DataContext.Member as MethodInfo;
-				method.Invoke(DataContext.Source, null);
-
-				tableView.DeselectRow(indexPath, true);
-			}
+			var picker = base.CreatePicker();
+			picker.Mode = UIDatePickerMode.Date;
+			return picker;
 		}
 	}
 }

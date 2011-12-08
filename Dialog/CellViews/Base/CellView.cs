@@ -66,7 +66,6 @@ namespace MonoMobile.Views
 		public virtual void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			Value = (T)_DataContext.Value; 
-			Console.WriteLine("Property changed: " + e.PropertyName);
 			//Controller.TableView.ReloadData();
 		}
 
@@ -82,7 +81,6 @@ namespace MonoMobile.Views
 				_DataContext = value;
 				_DataContext.TargetType = ValueType;
 				Value = (T)_DataContext.Value;
-				Console.WriteLine("Member {0}  -- ValueType {1}", _DataContext.Member.Name, ValueType);
 			}
 		}
 

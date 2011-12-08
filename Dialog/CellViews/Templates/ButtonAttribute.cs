@@ -30,6 +30,9 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Drawing;
+	using System.Reflection;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
 	public enum CommandOption
@@ -55,6 +58,32 @@ namespace MonoMobile.Views
 
 		internal string CanExecutePropertyName;
 		public CommandOption CommandOption;
+
+		[Preserve(AllMembers = true)]
+		class MethodCellView : CellView<MethodInfo>, ISelectable
+		{
+			public MethodCellView(RectangleF frame) : base(frame)
+			{
+			}
+
+			public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+			{
+				cell.TextLabel.Text = Caption;
+				cell.TextLabel.TextAlignment = UITextAlignment.Center;
+				cell.Accessory = UITableViewCellAccessory.None;
+			}
+
+			public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+			{
+				if (DataContext != null)
+				{
+					var method = DataContext.Member as MethodInfo;
+					method.Invoke(DataContext.Source, null);
+
+					tableView.DeselectRow(indexPath, true);
+				}
+			}
+		}
 	}
 }
 

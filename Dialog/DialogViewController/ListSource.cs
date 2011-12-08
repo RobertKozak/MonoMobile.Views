@@ -466,7 +466,7 @@ namespace MonoMobile.Views
 		
 			if (viewType != null)
 			{
-				NavigationSource.IsNavigable = viewType == typeof(ObjectCellView);
+				NavigationSource.IsNavigable = viewType == typeof(ObjectCellView<object>);
 				NavigationSource.NavigationViewType = viewType;
 			}
 

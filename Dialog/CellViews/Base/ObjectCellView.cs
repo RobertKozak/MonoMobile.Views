@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class ObjectCellView : CellView<object>, ISelectable
+	public class ObjectCellView<T> : CellView<T>, ISelectable
 	{
 		public UIModalTransitionStyle TransitionStyle { get; set; }
 		public bool IsModel { get; set; }

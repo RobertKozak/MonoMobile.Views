@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[Preserve(AllMembers = true)]
-	public class TimeCellView : DateTimeView
+	public class TimeCellView : DateTimeCellView
 	{
 		public TimeCellView(RectangleF frame) : base(frame)
 		{

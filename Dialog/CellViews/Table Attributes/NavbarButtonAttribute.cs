@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method, Inherited = false)]
 	public class NavbarButtonAttribute : CellViewTemplate
 	{
-		public override Type CellViewType { get { return typeof(ObjectCellView); } }
+		public override Type CellViewType { get { return typeof(ObjectCellView<object>); } }
 
 		public NavbarButtonAttribute() : base()
 		{
