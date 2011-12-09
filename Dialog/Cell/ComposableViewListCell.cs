@@ -102,6 +102,7 @@ namespace MonoMobile.Views
 			if (ViewList == null)
 				CreateViewList(viewTypes);
 			
+			Theme = Theme.CreateTheme(listSource.Controller.Theme);
 
 			AddSubview(_CompositeView);
 		}
@@ -158,6 +159,17 @@ namespace MonoMobile.Views
 						initializeCell.Cell = this;
 						initializeCell.Controller = ListSource.Controller;
 					}
+					
+					var themeable = view as IThemeable;
+					if (themeable != null)
+					{
+						if (themeable.Theme != null)
+						{
+							themeable.Theme.Cell = this;
+						}
+								
+						themeable.InitializeTheme(this);
+					}
 
 					var cellContent = view as ICellContent;
 					if (cellContent != null)
@@ -175,6 +187,48 @@ namespace MonoMobile.Views
 
 		public override void Draw(RectangleF rect)
 		{
+			if (ListSource != null)
+			{
+				Theme.Cell = this;
+				
+				TextLabel.BackgroundColor = UIColor.Clear;
+				if (DetailTextLabel != null)
+					DetailTextLabel.BackgroundColor = UIColor.Clear;
+
+				if (ListSource.IsRootCell)
+				{
+					Accessory = UITableViewCellAccessory.DisclosureIndicator;
+					TextLabel.Text = ListSource.Caption;
+					
+					if (ListSource.IsMultiselect && DetailTextLabel != null)
+					{
+						DetailTextLabel.Text = ListSource.SelectedItems.Count.ToString();
+					}
+					else
+					{
+						if (ListSource.SelectedItem != null)
+						{
+							if (ListSource.ReplaceCaptionWithSelection)
+							{
+								TextLabel.Text = ListSource.SelectedItem.ToString();
+							}
+							else if (DetailTextLabel != null)
+								{
+									DetailTextLabel.Text = ListSource.SelectedItem.ToString();
+								}
+						}
+					}
+				}
+				else
+				{
+					var sectionData = ListSource.GetSectionData(0);
+					if (sectionData.Count > 0)
+					{
+						TextLabel.Text = sectionData[IndexPath.Row].ToString();
+					}
+				}
+			}
+	
 			if (ViewList != null)
 			{
 				foreach (var view in ViewList)
@@ -191,44 +245,17 @@ namespace MonoMobile.Views
 						updateable.UpdateCell(this, IndexPath);
 					}
 			
+					var themeable = view as IThemeable;
+					if (themeable != null)
+					{			
+						themeable.ApplyTheme(this);
+					}
+
 					var customDraw = view as ICustomDraw;
 					if (customDraw != null)
 					{
 						customDraw.Draw(rect);
 					}
-				}
-			}
-
-			if (ListSource.IsRootCell)
-			{
-				Accessory = UITableViewCellAccessory.DisclosureIndicator;
-				TextLabel.Text = ListSource.Caption;
-				
-				if (ListSource.IsMultiselect && DetailTextLabel != null)
-				{
-					DetailTextLabel.Text = ListSource.SelectedItems.Count.ToString();
-				}
-				else
-				{
-					if (ListSource.SelectedItem != null)
-					{
-						if (ListSource.ReplaceCaptionWithSelection)
-						{
-							TextLabel.Text = ListSource.SelectedItem.ToString();
-						}
-						else if (DetailTextLabel != null)
-						{
-							DetailTextLabel.Text = ListSource.SelectedItem.ToString();
-						}
-					}
-				}
-			}
-			else
-			{
-				var sectionData = ListSource.GetSectionData(0);
-				if (sectionData.Count > 0)
-				{
-					TextLabel.Text = sectionData[IndexPath.Row].ToString();
 				}
 			}
 		}

@@ -103,9 +103,14 @@ namespace MonoMobile.Views
 				notifier.PropertyChanged += (s, e) =>
 				{
 					if (e.PropertyName == _CanExecute.Name)
-						CanExecuteChanged(this, EventArgs.Empty);
+						OnCanExecuteChanged();
 				};
 			}
+		}
+
+		public void OnCanExecuteChanged()
+		{					
+			CanExecuteChanged(this, EventArgs.Empty);
 		}
 
 		public bool CanExecute(object parameter)

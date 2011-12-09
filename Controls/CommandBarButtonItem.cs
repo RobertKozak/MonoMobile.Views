@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 		public BarButtonLocation Location { get; set; }
 		public int Order { get; set; }
 		public ICommand Command { get; set; }
-
+		
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, EventHandler handler): base(image, style, handler) {}
 		public CommandBarButtonItem(string title, UIBarButtonItemStyle style, EventHandler handler): base(title, style, handler) {}
 		public CommandBarButtonItem(UIBarButtonSystemItem systemItem, EventHandler handler): base(systemItem, handler) {}

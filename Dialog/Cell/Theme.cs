@@ -153,6 +153,7 @@ namespace MonoMobile.Views
 		public UIFont HeaderTextFont { get; set; }
 		public UITextAlignment HeaderTextAlignment { get; set; }
 		public UIColor HeaderTextColor { get; set; }
+		public UIColor HeaderTextBackgroundColor { get; set; }
 		public SizeF HeaderTextShadowOffset { get; set; }
 		public UIColor HeaderTextShadowColor { get; set; }
 		public UIColor HeaderBackgroundColor { get; set; }
@@ -160,6 +161,7 @@ namespace MonoMobile.Views
 		public UIFont FooterTextFont { get; set; }
 		public UITextAlignment FooterTextAlignment { get; set; }
 		public UIColor FooterTextColor { get; set; }
+		public UIColor FooterTextBackgroundColor { get; set; }
 		public SizeF FooterTextShadowOffset { get; set; }
 		public UIColor FooterTextShadowColor { get; set; }
 		public UIColor FooterBackgroundColor { get; set; }
@@ -229,6 +231,9 @@ namespace MonoMobile.Views
 			
 			HeaderTextAlignment = UITextAlignment.Left;
 			FooterTextAlignment = UITextAlignment.Center;
+
+			HeaderTextBackgroundColor = UIColor.Clear;
+			FooterTextBackgroundColor = UIColor.Clear;
 		}
 		
 		public static Theme CreateTheme(Theme theme)
@@ -278,6 +283,7 @@ namespace MonoMobile.Views
 					TextFont = theme.TextFont;
 				}
 				
+
 				if (theme.TextColor != null)
 				{
 					TextColor = theme.TextColor;
@@ -306,11 +312,12 @@ namespace MonoMobile.Views
 					DetailTextFont = theme.DetailTextFont;
 				}
 				
+
 				if (theme.DetailTextColor != null)
 				{
 					DetailTextColor = theme.DetailTextColor;
 				}
-				
+
 				if (theme.DetailTextShadowOffset != SizeF.Empty)
 				{
 					DetailTextShadowOffset = theme.DetailTextShadowOffset;
@@ -384,6 +391,11 @@ namespace MonoMobile.Views
 					HeaderTextColor = theme.HeaderTextColor;
 				}
 				
+				if (theme.HeaderTextBackgroundColor != null)
+				{
+					HeaderTextBackgroundColor = theme.HeaderTextBackgroundColor;
+				}
+
 				if (theme.HeaderTextShadowOffset != SizeF.Empty)
 				{
 					HeaderTextShadowOffset = theme.HeaderTextShadowOffset;
@@ -412,6 +424,11 @@ namespace MonoMobile.Views
 					FooterTextColor = theme.FooterTextColor;
 				}
 				
+				if (theme.FooterTextBackgroundColor != null)
+				{
+					FooterTextBackgroundColor = theme.FooterTextBackgroundColor;
+				}
+
 				if (theme.FooterTextShadowOffset != SizeF.Empty)
 				{
 					FooterTextShadowOffset = theme.FooterTextShadowOffset;
@@ -465,10 +482,10 @@ namespace MonoMobile.Views
 				{
 					_Cell.TextLabel.Font = TextFont;
 				}
-				
+
 				_Cell.TextLabel.TextAlignment = TextAlignment;
 				_Cell.TextLabel.TextColor = TextColor ?? _Cell.TextLabel.TextColor;
-				
+
 				if (TextShadowColor != null)
 				{
 					_Cell.TextLabel.ShadowColor = TextShadowColor;
@@ -491,10 +508,10 @@ namespace MonoMobile.Views
 				{
 					_Cell.DetailTextLabel.Font = DetailTextFont;
 				}
-				
+
 				_Cell.DetailTextLabel.TextAlignment = DetailTextAlignment;
 				_Cell.DetailTextLabel.TextColor = DetailTextColor ?? _Cell.DetailTextLabel.TextColor;
-				
+
 				if (DetailTextShadowColor != null)
 				{
 					_Cell.DetailTextLabel.ShadowColor = DetailTextShadowColor;

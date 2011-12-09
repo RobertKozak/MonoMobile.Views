@@ -44,7 +44,8 @@ namespace MonoMobile.Views
 		PopOnSelection,
 		Selection,
 		Multiselection,
-		Custom
+		Custom,
+		None
 	} 
 
 	public enum UnselectionBehavior

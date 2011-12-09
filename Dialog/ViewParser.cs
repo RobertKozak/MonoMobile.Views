@@ -295,6 +295,11 @@ namespace MonoMobile.Views
 						source.SelectedItem = memberValue;
 						source.SelectedItems.Add(source.SelectedItem);
 					}
+					else if (data != null && data.Count == 1)
+					{
+						source.SelectedItem = data[0];
+						source.SelectedItems.Add(source.SelectedItem);
+					}
 
 					source.Caption = GetCaption(member);
 
@@ -442,6 +447,7 @@ namespace MonoMobile.Views
 						if (tappable != null)
 						{
 							tappable.Command = GetCommandForMember(view, member); 
+							tappable.Command.CanExecuteChanged += HandleCanExecuteChanged;
 						}
 					}
 
@@ -496,6 +502,7 @@ namespace MonoMobile.Views
 						if (tappable != null)
 						{
 							tappable.Command = GetCommandForMember(view, member); 
+							tappable.Command.CanExecuteChanged += HandleCanExecuteChanged;
 						}
 					}
 

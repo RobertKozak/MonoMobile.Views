@@ -64,8 +64,8 @@ namespace MonoMobile.Views
 			listSource.UpdateCell(cell, indexPath);
 
 			cell.TextLabel.Text = Caption;
-			cell.Accessory = listSource.Sections[0].DataContext.Count > 0 ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-			cell.SelectionStyle = listSource.Sections[0].DataContext.Count > 0 ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None; 
+			cell.Accessory = listSource.Sections[0].DataContext.Count > 1 ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+			cell.SelectionStyle = listSource.Sections[0].DataContext.Count > 1 ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None; 
 			cell.DetailTextLabel.Text = string.Empty;
 			
 			var text = Caption;

@@ -50,7 +50,7 @@ namespace MonoMobile.Views
 		{		
 			if (e.PropertyName != "Count" && e.PropertyName != "Item[]")
 			{
-				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+//				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
 			}
 		}
 

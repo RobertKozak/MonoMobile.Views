@@ -206,7 +206,6 @@
     <Compile Include="Dialog\DialogViewController\ViewSource.cs" />
     <Compile Include="Dialog\DialogViewController\MemberData.cs" />
     <Compile Include="Dialog\DialogViewController\ViewContainer.cs" />
-    <Compile Include="Application\Registrations.cs" />
     <Compile Include="Interfaces\ICaption.cs" />
     <Compile Include="Dialog\DialogViewController\ListSource.cs" />
     <Compile Include="Controls\UIPlaceholderTextField.cs" />
@@ -262,6 +261,7 @@
     <Compile Include="Dialog\CellViews\Base\CellView.cs" />
     <Compile Include="Dialog\CellViews\Base\FocusableCellView.cs" />
     <Compile Include="Dialog\CellViews\Templates\AddressSample.cs" />
+    <Compile Include="Registrations.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

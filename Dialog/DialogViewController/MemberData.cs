@@ -212,6 +212,7 @@ namespace MonoMobile.Views
 
 		private void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
 		{
+			RemoveNotifyCollectionChangedHandler(value, handler);
 			var notifyCollectionChanged = value as INotifyCollectionChanged;
 			if (notifyCollectionChanged != null && handler != null)
 			{
@@ -221,6 +222,7 @@ namespace MonoMobile.Views
 
 		private void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
 		{
+			RemoveNotifyPropertyChangedHandler(value, handler);
 			var notifyPropertyChanged = value as INotifyPropertyChanged;
 			if (notifyPropertyChanged != null && handler != null)
 			{

@@ -169,6 +169,7 @@ namespace MonoMobile.Views
 			}
  
 			var cell = new ComposableViewListCell(cellStyle, cellId, indexPath, viewTypes, this);
+
 			return cell;
 		}
 		
@@ -179,30 +180,38 @@ namespace MonoMobile.Views
 			{
 				composableListCell.IndexPath = indexPath;
 			}
-
+			
+			Type dataType = null;
 			var sectionData = GetSectionData(0);
+			if (sectionData.Count > 0)
+			{
+				dataType = sectionData[0].GetType();
+			}
+
 			if (DisplayMode != DisplayMode.RootCell)
 			{
-				if (sectionData.Count > 0)
+				if (dataType != null && (dataType.IsPrimitive || dataType.IsEnum) && (SelectionAction == SelectionAction.NavigateToView || SelectionAction == SelectionAction.Custom))
 				{
-					var dataType = sectionData[0].GetType();
-					if ((dataType.IsPrimitive || dataType.IsEnum) && (SelectionAction == SelectionAction.NavigateToView || SelectionAction == SelectionAction.Custom))
-					{
-						IsSelectable = false;
-						SelectionAction = SelectionAction.Custom;
-					}
+					IsSelectable = false;
+					SelectionAction = SelectionAction.Custom;
+				}
+			}
+			else
+			{
+				if (dataType != null && ((dataType.IsPrimitive || dataType == typeof(string))) && (SelectionAction == SelectionAction.NavigateToView))
+				{
+					IsNavigable = sectionData.Count > 1;
+					SelectionAction = SelectionAction.Selection;
 				}
 			}
 
 			base.UpdateCell(cell, indexPath);
-			
-			cell.Accessory = SelectionAction == SelectionAction.Custom ? UITableViewCellAccessory.None : cell.Accessory;
 
 			cell.SelectionStyle = IsNavigable ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;  
 			cell.SelectionStyle = IsSelectable ? UITableViewCellSelectionStyle.None : cell.SelectionStyle;  
 
 			cell.SelectionStyle = SelectionAction == SelectionAction.Custom ? UITableViewCellSelectionStyle.Blue : cell.SelectionStyle;
-
+			
 			SetSelectionAccessory(cell, indexPath);
 
 			cell.SetNeedsDisplay();
@@ -239,7 +248,7 @@ namespace MonoMobile.Views
 				}
 			}
 		
-			// Do default is no views have done an update
+			// Do default since no views have done an update
 			if (!updated)
 			{
 				if (IsRootCell)
@@ -365,6 +374,9 @@ namespace MonoMobile.Views
 			}
 			else
 				data = GetSectionData(0);
+			
+			if (SelectionAction == SelectionAction.None)
+				return;
 
 			if (SelectionAction == SelectionAction.Custom)
 			{
@@ -382,7 +394,7 @@ namespace MonoMobile.Views
 				SelectionAction = SelectionAction.Selection;
 			}
 
-			if (IsNavigable && (data is IEnumerable))
+			if (IsNavigable && (data is IEnumerable && (!(data is string))))
 			{
 				NavigateToList();
 				return;
@@ -444,7 +456,7 @@ namespace MonoMobile.Views
 			{
 				Caption = data.ToString();
 			}
-
+			
 			var dvc = new DialogViewController(Caption, null, Controller.Theme, true);
 			dvc.ToolbarButtons = null;
 			dvc.NavbarButtons = null;
@@ -519,6 +531,8 @@ namespace MonoMobile.Views
 
 		public void Activated()
 		{
+			GetItems();
+
 			if (NavigationSource != null)
 			{
 				SelectedItem = NavigationSource.SelectedItem;
@@ -535,6 +549,26 @@ namespace MonoMobile.Views
 
 		public void Deactivated()
 		{
+		}
+		
+		private void GetItems()
+		{		
+			if (_SelectedItemMember != null)
+			{
+				var item = _SelectedItemMember.GetValue(Controller.RootView);
+				if (item != null)
+					SelectedItem = item;
+			}
+	
+			if (IsMultiselect)
+			{		
+				if (_SelectedItemsMember != null)
+				{
+					var items = _SelectedItemsMember.GetValue(Controller.RootView) as IList;
+					if (items != null)
+						SelectedItems = items; 
+				}
+			}
 		}
 
 		private void SetItems()
@@ -555,6 +589,14 @@ namespace MonoMobile.Views
 
 		protected override void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			var sectionData = GetSectionData(0);
+			cell.Accessory = SelectionAction == SelectionAction.Custom ? UITableViewCellAccessory.None : cell.Accessory;
+			
+			if (SelectionAction != SelectionAction.NavigateToView)
+			{
+				cell.Accessory = sectionData != null && sectionData.Count > 1 ? cell.Accessory : UITableViewCellAccessory.None;
+			}
+
 			base.SetSelectionAccessory(cell, indexPath);
 			
 			if (IsSelectable)
