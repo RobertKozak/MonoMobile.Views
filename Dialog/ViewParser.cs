@@ -1,4 +1,3 @@
-using System.Diagnostics;
 // 
 // ViewParser.cs
 // 
@@ -33,19 +32,15 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Collections.Specialized;
-	using System.ComponentModel;
-	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
-	using System.Text;
-	using MonoTouch.CoreLocation;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
-	public class ViewParser
+	public class ViewParser : NSObject
 	{
-		private CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
-		private CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
+		private readonly CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
+		private readonly CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
 
 		public ViewParser()
 		{
@@ -66,7 +61,7 @@ namespace MonoMobile.Views
 				if (member != null)
 				{
 					var memberData = new MemberData(view, member);
-					source = ParseList(controller, view, memberData, null); 
+					source = ParseList(controller, memberData, null); 
 				}
 					
 				if (source == null)
@@ -93,8 +88,7 @@ namespace MonoMobile.Views
 			{
 				var attributes = member.GetCustomAttributes(false); 
 
-				var memberData = new MemberData(view, member);				
-				memberData.Section = sectionIndex;
+				var memberData = new MemberData(view, member) { Section = sectionIndex };				
 				
 				var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
 				if (pullToRefreshAttribute != null)
@@ -132,6 +126,15 @@ namespace MonoMobile.Views
 					var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
 					if (theme != null && theme.CellHeight > 0)
 						memberData.RowHeight = theme.CellHeight;
+				}
+				else
+				{
+					var themeable = view as IThemeable;
+					if (themeable != null && themeable.Theme != null && themeable.Theme.CellHeight > 0)
+					{
+						memberData.RowHeight = themeable.Theme.CellHeight;
+						themeable.Theme = null;
+					}
 				}
 
 				var rowHeightAttribute = member.GetCustomAttribute<RowHeightAttribute>();
@@ -178,7 +181,7 @@ namespace MonoMobile.Views
 					}
 				}
 				
-				var viewTypes = GetViewTypes(view, memberData);
+				var viewTypes = GetViewTypes(memberData);
 
 				if (!sections.ContainsKey(memberData.Section))
 				{
@@ -234,11 +237,11 @@ namespace MonoMobile.Views
 
 				foreach(var memberData in list)
 				{
-					var viewTypes = GetViewTypes(view, memberData);
+					var viewTypes = GetViewTypes(memberData);
 
 					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
 					{
-						var listSource = ParseList(controller, view, memberData, viewTypes) as ListSource; 
+						var listSource = ParseList(controller, memberData, viewTypes) as ListSource; 
 			//			listSource.IsRootCell = listSource.IsRootCell || listSources.Count > 0;
 			//			listSource.IsNavigable = listSource.IsRootCell;
 
@@ -270,13 +273,12 @@ namespace MonoMobile.Views
 				return sectionList[0].ListSources[0];
 			}
 
-			var source = new ViewSource(controller);
-			source.Sections = sectionList;
+			var source = new ViewSource(controller) { Sections = sectionList };
 
 			return source;
 		}
 
-		public UITableViewSource ParseList(DialogViewController controller, object view, MemberData memberData, List<Type> viewTypes)
+		public UITableViewSource ParseList(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
 		{
 			object memberValue = memberData.Value;
 			var member = memberData.Member;
@@ -331,13 +333,17 @@ namespace MonoMobile.Views
 	
 					source.PopOnSelection = source.SelectionAction == SelectionAction.PopOnSelection;
 					
-					var navigateToViewAttribute = member.GetCustomAttribute<NavigateToViewAttribute>();	
-					if (navigateToViewAttribute != null)
+					var memberAttributes = member.GetCustomAttributes(false);
+					foreach(var memberAttribute in memberAttributes)
 					{
-						source.IsSelectable = false;
-						source.NavigationViewType = navigateToViewAttribute.ViewType;
+						var navigable = memberAttribute as INavigable;
+						if (navigable != null)
+						{
+							source.IsSelectable = false;
+							source.NavigationViewType = navigable.ViewType;
+						}
 					}
-					
+
 					source.IsRootCell = source.DisplayMode != DisplayMode.List;
 
 					return source;
@@ -360,12 +366,12 @@ namespace MonoMobile.Views
 				commandOption = buttonAttribute.CommandOption;
 			}
 
-			var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
-			if (progressAttribute != null)
-			{
-				propertyName = progressAttribute.CanExecutePropertyName;
-				commandOption = progressAttribute.CommandOption;
-			}
+//			var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
+//			if (progressAttribute != null)
+//			{
+//				propertyName = progressAttribute.CanExecutePropertyName;
+//				commandOption = progressAttribute.CommandOption;
+//			}
 
 			var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
 			if (toolbarButtonAttribute != null)
@@ -493,8 +499,7 @@ namespace MonoMobile.Views
 
 					if (buttonAttribute.ViewType != null)
 					{	
-						UIView buttonView = null;
-						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+						UIView buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
 						
 						CheckForInstanceProperties(view, member, buttonView);
 
@@ -556,7 +561,7 @@ namespace MonoMobile.Views
 			return caption;
 		}
 		
-		private Section CreateSection(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
+		private static Section CreateSection(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
 		{
 			var listSources = new SortedList<int, ListSource>();
 			listSources.Add(memberData.Order, null);
@@ -578,7 +583,7 @@ namespace MonoMobile.Views
 			return section;
 		}
 		
-		private CommandBarButtonItem CreateCommandBarButton(object view, MemberInfo member, string title, UIView buttonView, UIBarButtonItemStyle style, UIBarButtonSystemItem? buttonType, BarButtonLocation location)
+		private static CommandBarButtonItem CreateCommandBarButton(object view, MemberInfo member, string title, UIView buttonView, UIBarButtonItemStyle style, UIBarButtonSystemItem? buttonType, BarButtonLocation location)
 		{
 			CommandBarButtonItem button = null;
 
@@ -618,7 +623,7 @@ namespace MonoMobile.Views
 			return button;
 		}
 
-		private void InitializeSearch(object view, UITableViewSource source)
+		private static void InitializeSearch(object view, UITableViewSource source)
 		{
 			var searchbarAttribute = view.GetType().GetCustomAttribute<SearchbarAttribute>();
 			var searchbar = source as ISearchBar;
@@ -648,7 +653,7 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		private object GetActualView(object view)
+		private static object GetActualView(object view)
 		{
 			if (view != null && !(view is IView))
 			{
@@ -680,7 +685,7 @@ namespace MonoMobile.Views
 			return view;
 		}
 
-		private List<Type> GetViewTypes(object view, MemberData memberData)
+		private static List<Type> GetViewTypes(MemberData memberData)
 		{
 			var memberInfo = memberData.Member;
 			if (memberInfo != null)
@@ -720,7 +725,7 @@ namespace MonoMobile.Views
 			}).ToArray();
 		}
 
-		private void CheckForInstanceProperties(object view, MemberInfo member, UIView elementView)
+		private static void CheckForInstanceProperties(object view, MemberInfo member, UIView elementView)
 		{
 			var cellViewTemplate = member.GetCustomAttribute<CellViewTemplate>(true);
 			if (cellViewTemplate != null)// && element != _NoElement)

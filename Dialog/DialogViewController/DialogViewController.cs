@@ -42,7 +42,6 @@ namespace MonoMobile.Views
 	using System.Linq;
 	using System.Reflection;
 	using System.Threading;
-	using MonoMobile.Views;
 	using MonoMobile.Views.Utilities;
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
@@ -50,8 +49,8 @@ namespace MonoMobile.Views
 			
 	public class DialogViewController : UITableViewController
 	{
-		private CommandBarButtonItem _LeftFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Left };
-		private CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
+		private readonly CommandBarButtonItem _LeftFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Left };
+		private readonly CommandBarButtonItem _RightFixedSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Location = BarButtonLocation.Right };
 
 		private UITableView _TableView;
 
@@ -510,13 +509,13 @@ namespace MonoMobile.Views
 			
 			SetScrollEnabled();
 			
-			var nav = ParentViewController as UINavigationController;
-			if (nav != null)
+			if (Theme != null)
 			{
-				nav.NavigationBar.Opaque = false;
-	
-				if (Theme != null)
+				var nav = ParentViewController as UINavigationController;
+				if (nav != null)
 				{
+					nav.NavigationBar.Opaque = false;
+	
 					if (Theme.BarStyle.HasValue)
 					{
 						nav.NavigationBar.BarStyle = Theme.BarStyle.Value;
@@ -535,6 +534,14 @@ namespace MonoMobile.Views
 					nav.Toolbar.Translucent = Theme.BarTranslucent;
 					nav.Toolbar.TintColor = Theme.BarTintColor;
 				}
+			
+				var separatorColor = Theme.SeparatorColor;
+				if (separatorColor != null)
+					TableView.SeparatorColor = separatorColor;
+
+				var separatorStyle = Theme.SeparatorStyle;
+				if (separatorStyle.HasValue)
+					TableView.SeparatorStyle = separatorStyle.Value;
 			}
 
 			ConfigureBackgroundImage();
@@ -935,9 +942,6 @@ namespace MonoMobile.Views
 
 		private void CreateTableView(object view, MemberInfo member, Theme theme)
 		{
-			var parser = new ViewParser();
-			var source = parser.Parse(this, view, member);
-			
 			Theme = Theme.CreateTheme(theme);
 			var themeable = view as IThemeable;
 			if (themeable != null)
@@ -946,10 +950,14 @@ namespace MonoMobile.Views
 				if (themeAttribute != null)
 				{
 					var viewTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+					themeable.Theme = viewTheme;
 					Theme = Theme.CreateTheme(viewTheme);
 				}
 			}
 
+			var parser = new ViewParser();
+			var source = parser.Parse(this, view, member);
+			
 			var tableViewStyle = Theme.TableViewStyle;
 			var tableStyle = source as ITableViewStyle;
 			if (tableStyle != null)
@@ -983,9 +991,27 @@ namespace MonoMobile.Views
 			CreateTableView(view, member, theme);	
 		}
 		
-		protected override void Dispose (bool disposing)
+		protected override void Dispose(bool disposing)
 		{
-			base.Dispose (disposing);
+			if (disposing)
+			{
+				_LeftFixedSpace.Dispose();
+				_RightFixedSpace.Dispose();
+
+				if (_TableView != null)
+				{
+					_TableView.Dispose();
+					_TableView = null;
+				}
+
+				if (_Searchbar != null)
+				{
+					_Searchbar.Dispose();
+					_Searchbar = null;
+				}
+			}
+
+			base.Dispose(disposing);
 		}
 	}
 }

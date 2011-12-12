@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public class PasswordAttribute : EntryAttribute
 	{
-		public PasswordAttribute() : base()
+		public PasswordAttribute()
 		{
 			AutocorrectionType = UITextAutocorrectionType.No;
 			AutocapitalizationType = UITextAutocapitalizationType.None;

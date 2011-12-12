@@ -34,7 +34,6 @@ namespace MonoMobile.Views
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Threading;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;	
 
@@ -69,8 +68,33 @@ namespace MonoMobile.Views
 			return true;
 		}
 
-		private void Startup()
+		private static void Startup()
 		{
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach(var assembly in assemblies)
+			{
+				var types = assembly.GetTypes();
+				foreach(var type in types)
+				{
+					var initialize = type.GetCustomAttribute<InitializeAttribute>();
+					if (initialize != null)
+					{
+						var initializeMethod = type.GetMethod("Initialize");
+						if (initializeMethod != null)
+						{
+							initializeMethod.Invoke(type, null);
+						}
+					}
+				}
+			}
+			
+			sw.Stop();
+
+			Console.WriteLine("Initialized in :" + sw.Elapsed.Milliseconds);
+ 
 			MonoMobileApplication.Views = new List<object>();
 			foreach (var viewType in MonoMobileApplication.ViewTypes)
 			{

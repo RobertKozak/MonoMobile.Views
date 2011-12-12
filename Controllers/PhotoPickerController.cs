@@ -52,6 +52,16 @@ namespace MonoMobile.Views
 				_SelectedImage = image;
 				_SelectedAction(_SelectedImage);
 			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing && _SelectedImage != null)
+				{
+					_SelectedImage.Dispose();
+				}
+
+				base.Dispose(disposing);
+			}
 		}
 		
 		public PhotoPickerController(Action<UIImage> selectedAction)

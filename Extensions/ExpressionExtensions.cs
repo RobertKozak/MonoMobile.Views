@@ -30,8 +30,7 @@
 namespace System.Linq.Expressions
 {
     using System.Collections.ObjectModel;
-    using System.Linq;
-	using System.Reflection;
+   	using System.Reflection;
 
     public static class ExpressionExtensions
     {

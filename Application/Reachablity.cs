@@ -2,8 +2,6 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Net;
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
 	using MonoTouch.SystemConfiguration;
 	using MonoTouch.CoreFoundation;
 	

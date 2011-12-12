@@ -32,7 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using System.Drawing;
 	using System.Linq;
-	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
@@ -49,7 +48,7 @@ namespace MonoMobile.Views
 		public UIPlaceholderTextField(NSCoder coder): base(coder) {}
 		public UIPlaceholderTextField(IntPtr handle): base (handle) {}
 		public UIPlaceholderTextField(RectangleF frame): base(frame) { Initialize(); }
-		
+
 		protected void Initialize()
 		{
 			Delegate = new UIPlaceholderTextFieldDelegate();

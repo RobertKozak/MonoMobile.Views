@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 	public class CellView<T> : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
 	{
 		public T Value { get; set; }
-		public Type ValueType { get { return typeof(T); } }
+		public static Type ValueType { get { return typeof(T); } }
 
 		public Theme Theme { get; set; }
 

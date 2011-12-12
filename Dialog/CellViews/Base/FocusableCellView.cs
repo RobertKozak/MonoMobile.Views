@@ -33,7 +33,6 @@ namespace MonoMobile.Views
 	using System.Drawing;
 	using System.Collections.Generic;
 	using System.Linq;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
@@ -68,6 +67,16 @@ namespace MonoMobile.Views
 			
 			CellContentView = InputView;
 			Add(CellContentView);
+		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && InputView != null)
+			{
+				InputView = null;
+			}
+
+			base.Dispose(disposing);
 		}
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)

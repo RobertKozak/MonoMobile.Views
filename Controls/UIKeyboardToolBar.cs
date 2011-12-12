@@ -79,6 +79,26 @@ namespace MonoMobile.Views
 		public UIKeyboardToolbar(IntPtr handle) : base(handle) { }
 		public UIKeyboardToolbar(RectangleF frame) : base(frame) { }
 		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_NextButton != null)
+				{
+					_NextButton.Dispose();
+					_NextButton = null;
+				}
+
+				if (_PrevButton != null)
+				{
+					_PrevButton.Dispose();
+					_PrevButton = null;
+				}
+			}
+			
+			base.Dispose(disposing);
+		}
+
 		public override UIBarButtonItem[] CreateToolbarItems()
 		{
 			var baseButtons = base.CreateToolbarItems();

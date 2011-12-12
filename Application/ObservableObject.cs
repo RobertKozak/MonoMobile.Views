@@ -33,7 +33,6 @@ namespace MonoMobile.Views
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Linq.Expressions;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
@@ -47,10 +46,6 @@ namespace MonoMobile.Views
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
         public IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
-
-        public ObservableObject()
-        {
-        }
 
         public void NotifyPropertyChanged(string propertyName)
         {
@@ -99,7 +94,7 @@ namespace MonoMobile.Views
             if (isFunction)
             {
 				object source = this;
-				var propertyInfo = this.GetType().GetNestedMember(ref source, name, false);
+				var propertyInfo = GetType().GetNestedMember(ref source, name, false);
 				if (source != this) 
 				{
 					return (T)propertyInfo.GetValue(source);
@@ -128,7 +123,7 @@ namespace MonoMobile.Views
 			if (propertyName.Contains("."))
 			{
 				object source = this;
-				var propertyInfo = this.GetType().GetNestedMember(ref source, propertyName, false);
+				var propertyInfo = GetType().GetNestedMember(ref source, propertyName, false);
 				if (source != this)
 				{
 					propertyInfo.SetValue(source, value);

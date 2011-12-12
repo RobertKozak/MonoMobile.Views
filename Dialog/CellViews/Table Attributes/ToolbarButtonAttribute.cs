@@ -63,7 +63,6 @@ namespace MonoMobile.Views
 		public UIBarButtonSystemItem? ButtonType { get; set; }
 		public UIBarButtonItemStyle Style { get; set; }
 		public BarButtonLocation Location { get; set; }
-		public Type ViewType { get; set; }
 	}
 }
 

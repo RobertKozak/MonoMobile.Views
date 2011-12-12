@@ -30,17 +30,15 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections;
 	using System.Drawing;
-	using System.Reflection;
-	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class ObjectCellView<T> : CellView<T>, ISelectable
+	public class ObjectCellView<T> : CellView<T>, ISelectable, INavigable
 	{
 		public UIModalTransitionStyle TransitionStyle { get; set; }
-		public bool IsModel { get; set; }
+		public bool IsModal { get; set; }
 		public Type ViewType { get; set; }
 		
 		public ObjectCellView() : base(RectangleF.Empty)
@@ -61,7 +59,7 @@ namespace MonoMobile.Views
 			if (navigateToView != null)
 			{
 				TransitionStyle = navigateToView.TransitionStyle;
-				IsModel = navigateToView.ShowModal;
+				IsModal = navigateToView.IsModal;
 				ViewType = navigateToView.ViewType; 
 			}
 		}
@@ -97,12 +95,11 @@ namespace MonoMobile.Views
 				var dvc = new DialogViewController(Caption, view, controller.Theme, true) { Autorotate = true };
 				var nav = controller.ParentViewController as UINavigationController;
 
-				if (IsModel)
+				if (IsModal)
 				{		
 					dvc.ModalTransitionStyle = TransitionStyle;
  
-					var navController = new UINavigationController();
-					navController.ViewControllers = new UIViewController[] { dvc };
+					var navController = new UINavigationController() { ViewControllers = new UIViewController[] { dvc } };
 
 					nav.PresentModalViewController(navController, true);
 				}

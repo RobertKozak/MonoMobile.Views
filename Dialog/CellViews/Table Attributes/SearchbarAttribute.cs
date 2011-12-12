@@ -36,10 +36,6 @@ namespace MonoMobile.Views
 	{
 		public override Type CellViewType { get { return typeof(ObjectCellView<object>); } }
 
-		public SearchbarAttribute()
-		{
-		}
-
 		public string Placeholder { get; set; }
 		public bool IncrementalSearch { get; set; }
 		public bool ShowImmediately { get; set; }

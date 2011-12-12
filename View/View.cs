@@ -29,8 +29,6 @@
 //
 namespace MonoMobile.Views
 {
-	using System.Collections.Specialized;
-	using System.ComponentModel;
 	using MonoTouch.UIKit;	
 
 	public abstract class View : UIView, IView, IDataContext<object>, IInitializable, ICaption, IThemeable
@@ -66,6 +64,7 @@ namespace MonoMobile.Views
 
 		public View(string caption) : base()
 		{
+			Caption = caption;
 		}
 
 		public override string ToString()

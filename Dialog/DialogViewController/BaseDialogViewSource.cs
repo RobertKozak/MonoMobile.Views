@@ -56,15 +56,7 @@ namespace MonoMobile.Views
 		public Type SelectedAccessoryViewType { get; set; }
 		public Type UnselectedAccessoryViewType { get; set; }
 		
-		private IDictionary<int, Section> _Sections;
-		public IDictionary<int, Section> Sections {
-			get 
-			{ return _Sections;}  
-			set
-			{
-				_Sections = value;
-			} 
-		}
+		public IDictionary<int, Section> Sections { get; set; }
 
 		public UITableViewStyle TableViewStyle { get; set; }
 			
@@ -159,6 +151,33 @@ namespace MonoMobile.Views
 						else
 							view = Activator.CreateInstance(viewType) as UIView;
 	
+						var memberAttributes = memberData.Member.GetCustomAttributes(false);
+						
+						foreach (var memberAttribute in memberAttributes)
+						{
+							var navigable = view as INavigable;
+							if (navigable != null)
+							{
+								var memberNavigable = memberAttribute as INavigable;
+								if (memberNavigable != null)
+								{
+									navigable.ViewType = memberNavigable.ViewType;
+									navigable.IsModal = memberNavigable.IsModal;
+									navigable.TransitionStyle = memberNavigable.TransitionStyle;
+								}
+							}
+
+							var caption = view as ICaption;
+							if (caption != null)
+							{
+								var memberCaption = memberAttribute as ICaption;
+								if (memberCaption != null && !string.IsNullOrEmpty(memberCaption.Caption))
+								{
+									caption.Caption = memberCaption.Caption;
+								}
+							}
+						}
+
 						var dc = view as IDataContext<MemberData>;
 						if (dc != null)
 						{

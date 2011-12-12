@@ -46,12 +46,12 @@ namespace MonoMobile.Views
 
 	public class RefreshTableHeaderView : UIView
 	{
-		private static UIImage _ArrowImage = UIImage.FromResource(null, "arrow.png");
+		private static readonly UIImage _ArrowImage = UIImage.FromResource(null, "arrow.png");
 		private UIActivityIndicatorView _Activity;
 		private UILabel _LastUpdateLabel, _StatusLabel;
 		private UIImageView _ArrowView;		
 		private DateTime _LastUpdateTime;
-		private string _DefaultSettingsKey = "RefreshTableHeaderView.LastUpdateTime";
+		private readonly string _DefaultSettingsKey = "RefreshTableHeaderView.LastUpdateTime";
 		
 		public bool IsFlipped { get; set; }
 
@@ -69,6 +69,39 @@ namespace MonoMobile.Views
 			Initialize(rect);
 		}
 		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_ArrowImage.Dispose();
+
+				if (_Activity != null)
+				{
+					_Activity.Dispose();
+					_Activity = null;
+				}
+
+				if (_LastUpdateLabel != null)
+				{
+					_LastUpdateLabel.Dispose();
+					_LastUpdateLabel = null;
+				}
+
+				if (_StatusLabel != null)
+				{
+					_StatusLabel.Dispose();
+					_StatusLabel = null;
+				}
+
+				if (_ArrowView != null)
+				{
+					_ArrowView.Dispose();
+					_ArrowView = null;
+				}
+			}
+
+			base.Dispose(disposing);
+		}
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
@@ -80,7 +113,7 @@ namespace MonoMobile.Views
 			_Activity.Frame = new RectangleF(25, bounds.Height - 38, 20, 20);
 		}
 		
-		RefreshStatus status = (RefreshStatus)(-1);
+		private readonly RefreshStatus status = (RefreshStatus)(-1);
 		
 		public virtual void SetStatus(RefreshStatus status)
 		{
@@ -97,6 +130,9 @@ namespace MonoMobile.Views
 					
 				case RefreshStatus.PullToReload:
 					s = "Pull down to refresh...";
+					break;
+
+				default:
 					break;
 			}
 			_StatusLabel.Text = s;
@@ -153,7 +189,7 @@ namespace MonoMobile.Views
 
 		private void Initialize(RectangleF rect)
 		{
-			this.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+			AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			
 			BackgroundColor = new UIColor(0.88f, 0.9f, 0.92f, 1);
 			BackgroundColor = UIColor.Red;

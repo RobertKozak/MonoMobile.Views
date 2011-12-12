@@ -32,7 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
@@ -46,7 +45,7 @@ namespace MonoMobile.Views
 	
 	public class ComposableViewListCell : UITableViewCell
 	{
-		private const float StandardAccessoryWidth = 30;
+		//private const float StandardAccessoryWidth = 30;
 
 		private UIView _CompositeView { get; set; }
 		
@@ -88,7 +87,6 @@ namespace MonoMobile.Views
 		public ListSource ListSource { get; set; }
 		public Theme Theme { get; set; }
 
-		public ComposableViewListCell() :base() {}
 		public ComposableViewListCell(NSCoder coder) : base(coder) {}
 		public ComposableViewListCell(IntPtr handle) : base (handle) {}
 

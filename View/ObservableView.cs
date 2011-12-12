@@ -37,10 +37,6 @@ namespace MonoMobile.Views
 	{
 		private IObservableObject _Observable = new ObservableObject();
  
-		public ObservableView()
-		{
-		}
-	
 		public event PropertyChangedEventHandler PropertyChanged = (s, e) => { };
 	
 		public T Get<T>(Expression<Func<T>> property)

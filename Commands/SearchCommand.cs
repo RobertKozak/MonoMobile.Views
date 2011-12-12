@@ -33,7 +33,6 @@ namespace MonoMobile.Views
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
-	using MonoMobile.Views;
 
 	public class SearchCommand
 	{
@@ -57,7 +56,7 @@ namespace MonoMobile.Views
 			}
 			catch(Exception ex) 
 			{
-				throw new Exception(string.Format("{0} in {2}", ex.Message,_Execute.Name));
+				throw new Exception(string.Format("{0} in {1}", ex.Message,_Execute.Name));
 			}
 
 			return result;

@@ -1,5 +1,5 @@
 // 
-//  ProgressAttribute.cs
+//  ViewNavigator.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,40 +30,13 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.UIKit;
 	
-	public enum IndicatorStyle 
+	public static class ViewNavigator
 	{
-		Hud,
-		AccessoryIndicator
-	}
-
-	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
-	public class ProgressAttribute : Attribute
-	{
-		public ProgressAttribute(): this(null, null)
+		public static void Navigate(Type viewType, object dataContext)
 		{
-		}
 
-		public ProgressAttribute(string canExecutePropertyName): this(null, null)
-		{
-			CanExecutePropertyName = canExecutePropertyName;
-			CommandOption = CommandOption.Hide;
 		}
-
-		public ProgressAttribute(string title, string detailText)
-		{
-			Title = title;
-			DetailText = detailText;
-			
-			IndicatorStyle = IndicatorStyle.Hud;
-		}
-
-		internal string CanExecutePropertyName;
-		public CommandOption CommandOption;
-		public string Title { get; set; }
-		public string DetailText { get; set;}
-		public IndicatorStyle IndicatorStyle { get; set; }
 	}
 }
 

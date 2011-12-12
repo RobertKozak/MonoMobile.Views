@@ -31,7 +31,6 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
-	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
 	

@@ -30,7 +30,6 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
 	public interface IInitializeCell

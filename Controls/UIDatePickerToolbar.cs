@@ -48,7 +48,18 @@ namespace MonoMobile.Views
 		public UIDatePickerToolbar(NSCoder coder) : base(coder) { }
 		public UIDatePickerToolbar(IntPtr handle) : base(handle) { }
 		public UIDatePickerToolbar(RectangleF frame) : base(frame) { }
+		
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _TodayButton != null)
+			{
+				_TodayButton.Dispose();
+				_TodayButton = null;
+			}
+
+			base.Dispose(disposing);
+		}
 		public override UIBarButtonItem[] CreateToolbarItems()
 		{
 			var caption = "Today";

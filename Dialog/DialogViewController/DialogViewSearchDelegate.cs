@@ -36,13 +36,22 @@ namespace MonoMobile.Views
 
 	public class DialogViewSearchDelegate : UISearchBarDelegate
 	{
-		private DialogViewController _Container;
+		private readonly DialogViewController _Container;
 
 		public DialogViewSearchDelegate(DialogViewController container)
 		{
 			_Container = container;
 		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _Container != null)
+			{
+				_Container.Dispose();;
+			}
 
+			base.Dispose(disposing);
+		}
 		public override void OnEditingStarted(UISearchBar searchbar)
 		{
 			searchbar.ShowsCancelButton = true;

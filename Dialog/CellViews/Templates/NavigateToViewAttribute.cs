@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class NavigateToViewAttribute: Attribute
+	public class NavigateToViewAttribute: Attribute, INavigable
 	{
 		public NavigateToViewAttribute()
 		{
@@ -51,9 +51,9 @@ namespace MonoMobile.Views
 		public UIModalTransitionStyle TransitionStyle 
 		{ 
 			get { return _TransitionStyle; }
-			set { _TransitionStyle = value; ShowModal = true; }
+			set { _TransitionStyle = value; IsModal = true; }
 		}
-		public bool ShowModal { get; set; }
+		public bool IsModal { get; set; }
 	}
 }
 

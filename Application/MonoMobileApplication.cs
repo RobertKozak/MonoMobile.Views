@@ -32,7 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
@@ -151,8 +150,7 @@ namespace MonoMobile.Views
 			var dvc = CreateDialogViewController(view, true, false);			
 			dvc.ModalTransitionStyle = transistionStyle;
  
-			var navController = new UINavigationController();
-			navController.ViewControllers = new UIViewController[] { dvc };
+			var navController = new UINavigationController() { ViewControllers = new UIViewController[] { dvc } };
 
 			NavigationController.PresentModalViewController(navController, true);
 		}
@@ -167,7 +165,6 @@ namespace MonoMobile.Views
 			Title = title;
 			ViewTypes = new Type[] { mainViewType };
 
-			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
 
@@ -176,13 +173,11 @@ namespace MonoMobile.Views
 			Title = title;
 			ViewTypes = viewTypes;
 			
-			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", "MonoMobileAppDelegate");
 		}
 
 		public static void Run(string delegateName, string[] args)
 		{
-			Registrations.InitializeViewContainer();
 			UIApplication.Main(args, "MonoMobileApplication", delegateName);
 		}
 

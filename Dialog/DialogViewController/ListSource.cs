@@ -104,6 +104,11 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
+				if (CellId != null)
+				{
+					CellId.Dispose();
+				}
+
 				foreach(var section in Sections.Values)
 				{
 					section.DataContext = null;
@@ -457,9 +462,7 @@ namespace MonoMobile.Views
 				Caption = data.ToString();
 			}
 			
-			var dvc = new DialogViewController(Caption, null, Controller.Theme, true);
-			dvc.ToolbarButtons = null;
-			dvc.NavbarButtons = null;
+			var dvc = new DialogViewController(Caption, null, Controller.Theme, true) { ToolbarButtons = null, NavbarButtons = null };
 
 			if (NavigationSource == null)
 				NavigationSource = new ListSource(dvc, data, section.ViewTypes[CellId]);

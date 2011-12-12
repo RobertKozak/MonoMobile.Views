@@ -286,6 +286,9 @@ namespace MonoMobile.Views
 						case TypeCode.DateTime :
 							KeyboardType = UIKeyboardType.NumbersAndPunctuation;
 							break;	
+						default:
+							KeyboardType = UIKeyboardType.Default;
+							break;
 					}
 				}
 			}

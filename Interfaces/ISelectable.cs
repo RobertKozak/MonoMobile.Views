@@ -1,6 +1,5 @@
 namespace MonoMobile.Views
 {
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 

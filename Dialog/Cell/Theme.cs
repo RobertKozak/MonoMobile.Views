@@ -30,12 +30,11 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Drawing;
-	using System.Reflection;
-	using MonoMobile.Views.Utilities;
 	using MonoTouch.CoreGraphics;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
-	public class Theme
+	public class Theme : NSObject
 	{
 		private UITableViewCell _Cell;
 

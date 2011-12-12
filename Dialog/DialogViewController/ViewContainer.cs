@@ -31,18 +31,17 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Reflection;
 	using MonoTouch.UIKit;
 
 	public static class ViewContainer
 	{
-		private static Dictionary<Type, Type> _TypeViewMap = new Dictionary<Type, Type>();
+		private static readonly Dictionary<Type, Type> _TypeViewMap = new Dictionary<Type, Type>();
 
 		public static void RegisterView(Type type, Type viewType)
 		{
 			if (!typeof(UIView).IsAssignableFrom(viewType))
 			{
-				throw new Exception(string.Format("{0} must be a descendent of UIView", viewType.ToString()));
+				throw new Exception(string.Format("{0} must be a descendent of UIView", viewType));
 			}
 			
 			if (_TypeViewMap.ContainsKey(type))

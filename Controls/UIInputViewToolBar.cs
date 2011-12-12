@@ -57,6 +57,26 @@ namespace MonoMobile.Views
 		public UIInputViewToolbar(NSCoder coder) : base(coder) { }
 		public UIInputViewToolbar(IntPtr handle) : base(handle) { }
 		public UIInputViewToolbar(RectangleF frame) : base(frame) { }
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_Spacer != null)
+				{
+					_Spacer.Dispose();
+					_Spacer = null;
+				}
+
+				if (_DoneButton != null)
+				{
+					_DoneButton.Dispose();
+					_DoneButton = null;
+				}
+			}
+			
+			base.Dispose(disposing);
+		}
 
 		public override void LayoutSubviews()
 		{

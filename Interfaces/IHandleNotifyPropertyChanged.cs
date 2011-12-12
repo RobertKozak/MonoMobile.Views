@@ -30,7 +30,6 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Collections.Specialized;
 	using System.ComponentModel;
 	
 	public interface IHandleNotifyPropertyChanged

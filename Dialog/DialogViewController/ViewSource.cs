@@ -1,4 +1,3 @@
-using System.Diagnostics;
 // 
 //  ViewSource.cs
 // 
@@ -33,9 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.ComponentModel;
 	using System.Linq;
-	using System.Reflection;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
@@ -173,7 +170,7 @@ namespace MonoMobile.Views
 						foreach (var view in views)
 						{
 							var viewCaption = view as ICaption;
-							if (viewCaption != null)
+							if (viewCaption != null && string.IsNullOrEmpty(viewCaption.Caption))
 							{
 								viewCaption.Caption = ViewParser.GetCaption(memberData.Member);
 							}

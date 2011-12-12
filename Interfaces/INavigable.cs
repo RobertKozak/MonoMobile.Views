@@ -1,5 +1,5 @@
 // 
-//  CommandCellView.cs
+//  INavigable.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -29,34 +29,14 @@
 // 
 namespace MonoMobile.Views
 {
-	using System.Drawing;
-	using MonoTouch.Foundation;
+	using System;
 	using MonoTouch.UIKit;
-	
-	[Preserve(AllMembers = true)]
-	public class CommandCellView : CellView<ICommand>, ISelectable
+
+	public interface INavigable
 	{
-		public ICommand Command { get { return DataContext.Value as ICommand; } }
-		public object CommandParameter { get; set; }
-
-		public CommandCellView(RectangleF frame) : base(frame)
-		{
-		}
-
-		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{
-			cell.TextLabel.TextAlignment = UITextAlignment.Center;
-			cell.Accessory = UITableViewCellAccessory.None;
-		}
-
-		public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
-		{
-			if (Command != null)
-			{
-				if (Command.CanExecute(CommandParameter))
-					Command.Execute(CommandParameter);
-			}
-		}
+		Type ViewType { get; set; }
+		UIModalTransitionStyle TransitionStyle { get; set; }
+		bool IsModal { get; set; }
 	}
 }
 

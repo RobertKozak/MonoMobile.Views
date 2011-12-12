@@ -35,10 +35,6 @@ namespace MonoMobile.Views
 	public class ReadOnlyAttribute : CellViewTemplate
 	{
 		public override Type CellViewType { get { return typeof(StringCellView); } }
-
-		public ReadOnlyAttribute()
-		{
-		}
 	}
 }
 

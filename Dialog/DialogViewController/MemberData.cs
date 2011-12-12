@@ -192,7 +192,7 @@ namespace MonoMobile.Views
 			UpdateValue();
 		}
 
-		private void RemoveNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		private static void RemoveNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
 		{
 			var notifyCollectionChanged = value as INotifyCollectionChanged;
 			if (notifyCollectionChanged != null && handler != null)
@@ -201,7 +201,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void RemoveNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		private static void RemoveNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
 		{
 			var notifyPropertyChanged = value as INotifyPropertyChanged;
 			if (notifyPropertyChanged != null && handler != null)
@@ -210,7 +210,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		private static void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
 		{
 			RemoveNotifyCollectionChangedHandler(value, handler);
 			var notifyCollectionChanged = value as INotifyCollectionChanged;
@@ -220,7 +220,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		private static void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
 		{
 			RemoveNotifyPropertyChangedHandler(value, handler);
 			var notifyPropertyChanged = value as INotifyPropertyChanged;
@@ -248,26 +248,32 @@ namespace MonoMobile.Views
 		private object ConvertValue(object value)
 		{
 			object convertedValue = value;
-
-			if (ValueConverter != null)
-			{
-				var parameter = GetConverterParameter();
-				convertedValue = ValueConverter.Convert(value, TargetType, parameter, CultureInfo.CurrentUICulture);
-			}
 			
-			if (TargetType != null)
+			try 
 			{
-				var typeCode = Convert.GetTypeCode(convertedValue);
-				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+				if (ValueConverter != null)
 				{
-					try 
+					var parameter = GetConverterParameter();
+					convertedValue = ValueConverter.Convert(value, TargetType, parameter, CultureInfo.CurrentUICulture);
+				}
+				
+				if (TargetType != null)
+				{
+					var typeCode = Convert.GetTypeCode(convertedValue);
+					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
 					{
-						convertedValue = Convert.ChangeType(convertedValue, TargetType);
-					}
-					catch(InvalidCastException)
-					{
+						try 
+						{
+							convertedValue = Convert.ChangeType(convertedValue, TargetType);
+						}
+						catch(InvalidCastException)
+						{
+						}
 					}
 				}
+			}
+			catch (NotImplementedException)
+			{
 			}
 
 			return convertedValue;
@@ -303,6 +309,9 @@ namespace MonoMobile.Views
 				var message = string.Format("The value \"{0}\" is of type {1} but the {2} \"{3}\" is of type {4}. You need to specify an IValueConverter to convert it.", 
 					convertedValue, convertedValue.GetType(), Member.GetMemberTypeName(), Member.Name, memberType);
 				throw new FormatException(message);
+			}
+			catch (NotImplementedException)
+			{
 			}
 
 			return convertedValue;

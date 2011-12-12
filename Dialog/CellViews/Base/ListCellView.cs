@@ -33,7 +33,6 @@ namespace MonoMobile.Views
 	using System.Collections;
 	using System.Drawing;
 	using System.Linq;
-	using System.Reflection;
 	using MonoTouch.UIKit;
 	using MonoTouch.Foundation;
 	

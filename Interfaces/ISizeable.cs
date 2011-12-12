@@ -29,9 +29,6 @@
 //
 namespace MonoMobile.Views
 {
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
-
 	public interface ISizeable
 	{
 		float GetRowHeight();

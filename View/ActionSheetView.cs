@@ -34,7 +34,6 @@ namespace MonoMobile.Views
 	using System.Drawing;
 	using System.Linq;
 	using System.Reflection;
-	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
 	public class ActionSheetView : UIActionSheet
@@ -141,7 +140,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private string GetTitle(MethodInfo method)
+		private static string GetTitle(MethodInfo method)
 		{
 			var captionAttribute = method.GetCustomAttribute<CaptionAttribute>();
 			var title = captionAttribute != null ? captionAttribute.Caption : method.Name.Capitalize();

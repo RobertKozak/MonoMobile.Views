@@ -32,11 +32,16 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Reflection;
 	using MonoTouch.CoreLocation;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
+	
+	[AttributeUsage(AttributeTargets.Class)]
+	public class InitializeAttribute : Attribute
+	{
+	}
+	
+	[Initialize]
 	public static class Registrations
 	{
 		public static void InitializeViewContainer()
@@ -74,11 +79,13 @@ namespace MonoMobile.Views
 			//Other 
 			ViewContainer.RegisterView(typeof(UIView), typeof(ObjectCellView<UIView>));
 			ViewContainer.RegisterView(typeof(ICommand), typeof(CommandCellView));
-			ViewContainer.RegisterView(typeof(Uri), typeof(HtmlCellView));
 			ViewContainer.RegisterView(typeof(DateTime), typeof(DateCellView));
 			ViewContainer.RegisterView(typeof(NSDate), typeof(DateCellView));
-			ViewContainer.RegisterView(typeof(CLLocationCoordinate2D), typeof(MapCellView));
-			ViewContainer.RegisterView(typeof(IEnumerable<CLLocationCoordinate2D>), typeof(MapCellView));
+		}
+
+		public static void Initialize()
+		{
+			InitializeViewContainer();
 		}
 	}
 }

@@ -31,8 +31,7 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Specialized;
-	using System.ComponentModel;
-	
+
 	public interface IHandleNotifyCollectionChanged
 	{
 		void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);

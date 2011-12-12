@@ -176,10 +176,8 @@
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
-    <Compile Include="Extensions\UIDevice.cs" />
     <Compile Include="Dialog\Themes\ClearTheme.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
-    <Compile Include="Extensions\DateExtentions.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Dialog\Themes\PlainTheme.cs" />
     <Compile Include="Dialog\Themes\GroupedTheme.cs" />
@@ -225,17 +223,12 @@
     <Compile Include="Dialog\Cell\ComposableViewListCell.cs" />
     <Compile Include="Interfaces\ICustomDraw.cs" />
     <Compile Include="Dialog\CellViews\Templates\ButtonAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\HtmlAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\PasswordAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\EntryAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\CellViewTemplate.cs" />
     <Compile Include="Dialog\CellViews\Templates\RangeAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\DateAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\TimeAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\MulitlineAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\MapAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\ProgressAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\LoadMoreAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\NavigateToViewAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\ReadOnlyAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\CaptionAttribute.cs" />
@@ -256,12 +249,13 @@
     <Compile Include="Dialog\CellViews\Base\DateCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\DateTimeCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\TimeCellView.cs" />
-    <Compile Include="Dialog\CellViews\Base\HtmlCellView.cs" />
-    <Compile Include="Dialog\CellViews\Base\MapCellVIew.cs" />
     <Compile Include="Dialog\CellViews\Base\CellView.cs" />
     <Compile Include="Dialog\CellViews\Base\FocusableCellView.cs" />
-    <Compile Include="Dialog\CellViews\Templates\AddressSample.cs" />
     <Compile Include="Registrations.cs" />
+    <Compile Include="Dialog\ViewNavigator.cs" />
+    <Compile Include="Interfaces\INavigable.cs" />
+    <Compile Include="Extensions\DateExtensions.cs" />
+    <Compile Include="Extensions\UIDeviceExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	public class Wait
 	{
 		private NSTimer _Timer;
-		private Action _Action;
+		private readonly Action _Action;
 
 		public Wait(TimeSpan when, Action action)
 		{

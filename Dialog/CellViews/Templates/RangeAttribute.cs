@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 	{
 		public override Type CellViewType { get { return typeof(SliderCellView); } }
 
-		public RangeAttribute(float low, float high): base()
+		public RangeAttribute(float low, float high)
 		{
 			Low = low;
 			High = high;

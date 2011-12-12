@@ -43,7 +43,7 @@ namespace MonoMobile.Views
 			{false, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance } 
 		};
 
-		private static List<Func<Type, bool, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<Type, bool, MemberInfo[]>>() 
+		private static readonly List<Func<Type, bool, MemberInfo[]>> _ObjectMemberFuncMap = new List<Func<Type, bool, MemberInfo[]>>() 
 		{
 			(T, allowPrivate) => GetFields(T, allowPrivate),
 			(T, allowPrivate) => GetProperties(T, allowPrivate),
@@ -285,20 +285,12 @@ namespace MonoMobile.Views
 		}
 
 		public static object TryGetValue(this MemberInfo member, object obj)
-		{
+		{	
 			object result = null;
-			
+
 			try
 			{
-				if (member.MemberType == MemberTypes.Field)
-				{
-					result = ((FieldInfo)member).GetValue(obj);
-				}
-			
-				if (member.MemberType == MemberTypes.Property)
-				{
-					result = ((PropertyInfo)member).GetValue(obj, null);
-				}
+				result = GetValue(member, obj);
 			}
 			catch (ArgumentException)
 			{

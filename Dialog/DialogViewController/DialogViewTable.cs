@@ -50,6 +50,20 @@ namespace MonoMobile.Views
 
 		protected override void Dispose (bool disposing)
 		{
+			if (disposing)
+			{
+				if (oldTextShadowColor != null)
+				{
+					oldTextShadowColor.Dispose();
+					oldTextShadowColor= null;
+				}
+
+				if (oldDetailTextShadowColor != null)
+				{
+					oldDetailTextShadowColor.Dispose();
+					oldDetailTextShadowColor = null;
+				}
+			}
 			base.Dispose (disposing);
 		}
 		

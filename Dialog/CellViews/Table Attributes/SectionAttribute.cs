@@ -30,7 +30,6 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using MonoMobile.Views;
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class SectionAttribute : Attribute

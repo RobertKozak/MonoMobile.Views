@@ -31,7 +31,6 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Globalization;
-	using MonoMobile.Views;
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]

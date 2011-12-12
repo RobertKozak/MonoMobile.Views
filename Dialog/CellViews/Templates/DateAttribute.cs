@@ -36,7 +36,7 @@ namespace MonoMobile.Views
 	{
 		public override Type CellViewType { get { return typeof(DateCellView); } }
 
-		public DateAttribute(): base()
+		public DateAttribute()
 		{
 		}
 	}

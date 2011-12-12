@@ -62,8 +62,8 @@ namespace MonoMobile.Views
 		private DateTime? _ShowStarted;
 		private HudProgressMode? _Mode;
 		private bool _UseAnimation;
-		private float _YOffset = 0f;
-		private float _XOffset= 0f;
+		private readonly float _YOffset = 0f;
+		private readonly float _XOffset= 0f;
 		private bool _TaskInProgress;
 		private UILabel _Label;
 		private UILabel _DetailsLabel;
@@ -183,6 +183,8 @@ namespace MonoMobile.Views
 			{
 				indicator.Progress = Progress;
 			}
+
+			_Window = null;
 		}
 
 		private void UpdateIndicators()
@@ -209,9 +211,10 @@ namespace MonoMobile.Views
 				{
 					ContentMode = UIViewContentMode.ScaleAspectFill,
 					Image = _CheckmarkImage,
-					AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin
+					AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin,
+					Bounds = new RectangleF(0, 0, 37, 37)
 				};
-				_Indicator.Bounds = new RectangleF(0, 0, 37, 37);
+				
 			}
 			
 			AddSubview(_Indicator);
@@ -460,7 +463,7 @@ namespace MonoMobile.Views
 			return (new Class(clsName)).Handle;
 		}
 
-		private float ToRadians(float degrees)
+		private static float ToRadians(float degrees)
         {
             return degrees * 0.01745329f;
         }

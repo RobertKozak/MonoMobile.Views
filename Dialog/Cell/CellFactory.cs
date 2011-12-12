@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.ObjCRuntime;
 
-	public class TableCellFactory<T> where T : UITableViewCell
+	public class TableCellFactory<T> : NSObject where T : UITableViewCell
 	{
 		private string _NibName;
     
@@ -47,7 +47,17 @@ namespace MonoMobile.Views
 		public TableCellFactory()
 		{
 		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && CellId != null)
+			{
+				CellId.Dispose();
+				CellId = null;
+			}
 
+			base.Dispose(disposing);
+		}
 		public T GetCell(UITableView tableView, NSIndexPath indexPath, NSString cellId, Func<NSString, NSIndexPath, T> newCell)
 		{
 			return GetCell(tableView, indexPath, cellId, string.Empty, newCell);

@@ -27,17 +27,23 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-
 namespace MonoMobile.Views
 {
+	using System;
+	using MonoTouch.UIKit;
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
-	public abstract class CellViewTemplate : ValueConverterAttribute
+	public abstract class CellViewTemplate : ValueConverterAttribute, INavigable, ICaption
 	{
+		public string Caption { get; set; }
 		public abstract Type CellViewType { get; }
 
 		public string InstancePropertyName { get; set; }
 		
+		public Type ViewType { get; set; }
+		public UIModalTransitionStyle TransitionStyle { get; set; }
+		public bool IsModal { get; set; }	
+
 		public CellViewTemplate(Type valueConverterType): base(valueConverterType)
 		{
 			ViewContainer.RegisterView(GetType(), CellViewType);
@@ -46,6 +52,14 @@ namespace MonoMobile.Views
 		public CellViewTemplate()
 		{
 			ViewContainer.RegisterView(GetType(), CellViewType);
+		}
+
+		public CellViewTemplate(Type valueConverterType, object converterParameter): base(valueConverterType, converterParameter)
+		{
+		}
+
+		public CellViewTemplate(Type valueConverterType, string converterParameterPropertyName): base(valueConverterType, converterParameterPropertyName)
+		{
 		}
 	}
 }

@@ -87,7 +87,7 @@ namespace MonoMobile.Views
 
 		public virtual string FormatDate(DateTime dt)
 		{
-			return fmt.ToString(dt) + " " + dt.ToLocalTime().ToShortTimeString();
+			return string.Format("{0} {1}", fmt.ToString(dt), dt.ToLocalTime().ToShortTimeString());
 		}
 
 		public virtual UIDatePicker CreatePicker()

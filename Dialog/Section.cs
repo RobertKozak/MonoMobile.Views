@@ -32,11 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Collections.Specialized;
-	using System.ComponentModel;
-	using System.Drawing;
-	using System.Linq;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
@@ -64,7 +59,7 @@ namespace MonoMobile.Views
 		public UIView HeaderView { get; set; }
 		public UIView FooterView { get; set; }
 		
-		public Section(string title)
+		public Section()
 		{
 			ListSources = new Dictionary<int, ListSource>(); 
 			ViewTypes = new Dictionary<string, IList<Type>>();
@@ -82,15 +77,20 @@ namespace MonoMobile.Views
 		
 		protected override void Dispose(bool disposing)
 		{
-			foreach (var viewList in Views.Values)
+			if (disposing)
 			{
-				foreach (var view in viewList)
+				Controller = null;
+
+				foreach (var viewList in Views.Values)
 				{
-					var disposable = view as IDisposable;
-					if (disposable != null)
+					foreach (var view in viewList)
 					{
-						disposable.Dispose();
-						disposable = null;
+						var disposable = view as IDisposable;
+						if (disposable != null)
+						{
+							disposable.Dispose();
+							disposable = null;
+						}
 					}
 				}
 			}
