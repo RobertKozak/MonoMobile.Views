@@ -32,7 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using MonoTouch.Foundation;
 
-	public class Wait
+	public class Wait : NSObject
 	{
 		private NSTimer _Timer;
 		private readonly Action _Action;
@@ -43,12 +43,27 @@ namespace MonoMobile.Views
 			_Timer = NSTimer.CreateScheduledTimer(when, ExecuteTimer);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				KillTimer();
+
+			base.Dispose(disposing);
+		}
+		
+		private void KillTimer()
+		{
+			if (_Timer != null)
+			{
+				_Timer.Invalidate();
+				_Timer.Dispose();
+				_Timer = null;
+			}
+		}
+
 		private void ExecuteTimer()
 		{
-			_Timer.Invalidate();
-			_Timer.Dispose();		
-			_Timer = null;
-
+			KillTimer();
 			_Action();
 		}
 	}

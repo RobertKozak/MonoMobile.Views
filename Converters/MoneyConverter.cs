@@ -51,7 +51,7 @@ namespace MonoMobile.Views
 			if (value == null)
 				return "0.00";
 
-			return ((string)value).Replace("$", "");
+			return ((string)value).Replace("$", "").Replace("(","-").Replace(")","");
 		}
 	}
 }

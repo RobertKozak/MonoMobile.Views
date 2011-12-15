@@ -46,7 +46,8 @@ namespace MonoMobile.Views
 		Indeterminate,
 		/** Progress is shown using a MBRoundProgressView. */
 		Determinate, 
-		Completed
+		Completed,
+		None
 	}
 
 	public class ProgressHud : UIView
@@ -217,7 +218,8 @@ namespace MonoMobile.Views
 				
 			}
 			
-			AddSubview(_Indicator);
+			if (Mode != HudProgressMode.None)
+				AddSubview(_Indicator);
 		}
 		#endregion
 		

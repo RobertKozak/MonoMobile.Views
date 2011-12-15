@@ -36,11 +36,13 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	
+	[Preserve(AllMembers = true)]
 	[AttributeUsage(AttributeTargets.Class)]
 	public class InitializeAttribute : Attribute
 	{
 	}
 	
+	[Preserve(AllMembers = true)]
 	[Initialize]
 	public static class Registrations
 	{

@@ -899,7 +899,7 @@ namespace MonoMobile.Views
 
 		private void SetScrollEnabled()
 		{
-			if (DisableScrolling)
+			if (DisableScrolling && TableView != null && TableView.Source != null)
 			{
 				var totalCells = 0;
 				var numberOfSections = TableView.Source.NumberOfSections(TableView);
@@ -914,25 +914,28 @@ namespace MonoMobile.Views
 		
 		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var source = TableView.Source as BaseDialogViewSource;
-			foreach (var section in source.Sections.Values)
+			Log.Time("Handle NotifyPropertyChanged property = "+ e.PropertyName, ()=>
 			{
-				foreach (var viewList in section.Views.Values)
+				var source = TableView.Source as BaseDialogViewSource;
+				foreach (var section in source.Sections.Values)
 				{
-					foreach(var view in viewList)
+					foreach (var viewList in section.Views.Values)
 					{
-						var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
-						var dc = view as IDataContext<MemberData>;
-						if (dc != null)
+						foreach (var view in viewList)
 						{
-							if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
+							var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
+							var dc = view as IDataContext<MemberData>;
+							if (dc != null)
 							{
-								new Wait(TimeSpan.FromMilliseconds(150), ()=>handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e));
+								if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
+								{
+									new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e));
+								}
 							}
 						}
 					}
-				}
-			}
+				}				
+			});
 		}
 
 		private void CreateTableView(object view, Theme theme)

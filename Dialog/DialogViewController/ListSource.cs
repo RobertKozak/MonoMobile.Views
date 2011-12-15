@@ -413,6 +413,9 @@ namespace MonoMobile.Views
 		
 		public void NavigateToView()
 		{
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+
 			var viewType = NavigationViewType;
 			if (viewType == null)
 			{
@@ -450,6 +453,9 @@ namespace MonoMobile.Views
 				var dvc = new DialogViewController(Caption, NavigationView, Controller.Theme, true);
 				Controller.NavigationController.PushViewController(dvc, true);
 			}
+
+			sw.Stop();
+			Console.WriteLine("Navigate to View time : "+sw.Elapsed.Milliseconds);
 		}
 
 		public void NavigateToList()

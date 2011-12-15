@@ -184,7 +184,10 @@ namespace MonoMobile.Views
 		
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			UpdateValue();
+			Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName, ()=>
+			{
+				UpdateValue();
+			});
 		}
 
 		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

@@ -176,11 +176,8 @@
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolBar.cs" />
     <Compile Include="Controls\UIInputViewToolBar.cs" />
-    <Compile Include="Dialog\Themes\ClearTheme.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
-    <Compile Include="Dialog\Themes\PlainTheme.cs" />
-    <Compile Include="Dialog\Themes\GroupedTheme.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Application\Alert.cs" />
     <Compile Include="Application\MonoMobileApplication.cs" />
@@ -256,6 +253,7 @@
     <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
     <Compile Include="Extensions\UIDeviceExtensions.cs" />
+    <Compile Include="Application\Log.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -269,7 +267,6 @@
     <Folder Include="Controls\" />
     <Folder Include="Dialog\Cell\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Dialog\Themes\" />
     <Folder Include="Controllers\" />
     <Folder Include="Dialog\DialogViewController\" />
     <Folder Include="Dialog\CellViews\" />
