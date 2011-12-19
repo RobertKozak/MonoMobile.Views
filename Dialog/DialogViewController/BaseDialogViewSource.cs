@@ -155,6 +155,16 @@ namespace MonoMobile.Views
 						
 						foreach (var memberAttribute in memberAttributes)
 						{
+							var viewTheme = view as IThemeable;
+							if (viewTheme != null)
+							{
+								var memberTheme = memberAttribute as CellViewTemplate;
+								if (memberTheme != null && memberTheme.Theme != null)
+								{
+									viewTheme.Theme = Theme.CreateTheme(memberTheme.Theme);
+								}
+							}
+
 							var navigable = view as INavigable;
 							if (navigable != null)
 							{

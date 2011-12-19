@@ -119,7 +119,7 @@ namespace MonoMobile.Views
 		public void MovePrev()
 		{
 			var views = GetFocusableList();
-			views.Reverse();
+			views = views.Reverse().ToList();
 
 			MoveFocus(views);
 		}
@@ -136,7 +136,7 @@ namespace MonoMobile.Views
 					foreach (var view in viewList)
 					{
 						var focusable = view as IFocusable;
-						if (focusable != null && focusable.EditModeValue != EditMode.ReadOnly && focusable != this)
+						if (focusable != null && focusable.EditModeValue != EditMode.ReadOnly)
 						{
 							views.Add(focusable);
 						}
@@ -150,8 +150,8 @@ namespace MonoMobile.Views
 		private void MoveFocus(IList<IFocusable> focusables)
 		{
 			_Focus = null;
-			
-			_Focus = focusables.Skip(1).FirstOrDefault();
+
+			_Focus = focusables.SkipUntil((focus) => focus == this).FirstOrDefault();
 
 			if (_Focus == null)
 			{

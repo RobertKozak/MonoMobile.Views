@@ -43,7 +43,9 @@ namespace MonoMobile.Views
 		public Type ViewType { get; set; }
 		public UIModalTransitionStyle TransitionStyle { get; set; }
 		public bool IsModal { get; set; }	
-
+		
+		public Theme Theme { get; set; }
+		
 		public CellViewTemplate(Type valueConverterType): base(valueConverterType)
 		{
 			ViewContainer.RegisterView(GetType(), CellViewType);

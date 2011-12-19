@@ -279,7 +279,10 @@ namespace MonoMobile.Views
 				else
 				{
 					if (sectionData.Count > 0)
+					{
+						cell.TextLabel.AdjustsFontSizeToFitWidth = true;
 						cell.TextLabel.Text = sectionData[indexPath.Row].ToString();
+					}
 				}
 			}
 		}
