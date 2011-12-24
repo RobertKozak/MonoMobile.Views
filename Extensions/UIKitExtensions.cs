@@ -36,18 +36,18 @@ namespace MonoMobile.Views
 	{
 		public static UIColor Clone(this UIColor color)
 		{
-			if (color == null)
+			//if (color == null)
 				return color;
 
-			return new UIColor(color.CGColor);
+		//	return new UIColor(color.CGColor);
 		}
 
 		public static UIFont Clone(this UIFont font)
 		{
-			if (font != null)
-				return UIFont.FromName(font.Name, font.PointSize);
+			//if (font != null)
+				//return UIFont.FromName(font.Name, font.PointSize);
 			
-			return null;
+			return font;
 		}
 	}
 }

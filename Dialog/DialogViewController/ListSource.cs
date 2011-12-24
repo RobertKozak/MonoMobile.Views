@@ -116,9 +116,30 @@ namespace MonoMobile.Views
 				{
 					CellId.Dispose();
 				}
+				
+				if (NavigationView != null)
+				{
+					var disposable = NavigationView as IDisposable;
+					if (disposable != null)
+					{
+						disposable.Dispose();
+						NavigationView = null;
+					}
+				}
+
+				if (NavigationSource != null)
+				{
+					NavigationSource.Dispose();
+					NavigationSource = null;
+				}
 
 				foreach(var section in Sections.Values)
 				{
+					var disposable = section.DataContext as IDisposable;
+					if (disposable != null)
+					{
+						disposable.Dispose();
+					}
 					section.DataContext = null;
 				}
 			}
@@ -171,11 +192,11 @@ namespace MonoMobile.Views
 			
 			if (RowHeights.Count > 0 && RowHeights[BaseIndexPath] > 0)
 			{
-				new Wait(new TimeSpan(0), () =>
+				using (new Wait(new TimeSpan(0), () =>
 				{
 					Controller.TableView.BeginUpdates();
 					Controller.TableView.EndUpdates();
-				});
+				}));
 			}
 
 			return cell;
@@ -403,10 +424,10 @@ namespace MonoMobile.Views
 					}
 					else
 					{
-						new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+						using (new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
 						{
 							Controller.ReloadData();
-						});
+						}));
 					}
 				}
 

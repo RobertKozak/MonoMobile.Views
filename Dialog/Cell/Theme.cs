@@ -239,42 +239,7 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
-				Console.WriteLine("Disposing Theme : {0} [ Handle: {1} ]", Name, Handle);
-
 				_Cell = null;
-				
-//				if (PlaceholderColor != null) PlaceholderColor.Dispose();
-//				if (SeparatorColor != null) SeparatorColor.Dispose();
-//				if (BarTintColor != null) BarTintColor.Dispose();
-//
-//				if (CellImageIcon != null) CellImageIcon.Dispose();
-//				if (CellBackgroundColor != null) CellBackgroundColor.Dispose();
-//				
-//				if (TextFont != null) TextFont.Dispose();
-//				if (TextColor != null) TextColor.Dispose();
-//				if (TextShadowColor != null) TextShadowColor.Dispose();
-//				if (TextHighlightColor != null) TextHighlightColor.Dispose();
-//				if (DetailTextFont != null) DetailTextFont.Dispose();
-//				if (DetailTextColor != null) DetailTextColor.Dispose();
-//				if (DetailTextShadowColor != null) DetailTextShadowColor.Dispose();
-//				if (DetailTextHighlightColor != null) DetailTextHighlightColor.Dispose();
-//
-//				if (HeaderTextFont != null) HeaderTextFont.Dispose();
-//				if (HeaderTextColor != null) HeaderTextColor.Dispose();
-//				if (HeaderTextBackgroundColor != null) HeaderTextBackgroundColor.Dispose();
-//				if (HeaderTextShadowColor != null) HeaderTextShadowColor.Dispose();
-//				if (HeaderBackgroundColor != null) HeaderBackgroundColor.Dispose();
-//				
-//				if (HeaderTextFont != null) HeaderTextFont.Dispose();
-//				if (HeaderTextColor != null) HeaderTextColor.Dispose();
-//				if (HeaderTextBackgroundColor != null) HeaderTextBackgroundColor.Dispose();
-//				if (HeaderTextShadowColor != null) HeaderTextShadowColor.Dispose();
-//				if (HeaderBackgroundColor != null) HeaderBackgroundColor.Dispose();
-//	
-//				if (BackgroundImage != null) BackgroundImage.Dispose();
-//				if (BackgroundColor != null) BackgroundColor.Dispose();
-//				
-//				if (DisabledColor != null) DisabledColor.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -296,18 +261,12 @@ namespace MonoMobile.Views
 		public static Theme CreateTheme()
 		{
 			var newTheme = new Theme();
-
-			Console.WriteLine("Created Theme {0} [ Handle: {1} ]", newTheme.Name, newTheme.Handle);
-
 			return newTheme;
 		}
 
 		public static Theme CreateTheme(Type themeType)
 		{
 			var newTheme = Activator.CreateInstance(themeType) as Theme;
-
-			Console.WriteLine("Created Theme {0} [ Handle: {1} ]", newTheme.Name, newTheme.Handle);
-
 			return newTheme;
 		}
 

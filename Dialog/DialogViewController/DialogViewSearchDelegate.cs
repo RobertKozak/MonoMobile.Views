@@ -88,11 +88,11 @@ namespace MonoMobile.Views
 		{
 			searchbar.ShowsCancelButton = false;
 			searchbar.ResignFirstResponder();
-			new Wait(new TimeSpan(0,0,0,0,300), ()=> 
+			using (new Wait(new TimeSpan(0,0,0,0,300), ()=> 
 			{
 				_Container.FinishSearch(false); 
 				_Container.ToggleSearchbar();
-			});
+			}));
 		}
 
 		public override void SearchButtonClicked(UISearchBar searchbar)

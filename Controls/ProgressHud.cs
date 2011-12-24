@@ -291,6 +291,11 @@ namespace MonoMobile.Views
 
 		protected override void Dispose(bool disposing)
 		{
+			if (_CheckmarkImage != null)
+			{
+				_CheckmarkImage.Dispose();
+			}
+
 			if (_Indicator != null)
 			{
 				_Indicator.RemoveFromSuperview();

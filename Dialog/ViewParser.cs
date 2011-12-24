@@ -111,6 +111,7 @@ namespace MonoMobile.Views
 					pullToRefreshAttribute != null || 
 					(attributes.Length == 0 && typeof(MethodInfo) == memberData.Type))
 				{
+					memberData.Dispose();
 					continue;
 				}
 

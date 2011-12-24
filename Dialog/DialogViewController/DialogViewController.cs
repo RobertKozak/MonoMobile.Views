@@ -905,7 +905,7 @@ namespace MonoMobile.Views
 							{
 								if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
 								{
-									new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e));
+									using (new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e)));
 								}
 							}
 						}
@@ -983,6 +983,11 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
+				if (BackgroundImage != null)
+				{
+					//BackgroundImage.Dispose();
+				}
+
 				_LeftFixedSpace.Dispose();
 				_RightFixedSpace.Dispose();
 
@@ -1012,11 +1017,11 @@ namespace MonoMobile.Views
 										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
 									}
 								}
-
-								view.Dispose();
 							}
 						}
 					}
+
+					source.Dispose();
 				}
 
 				if (_TableView != null)
@@ -1038,6 +1043,22 @@ namespace MonoMobile.Views
 					{
 						disposable.Dispose();
 						RootView = null;
+					}
+				}
+				
+				if (ToolbarButtons != null)
+				{
+					foreach(var button in ToolbarButtons)
+					{
+						button.Dispose();
+					}
+				}
+
+				if (NavbarButtons != null)
+				{
+					foreach (var button in NavbarButtons)
+					{
+						button.Dispose();
 					}
 				}
 

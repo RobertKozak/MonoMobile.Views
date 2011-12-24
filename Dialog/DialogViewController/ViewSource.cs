@@ -47,7 +47,7 @@ namespace MonoMobile.Views
 		{
 			Caption = title;
 		}
-		
+
 		public override int RowsInSection(UITableView tableview, int sectionIndex)
 		{
 			if (IsRootCell)
@@ -180,7 +180,8 @@ namespace MonoMobile.Views
 							if (dc != null)
 							{
 								var item = GetMemberData(indexPath);
-								dc.DataContext = item;
+								if (dc.DataContext != item)
+									dc.DataContext = item;
 							}
 
 							var updateable = view as IUpdateable;

@@ -65,7 +65,12 @@ namespace MonoMobile.Views
 			{
 				Controller = null;
 				Cell = null;
-				DataContext = null;
+
+				if (DataContext != null)
+				{
+					DataContext.Dispose();
+				}
+				
 				Value = default(T);
  
 				if (Theme != null)

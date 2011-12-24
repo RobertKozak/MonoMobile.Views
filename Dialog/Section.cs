@@ -74,12 +74,13 @@ namespace MonoMobile.Views
 			ViewTypes = new Dictionary<string, IList<Type>>();
 			Views = new Dictionary<UITableViewCell, IList<UIView>>();
 		}
-		
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
 				Controller = null;
+
 				if (HeaderView != null) HeaderView.Dispose();
 				if (FooterView != null) FooterView.Dispose();
 

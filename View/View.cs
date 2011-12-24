@@ -71,6 +71,12 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
+				var dc = this as IDataContext<MemberData>;
+				if (dc != null)
+				{
+					dc.DataContext.Dispose();
+				}
+
 				if (Theme != null)
 				{
 					Theme.Dispose();

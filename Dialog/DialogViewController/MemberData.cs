@@ -84,16 +84,25 @@ namespace MonoMobile.Views
 			
 			AddNotifyPropertyChangedHandler(Source, this);
 			AddNotifyPropertyChangedHandler(DataContextSource, this);
+			
+			Console.WriteLine("Creating MemberData: {0} from {1}", Member.Name, Source.GetType());
 		}
 		
-		protected override void Dispose (bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
+				Console.WriteLine("Disposing MemberData: {0} from {1}", Member.Name, Source.GetType());
+				
 				Id.Dispose();
-			}
 
-			base.Dispose (disposing);
+				if (DataContextBinder != null)
+				{
+					DataContextBinder.Dispose();
+				}
+			}
+			
+			base.Dispose(disposing);
 		}
 
 		protected virtual object GetValue()
