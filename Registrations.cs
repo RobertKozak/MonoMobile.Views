@@ -32,7 +32,6 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using MonoTouch.CoreLocation;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 	

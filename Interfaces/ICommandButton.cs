@@ -1,5 +1,5 @@
 // 
-//  ViewNavigator.cs
+//  ICommandButton.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,16 +27,17 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+using System;
+
 namespace MonoMobile.Views
 {
-	using System;
-	
-	public static class ViewNavigator
+	public interface ICommandButton
 	{
-		public static void Navigate(Type viewType, object dataContext)
-		{
+		ICommand Command { get; set; }
+		object CommandParameter { get; set; }
 
-		}
+		bool Enabled { get; set; }
+		bool Hidden { get; set; }
 	}
 }
 

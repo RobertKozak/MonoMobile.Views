@@ -37,7 +37,7 @@ namespace MonoMobile.Views
 
 	public static class TypeExtensions
 	{
-		private static Dictionary<bool, BindingFlags> _BindingFlagsMap= new Dictionary<bool, BindingFlags>() 
+		private static readonly Dictionary<bool, BindingFlags> _BindingFlagsMap= new Dictionary<bool, BindingFlags>() 
 		{  
 			{true, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance }, 
 			{false, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance } 

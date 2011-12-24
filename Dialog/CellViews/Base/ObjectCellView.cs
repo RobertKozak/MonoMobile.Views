@@ -99,7 +99,7 @@ namespace MonoMobile.Views
 				{		
 					dvc.ModalTransitionStyle = TransitionStyle;
  
-					var navController = new UINavigationController() { ViewControllers = new UIViewController[] { dvc } };
+					var navController = new NavigationController() { ViewControllers = new UIViewController[] { dvc } };
 
 					nav.PresentModalViewController(navController, true);
 				}

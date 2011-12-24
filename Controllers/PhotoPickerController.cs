@@ -31,7 +31,6 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Drawing;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
 
@@ -39,7 +38,7 @@ namespace MonoMobile.Views
 	{
 		class PhotoControllerDelegate : UIImagePickerControllerDelegate
 		{
-			private Action<UIImage> _SelectedAction;
+			private readonly Action<UIImage> _SelectedAction;
 			private UIImage _SelectedImage;
 
 			public PhotoControllerDelegate(Action<UIImage> selectedAction)

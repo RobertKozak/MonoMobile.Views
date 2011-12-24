@@ -39,13 +39,14 @@ namespace MonoMobile.Views
 	
 	public class ViewParser : NSObject
 	{
-		private readonly CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
-		private readonly CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
-
-		public ViewParser()
-		{
-		}
+		private static readonly CommandBarButtonItem _LeftFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Left };
+		private static readonly CommandBarButtonItem _RightFlexibleSpace = new CommandBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) { Location = BarButtonLocation.Right };
 		
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+		}
+
 		public UITableViewSource Parse(DialogViewController controller, object view, MemberInfo member)
 		{
 			UITableViewSource source = null;
@@ -60,8 +61,10 @@ namespace MonoMobile.Views
 
 				if (member != null)
 				{
-					var memberData = new MemberData(view, member);
-					source = ParseList(controller, memberData, null); 
+					using (var memberData = new MemberData(view, member))
+					{
+						source = ParseList(controller, memberData, null); 
+					}
 				}
 					
 				if (source == null)
@@ -123,9 +126,12 @@ namespace MonoMobile.Views
 				var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
 				if (themeAttribute != null)
 				{
-					var theme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+					var theme = Theme.CreateTheme(themeAttribute.ThemeType);
 					if (theme != null && theme.CellHeight > 0)
+					{
 						memberData.RowHeight = theme.CellHeight;
+						theme.Dispose();
+					}
 				}
 				else
 				{
@@ -133,7 +139,6 @@ namespace MonoMobile.Views
 					if (themeable != null && themeable.Theme != null && themeable.Theme.CellHeight > 0)
 					{
 						memberData.RowHeight = themeable.Theme.CellHeight;
-						themeable.Theme = null;
 					}
 				}
 
@@ -242,8 +247,6 @@ namespace MonoMobile.Views
 					if ((!typeof(string).IsAssignableFrom(memberData.Type) && typeof(IEnumerable).IsAssignableFrom(memberData.Type)) || typeof(Enum).IsAssignableFrom(memberData.Type))
 					{
 						var listSource = ParseList(controller, memberData, viewTypes) as ListSource; 
-			//			listSource.IsRootCell = listSource.IsRootCell || listSources.Count > 0;
-			//			listSource.IsNavigable = listSource.IsRootCell;
 
 						listSource.MemberData = memberData;
 						listSource.Sections[0].Index = memberData.Section;
@@ -278,7 +281,7 @@ namespace MonoMobile.Views
 			return source;
 		}
 
-		public UITableViewSource ParseList(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
+		public static UITableViewSource ParseList(DialogViewController controller, MemberData memberData, List<Type> viewTypes)
 		{
 			object memberValue = memberData.Value;
 			var member = memberData.Member;
@@ -353,7 +356,7 @@ namespace MonoMobile.Views
 			return null;
 		}
 		
-	    public static ICommand GetCommandForMember(object view, MemberInfo member)
+	    public static ReflectiveCommand GetCommandForMember(object view, MemberInfo member)
 		{
 			string propertyName = string.Empty;
 			PropertyInfo propertyInfo = null;
@@ -365,13 +368,6 @@ namespace MonoMobile.Views
 				propertyName = buttonAttribute.CanExecutePropertyName;
 				commandOption = buttonAttribute.CommandOption;
 			}
-
-//			var progressAttribute = member.GetCustomAttribute<ProgressAttribute>();
-//			if (progressAttribute != null)
-//			{
-//				propertyName = progressAttribute.CanExecutePropertyName;
-//				commandOption = progressAttribute.CommandOption;
-//			}
 
 			var toolbarButtonAttribute = member.GetCustomAttribute<ToolbarButtonAttribute>();
 			if (toolbarButtonAttribute != null)
@@ -449,7 +445,7 @@ namespace MonoMobile.Views
 						
 						CheckForInstanceProperties(view, member, buttonView);
 
-						var tappable = buttonView as ITappable;
+						var tappable = buttonView as ICommandButton;
 						if (tappable != null)
 						{
 							tappable.Command = GetCommandForMember(view, member); 
@@ -461,6 +457,11 @@ namespace MonoMobile.Views
 					
 					if (button != null)
 					{		
+						if (button.Command != null)
+						{
+							button.Command.CanExecuteChanged += HandleCanExecuteChanged;
+						}
+
 						if (button.Location == BarButtonLocation.Center)
 							buttonList.Add(_LeftFlexibleSpace);
 
@@ -503,7 +504,7 @@ namespace MonoMobile.Views
 						
 						CheckForInstanceProperties(view, member, buttonView);
 
-						var tappable = buttonView as ITappable;
+						var tappable = buttonView as ICommandButton;
 						if (tappable != null)
 						{
 							tappable.Command = GetCommandForMember(view, member); 
@@ -515,6 +516,11 @@ namespace MonoMobile.Views
 					
 					if (button != null)
 					{
+						if (button.Command != null)
+						{
+							button.Command.CanExecuteChanged += HandleCanExecuteChanged;
+						}
+
 						buttonList.Add(button);
 					}
 				}
@@ -587,7 +593,7 @@ namespace MonoMobile.Views
 		{
 			CommandBarButtonItem button = null;
 
-			ICommand command = null;
+			ReflectiveCommand command = null;
 			var methodInfo = member as MethodInfo;
 
 			if(methodInfo != null)
@@ -595,7 +601,7 @@ namespace MonoMobile.Views
 
 			if (!string.IsNullOrEmpty(title))
 			{
-				button = new CommandBarButtonItem(title, style, delegate {command.Execute(null); });
+				button = new CommandBarButtonItem(title, style, (sender, e) => command.Execute(null));
 			}
 			else if (buttonView != null)
 			{
@@ -606,10 +612,11 @@ namespace MonoMobile.Views
 				if (!buttonType.HasValue)
 					buttonType = UIBarButtonSystemItem.Done;
 
-				button = new CommandBarButtonItem(buttonType.Value,  delegate { command.Execute(null); });
+				button = new CommandBarButtonItem(buttonType.Value,  (sender, e) => command.Execute(null));
 				button.Style = style;
 			}
 		
+			command.CommandButton = button;
 			button.Enabled = true;
 			button.Location = location;
 			button.Command = command;
@@ -728,7 +735,7 @@ namespace MonoMobile.Views
 		private static void CheckForInstanceProperties(object view, MemberInfo member, UIView elementView)
 		{
 			var cellViewTemplate = member.GetCustomAttribute<CellViewTemplate>(true);
-			if (cellViewTemplate != null)// && element != _NoElement)
+			if (cellViewTemplate != null)
 			{
 				if (!string.IsNullOrEmpty(cellViewTemplate.InstancePropertyName))
 				{
@@ -736,21 +743,10 @@ namespace MonoMobile.Views
 					if (instanceProperty != null)
 					{
 						UIView instanceView = elementView;
-//						if (element != null && element.ElementView != null)
-//							instanceView = element.ElementView;
 
 						instanceProperty.SetValue(view, instanceView);
 					}
-				}
-
-//				if (!string.IsNullOrEmpty(baseControlAttribute.ElementPropertyName))
-//				{
-//					var elementProperty = view.GetType().GetProperty(baseControlAttribute.ElementPropertyName, BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-//					if (elementProperty != null)
-//					{
-//						elementProperty.SetValue(view, element);
-//					}
-//				}
+				}				
 			}
 		}
 		
@@ -759,14 +755,16 @@ namespace MonoMobile.Views
 			var reflectiveCommand = sender as ReflectiveCommand;
 			if (reflectiveCommand != null)
 			{
-//				if (reflectiveCommand.CommandOption == CommandOption.Hide)
-//				{
-//					reflectiveCommand.Element.Visible = reflectiveCommand.CanExecute(null);
-//				}
-//				else
-//				{
-//					reflectiveCommand.Element.Enabled = reflectiveCommand.CanExecute(null);
-//				}
+				if (reflectiveCommand.CommandOption == CommandOption.Hide)
+				{
+					reflectiveCommand.CommandButton.Hidden = !reflectiveCommand.CanExecute(null);
+				}
+				else
+				{
+					reflectiveCommand.CommandButton.Enabled = reflectiveCommand.CanExecute(null);
+				}
+
+				MonoMobileApplication.CurrentDialogViewController.UpdateSource();
 			}
 		}
 	}

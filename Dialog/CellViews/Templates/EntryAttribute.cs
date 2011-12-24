@@ -44,7 +44,7 @@ namespace MonoMobile.Views
 		{
 		}
 
-		public EntryAttribute(string placeholder): base()
+		public EntryAttribute(string placeholder)
 		{
 			Placeholder = placeholder;
 		}
@@ -103,22 +103,24 @@ namespace MonoMobile.Views
 					//DataContextProperty.ConvertBack<string>();				
 				};
 				
-				InputView.ShouldReturn = delegate
+				InputView.ShouldReturn = UITextField =>
 				{
 					InputView.ResignFirstResponder();
 	
 					return true;
 				};
 					
-				InputView.EditingDidEnd += delegate 
+				InputView.EditingDidEnd += (sender, e) => 
 				{
 					DataContext.Value = InputView.Text;
 					InputView.Text = DataContext.Value.ToString();
 				};
 								
-				InputView.EditingDidEndOnExit += delegate {
+				InputView.EditingDidEndOnExit += (sender, e) =>
+				{
 					InputView.ResignFirstResponder();
 				};
+
 				Add(InputView);
 			}
 	
@@ -239,20 +241,23 @@ namespace MonoMobile.Views
 			{
 				base.SetDataContext(value);
 	
-				var propertyInfo = DataContext.Member as PropertyInfo;
-				if (propertyInfo != null)
+				if (DataContext != null)
 				{
-					EditModeValue = !propertyInfo.CanWrite ? EditMode.ReadOnly : EditModeValue;
-				}
+					var propertyInfo = DataContext.Member as PropertyInfo;
+					if (propertyInfo != null)
+					{
+						EditModeValue = !propertyInfo.CanWrite ? EditMode.ReadOnly : EditModeValue;
+					}
 	
-				SetKeyboard();
+					SetKeyboard();
+				}
 			}
 			
 			private void SetKeyboard()
 			{
 				if (KeyboardType == UIKeyboardType.Default)
 				{
-					var typeCode = Convert.GetTypeCode(DataContext.Value);
+					var typeCode = Convert.GetTypeCode(DataContext.UnconvertedValue);
 					switch (typeCode)
 					{
 						case TypeCode.Decimal :

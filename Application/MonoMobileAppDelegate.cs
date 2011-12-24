@@ -31,11 +31,9 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
 	using System.Linq;
-	using System.Threading;
 	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;	
+	using MonoTouch.UIKit;
 
 	[Register("MonoMobileAppDelegate")]
 	public class MonoMobileAppDelegate : UIApplicationDelegate
@@ -43,8 +41,9 @@ namespace MonoMobile.Views
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{	
-			MonoMobileApplication.NavigationController = new UINavigationController();
-			
+			HttpDebug.Start (); 
+
+			MonoMobileApplication.NavigationController = new NavigationController();
 			MonoMobileApplication.Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
 			MonoMobileApplication.Window.AddSubview(MonoMobileApplication.NavigationController.View);
@@ -70,9 +69,6 @@ namespace MonoMobile.Views
 
 		private static void Startup()
 		{
-			var sw = new System.Diagnostics.Stopwatch();
-			sw.Start();
-
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			foreach(var assembly in assemblies)
 			{
@@ -90,10 +86,6 @@ namespace MonoMobile.Views
 					}
 				}
 			}
-			
-			sw.Stop();
-
-			Console.WriteLine("Initialized in :" + sw.Elapsed.Milliseconds);
  
 			MonoMobileApplication.Views = new List<object>();
 			foreach (var viewType in MonoMobileApplication.ViewTypes)
@@ -113,7 +105,7 @@ namespace MonoMobile.Views
 
 			foreach(var view in MonoMobileApplication.Views)
 			{	
-				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, new Theme(), true) { Autorotate = true } );
+				MonoMobileApplication.DialogViewControllers.Add(new DialogViewController(MonoMobileApplication.Title, view, Theme.CreateTheme(), true) { Autorotate = true } );
 			}
 	
 			MonoMobileApplication.NavigationController.ViewControllers = MonoMobileApplication.DialogViewControllers.ToArray();

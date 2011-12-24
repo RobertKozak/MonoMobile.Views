@@ -47,11 +47,11 @@ namespace MonoMobile.Views
 		protected TableCellFactory<UITableViewCell> CellFactory;
 		
 		protected string NibName { get; set; }
-		
-		protected IDictionary<NSIndexPath, float> RowHeights;
-
+	
 		protected IDictionary<UITableViewCell, UIView> SelectedAccessoryViews;
 		protected IDictionary<UITableViewCell, UIView> UnselectedAccessoryViews;
+
+		public IDictionary<NSIndexPath, float> RowHeights;
 
 		public Type SelectedAccessoryViewType { get; set; }
 		public Type UnselectedAccessoryViewType { get; set; }
@@ -90,13 +90,24 @@ namespace MonoMobile.Views
 
 		protected override void Dispose(bool disposing)
 		{
-			foreach(var section in Sections.Values)
+			if (disposing)
 			{
-				var disposable = section as IDisposable;
-				if (disposable != null)
+				Controller = null;
+			
+				if (CellFactory != null)
 				{
-					disposable.Dispose();
-					disposable = null;
+					CellFactory.Dispose();
+					CellFactory = null;
+				}
+
+				foreach(var section in Sections.Values)
+				{
+					var disposable = section as IDisposable;
+					if (disposable != null)
+					{
+						disposable.Dispose();
+						disposable = null;
+					}
 				}
 			}
 
@@ -216,14 +227,14 @@ namespace MonoMobile.Views
 							var themeAttribute = viewType.GetCustomAttribute<ThemeAttribute>();
 							if (themeAttribute != null)
 							{
-								var viewTypeTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+								var viewTypeTheme = Theme.CreateTheme(themeAttribute.ThemeType);
 								theme.MergeTheme(viewTypeTheme);
 							}
 
 							themeAttribute = memberData.Member.GetCustomAttribute<ThemeAttribute>();
 							if (themeAttribute != null)
 							{
-								var memberTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+								var memberTheme = Theme.CreateTheme(themeAttribute.ThemeType);
 								theme.MergeTheme(memberTheme);
 							}
 
@@ -423,14 +434,15 @@ namespace MonoMobile.Views
 					var indentation = UIDevice.CurrentDevice.GetIndentation();
 					var width = tableView.Bounds.Width - (indentation * 2);
 					
-					var headerLabel = new UILabel();
-	
-					headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
-					var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
-				
-					var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
+					using (var headerLabel = new UILabel())
+					{
+						headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+						var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
+					
+						var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
 						
-					return height;
+						return height;
+					}
 				}
 			}
 			return 0;
@@ -465,14 +477,15 @@ namespace MonoMobile.Views
 	
 					var width = tableView.Bounds.Width - (indentation * 2);
 	
-					var footerLabel = new UILabel();
-				
-					footerLabel.Font = UIFont.SystemFontOfSize(15);
-					var size = footerLabel.StringSize(section.FooterText, footerLabel.Font);
-	
-					var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width));
-					
-					return height;
+					using (var footerLabel = new UILabel())
+					{
+						footerLabel.Font = UIFont.SystemFontOfSize(15);
+						var size = footerLabel.StringSize(section.FooterText, footerLabel.Font);
+		
+						var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width));
+						
+						return height;
+					}
 				}
 			}
 			
@@ -509,8 +522,7 @@ namespace MonoMobile.Views
 			var indentation = UIDevice.CurrentDevice.GetIndentation();
 			var width = tableView.Bounds.Width - (indentation - 10);
 
-			var headerLabel = new UILabel();
-			headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
+			var headerLabel = new UILabel() { Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize) };
 
 			var size = headerLabel.StringSize(caption, headerLabel.Font);
 			var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(caption, width) + 0.5));
@@ -564,9 +576,7 @@ namespace MonoMobile.Views
 			var bounds = tableView.Bounds;
 			var width = bounds.Width - (indentation * 2);
 
-			var footerLabel = new UILabel();		
-			
-			footerLabel.Font = UIFont.SystemFontOfSize(15);
+			var footerLabel = new UILabel() { Font = UIFont.SystemFontOfSize(15) };
 			
 			var rect = new RectangleF(bounds.X + indentation, bounds.Y, width, 0);
 					

@@ -80,6 +80,8 @@ namespace MonoMobile.Views
 			if (disposing)
 			{
 				Controller = null;
+				if (HeaderView != null) HeaderView.Dispose();
+				if (FooterView != null) FooterView.Dispose();
 
 				foreach (var viewList in Views.Values)
 				{
@@ -92,6 +94,21 @@ namespace MonoMobile.Views
 							disposable = null;
 						}
 					}
+				}
+
+				if (DataContext != null)
+				{
+					foreach(object item in DataContext)
+					{
+						var disposable = item as IDisposable;
+						if (disposable != null)
+						{
+							disposable.Dispose();
+						}
+					}
+
+					DataContext.Clear();
+					DataContext = null;
 				}
 			}
 

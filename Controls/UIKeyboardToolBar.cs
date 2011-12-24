@@ -33,7 +33,6 @@ namespace MonoMobile.Views
 	using System.Drawing;
 	using System.Linq;
 	using MonoTouch.Foundation;
-	using System.Collections.Generic;
 	using MonoTouch.UIKit;
 
 	public class UIKeyboardToolbar : UIInputViewToolbar

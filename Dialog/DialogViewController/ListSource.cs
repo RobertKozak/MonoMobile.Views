@@ -42,6 +42,8 @@ namespace MonoMobile.Views
 	{
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
+		
+		public NSIndexPath BaseIndexPath = NSIndexPath.FromRowSection(0, 0);
 
 		public readonly NSString CellId;
 		public MemberData MemberData { get; set; }
@@ -104,6 +106,12 @@ namespace MonoMobile.Views
 		{
 			if (disposing)
 			{
+				if (MemberData != null)
+				{
+					MemberData.Dispose();
+					MemberData = null;
+				}
+
 				if (CellId != null)
 				{
 					CellId.Dispose();
@@ -144,7 +152,13 @@ namespace MonoMobile.Views
 			if (MemberData != null && MemberData.RowHeight != 0)
 				return MemberData.RowHeight;
 
-			return base.GetHeightForRow(tableView, indexPath);
+			if (RowHeights.Count == 1 && RowHeights[BaseIndexPath] > 0)
+			{
+				return RowHeights[BaseIndexPath];
+			}
+
+			var rowHeight = base.GetHeightForRow(tableView, indexPath);
+			return rowHeight;
 		}
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -154,6 +168,15 @@ namespace MonoMobile.Views
 			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewListCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
+			
+			if (RowHeights.Count > 0 && RowHeights[BaseIndexPath] > 0)
+			{
+				new Wait(new TimeSpan(0), () =>
+				{
+					Controller.TableView.BeginUpdates();
+					Controller.TableView.EndUpdates();
+				});
+			}
 
 			return cell;
 		}
@@ -171,6 +194,15 @@ namespace MonoMobile.Views
 			if (section.ViewTypes != null && section.ViewTypes.ContainsKey(key))
 			{
 				viewTypes = section.ViewTypes[key];
+				if (viewTypes != null && !viewTypes.Contains(NavigationViewType))
+				{
+					viewTypes.Add(NavigationViewType);
+				}
+			}
+
+			if (viewTypes == null && NavigationViewType != null)
+			{
+				viewTypes = new List<Type>() { NavigationViewType };
 			}
  
 			var cell = new ComposableViewListCell(cellStyle, cellId, indexPath, viewTypes, this);
@@ -241,7 +273,7 @@ namespace MonoMobile.Views
 						{
 							dc.DataContext = GetSectionData(0)[indexPath.Row];
 						}
-		
+
 						var updateable = view as IUpdateable;
 						if (updateable != null)
 						{
@@ -416,9 +448,6 @@ namespace MonoMobile.Views
 		
 		public void NavigateToView()
 		{
-			var sw = new System.Diagnostics.Stopwatch();
-			sw.Start();
-
 			var viewType = NavigationViewType;
 			if (viewType == null)
 			{
@@ -456,9 +485,6 @@ namespace MonoMobile.Views
 				var dvc = new DialogViewController(Caption, NavigationView, Controller.Theme, true);
 				Controller.NavigationController.PushViewController(dvc, true);
 			}
-
-			sw.Stop();
-			Console.WriteLine("Navigate to View time : "+sw.Elapsed.Milliseconds);
 		}
 
 		public void NavigateToList()
@@ -478,11 +504,11 @@ namespace MonoMobile.Views
 			
 			NavigationSource.SelectionAction = SelectionAction;
 
-			NavigationSource.IsSelectable = true;
+			NavigationSource.IsSelectable = (SelectionAction == SelectionAction.PopOnSelection || SelectionAction == SelectionAction.Selection || SelectionAction == SelectionAction.Multiselection);
 			NavigationSource.NavigationViewType = null;
 			
 			var viewType = NavigationViewType;
-			if (viewType == null)
+			if (viewType == null && SelectionAction == SelectionAction.NavigateToView)
 			{
 				var genericType = data.GetType().GetGenericArguments().FirstOrDefault();
 				viewType = ViewContainer.GetView(genericType);
@@ -503,7 +529,7 @@ namespace MonoMobile.Views
 			NavigationSource.UnselectionBehavior = UnselectionBehavior;
 
 			NavigationSource.IsMultiselect = IsMultiselect;
-			NavigationSource.IsSelectable = IsSelectable;
+	//		NavigationSource.IsSelectable = IsSelectable;
 	
 			if (data.Count > 0 && (data[0].GetType().IsPrimitive || data[0].GetType().IsEnum))
 				NavigationSource.IsSelectable = true;

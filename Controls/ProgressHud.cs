@@ -52,7 +52,7 @@ namespace MonoMobile.Views
 
 	public class ProgressHud : UIView
 	{
-		private static UIImage _CheckmarkImage = UIImage.FromResource(null, "checkmark.png");
+		private static readonly UIImage _CheckmarkImage = UIImage.FromResource(null, "checkmark.png");
 		
 		private UIWindow _Window = UIApplication.SharedApplication.Windows.FirstOrDefault();
 		private UIView _Indicator;
@@ -64,7 +64,7 @@ namespace MonoMobile.Views
 		private HudProgressMode? _Mode;
 		private bool _UseAnimation;
 		private readonly float _YOffset = 0f;
-		private readonly float _XOffset= 0f;
+		private readonly float _XOffset = 0f;
 		private bool _TaskInProgress;
 		private UILabel _Label;
 		private UILabel _DetailsLabel;
@@ -74,8 +74,8 @@ namespace MonoMobile.Views
 
 		public event EventHandler HudWasHidden;
 
-		public float GraceTime = 0f;
-		public float MinimumShowTime = 0f;
+		public float GraceTime;
+		public float MinimumShowTime;
 
 		public HudProgressMode Mode
 		{

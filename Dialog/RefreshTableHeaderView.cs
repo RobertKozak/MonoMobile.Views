@@ -61,12 +61,13 @@ namespace MonoMobile.Views
 			{
 				_DefaultSettingsKey = settingsKey;
 			}
-			Initialize(rect); 
+
+			Initialize(); 
 		}
 
 		public RefreshTableHeaderView(RectangleF rect) : base(rect)
 		{
-			Initialize(rect);
+			Initialize();
 		}
 		
 		protected override void Dispose(bool disposing)
@@ -113,11 +114,11 @@ namespace MonoMobile.Views
 			_Activity.Frame = new RectangleF(25, bounds.Height - 38, 20, 20);
 		}
 		
-		private readonly RefreshStatus status = (RefreshStatus)(-1);
+		private readonly RefreshStatus _Status = (RefreshStatus)(-1);
 		
 		public virtual void SetStatus(RefreshStatus status)
 		{
-			if (this.status == status)
+			if (_Status == status)
 				return;
 			
 			string s = "Release to refresh";
@@ -187,7 +188,7 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private void Initialize(RectangleF rect)
+		private void Initialize()
 		{
 			AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			

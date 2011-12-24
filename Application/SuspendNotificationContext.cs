@@ -31,7 +31,6 @@ namespace MonoMobile.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
 
 	public class SuspendNotificationContext : IDisposable
 	{
@@ -54,7 +53,18 @@ namespace MonoMobile.Views
 			}
 		}
 
+		~SuspendNotificationContext()
+		{
+			Dispose(false);
+		}
+		
 		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		} 
+
+		public void Dispose(bool disposing)
 		{
 			foreach (var observableObject in _ObservableObjects)
 			{

@@ -40,12 +40,14 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MemberData: IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
+	public class MemberData: NSObject, IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
 	{
 		private object _Value;
 		private object _DataContextValue;
 		private DataContextBinder _DataContextBinder;
-
+		
+		public object UnconvertedValue { get; set; }
+	
 		public object Value { get { return GetValue(); } set { SetValue(value); } }
 		public Type Type { get; set; }
 		public Type TargetType { get; set; }
@@ -80,11 +82,18 @@ namespace MonoMobile.Views
 			UpdateValue();
 			Id = CreateId();
 			
-		//	RemoveNotifyPropertyChangedHandler(Source, this);
 			AddNotifyPropertyChangedHandler(Source, this);
-			
-		//	RemoveNotifyPropertyChangedHandler(DataContextSource, this);
 			AddNotifyPropertyChangedHandler(DataContextSource, this);
+		}
+		
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing)
+			{
+				Id.Dispose();
+			}
+
+			base.Dispose (disposing);
 		}
 
 		protected virtual object GetValue()
@@ -113,50 +122,54 @@ namespace MonoMobile.Views
 
 		protected virtual void SetValue(object value)
 		{	
-			var convertedValue = ConvertbackValue(value);
-
 			var shouldSetHandlers = false;		
 			object oldValue = null;
+			UnconvertedValue = value;
 
-			if (_DataContextValue != value)
+			if (_DataContextValue != value || _Value != value)
 			{
-				if (DataContextMember != null)
+				var convertedValue = ConvertbackValue(value);
+
+				if (_DataContextValue != value)
 				{
-					oldValue = DataContextMember.GetValue(DataContextSource);
-					if (oldValue != value)
+					if (DataContextMember != null)
 					{
-						RemoveNotifyCollectionChangedHandler(_DataContextValue, this);
-						RemoveNotifyPropertyChangedHandler(_DataContextValue, this);
-					
-						shouldSetHandlers = true;
+						oldValue = DataContextMember.GetValue(DataContextSource);
+						if (oldValue != value)
+						{
+							RemoveNotifyCollectionChangedHandler(_DataContextValue, this);
+							RemoveNotifyPropertyChangedHandler(_DataContextValue, this);
 						
-						ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
-						
-						if (DataContextMember.CanWrite())
-							DataContextMember.SetValue(DataContextSource, convertedValue);
+							shouldSetHandlers = true;
+							
+							ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
+							
+							if (DataContextMember.CanWrite())
+								DataContextMember.SetValue(DataContextSource, convertedValue);
+						}
+	
+						_DataContextValue = convertedValue;
 					}
-
-					_DataContextValue = convertedValue;
 				}
-			}
-
-			if (_Value != value)
-			{
-				oldValue = Member.GetValue(Source);
-				if (oldValue != value)
+	
+				if (_Value != value)
 				{
-					RemoveNotifyCollectionChangedHandler(_Value, this);
-					RemoveNotifyPropertyChangedHandler(_Value, this);
-					
-					shouldSetHandlers = true;
+					oldValue = Member.GetValue(Source);
+					if (oldValue != value)
+					{	
+						RemoveNotifyCollectionChangedHandler(_Value, this);
+						RemoveNotifyPropertyChangedHandler(_Value, this);
 
-					ResetCollection(_Value as INotifyCollectionChanged, value as IList);
-					
-					if (Member.CanWrite())
-						Member.SetValue(Source, convertedValue);
+						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
+						
+						shouldSetHandlers = true;
+	
+						if (Member.CanWrite())
+							Member.SetValue(Source, convertedValue);
+					}
+	
+					_Value = convertedValue;
 				}
-
-				_Value = convertedValue;
 			}
 
 			if (shouldSetHandlers)
@@ -184,10 +197,13 @@ namespace MonoMobile.Views
 		
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName, ()=>
+			if (e.PropertyName == Member.Name)
 			{
-				UpdateValue();
-			});
+				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
+				        {
+					UpdateValue();
+				});
+			}
 		}
 
 		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

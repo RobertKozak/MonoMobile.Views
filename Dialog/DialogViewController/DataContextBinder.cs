@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	using System.ComponentModel;
 
-	public class DataContextBinder: IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
+	public class DataContextBinder: NSObject, IHandleNotifyPropertyChanged, IHandleNotifyCollectionChanged
 	{
 		public Section Section { get; set; }
 		public DialogViewController Controller { get; set; }
@@ -44,6 +44,17 @@ namespace MonoMobile.Views
 		{
 			Section = section;
 			Controller = controller;
+		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Controller = null;
+				Section = null;
+			}
+
+			base.Dispose(disposing);
 		}
 
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)

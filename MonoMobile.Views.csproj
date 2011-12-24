@@ -164,7 +164,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Interfaces\IFocusable.cs" />
     <Compile Include="Interfaces\ISelectable.cs" />
-    <Compile Include="Interfaces\ITappable.cs" />
     <Compile Include="Interfaces\ISizeable.cs" />
     <Compile Include="Interfaces\ISearchable.cs" />
     <Compile Include="Interfaces\ISearchBar.cs" />
@@ -174,8 +173,6 @@
     <Compile Include="Application\IObservableObject.cs" />
     <Compile Include="Dialog\ViewParser.cs" />
     <Compile Include="Controls\UIDatePickerToolbar.cs" />
-    <Compile Include="Controls\UIKeyboardToolBar.cs" />
-    <Compile Include="Controls\UIInputViewToolBar.cs" />
     <Compile Include="Application\MonoMobileAppDelegate.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -242,18 +239,24 @@
     <Compile Include="Dialog\CellViews\Base\BooleanCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\ObjectCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\ListCellView.cs" />
-    <Compile Include="Dialog\CellViews\Base\CommandView.cs" />
     <Compile Include="Dialog\CellViews\Base\DateCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\DateTimeCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\TimeCellView.cs" />
     <Compile Include="Dialog\CellViews\Base\CellView.cs" />
     <Compile Include="Dialog\CellViews\Base\FocusableCellView.cs" />
     <Compile Include="Registrations.cs" />
-    <Compile Include="Dialog\ViewNavigator.cs" />
     <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
     <Compile Include="Extensions\UIDeviceExtensions.cs" />
     <Compile Include="Application\Log.cs" />
+    <Compile Include="Application\UrlImageStore.cs" />
+    <Compile Include="Interfaces\ICommandButton.cs" />
+    <Compile Include="Dialog\DialogViewController\NavigationController.cs" />
+    <Compile Include="Application\HttpDebug.cs" />
+    <Compile Include="Extensions\UIKitExtensions.cs" />
+    <Compile Include="Controls\UIInputViewToolbar.cs" />
+    <Compile Include="Controls\UIKeyboardToolbar.cs" />
+    <Compile Include="Dialog\CellViews\Base\CommandCellView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

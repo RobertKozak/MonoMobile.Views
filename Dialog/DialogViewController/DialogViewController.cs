@@ -155,8 +155,9 @@ namespace MonoMobile.Views
 				RefreshView.SetActivity(true);
 			
 			Thread.Sleep(250);
-
-			var refreshThread = new Thread(RefreshThread as ThreadStart);
+			
+			ThreadStart threadStart = RefreshThread;
+			var refreshThread = new Thread(threadStart);
 			refreshThread.Start();
 		}
 
@@ -167,10 +168,7 @@ namespace MonoMobile.Views
 				if (PullToRefreshCommand != null)
 					PullToRefreshCommand.Execute(this);
 	
-				InvokeOnMainThread(delegate
-				{
-					ReloadComplete();
-				});
+				InvokeOnMainThread(() => ReloadComplete());
 			}
 		}
 
@@ -609,7 +607,7 @@ namespace MonoMobile.Views
 
 			if (ToolbarButtons != null)
 			{
-				var buttonList = ToolbarButtons.Where((button)=>button.Command == null || button.Command.CanExecute(null)).ToList();
+				var buttonList = ToolbarButtons.Where((button)=>button.Command == null || !(button as ICommandButton).Hidden).ToList();
 
 				var leftCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Left).Count();
 				var rightCount = buttonList.Where((button)=>button.Location == BarButtonLocation.Right).Count();
@@ -827,13 +825,14 @@ namespace MonoMobile.Views
 			UIView.SetAnimationDuration(1.25);
 			UIView.SetAnimationCurve(UIViewAnimationCurve.EaseInOut);
 			
-			UIView.Transition(parent, 1, UIViewAnimationOptions.TransitionFlipFromRight, delegate 
+			UIView.Transition(parent, 1, UIViewAnimationOptions.TransitionFlipFromRight, () => 
 			{
 				TableView.RemoveFromSuperview();
 				TableView = oldTB;
 				parent.AddSubview(TableView);
 				
 			}, null);
+
 			UIView.CommitAnimations();
 		}
 
@@ -866,29 +865,6 @@ namespace MonoMobile.Views
 				if (activation != null)
 					activation.Deactivated();
 			}
-
-			var source = TableView.Source as ViewSource;
-			if (source != null)
-			{
-				foreach (var section in source.Sections.Values)
-				{
-					foreach (var viewList in section.Views.Values)
-					{
-						foreach(var view in viewList)
-						{
-							var dc = view as IDataContext<MemberData>;
-							if (dc != null)
-							{
-								var notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
-								if (notifyPropertChanged != null)
-								{
-									notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		private void SetPushing(bool pushing)
@@ -914,7 +890,7 @@ namespace MonoMobile.Views
 		
 		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Log.Time("Handle NotifyPropertyChanged property = "+ e.PropertyName, ()=>
+			Log.Time("[{0}] Handle NotifyPropertyChanged property = "+ e.PropertyName + " sender = "+sender.ToString(), ()=>
 			{
 				var source = TableView.Source as BaseDialogViewSource;
 				foreach (var section in source.Sections.Values)
@@ -952,32 +928,41 @@ namespace MonoMobile.Views
 				var themeAttribute = view.GetType().GetCustomAttribute<ThemeAttribute>();
 				if (themeAttribute != null)
 				{
-					var viewTheme = Activator.CreateInstance(themeAttribute.ThemeType) as Theme;
+					var viewTheme = Theme.CreateTheme(themeAttribute.ThemeType);
 					themeable.Theme = viewTheme;
-					Theme = Theme.CreateTheme(viewTheme);
+					var newTheme = Theme.CreateTheme(viewTheme);
+
+					Theme = newTheme;
+					themeable.Theme = Theme;
 				}
 			}
 
-			var parser = new ViewParser();
-			var source = parser.Parse(this, view, member);
-			
-			var tableViewStyle = Theme.TableViewStyle;
-			var tableStyle = source as ITableViewStyle;
-			if (tableStyle != null)
+			using(var parser = new ViewParser())
 			{
-				tableViewStyle = tableStyle.TableViewStyle;
-			}
-			
-			if (source != null)
-			{
-				_TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
-				_TableView.Source = source;
+				var source = parser.Parse(this, view, member);
 				
-				TableView = _TableView;
-				DisableScrolling = view.GetType().GetCustomAttribute<DisableScrollingAttribute>() != null;
+				var tableViewStyle = Theme.TableViewStyle;
+				var tableStyle = source as ITableViewStyle;
+				if (tableStyle != null)
+				{
+					tableViewStyle = tableStyle.TableViewStyle;
+				}
+				
+				if (source != null)
+				{
+					_TableView = MakeTableView(UIScreen.MainScreen.Bounds, tableViewStyle);
+					_TableView.Source = source;
+					
+					TableView = _TableView;
+					DisableScrolling = view.GetType().GetCustomAttribute<DisableScrollingAttribute>() != null;
+				}
 			}
 		}
+		
+		public DialogViewController(IntPtr handle): base(handle)
+		{
 
+		}
 		public DialogViewController(string title, object view, Theme theme, bool pushing) : base(UITableViewStyle.Grouped)
 		{
 			Title = title;
@@ -1001,17 +986,63 @@ namespace MonoMobile.Views
 				_LeftFixedSpace.Dispose();
 				_RightFixedSpace.Dispose();
 
+				var source = TableView.Source as ViewSource;
+				if (source != null)
+				{
+					foreach (var section in source.Sections.Values)
+					{
+						foreach (var viewList in section.Views.Values)
+						{
+							foreach (var view in viewList)
+							{
+								var dc = view as IDataContext<MemberData>;
+								if (dc != null)
+								{
+									var notifyPropertChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
+									if (notifyPropertChanged != null)
+									{
+										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
+									}								
+
+									notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
+									if (notifyPropertChanged != null)
+									{
+										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
+									}
+								}
+
+								view.Dispose();
+							}
+						}
+					}
+				}
+
 				if (_TableView != null)
 				{
 					_TableView.Dispose();
 					_TableView = null;
 				}
-
+				
 				if (_Searchbar != null)
 				{
 					_Searchbar.Dispose();
 					_Searchbar = null;
 				}
+				
+				if (RootView != null)
+				{
+					var disposable = RootView as IDisposable;
+					if (disposable != null)
+					{
+						disposable.Dispose();
+						RootView = null;
+					}
+				}
+
+				Theme.Dispose();
+				Theme = null;
 			}
 
 			base.Dispose(disposing);

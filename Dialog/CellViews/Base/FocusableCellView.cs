@@ -60,11 +60,10 @@ namespace MonoMobile.Views
 			InputView = new UIPlaceholderTextField(frame) 
 			{ 	
 				BackgroundColor = UIColor.Clear, 
+				AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth,
 				Tag = 1, 
 			};
-			
-			InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
-			
+						
 			CellContentView = InputView;
 			Add(CellContentView);
 		}

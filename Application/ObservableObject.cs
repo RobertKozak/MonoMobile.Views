@@ -47,6 +47,11 @@ namespace MonoMobile.Views
 
         public IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
 
+		public void UnsubscribeAllNotifications()
+		{
+			PropertyChanged = null;
+		}
+
         public void NotifyPropertyChanged(string propertyName)
         {
 			if (!_SuspendNotifications)

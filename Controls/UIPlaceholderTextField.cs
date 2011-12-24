@@ -44,7 +44,7 @@ namespace MonoMobile.Views
 		public UIColor PlaceholderColor { get; set; }
 		public UITextAlignment PlaceholderAlignment { get; set; }
 
-		public UIPlaceholderTextField(): base() { Initialize(); }
+		public UIPlaceholderTextField() { Initialize(); }
 		public UIPlaceholderTextField(NSCoder coder): base(coder) {}
 		public UIPlaceholderTextField(IntPtr handle): base (handle) {}
 		public UIPlaceholderTextField(RectangleF frame): base(frame) { Initialize(); }

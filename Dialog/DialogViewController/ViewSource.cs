@@ -45,6 +45,7 @@ namespace MonoMobile.Views
 		
 		public ViewSource(DialogViewController controller, string title) : this(controller)
 		{
+			Caption = title;
 		}
 		
 		public override int RowsInSection(UITableView tableview, int sectionIndex)

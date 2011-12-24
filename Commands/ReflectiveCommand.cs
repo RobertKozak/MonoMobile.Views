@@ -31,9 +31,9 @@
 namespace MonoMobile.Views
 {
 	using System;
-	using System.Reflection;
 	using System.ComponentModel;
 	using System.Linq;
+	using System.Reflection;
 
 	public class ReflectiveCommand : ICommand
 	{
@@ -42,6 +42,7 @@ namespace MonoMobile.Views
 		private readonly object _ViewModel;
 		private readonly object _CanExecuteSource;
 		
+		public ICommandButton CommandButton { get; set; }
 		public CommandOption CommandOption { get; set; }
 
 		public event EventHandler CanExecuteChanged = (sender, e) => { };

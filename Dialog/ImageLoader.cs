@@ -30,7 +30,6 @@ using System.Threading;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using MonoTouch.CoreGraphics;
 using MonoMobile.Views.Utilities;
 using System.Security.Cryptography;
 using System.Diagnostics;
@@ -71,24 +70,24 @@ namespace MonoMobile.Views.Utilities
 	public class ImageLoader
 	{
 		public static readonly string BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "..");
-		const int MaxRequests = 6;
-		static string PicDir;
+		private const int MaxRequests = 6;
+		private static readonly string PicDir;
 
 		// Cache of recently used images
-		LRUCache<Uri, UIImage> cache;
+		private readonly LRUCache<Uri, UIImage> cache;
 
 		// A list of requests that have been issues, with a list of objects to notify.
-		static Dictionary<Uri, List<IImageUpdated>> pendingRequests;
+		private readonly static Dictionary<Uri, List<IImageUpdated>> pendingRequests;
 
 		// A list of updates that have completed, we must notify the main thread about them.
-		static HashSet<Uri> queuedUpdates;
+		private readonly static HashSet<Uri> queuedUpdates;
 
 		// A queue used to avoid flooding the network stack with HTTP requests
-		static Stack<Uri> requestQueue;
+		private readonly static Stack<Uri> requestQueue;
 
-		static NSString nsDispatcher = new NSString("x");
+		private readonly static NSString nsDispatcher = new NSString("x");
 
-		static MD5CryptoServiceProvider checksum = new MD5CryptoServiceProvider();
+		private readonly static MD5CryptoServiceProvider checksum = new MD5CryptoServiceProvider();
 
 		/// <summary>
 		///   This contains the default loader which is configured to be 50 images
@@ -254,7 +253,7 @@ namespace MonoMobile.Views.Utilities
 					requestQueue.Push(uri);
 				else
 				{
-					ThreadPool.QueueUserWorkItem(delegate
+					ThreadPool.QueueUserWorkItem(state =>
 					{
 						try
 						{
@@ -336,9 +335,8 @@ namespace MonoMobile.Views.Utilities
 		{
 			do
 			{
-				bool downloaded = false;
-				
-				downloaded = Download(uri, target, headers);
+				bool downloaded = Download(uri, target, headers);
+
 				if (!downloaded)
 					Console.WriteLine("Error fetching picture for {0} to {1}", uri, target);
 				

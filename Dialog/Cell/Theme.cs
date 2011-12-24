@@ -235,15 +235,82 @@ namespace MonoMobile.Views
 			FooterTextBackgroundColor = UIColor.Clear;
 		}
 		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Console.WriteLine("Disposing Theme : {0} [ Handle: {1} ]", Name, Handle);
+
+				_Cell = null;
+				
+//				if (PlaceholderColor != null) PlaceholderColor.Dispose();
+//				if (SeparatorColor != null) SeparatorColor.Dispose();
+//				if (BarTintColor != null) BarTintColor.Dispose();
+//
+//				if (CellImageIcon != null) CellImageIcon.Dispose();
+//				if (CellBackgroundColor != null) CellBackgroundColor.Dispose();
+//				
+//				if (TextFont != null) TextFont.Dispose();
+//				if (TextColor != null) TextColor.Dispose();
+//				if (TextShadowColor != null) TextShadowColor.Dispose();
+//				if (TextHighlightColor != null) TextHighlightColor.Dispose();
+//				if (DetailTextFont != null) DetailTextFont.Dispose();
+//				if (DetailTextColor != null) DetailTextColor.Dispose();
+//				if (DetailTextShadowColor != null) DetailTextShadowColor.Dispose();
+//				if (DetailTextHighlightColor != null) DetailTextHighlightColor.Dispose();
+//
+//				if (HeaderTextFont != null) HeaderTextFont.Dispose();
+//				if (HeaderTextColor != null) HeaderTextColor.Dispose();
+//				if (HeaderTextBackgroundColor != null) HeaderTextBackgroundColor.Dispose();
+//				if (HeaderTextShadowColor != null) HeaderTextShadowColor.Dispose();
+//				if (HeaderBackgroundColor != null) HeaderBackgroundColor.Dispose();
+//				
+//				if (HeaderTextFont != null) HeaderTextFont.Dispose();
+//				if (HeaderTextColor != null) HeaderTextColor.Dispose();
+//				if (HeaderTextBackgroundColor != null) HeaderTextBackgroundColor.Dispose();
+//				if (HeaderTextShadowColor != null) HeaderTextShadowColor.Dispose();
+//				if (HeaderBackgroundColor != null) HeaderBackgroundColor.Dispose();
+//	
+//				if (BackgroundImage != null) BackgroundImage.Dispose();
+//				if (BackgroundColor != null) BackgroundColor.Dispose();
+//				
+//				if (DisabledColor != null) DisabledColor.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public static Theme CreateTheme(Theme theme)
 		{
-			var newTheme = new Theme();
+			var newTheme = CreateTheme();
 
 			newTheme.MergeTheme(theme);
+			if (theme != null)
+			{
+				theme.Dispose();
+			}
 
 			return newTheme;
 		}
 		
+		public static Theme CreateTheme()
+		{
+			var newTheme = new Theme();
+
+			Console.WriteLine("Created Theme {0} [ Handle: {1} ]", newTheme.Name, newTheme.Handle);
+
+			return newTheme;
+		}
+
+		public static Theme CreateTheme(Type themeType)
+		{
+			var newTheme = Activator.CreateInstance(themeType) as Theme;
+
+			Console.WriteLine("Created Theme {0} [ Handle: {1} ]", newTheme.Name, newTheme.Handle);
+
+			return newTheme;
+		}
+
 		public void MergeTheme(Theme theme)
 		{
 			if (theme != null)
@@ -255,15 +322,9 @@ namespace MonoMobile.Views
 					CellHeight = theme.CellHeight;
 				}
 				
-//				if (theme.CellImageIcon != null)
-//					CellImageIcon = theme.CellImageIcon;
-//				
-//				if (theme.CellImageIconUri != null)
-//					CellImageIconUri = theme.CellImageIconUri;
-				
 				if (theme.CellBackgroundColor != null)
 				{
-					CellBackgroundColor = theme.CellBackgroundColor;
+					CellBackgroundColor = theme.CellBackgroundColor.Clone();
 				}
 				
 				if (theme.CellBackgroundUri != null)
@@ -279,13 +340,13 @@ namespace MonoMobile.Views
 				
 				if (theme.TextFont != null)
 				{
-					TextFont = theme.TextFont;
+					TextFont = theme.TextFont.Clone();
 				}
 				
 
 				if (theme.TextColor != null)
 				{
-					TextColor = theme.TextColor;
+					TextColor = theme.TextColor.Clone();
 				}
 				
 				if (theme.TextShadowOffset != SizeF.Empty)
@@ -295,12 +356,12 @@ namespace MonoMobile.Views
 				
 				if (theme.TextShadowColor != null)
 				{
-					TextShadowColor = theme.TextShadowColor;
+					TextShadowColor = theme.TextShadowColor.Clone();
 				}
 				
 				if (theme.TextHighlightColor != null)
 				{
-					TextHighlightColor = theme.TextHighlightColor;
+					TextHighlightColor = theme.TextHighlightColor.Clone();
 				}
 				
 				TextAlignment = theme.TextAlignment;
@@ -308,13 +369,13 @@ namespace MonoMobile.Views
 				
 				if (theme.DetailTextFont != null)
 				{
-					DetailTextFont = theme.DetailTextFont;
+					DetailTextFont = theme.DetailTextFont.Clone();
 				}
 				
 
 				if (theme.DetailTextColor != null)
 				{
-					DetailTextColor = theme.DetailTextColor;
+					DetailTextColor = theme.DetailTextColor.Clone();
 				}
 
 				if (theme.DetailTextShadowOffset != SizeF.Empty)
@@ -324,12 +385,12 @@ namespace MonoMobile.Views
 				
 				if (theme.DetailTextShadowColor != null)
 				{
-					DetailTextShadowColor = theme.DetailTextShadowColor;
+					DetailTextShadowColor = theme.DetailTextShadowColor.Clone();
 				}
 				
 				if (theme.DetailTextHighlightColor != null)
 				{
-					DetailTextHighlightColor = theme.DetailTextHighlightColor;
+					DetailTextHighlightColor = theme.DetailTextHighlightColor.Clone();
 				}
 				
 				DetailTextAlignment = theme.DetailTextAlignment;
@@ -337,7 +398,7 @@ namespace MonoMobile.Views
 				
 				if (theme.PlaceholderColor != null)
 				{
-					PlaceholderColor = theme.PlaceholderColor;
+					PlaceholderColor = theme.PlaceholderColor.Clone();
 				}
 				
 				if (theme.PlaceholderAlignment != UITextAlignment.Right)
@@ -347,7 +408,7 @@ namespace MonoMobile.Views
 
 				if (theme.SeparatorColor != null)
 				{
-					SeparatorColor = theme.SeparatorColor;
+					SeparatorColor = theme.SeparatorColor.Clone();
 				}
 
 				if (theme.SeparatorStyle.HasValue)
@@ -364,7 +425,7 @@ namespace MonoMobile.Views
 
 				if (theme.BarTintColor != null)
 				{
-					BarTintColor = theme.BarTintColor;
+					BarTintColor = theme.BarTintColor.Clone();
 				}
 		
 				if (theme.BarImage != null)
@@ -382,17 +443,17 @@ namespace MonoMobile.Views
 				
 				if (theme.HeaderTextFont != null)
 				{
-					HeaderTextFont = theme.HeaderTextFont;
+					HeaderTextFont = theme.HeaderTextFont.Clone();
 				}
 				
 				if (theme.HeaderTextColor != null)
 				{
-					HeaderTextColor = theme.HeaderTextColor;
+					HeaderTextColor = theme.HeaderTextColor.Clone();
 				}
 				
 				if (theme.HeaderTextBackgroundColor != null)
 				{
-					HeaderTextBackgroundColor = theme.HeaderTextBackgroundColor;
+					HeaderTextBackgroundColor = theme.HeaderTextBackgroundColor.Clone();
 				}
 
 				if (theme.HeaderTextShadowOffset != SizeF.Empty)
@@ -402,12 +463,12 @@ namespace MonoMobile.Views
 				
 				if (theme.HeaderTextShadowColor != null)
 				{
-					HeaderTextShadowColor = theme.HeaderTextShadowColor;
+					HeaderTextShadowColor = theme.HeaderTextShadowColor.Clone();
 				}
 				
 				if (theme.HeaderBackgroundColor != null)
 				{
-					HeaderBackgroundColor = theme.HeaderBackgroundColor;
+					HeaderBackgroundColor = theme.HeaderBackgroundColor.Clone();
 				}
 				
 
@@ -415,17 +476,17 @@ namespace MonoMobile.Views
 				
 				if (theme.FooterTextFont != null)
 				{
-					FooterTextFont = theme.FooterTextFont;
+					FooterTextFont = theme.FooterTextFont.Clone();
 				}
 				
 				if (theme.FooterTextColor != null)
 				{
-					FooterTextColor = theme.FooterTextColor;
+					FooterTextColor = theme.FooterTextColor.Clone();
 				}
 				
 				if (theme.FooterTextBackgroundColor != null)
 				{
-					FooterTextBackgroundColor = theme.FooterTextBackgroundColor;
+					FooterTextBackgroundColor = theme.FooterTextBackgroundColor.Clone();
 				}
 
 				if (theme.FooterTextShadowOffset != SizeF.Empty)
@@ -435,12 +496,12 @@ namespace MonoMobile.Views
 				
 				if (theme.FooterTextShadowColor != null)
 				{
-					FooterTextShadowColor = theme.FooterTextShadowColor;
+					FooterTextShadowColor = theme.FooterTextShadowColor.Clone();
 				}
 			
 				if (theme.FooterBackgroundColor != null)
 				{
-					FooterBackgroundColor = theme.FooterBackgroundColor;
+					FooterBackgroundColor = theme.FooterBackgroundColor.Clone();
 				}
 			
 
@@ -451,7 +512,7 @@ namespace MonoMobile.Views
 
 				if (theme.BackgroundColor != null)
 				{
-					BackgroundColor = theme.BackgroundColor;
+					BackgroundColor = theme.BackgroundColor.Clone();
 				}
 				
 				if (theme.BackgroundUri != null)

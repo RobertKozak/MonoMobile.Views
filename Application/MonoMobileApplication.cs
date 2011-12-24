@@ -150,7 +150,7 @@ namespace MonoMobile.Views
 			var dvc = CreateDialogViewController(view, true, false);			
 			dvc.ModalTransitionStyle = transistionStyle;
  
-			var navController = new UINavigationController() { ViewControllers = new UIViewController[] { dvc } };
+			var navController = new NavigationController() { ViewControllers = new UIViewController[] { dvc } };
 
 			NavigationController.PresentModalViewController(navController, true);
 		}
@@ -158,6 +158,7 @@ namespace MonoMobile.Views
 		public static void DismissModalView(bool animated)
 		{
 			NavigationController.DismissModalViewControllerAnimated(animated);
+			NavigationController.VisibleViewController.Dispose();
 		}
 
 		public static void Run(string title, Type mainViewType, string[] args)
@@ -188,9 +189,8 @@ namespace MonoMobile.Views
 			if (CurrentDialogViewController != null)
 			{
 				theme = CurrentDialogViewController.Theme;
-				if (theme == null)
-					theme = new Theme();
-				theme.TableViewStyle = UITableViewStyle.Grouped;
+				theme = Theme.CreateTheme(theme);
+				theme.TableViewStyle = UITableViewStyle.Grouped; 
 			}
 			
 			string title = null;
@@ -203,8 +203,7 @@ namespace MonoMobile.Views
 			if (string.IsNullOrEmpty(title))
 				title = MonoMobileApplication.Title;
 			
-			var dvc = new DialogViewController(title, view, theme, pushing) { Autorotate = true };
-			dvc.IsModal = isModal;
+			var dvc = new DialogViewController(title, view, theme, pushing) { Autorotate = true, IsModal = isModal };
 			
 			return dvc;
 		}	

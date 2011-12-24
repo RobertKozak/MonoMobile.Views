@@ -58,7 +58,25 @@ namespace MonoMobile.Views
 		{
 			ShowCaption = true;
 		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Controller = null;
+				Cell = null;
+				DataContext = null;
+				Value = default(T);
+ 
+				if (Theme != null)
+				{
+					Theme.Dispose();
+					Theme = null;
+				}
+			}
 
+			base.Dispose(disposing);
+		}
 		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 		}
@@ -79,8 +97,11 @@ namespace MonoMobile.Views
 			if (_DataContext != value)
 			{
 				_DataContext = value;
-				_DataContext.TargetType = ValueType;
-				Value = (T)_DataContext.Value;
+				if (_DataContext != null)
+				{
+					_DataContext.TargetType = ValueType;
+					Value = (T)_DataContext.Value;
+				}
 			}
 		}
 

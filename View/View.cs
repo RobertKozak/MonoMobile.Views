@@ -62,9 +62,23 @@ namespace MonoMobile.Views
 		{
 		}
 
-		public View(string caption) : base()
+		public View(string caption)
 		{
 			Caption = caption;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (Theme != null)
+				{
+					Theme.Dispose();
+					Theme = null;
+				}
+			}
+
+			base.Dispose(disposing);
 		}
 
 		public override string ToString()

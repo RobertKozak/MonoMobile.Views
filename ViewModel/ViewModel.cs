@@ -40,11 +40,17 @@ namespace MonoMobile.Views
 			get { return GetDataModel(); } 
 			set { SetDataModel(value); }
 		}
-
-		public ViewModel()
-		{
-		}
 		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				UnsubscribeAllNotifications();
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public virtual object GetDataModel()
 		{
 			return _DataModel;
@@ -61,7 +67,7 @@ namespace MonoMobile.Views
 			return Load(key, string.Empty);
 		}
 
-		public string Load(string key, string defaultValue)
+		public static string Load(string key, string defaultValue)
 		{
 			if (NSUserDefaults.StandardUserDefaults[key] != null)
 			{
@@ -71,7 +77,7 @@ namespace MonoMobile.Views
 				return defaultValue;
 		}
 
-		public void Save(string key, string value)
+		public static void Save(string key, string value)
 		{
 			if (value != null)
 			{

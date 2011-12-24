@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 
 	public class ObservableView : View, INotifyPropertyChanged, IObservableObject
 	{
-		private IObservableObject _Observable = new ObservableObject();
+		private readonly IObservableObject _Observable = new ObservableObject();
  
 		public event PropertyChangedEventHandler PropertyChanged = (s, e) => { };
 	

@@ -48,7 +48,6 @@ namespace MonoMobile.Views
 		//private const float StandardAccessoryWidth = 30;
 
 		private UIView _CompositeView { get; set; }
-		
 //		private CellPosition CellPosition 
 //		{
 //			get
@@ -95,6 +94,11 @@ namespace MonoMobile.Views
 			IndexPath = indexPath;
 			ListSource = listSource;
 			
+			if (!ListSource.RowHeights.ContainsKey(ListSource.BaseIndexPath))
+			{
+				ListSource.RowHeights.Add(ListSource.BaseIndexPath, ListSource.Controller.TableView.RowHeight);
+			}
+
 			_CompositeView = new UIView(Bounds);
 
 			if (ViewList == null)
@@ -121,7 +125,7 @@ namespace MonoMobile.Views
 			}
 			
 			ViewList = new List<UIView>();
-			
+
 			if (viewTypes != null)
 			{
 				foreach (var viewType in viewTypes)
@@ -131,6 +135,18 @@ namespace MonoMobile.Views
 					if (hasFrameCtor)
 					{
 						view = Activator.CreateInstance(viewType, new object[] { frame }) as UIView;
+						
+						if (ListSource.RowHeights[ListSource.BaseIndexPath] != view.Frame.Height)
+						{
+							if (ListSource.RowHeights.ContainsKey(IndexPath))
+							{
+								ListSource.RowHeights[IndexPath] = view.Frame.Height;
+							}
+							else
+							{
+								ListSource.RowHeights.Add(IndexPath, view.Frame.Height);
+							}
+						}
 					}
 					else
 					{
@@ -164,6 +180,18 @@ namespace MonoMobile.Views
 						if (themeable.Theme != null)
 						{
 							themeable.Theme.Cell = this;
+						}
+						else
+						{
+							var theme = view.GetType().GetCustomAttribute<ThemeAttribute>();
+							if (theme != null)
+							{
+								var cellViewTheme = Theme.CreateTheme(theme.ThemeType);
+								if (cellViewTheme != null)
+								{
+									themeable.Theme = cellViewTheme;
+								}
+							}
 						}
 								
 						themeable.InitializeTheme(this);
@@ -227,33 +255,86 @@ namespace MonoMobile.Views
 				}
 			}
 	
+			var resizedRows = false;
+
 			if (ViewList != null)
 			{
 				foreach (var view in ViewList)
 				{
-					var dc = view as IDataContext<object>;
-					if (dc != null)
+					var sectionData = ListSource.GetSectionData(0);
+					if (sectionData != null && sectionData.Count > 0)
 					{
-						dc.DataContext = ListSource.GetSectionData(0)[IndexPath.Row];
+						var data = sectionData[IndexPath.Row];
+						var dc = view as IDataContext<object>;
+						if (dc != null)
+						{
+							dc.DataContext = data;
+						}
+	
+						if (dc == null)
+						{
+							var dataContextMember = view.GetType().GetProperty("DataContext");
+							if (dataContextMember != null && data.GetType().IsAssignableFrom(dataContextMember.PropertyType))
+							{
+								dataContextMember.SetValue(view, data);
+							}
+						}
+	
+						var updateable = view as IUpdateable;
+						if (updateable != null)
+						{
+							updateable.UpdateCell(this, IndexPath);
+						}
+				
+						var rowHeight = 0f;
+						var themeable = view as IThemeable;
+						if (themeable != null)
+						{			
+							themeable.ApplyTheme(this);
+							if (themeable.Theme != null && themeable.Theme.CellHeight > 0)
+							{
+								rowHeight = themeable.Theme.CellHeight;
+							}
+						}
+	
+						var sizeable = view as ISizeable;
+						if (sizeable != null)
+						{
+							rowHeight = sizeable.GetRowHeight();
+						}
+						
+						if (rowHeight > 0 && ListSource.RowHeights[ListSource.BaseIndexPath] != rowHeight)
+						{
+							if (ListSource.RowHeights.ContainsKey(IndexPath))
+							{
+								if (ListSource.RowHeights[IndexPath] != rowHeight)
+								{
+									ListSource.RowHeights[IndexPath] = rowHeight;
+									resizedRows = true;
+								}
+							}
+							else
+							{
+								ListSource.RowHeights.Add(IndexPath, rowHeight);
+								resizedRows = true;
+							}
+						}
+	
+						var customDraw = view as ICustomDraw;
+						if (customDraw != null)
+						{
+							customDraw.Draw(rect);
+						}
 					}
+				}
 
-					var updateable = view as IUpdateable;
-					if (updateable != null)
+				if (resizedRows)
+				{
+					new Wait(new TimeSpan(0), () =>
 					{
-						updateable.UpdateCell(this, IndexPath);
-					}
-			
-					var themeable = view as IThemeable;
-					if (themeable != null)
-					{			
-						themeable.ApplyTheme(this);
-					}
-
-					var customDraw = view as ICustomDraw;
-					if (customDraw != null)
-					{
-						customDraw.Draw(rect);
-					}
+						ListSource.Controller.TableView.BeginUpdates();
+						ListSource.Controller.TableView.EndUpdates();
+					});
 				}
 			}
 		}

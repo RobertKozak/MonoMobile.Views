@@ -34,16 +34,18 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	using MonoTouch.ObjCRuntime;
 
-	public class CommandBarButtonItem: UIBarButtonItem
+	public class CommandBarButtonItem: UIBarButtonItem, ICommandButton
 	{
 		public BarButtonLocation Location { get; set; }
 		public int Order { get; set; }
 		public ICommand Command { get; set; }
-		
+		public object CommandParameter { get; set; }
+		public bool Hidden { get; set; }
+
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, EventHandler handler): base(image, style, handler) {}
 		public CommandBarButtonItem(string title, UIBarButtonItemStyle style, EventHandler handler): base(title, style, handler) {}
 		public CommandBarButtonItem(UIBarButtonSystemItem systemItem, EventHandler handler): base(systemItem, handler) {}
-		public CommandBarButtonItem(UIBarButtonSystemItem systemItem): base(systemItem, delegate { Command.Execute(null); }) {}
+		public CommandBarButtonItem(UIBarButtonSystemItem systemItem): base(systemItem, (s, e) => Command.Execute(null)) {}
 		public CommandBarButtonItem(NSCoder coder): base(coder) {}
 		public CommandBarButtonItem(IntPtr handle): base(handle) {}
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, NSObject target, Selector action): base(image, style, target, action) {}
