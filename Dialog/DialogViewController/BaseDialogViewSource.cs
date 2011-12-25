@@ -161,11 +161,18 @@ namespace MonoMobile.Views
 							view = Activator.CreateInstance(viewType, new object[] { cell.ContentView.Bounds }) as UIView;
 						else
 							view = Activator.CreateInstance(viewType) as UIView;
-	
+
 						var memberAttributes = memberData.Member.GetCustomAttributes(false);
 						
 						foreach (var memberAttribute in memberAttributes)
 						{
+							var hasCellViewTemplate = view as ICellViewTemplate;
+							var cellViewTemplate = memberAttribute as CellViewTemplate;
+							if (hasCellViewTemplate != null && cellViewTemplate != null)
+							{
+								hasCellViewTemplate.CellViewTemplate = cellViewTemplate;
+							}
+
 							var viewTheme = view as IThemeable;
 							if (viewTheme != null)
 							{

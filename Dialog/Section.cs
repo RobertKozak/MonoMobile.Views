@@ -96,21 +96,6 @@ namespace MonoMobile.Views
 						}
 					}
 				}
-
-				if (DataContext != null)
-				{
-					foreach(object item in DataContext)
-					{
-						var disposable = item as IDisposable;
-						if (disposable != null)
-						{
-							disposable.Dispose();
-						}
-					}
-
-					DataContext.Clear();
-					DataContext = null;
-				}
 			}
 
 			base.Dispose(disposing);

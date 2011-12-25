@@ -51,7 +51,7 @@ namespace MonoMobile.Views
 				Tag = 1 
 			};
 
-			Switch.ValueChanged += delegate 
+			Switch.ValueChanged += (sender, e) => 
 			{
 				DataContext.Value = Switch.On;
 			};

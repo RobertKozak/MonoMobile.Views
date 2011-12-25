@@ -66,7 +66,7 @@ namespace MonoMobile.Views
 					Tag = 1 
 				};
 
-				Slider.ValueChanged += delegate 
+				Slider.ValueChanged += (sender, e) => 
 				{
 					DataContext.Value = Slider.Value;
 				};

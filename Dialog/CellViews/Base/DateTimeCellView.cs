@@ -100,7 +100,7 @@ namespace MonoMobile.Views
 				Mode = UIDatePickerMode.Date 
 			};
 			
-			picker.ValueChanged += delegate { DataContext.Value = DatePicker.Date; };
+			picker.ValueChanged += (sender, e) => DataContext.Value = DatePicker.Date;
 
 			return picker;
 		}

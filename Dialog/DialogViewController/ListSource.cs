@@ -413,21 +413,24 @@ namespace MonoMobile.Views
 
 				if (Controller != null)
 				{
-					if (PopOnSelection && !(!IsSelectable || IsNavigable || IsMultiselect))
+					lock(this)
 					{
-						Controller.NavigationController.PopViewControllerAnimated(true);
-					}
+						if (PopOnSelection && !(!IsSelectable || IsNavigable || IsMultiselect))
+						{
+							Controller.NavigationController.PopViewControllerAnimated(true);
+						}
 					
-					if (IsSelectable || IsMultiselect || !IsNavigable)
-					{
-						Controller.ReloadData();
-					}
-					else
-					{
-						using (new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+						if (IsSelectable || IsMultiselect || !IsNavigable)
 						{
 							Controller.ReloadData();
-						}));
+						}
+						else
+						{
+							using (new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+							{
+							Controller.ReloadData();
+							}));
+						}
 					}
 				}
 

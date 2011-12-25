@@ -569,36 +569,36 @@ namespace MonoMobile.Views
 					activation.Activated();
 			}
 
-			var source = TableView.Source as BaseDialogViewSource;
-			if (source != null)
-			{
-				foreach (var section in source.Sections.Values)
-				{
-					foreach (var viewList in section.Views.Values)
-					{
-						foreach(var view in viewList)
-						{
-							var dc = view as IDataContext<MemberData>;
-							if (dc != null)
-							{
-								var notifyPropertyChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
-								if (notifyPropertyChanged != null)
-								{
-									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
-								}
-
-								notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
-								if (notifyPropertyChanged != null)
-								{
-									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
-								}
-							}
-						}
-					}
-				}	
-			}
+//			var source = TableView.Source as BaseDialogViewSource;
+//			if (source != null)
+//			{
+//				foreach (var section in source.Sections.Values)
+//				{
+//					foreach (var viewList in section.Views.Values)
+//					{
+//						foreach(var view in viewList)
+//						{
+//							var dc = view as IDataContext<MemberData>;
+//							if (dc != null)
+//							{
+//								var notifyPropertyChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
+//								if (notifyPropertyChanged != null)
+//								{
+//									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+//									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
+//								}
+//
+//								notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
+//								if (notifyPropertyChanged != null)
+//								{
+//									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+//									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
+//								}
+//							}
+//						}
+//					}
+//				}	
+//			}
 		}
 
 		private void ConfigureToolbarItems()
@@ -888,31 +888,31 @@ namespace MonoMobile.Views
 			}
 		}
 		
-		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			Log.Time("[{0}] Handle NotifyPropertyChanged property = "+ e.PropertyName + " sender = "+sender.ToString(), ()=>
-			{
-				var source = TableView.Source as BaseDialogViewSource;
-				foreach (var section in source.Sections.Values)
-				{
-					foreach (var viewList in section.Views.Values)
-					{
-						foreach (var view in viewList)
-						{
-							var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
-							var dc = view as IDataContext<MemberData>;
-							if (dc != null)
-							{
-								if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
-								{
-									using (new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e)));
-								}
-							}
-						}
-					}
-				}				
-			});
-		}
+//		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+//		{
+//			Log.Time("[{0}] Handle NotifyPropertyChanged property = "+ e.PropertyName + " sender = "+sender.ToString(), ()=>
+//			{
+//				var source = TableView.Source as BaseDialogViewSource;
+//				foreach (var section in source.Sections.Values)
+//				{
+//					foreach (var viewList in section.Views.Values)
+//					{
+//						foreach (var view in viewList)
+//						{
+//							var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
+//							var dc = view as IDataContext<MemberData>;
+//							if (dc != null)
+//							{
+//								if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
+//								{
+//									using (new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e)));
+//								}
+//							}
+//						}
+//					}
+//				}				
+//			});
+//		}
 
 		private void CreateTableView(object view, Theme theme)
 		{
@@ -996,27 +996,35 @@ namespace MonoMobile.Views
 				{
 					foreach (var section in source.Sections.Values)
 					{
-						foreach (var viewList in section.Views.Values)
-						{
-							foreach (var view in viewList)
-							{
-								var dc = view as IDataContext<MemberData>;
-								if (dc != null)
-								{
-									var notifyPropertChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
-									if (notifyPropertChanged != null)
-									{
-										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
-									}								
+//						foreach (var viewList in section.Views.Values)
+//						{
+//							foreach (var view in viewList)
+//							{
+//								var dc = view as IDataContext<MemberData>;
+//								if (dc != null)
+//								{
+//									var notifyPropertChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
+//									if (notifyPropertChanged != null)
+//									{
+//										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+//										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
+//									}								
+//
+//									notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
+//									if (notifyPropertChanged != null)
+//									{
+//										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
+//										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
+//									}
+//								}
+//							}
+//						}
 
-									notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
-									if (notifyPropertChanged != null)
-									{
-										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
-									}
-								}
+						foreach(var listSource in section.ListSources.Values)
+						{
+							if (listSource != null)
+							{
+								listSource.Dispose();
 							}
 						}
 					}

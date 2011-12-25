@@ -30,6 +30,7 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.ComponentModel;
 	using System.Drawing;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -232,9 +233,12 @@ namespace MonoMobile.Views
 				}
 			}
 	
-			public override void HandleNotifyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+			public override void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 			{
-				InputView.Text = DataContext.Value.ToString();
+				if (e.PropertyName == DataContext.Member.Name)
+				{
+					InputView.Text = DataContext.Value.ToString();
+				}
 			}
 	
 			protected override void SetDataContext(MemberData value)

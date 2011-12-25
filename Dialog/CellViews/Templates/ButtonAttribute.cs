@@ -56,7 +56,7 @@ namespace MonoMobile.Views
 			CommandOption = CommandOption.Hide;
 		}
 
-		internal string CanExecutePropertyName;
+		public string CanExecutePropertyName;
 		public CommandOption CommandOption;
 
 		[Preserve(AllMembers = true)]

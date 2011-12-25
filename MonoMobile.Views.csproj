@@ -257,6 +257,7 @@
     <Compile Include="Controls\UIInputViewToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolbar.cs" />
     <Compile Include="Dialog\CellViews\Base\CommandCellView.cs" />
+    <Compile Include="Interfaces\ICellViewTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

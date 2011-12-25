@@ -36,10 +36,12 @@ namespace MonoMobile.Views
 	using MonoTouch.UIKit;
 	
 	[Preserve(AllMembers = true)]
-	public class CellView<T> : UIView, IDataContext<MemberData>, IInitializeCell, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
+	public class CellView<T> : UIView, IDataContext<MemberData>, IInitializable, IInitializeCell, ICellViewTemplate, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
 	{
 		public T Value { get; set; }
 		public static Type ValueType { get { return typeof(T); } }
+
+		public CellViewTemplate CellViewTemplate { get; set; }
 
 		public Theme Theme { get; set; }
 
@@ -65,9 +67,11 @@ namespace MonoMobile.Views
 			{
 				Controller = null;
 				Cell = null;
-
+				
 				if (DataContext != null)
 				{
+					_DataContext.RemoveNotifyPropertyChangedHandler(_DataContext.Source, this);
+					_DataContext.RemoveNotifyPropertyChangedHandler(_DataContext.DataContextSource, this);
 					DataContext.Dispose();
 				}
 				
@@ -82,14 +86,24 @@ namespace MonoMobile.Views
 
 			base.Dispose(disposing);
 		}
+
+		public virtual void Initialize()
+		{
+		}
+
 		public virtual void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 		}
 		
 		public virtual void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Value = (T)_DataContext.Value; 
-			//Controller.TableView.ReloadData();
+			Console.WriteLine("CellView HandlePropertyChanged {0} Actual property = {1}", e.PropertyName, DataContext.Member.Name);
+
+			if (DataContext.CanHandleNotifyPropertyChanged(e.PropertyName))
+			{
+				Value = (T)_DataContext.Value; 
+				//Controller.TableView.ReloadData();
+			}
 		}
 
 		protected virtual MemberData GetDataContext()
@@ -107,6 +121,15 @@ namespace MonoMobile.Views
 					_DataContext.TargetType = ValueType;
 					Value = (T)_DataContext.Value;
 				}
+			}
+			
+			if (_DataContext != null)
+			{
+//				if (_DataContext.Source != null)
+//					_DataContext.AddNotifyPropertyChangedHandler(_DataContext.Source, this);
+
+				if (_DataContext.DataContextSource != null)
+					_DataContext.AddNotifyPropertyChangedHandler(_DataContext.DataContextSource, this);
 			}
 		}
 

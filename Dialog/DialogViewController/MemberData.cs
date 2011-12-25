@@ -82,29 +82,90 @@ namespace MonoMobile.Views
 			UpdateValue();
 			Id = CreateId();
 			
-			AddNotifyPropertyChangedHandler(Source, this);
-			AddNotifyPropertyChangedHandler(DataContextSource, this);
-			
-			Console.WriteLine("Creating MemberData: {0} from {1}", Member.Name, Source.GetType());
+//			AddNotifyPropertyChangedHandler(Source, this);
+//			AddNotifyPropertyChangedHandler(DataContextSource, this);
 		}
 		
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				Console.WriteLine("Disposing MemberData: {0} from {1}", Member.Name, Source.GetType());
-				
 				Id.Dispose();
 
 				if (DataContextBinder != null)
 				{
 					DataContextBinder.Dispose();
 				}
+				
+				RemoveNotifyPropertyChangedHandler(Source, this);
+				RemoveNotifyPropertyChangedHandler(DataContextSource, this);
+
+				RemoveNotifyCollectionChangedHandler(Source, this);
+				RemoveNotifyCollectionChangedHandler(DataContextSource, this);
 			}
 			
 			base.Dispose(disposing);
 		}
 
+		public void UpdateValue()
+		{
+			SetValue(GetValue());
+		}
+		
+		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (CanHandleNotifyPropertyChanged(e.PropertyName))
+			{
+				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
+				        {
+					UpdateValue();
+				});
+			}
+		}
+
+		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			UpdateValue();
+		}
+
+		public void RemoveNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		{
+			var notifyCollectionChanged = value as INotifyCollectionChanged;
+			if (notifyCollectionChanged != null && handler != null)
+			{
+				notifyCollectionChanged.CollectionChanged -= handler.HandleNotifyCollectionChanged;
+			}
+		}
+
+		public void RemoveNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		{
+			var notifyPropertyChanged = value as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null && handler != null)
+			{
+				notifyPropertyChanged.PropertyChanged -= handler.HandleNotifyPropertyChanged;
+			}
+		}
+
+		public void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
+		{
+			RemoveNotifyCollectionChangedHandler(value, handler);
+			var notifyCollectionChanged = value as INotifyCollectionChanged;
+			if (notifyCollectionChanged != null && handler != null)
+			{
+				notifyCollectionChanged.CollectionChanged += handler.HandleNotifyCollectionChanged;
+			}
+		}
+
+		public void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
+		{
+			RemoveNotifyPropertyChangedHandler(value, handler);
+			var notifyPropertyChanged = value as INotifyPropertyChanged;
+			if (notifyPropertyChanged != null && handler != null)
+			{
+				notifyPropertyChanged.PropertyChanged += handler.HandleNotifyPropertyChanged;
+			}
+		}
+		
 		protected virtual object GetValue()
 		{
 			if (Member != null && Source != null)
@@ -128,7 +189,12 @@ namespace MonoMobile.Views
 
 			return ConvertValue(_Value);
 		}
-
+		
+		public virtual bool CanHandleNotifyPropertyChanged(string propertyName)
+		{
+			return (Member != null && propertyName == Member.Name) || (DataContextMember != null && propertyName == DataContextMember.Name);
+		}
+		
 		protected virtual void SetValue(object value)
 		{	
 			var shouldSetHandlers = false;		
@@ -154,7 +220,9 @@ namespace MonoMobile.Views
 							ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
 							
 							if (DataContextMember.CanWrite())
+							{
 								DataContextMember.SetValue(DataContextSource, convertedValue);
+							}
 						}
 	
 						_DataContextValue = convertedValue;
@@ -174,7 +242,9 @@ namespace MonoMobile.Views
 						shouldSetHandlers = true;
 	
 						if (Member.CanWrite())
+						{
 							Member.SetValue(Source, convertedValue);
+						}
 					}
 	
 					_Value = convertedValue;
@@ -197,65 +267,6 @@ namespace MonoMobile.Views
 			AddNotifyPropertyChangedHandler(Value, binder);
 
 			_DataContextBinder = binder;
-		}
-		
-		public void UpdateValue()
-		{
-			SetValue(GetValue());
-		}
-		
-		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == Member.Name)
-			{
-				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
-				        {
-					UpdateValue();
-				});
-			}
-		}
-
-		public void HandleNotifyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			UpdateValue();
-		}
-
-		private static void RemoveNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
-		{
-			var notifyCollectionChanged = value as INotifyCollectionChanged;
-			if (notifyCollectionChanged != null && handler != null)
-			{
-				notifyCollectionChanged.CollectionChanged -= handler.HandleNotifyCollectionChanged;
-			}
-		}
-
-		private static void RemoveNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
-		{
-			var notifyPropertyChanged = value as INotifyPropertyChanged;
-			if (notifyPropertyChanged != null && handler != null)
-			{
-				notifyPropertyChanged.PropertyChanged -= handler.HandleNotifyPropertyChanged;
-			}
-		}
-
-		private static void AddNotifyCollectionChangedHandler(object value, IHandleNotifyCollectionChanged handler)
-		{
-			RemoveNotifyCollectionChangedHandler(value, handler);
-			var notifyCollectionChanged = value as INotifyCollectionChanged;
-			if (notifyCollectionChanged != null && handler != null)
-			{
-				notifyCollectionChanged.CollectionChanged += handler.HandleNotifyCollectionChanged;
-			}
-		}
-
-		private static void AddNotifyPropertyChangedHandler(object value, IHandleNotifyPropertyChanged handler)
-		{
-			RemoveNotifyPropertyChangedHandler(value, handler);
-			var notifyPropertyChanged = value as INotifyPropertyChanged;
-			if (notifyPropertyChanged != null && handler != null)
-			{
-				notifyPropertyChanged.PropertyChanged += handler.HandleNotifyPropertyChanged;
-			}
 		}
 
 		private void ResetCollection(INotifyCollectionChanged collection, IList newCollection)
