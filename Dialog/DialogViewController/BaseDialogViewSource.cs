@@ -566,8 +566,13 @@ namespace MonoMobile.Views
 			if (Controller.Theme != null)
 			{
 				headerLabel.TextAlignment = Controller.Theme.HeaderTextAlignment;
-				headerLabel.TextColor = Controller.Theme.HeaderTextColor;
-				headerLabel.ShadowColor = Controller.Theme.HeaderTextShadowColor;
+
+				if (Controller.Theme.HeaderTextColor != null)
+					headerLabel.TextColor = Controller.Theme.HeaderTextColor;
+
+				if (Controller.Theme.HeaderTextShadowColor != null)
+					headerLabel.ShadowColor = Controller.Theme.HeaderTextShadowColor;
+
 				headerLabel.ShadowOffset = Controller.Theme.HeaderTextShadowOffset;
 			}
 

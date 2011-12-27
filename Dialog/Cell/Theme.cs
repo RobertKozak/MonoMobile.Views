@@ -553,7 +553,7 @@ namespace MonoMobile.Views
 			}
 			else if (CellBackgroundImage != null)
 			{
-				_Cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
+				_Cell.BackgroundColor = UIColor.FromPatternImage(CellBackgroundImage);
 			}
 			else
 			{

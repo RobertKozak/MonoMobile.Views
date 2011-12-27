@@ -6,8 +6,7 @@ using MonoTouch.UIKit;
 namespace Samples
 {
 	[Theme(typeof(HoneyDoTheme))]
-	[Theme(typeof(FrostedTheme))]
-	public class ListTest : ListView
+	public class ListTest : View
 	{
 		protected new ObservableCollection<MovieViewModel> DataContext
 		{
@@ -40,16 +39,6 @@ namespace Samples
 		public void One()
 		{
 			DataContext.Insert(2, new MovieViewModel(){});	
-		}
-
-		public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
-		{
-		}
-
-		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-		{
-			if (DataContext != null && DataContext.Count > indexPath.Row)
-				cell.TextLabel.Text = DataContext[indexPath.Row].ToString();
 		}
 	}
 }

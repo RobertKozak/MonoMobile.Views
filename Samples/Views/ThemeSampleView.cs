@@ -9,10 +9,9 @@ namespace Samples
 	[Preserve(AllMembers = true)]
 	public class ThemeSampleView: View
 	{
-		[Bind("Themes", "Index")]
-		public int Selected { get; set; }
-
-		[Bind("Themes", "Theme")]
+		public Theme Selected { get; set; }
+		
+		[List(SelectionAction = SelectionAction.Multiselection, SelectedItemMemberName = "Selected")]
 		public ObservableCollection<Theme> Themes { get; set; }	
 
 		public ThemeSampleView()

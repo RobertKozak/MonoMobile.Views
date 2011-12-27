@@ -46,14 +46,6 @@ namespace MonoMobile.Views
 			TextShadowOffset = new SizeF(1, 0);
 			
 			gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), new float[] { 0.95f, 0.95f, 0.95f, 1, 0.85f, 0.85f, 0.85f, 1 }, new float[] { 0, 1 });
-			
-			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
-		}
-
-		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
-		{
-			context.DrawLinearGradient(gradient, new PointF(rect.Left, rect.Top), new PointF(rect.Left, rect.Bottom), CGGradientDrawingOptions.DrawsBeforeStartLocation);
-			cell.ShouldDrawBorder = true;
 		}
 	}
 

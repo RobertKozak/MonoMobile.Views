@@ -5,24 +5,23 @@ namespace Samples
 	using MonoMobile.Views;
 	using MonoTouch.UIKit;
 
-	public class EcteteraElement : RootElement, ISelectable//, ISizeable
+	public class EcteteraCellView : View, ISelectable, IUpdateable, IHandleNotifyPropertyChanged//, ISizeable
 	{
+		public UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Default; } } 
+		public UITableViewCell Cell { get; set; }
+		public DialogViewController Controller { get; set; }
+
 		private UITextField _TextField;
 		private UIImageView _Image;
+		
+		private UIView ElementView;
 
 		private EcteteraViewModel ViewModel
 		{
 			get { return ((EcteteraView)DataContext).DataContext; }
 		}
 
-		public override void InitializeCell(UITableView tableView)
-		{
-			base.InitializeCell (tableView);
-			Cell.Accessory = UITableViewCellAccessory.None;
-			Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-		}
-
-		public override void InitializeContent()
+		public EcteteraCellView()
 		{
 			_TextField = new UITextField(new RectangleF(50, 10, 250, 30));
 		
@@ -30,8 +29,6 @@ namespace Samples
 			
 			if (ViewModel != null)
 				_Image.BackgroundColor = ViewModel.Color;
-
-			base.InitializeContent();
 		
 			ElementView = new UIView(RectangleF.Empty) { BackgroundColor = UIColor.ScrollViewTexturedBackgroundColor };
 
@@ -53,26 +50,29 @@ namespace Samples
 		
 
 			if (ViewModel != null)
-			_TextField.Text = ViewModel.Text;
-		}
-		
-		public override void UpdateCell()
-		{
-			base.UpdateCell();
-			TableView.ScrollEnabled = false;
-			var location = new PointF(-10, -11);
-			ElementView.Frame = new RectangleF(location, TableView.Frame.Size);
+				_TextField.Text = ViewModel.Text;
+
+			Add(ElementView);
 		}
 
-		protected override void OnDataContextChanged()
+		public void UpdateCell(UITableViewCell cell, MonoTouch.Foundation.NSIndexPath indexPath)
+		{
+			cell.Accessory = UITableViewCellAccessory.None;
+			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+
+			var location = new PointF(-10, -11);
+			ElementView.Frame = new RectangleF(location, cell.Frame.Size);
+		}
+
+		public void HandleNotifyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (_TextField != null)
-				_TextField.Text = ViewModel.Text;
+				_TextField.Text = ViewModel.Text;		
 		}
 
-		public void Selected(DialogViewController dvc, UITableView tableView, MonoTouch.Foundation.NSIndexPath path)
+		public void Selected (DialogViewController controller, UITableView tableView, object item, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			// do nothing
+		
 		}
 	
 
@@ -101,9 +101,10 @@ namespace Samples
 
 	public class EcteteraView: View
 	{
-		[Section(Order = 0)]
+		[Section]
+		[Order(0)]
 		[Caption("")]
-		[Root(ElementType = typeof(EcteteraElement))]
+		[CellView(typeof(EcteteraCellView))]
 		public new EcteteraViewModel DataContext
 		{
 			get { return (EcteteraViewModel)GetDataContext(); }

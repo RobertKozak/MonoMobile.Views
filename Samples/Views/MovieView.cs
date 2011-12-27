@@ -20,21 +20,21 @@ namespace Samples
 			set;// { Set(()=>DataContext.Genre, value); }
 		}
 		
-		[PopOnSelection]
+		[List(SelectionAction = SelectionAction.PopOnSelection)]
 		public Rating Rating
 		{
 			get;// { return Get(()=>DataContext.Rating); } 
 			set;// { Set(()=>DataContext.Rating, value); }
 		}
 		
-		[Bind(ValueConverterType = typeof(MoneyConverter))]
+		[ValueConverter(typeof(MoneyConverter))]
 		public float TicketPrice 
 		{
 			get;// { return Get (() => DataContext.TicketPrice); }
 			set;// { Set (() => DataContext.TicketPrice, value); }
 		}
 		
-		[Bind(ValueConverterType = typeof(PercentConverter))]
+		[ValueConverter(typeof(PercentConverter))]
 		public float CriticsRating 
 		{
 			get;// { return Get (() => DataContext.CriticsRating); }
@@ -56,7 +56,8 @@ namespace Samples
 //			set;// { Set(() => DataContext.Location, value); }
 //		}
 
-		[Section(Order = 1)]
+		[Section]
+		[Order(1)]
 		[Button]
 		public void MakeMovieRestricted()
 		{

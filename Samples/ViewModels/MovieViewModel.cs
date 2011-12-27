@@ -84,7 +84,7 @@ namespace Samples
 			set { Set(()=>ShownIn3D, value); }
 		}
 
-		public EnumCollection<Location> Location
+		public Location Location
 		{
 			get { return Get(() => Location); }
 			set { Set(() => Location, value); }

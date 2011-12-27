@@ -60,26 +60,6 @@ namespace MonoMobile.Views
 
 			FooterTextColor = UIColor.FromWhiteAlpha(1f, 0.8f);
 			FooterTextShadowColor = UIColor.FromWhiteAlpha(0f, 0.2f);
-
-			DrawElementViewAction = (rect, context, cell) => DrawElementView(rect, context, cell);
-		}
-
-		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
-		{
-			context.SaveState();
-					
-			var backgroundColor = CellBackgroundColor;
-			if(backgroundColor != null)
-			{
-				if (backgroundColor == UIColor.Clear)
-					backgroundColor = UIColor.White;
-
-				context.SetFillColorWithColor(backgroundColor.ColorWithAlpha(0.4f).CGColor);
-				context.SetBlendMode(CGBlendMode.Overlay);
-				context.FillRect(rect);
-			}
-
-			context.RestoreState();
 		}
 	}
 }

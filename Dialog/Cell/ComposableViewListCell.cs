@@ -130,6 +130,8 @@ namespace MonoMobile.Views
 			{
 				foreach (var viewType in viewTypes)
 				{
+					if (viewType == null) continue;
+
 					UIView view = null;
 					var hasFrameCtor = viewType.GetConstructor(new Type[] { typeof(RectangleF) }) != null;
 					if (hasFrameCtor)

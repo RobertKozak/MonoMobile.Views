@@ -9,12 +9,9 @@ namespace Samples
 	using System.ComponentModel;
 
 	[Theme(typeof(HoneyDoTheme))]
-	[Theme(typeof(FrostedTheme))]
 	public class HoneyDoListView: View
 	{
-		[Bind("Caption", "Caption")]
-		//[Root(ViewType = typeof(StandardListView))]
-		[MultiSelection]
+		[List(SelectionAction = SelectionAction.Multiselection)]
 		public List<string> Items { get; private set; }
 
 		

@@ -12,8 +12,6 @@ namespace Samples
 	using System;
 	using MonoMobile.Views;
 
-	[Theme(typeof(BackgroundImageTheme))]
-	[Theme(typeof(NavbarTheme))]
 	[Theme(typeof(FrostedTheme))]
 	//[Searchbar(IncrementalSearch = false)]
 	public class TestView : View
@@ -157,15 +155,18 @@ namespace Samples
 
 	[Section("Lists")]
 		public TestEnum TestEnum;
-		[PopOnSelection]
+
+		[List(SelectionAction = SelectionAction.PopOnSelection)]	
 		public TestEnum PopEnum;
-		public EnumCollection<TestEnum> EnumCollection = new EnumCollection<TestEnum>();
+
+		public List<TestEnum> EnumCollection = new List<TestEnum>();
 		public IEnumerable MyList = new List<string>() { "Windows", "OS X", "Linux"};
 
-		[MultiSelection]
+		[List(SelectionAction = SelectionAction.Multiselection)]
 		public List<string> MySelectableList = new List<string>() { "Windows", "OS X", "Linux" }; 
 
-		[List(ViewType = typeof(MovieView))]
+		[List]
+		[NavigateToView(typeof(MovieView))]
 		public ObservableCollection<MovieViewModel> Movies;
 
 		public MyObject(string name)

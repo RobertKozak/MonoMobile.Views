@@ -16,83 +16,51 @@ namespace Samples
 	using System.Linq;
 	
 	[Preserve(AllMembers = true)]
-//	[Theme(typeof(BackgroundImageTheme))]
 	[Theme(typeof(NavbarTheme))]
-//	[Theme(typeof(FrostedTheme))]
-//	[EnableSearch(true, IncrementalSearch = true)]
 	public class MovieListView: View, INotifyPropertyChanged
-	{	
-	//	[EnableSearch(true, IncrementalSearch = false)]
-		public List<ISection> Search(ISection[] sections, string searchText)
-		{
-			var result = new List<ISection>();
-
-			foreach(var section in sections)
-				foreach(var element in section.Elements)
-			{
-				if (element.Caption.Contains(searchText))
-					result.Add(new Section() { element });		
-			}
-
-			return result;
-		}
-
-		private View1 _View1 = new View1();
-		private View2 _View2 = new View2();
-		
-		[Section("Test Section", "",Order = 2, IsExpandable = true)]
-		[Multiline]
-		[DefaultValue("Test Entry. This is a sample of some very long text.")]
-		//	[Theme(typeof(CorkStyle))]
+	{
+		[Section("Test Section", "")]
+		[Order(2)]
+		[List(SelectionAction = SelectionAction.Multiselection)]
+		[Theme(typeof(CorkTheme))]
 		public string TestEntry2 { get; set; }
 
-		[DefaultValue(true)]
-		//[Checkbox]
 		public bool TestBool { get; set; }
 
 		[Date]
-	//	[Theme(typeof(MarbledTheme))]
 		public DateTime Date {get; set;}
 		
 		[Time]
-	//	[Theme(typeof(GraniteStyle))]
+		[Theme(typeof(GraniteTheme))]
 		public DateTime Time {get; set;}
-		
-		public EntryElement TestEntry { get; set; }
 
 		[Password("Enter passsword")]
 		[DefaultValue("Test String")]
-		public string MyString
-		{
-			get;
-			set;
-		}
+		public string MyString { get; set; }
 
 		[Section]
-		[Root(ViewType = typeof(MovieView))]
-	//	[List(ViewType = typeof(MovieView))]//, ThemeType = typeof(WoodenTheme))]
+		[CellView(typeof(MovieView))]
 		public ObservableCollection<MovieViewModel> Movies 
 		{
 			get;
 			set;
 		}
 		
-		[LoadMore]
-		public void Activity()
-		{
-			Thread.Sleep(1500);
-		}
+//		[LoadMore]
+//		public void Activity()
+//		{
+//			Thread.Sleep(1500);
+//		}
 		
-		[Section]
-		[Progress("Getting values...", "Testing", IndicatorStyle = IndicatorStyle.AccessoryIndicator)]
-		public void Test()
-		{
-			System.Threading.Thread.Sleep(3000);
-		}
+//		[Section]
+//		[Progress("Getting values...", "Testing", IndicatorStyle = IndicatorStyle.AccessoryIndicator)]
+//		public void Test()
+//		{
+//			System.Threading.Thread.Sleep(3000);
+//		}
 
 		[Section("Using a DataBinding", "This is a footer")]
-		[Root(ViewType = typeof(MovieView))]
-		[NavbarButton(UIBarButtonSystemItem.Add)]
+		[NavigateToView(typeof(MovieView))]
 		public ObservableCollection<MovieViewModel> Movies2 
 		{
 		get; set;
@@ -114,53 +82,26 @@ namespace Samples
 //			((MovieListViewModel)DataContext).TestEntry2 = "Test Robert";
 		}
 
-		[Map("A Map")]
-		public CLLocationCoordinate2D Location {get; set;}
+	//	[Map("A Map")]
+	//	public CLLocationCoordinate2D Location {get; set;}
 
 			
 		[Entry]
-		[Bind("TestEntry", "DataContext")]
 		[DefaultValue("Rocket")]
-		public string TestEntry5
-		{
-			get;// { return Get(()=>TestEntry, "Testing"); }
-			set;// { Set(()=>TestEntry, value); }
-		} 
+		public string TestEntry5 { get; set; } 
 
 		[Section]
-		[Root(CellStyle = UITableViewCellStyle.Subtitle)]
 		[Caption("Root Address")]
-		public AddressView AddressView
-		{
-			get;// { return Get(()=>AddressView, new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" }); } 
-			set;// { Set(()=>AddressView, value); } 
-		}
+		public AddressView AddressView { get; set; }
 		
-		private IView _DynamicView;
-		[Section(Order = 10)]
-		[Root]
-		public IView DynamicView
-		{
-			get { return _DynamicView; }
-			set 
-			{ 
-				_DynamicView = value;
-				if (PropertyChanged != null) 
-					PropertyChanged(this, new PropertyChangedEventArgs("DynamicView")); 
-			} // { Set(()=>DynamicView, value); }
-		}
 		
-		[MultiSelection]
+		[List(SelectionAction = SelectionAction.Multiselection)]
 		public List<string> MovieClasses { get; set; }
 		
 		[Section]
 	//	[CellStyle(typeof(ClearStyle))]
 	//[CellStyle(typeof(ButtonCellStyle))]
-		public View WebSamples
-		{
-			get;// { return Get(()=>WebSamples, new WebSamples()); }
-			set;// { Set(()=>WebSamples, value); }
-		}
+		public View WebSamples { get; set; }
 		
 		private bool _CanChangeStyle;
 		[Checkmark]
@@ -177,39 +118,16 @@ namespace Samples
 				}
 			}
 		}
-
-		[Button]
-		[Section(Order = 11)]
-		public void ChangeDynamicView()
-		{
-			if(DynamicView.GetType() == typeof(View1))
-				DynamicView = _View2;
-			else
-				DynamicView = _View1;
-		}
 		
 		[Button("CanChangeStyle", CommandOption = CommandOption.Hide)]
 		public void ChangeStyle()
 		{
 			
 		}
-//		[List]
-//		[Section("", "This Address is the same as Root Address above")]
-//		public AddressView InlineAddress 
-//		{
-//			get { return Get(()=>AddressView); } 
-//			set { Set(()=>AddressView, value); } 
-//		}
 		
 		[Section]
-		[Root]
-		public InterestingView InterestingStuff
-		{
-			get;// { return Get(()=>InterestingStuff, new InterestingView()); }
-			set;// { Set(()=>InterestingStuff, value); }
-		}
+		public InterestingView InterestingStuff { get; set; }
 		
-	//	[PullToRefresh]
 		public void RefreshData()
 		{
 			for(var index = 0; index < 100; index++)
@@ -222,7 +140,7 @@ namespace Samples
 
 		public MovieListView()
 		{
-			DataContext = new MovieListViewModel();// { TestEntry = "TestEntry string" };
+			DataContext = new MovieListViewModel();
 			
 
 			HoneyDoList = new HoneyDoListView();
@@ -236,29 +154,23 @@ namespace Samples
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
-			dataModel.Load(25);
+			dataModel.Load(5);
 			Movies =dataModel.Movies;
 			MyString = "Test string";
 
-InterestingStuff = new InterestingView();
+			InterestingStuff = new InterestingView();
 			
-			Location = new CLLocationCoordinate2D(-33.867139,151.207114);
 
-DynamicView = new View1();
 			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
-			WebSamples = new WebSamples();
 
-////			foreach(var movie in dataModel.Movies)
-////			{
-////				Movies.Add(new MovieView() { DataContext = movie });
-////			}
-//
-Movies2 = Movies;
+			Movies2 = Movies;
 		
 			Time = DateTime.Now;
 			Date = DateTime.Now;
 			
 			CanChangeStyle = true;
+
+			TestEntry2 = "Test Entry. This is a sample of some very long text.";
 		}
 	
 

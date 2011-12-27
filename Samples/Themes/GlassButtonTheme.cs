@@ -46,46 +46,6 @@ namespace MonoMobile.Views
 			TextColor = UIColor.White;
 			TextShadowColor = UIColor.DarkGray;
 			TextAlignment = UITextAlignment.Center;
-
-			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
-		}
-
-		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
-		{
-			var gradientFrame = rect;
-			
-			var shineFrame = gradientFrame;
-			shineFrame.Y += 1;
-			shineFrame.X += 1;
-			shineFrame.Width -= 2;
-			shineFrame.Height = (shineFrame.Height / 2);
-
-			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
-
-			var gradient = new CGGradient(
-			    colorSpace,
-			    new float[] { 0f, 0f,0f, 0.70f, 
-							  0f, 0f, 0f, 0.40f},
-				new float[] { 0, 1 } );
-
-			var shineGradient = new CGGradient(
-			    colorSpace,
-			    new float[] { 1f, 1f, 1f, 0.80f, 
-							  1f, 1f, 1f, 0.10f},
-				new float[] { 0, 1 } );
-			
-			if (Cell != null && Cell.Highlighted)
-			{
-				context.SetFillColorWithColor(HighlightColor.CGColor);
-			}
-			else
-			{
-				context.SetFillColorWithColor(CellBackgroundColor.CGColor);
-			}
-			context.FillRect(rect);
-	
-			context.DrawLinearGradient(gradient, new PointF(gradientFrame.Left, gradientFrame.Top), new PointF(gradientFrame.Left, gradientFrame.Bottom), CGGradientDrawingOptions.DrawsAfterEndLocation);		
-			context.DrawLinearGradient(shineGradient, new PointF(shineFrame.Left, shineFrame.Top), new PointF(shineFrame.Left, shineFrame.Bottom), CGGradientDrawingOptions.DrawsAfterEndLocation);
 		}
 	}
 }

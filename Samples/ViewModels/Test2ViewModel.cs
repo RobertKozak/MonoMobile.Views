@@ -171,7 +171,7 @@ namespace DealerCenter
 //			private set { Set(() => InventoryList, value); }
 //		}
 		
-		public EnumCollection<TestEnum> TestEnumCollection
+		public List<TestEnum> TestEnumCollection
 		{
 			get { return Get(() => TestEnumCollection); }
 			private set { Set(() => TestEnumCollection, value); }

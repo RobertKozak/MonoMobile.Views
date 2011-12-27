@@ -45,7 +45,7 @@ namespace Samples
 			{
 				InvokeOnMainThread(delegate
 				{
-					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController("Sample", new TestView(), true) { Autorotate = true } };
+					_Navigation.ViewControllers = new UIViewController[] { new DialogViewController("Sample", new TestView(), null, true) { Autorotate = true } };
 					
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(0.3f);

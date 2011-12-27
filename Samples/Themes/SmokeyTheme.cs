@@ -41,21 +41,6 @@ namespace MonoMobile.Views
 			CellBackgroundColor = UIColor.Clear;
 			TextColor = UIColor.DarkTextColor;
 			SeparatorColor = UIColor.DarkGray;
-
-			DrawElementViewAction = (rect, context, cell) => { DrawElementView(rect, context, cell); };
-		}
-
-		public void DrawElementView(RectangleF rect, CGContext context, UITableViewElementCell cell)
-		{
-			context.SaveState();
-			float r = 0;
-			float g = 0;
-			float b = 0;
-
-			var gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), new float[] { r, g, b, 0.20f, r, g, b, 0.40f }, new float[] { 0, 1 });			
-			context.DrawLinearGradient(gradient, new PointF(rect.Left, rect.Top), new PointF(rect.Left, rect.Bottom), CGGradientDrawingOptions.DrawsBeforeStartLocation);
-
-			context.RestoreState();
 		}
 	}
 }
