@@ -507,42 +507,6 @@ namespace MonoMobile.Views
 			
 			SetScrollEnabled();
 			
-			if (Theme != null)
-			{
-				var nav = ParentViewController as UINavigationController;
-				if (nav != null)
-				{
-					nav.NavigationBar.Opaque = false;
-	
-					if (Theme.BarStyle.HasValue)
-					{
-						nav.NavigationBar.BarStyle = Theme.BarStyle.Value;
-					}
-	
-	//				if (!string.IsNullOrEmpty(_Root.NavbarImage))
-	//				{
-	//					UIView view = new UIView(new RectangleF(0f, 0f, nav.NavigationBar.Frame.Width, nav.NavigationBar.Frame.Height));
-	//					view.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(_Root.NavbarImage).ImageToFitSize(view.Bounds.Size));
-	//					nav.NavigationBar.InsertSubview(view, 0);
-	//				}
-	//				else
-					nav.NavigationBar.Translucent = Theme.BarTranslucent;
-					nav.NavigationBar.TintColor = Theme.BarTintColor;
-
-					nav.Toolbar.Translucent = Theme.BarTranslucent;
-					nav.Toolbar.TintColor = Theme.BarTintColor;
-				}
-			
-				var separatorColor = Theme.SeparatorColor;
-				if (separatorColor != null)
-					TableView.SeparatorColor = separatorColor;
-
-				var separatorStyle = Theme.SeparatorStyle;
-				if (separatorStyle.HasValue)
-					TableView.SeparatorStyle = separatorStyle.Value;
-			}
-
-			ConfigureBackgroundImage();
 			ReloadData();
 		}
 
@@ -568,37 +532,6 @@ namespace MonoMobile.Views
 				if (activation != null)
 					activation.Activated();
 			}
-
-//			var source = TableView.Source as BaseDialogViewSource;
-//			if (source != null)
-//			{
-//				foreach (var section in source.Sections.Values)
-//				{
-//					foreach (var viewList in section.Views.Values)
-//					{
-//						foreach(var view in viewList)
-//						{
-//							var dc = view as IDataContext<MemberData>;
-//							if (dc != null)
-//							{
-//								var notifyPropertyChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
-//								if (notifyPropertyChanged != null)
-//								{
-//									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-//									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
-//								}
-//
-//								notifyPropertyChanged = dc.DataContext.Source as INotifyPropertyChanged;
-//								if (notifyPropertyChanged != null)
-//								{
-//									notifyPropertyChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-//									notifyPropertyChanged.PropertyChanged += HandleNotifyPropertyChanged;
-//								}
-//							}
-//						}
-//					}
-//				}	
-//			}
 		}
 
 		private void ConfigureToolbarItems()
@@ -804,16 +737,75 @@ namespace MonoMobile.Views
 
 		public void ReloadData()
 		{			
-//			if (TableView != null)
-//			{
-			//	UpdateSource();
+			if (Theme != null)
+			{
+				var nav = ParentViewController as UINavigationController;
+				if (nav != null)
+				{
+					nav.NavigationBar.Opaque = false;
+	
+					if (Theme.BarStyle.HasValue)
+					{
+						nav.NavigationBar.BarStyle = Theme.BarStyle.Value;
+					}
+	
+					nav.NavigationBar.Translucent = Theme.BarTranslucent;
+					nav.NavigationBar.TintColor = Theme.BarTintColor;
+
+					nav.Toolbar.Translucent = Theme.BarTranslucent;
+					nav.Toolbar.TintColor = Theme.BarTintColor;
+				}
+			
+				var separatorColor = Theme.SeparatorColor;
+				if (separatorColor != null)
+					TableView.SeparatorColor = separatorColor;
+
+				var separatorStyle = Theme.SeparatorStyle;
+				if (separatorStyle.HasValue)
+					TableView.SeparatorStyle = separatorStyle.Value;
+			}
+
+			ConfigureBackgroundImage();
+
 			if (TableView != null)
 				TableView.ReloadData();
-//			}
 
 			_Dirty = false;
 		}
 		
+		public void ResetTheme(Theme newTheme)
+		{
+			this.Theme.MergeTheme(newTheme);
+
+			var source = TableView.Source as BaseDialogViewSource;
+
+			foreach(var cell in TableView.VisibleCells)
+			{
+				var listCell = cell as ComposableViewListCell;
+				if (listCell != null)
+				{
+					listCell.Theme.MergeTheme(newTheme);
+				}
+			}
+
+			foreach (var section in source.Sections.Values)
+			{
+				foreach (var viewList in section.Views.Values)
+				{
+					foreach (var view in viewList)
+					{
+						var themeable = view as IThemeable;
+						if (themeable != null)
+						{
+							themeable.Theme.MergeTheme(Theme);	
+						}
+					}
+				}
+			}
+
+			ReloadData();
+		}
+
 		public void Flip()
 		{
 			var oldTB = TableView;

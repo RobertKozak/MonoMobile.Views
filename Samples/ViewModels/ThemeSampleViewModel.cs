@@ -20,7 +20,7 @@ namespace Samples
 		
 		public ObservableCollection<Theme> Themes { get; set; }
 		
-		public int Selected { get; set; }
+		public Theme Selected { get; set; }
 
 		public ThemeSampleViewModel()
 		{

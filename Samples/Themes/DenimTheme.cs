@@ -38,11 +38,17 @@ namespace MonoMobile.Views
 	{
 		public DenimTheme()
 		{
-			CellBackgroundColor = UIColor.ScrollViewTexturedBackgroundColor;
+			CellBackgroundColor = UIColor.FromWhiteAlpha(1.0f, 0.2f);
+
 			TextColor = UIColor.White;
 			TextShadowColor = UIColor.Black;
 			TextShadowOffset = new SizeF(0, 1);
 			DetailTextColor = UIColor.LightTextColor;
+
+			BarTintColor = UIColor.FromRGB(50, 100, 200);
+			BarStyle = UIBarStyle.Default;
+
+			BackgroundColor = UIColor.ScrollViewTexturedBackgroundColor;
 
 			Name = "Denim";
 		}

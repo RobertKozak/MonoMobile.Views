@@ -9,14 +9,21 @@ namespace Samples
 	[Preserve(AllMembers = true)]
 	public class ThemeSampleView: View
 	{
-		public Theme Selected { get; set; }
-		
-		[List(SelectionAction = SelectionAction.Multiselection, SelectedItemMemberName = "Selected")]
+		private Theme Selected;
+
+		[List(SelectionAction = SelectionAction.Selection, SelectedItemMemberName = "Selected")]
 		public ObservableCollection<Theme> Themes { get; set; }	
 
 		public ThemeSampleView()
 		{
 			DataContext = new ThemeSampleViewModel();
+		}
+		
+		[Section]
+		[Button]
+		public void SetSelectedTheme()
+		{
+			Application.CurrentDialogViewController.ResetTheme(Selected);
 		}
 	}
 }

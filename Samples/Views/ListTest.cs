@@ -8,7 +8,8 @@ namespace Samples
 	[Theme(typeof(HoneyDoTheme))]
 	public class ListTest : View
 	{
-		protected new ObservableCollection<MovieViewModel> DataContext
+		[List]
+		public new ObservableCollection<MovieViewModel> DataContext
 		{
 			get { return (ObservableCollection<MovieViewModel>)GetDataContext(); }
 			set { SetDataContext(value); }
@@ -31,8 +32,7 @@ namespace Samples
 			var dataModel = new MovieDataModel();
 			dataModel.Load(20);
 			Console.WriteLine("Data Loaded " + DateTime.Now);
-		DataContext = dataModel.Movies;
-
+			DataContext = dataModel.Movies;
 		}
 
 		[ToolbarButton]

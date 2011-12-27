@@ -218,7 +218,7 @@ namespace MonoMobile.Views
 			if (ListSource != null)
 			{
 				Theme.Cell = this;
-				
+				 
 				TextLabel.BackgroundColor = UIColor.Clear;
 				if (DetailTextLabel != null)
 					DetailTextLabel.BackgroundColor = UIColor.Clear;
