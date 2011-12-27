@@ -395,6 +395,9 @@ as needed. For these classes you need to decorate them with a [Preserve(AllMembe
 MonoMobile.View.Themes and MonoMobile.Views.Templates are two more GitHub projects for you to place new Themes and CellViewTemplates 
 that you want to share with the world and enhance the MonoMobile.Views framework ecosystem.
 
+Some simple examples
+====================
+
 Simple Helow World:
 
 		namespace HelloWorld
