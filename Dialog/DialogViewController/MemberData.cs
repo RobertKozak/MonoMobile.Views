@@ -81,9 +81,6 @@ namespace MonoMobile.Views
 
 			UpdateValue();
 			Id = CreateId();
-			
-//			AddNotifyPropertyChangedHandler(Source, this);
-//			AddNotifyPropertyChangedHandler(DataContextSource, this);
 		}
 		
 		protected override void Dispose(bool disposing)

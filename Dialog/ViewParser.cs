@@ -32,6 +32,7 @@ namespace MonoMobile.Views
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Reflection;
 	using MonoTouch.Foundation;
@@ -92,7 +93,13 @@ namespace MonoMobile.Views
 				var attributes = member.GetCustomAttributes(false); 
 
 				var memberData = new MemberData(view, member) { Section = sectionIndex };				
-				
+
+				var defaultValueAttribute = member.GetCustomAttribute<DefaultValueAttribute>();
+				if (defaultValueAttribute != null)
+				{
+					memberData.Value = defaultValueAttribute.Value;
+				}
+
 				var pullToRefreshAttribute = member.GetCustomAttribute<PullToRefreshAttribute>();
 				if (pullToRefreshAttribute != null)
 				{
