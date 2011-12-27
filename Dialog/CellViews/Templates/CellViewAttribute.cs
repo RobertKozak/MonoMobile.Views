@@ -1,5 +1,5 @@
 // 
-// ViewAttribute.cs
+// CellViewAttribute.cs
 // 
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -30,28 +30,25 @@
 namespace MonoMobile.Views
 {
 	using System;
-	
 
-	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-	public class ViewAttribute: Attribute
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
+	public class CellViewAttribute: ViewAttribute
 	{
-		protected ViewAttribute()
+		protected CellViewAttribute()
 		{
 		}
 
-		public ViewAttribute(Type viewType)
+		public CellViewAttribute(Type viewType)
 		{
 			ViewType = viewType;
 		}
 
-		public ViewAttribute(string nibName)
+		public CellViewAttribute(string nibName)
 		{
 			NibName = nibName;
 		}
 
-		public Type ViewType { get; set; }
 		public string NibName { get; set; }
 		public int RowHeight { get; set; }
 	}
 }
-

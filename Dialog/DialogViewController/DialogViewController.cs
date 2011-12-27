@@ -807,6 +807,7 @@ namespace MonoMobile.Views
 //			if (TableView != null)
 //			{
 			//	UpdateSource();
+			if (TableView != null)
 				TableView.ReloadData();
 //			}
 
@@ -985,7 +986,7 @@ namespace MonoMobile.Views
 			{
 				if (BackgroundImage != null)
 				{
-					//BackgroundImage.Dispose();
+					BackgroundImage = null;
 				}
 
 				_LeftFixedSpace.Dispose();
@@ -996,30 +997,6 @@ namespace MonoMobile.Views
 				{
 					foreach (var section in source.Sections.Values)
 					{
-//						foreach (var viewList in section.Views.Values)
-//						{
-//							foreach (var view in viewList)
-//							{
-//								var dc = view as IDataContext<MemberData>;
-//								if (dc != null)
-//								{
-//									var notifyPropertChanged = dc.DataContext.DataContextSource as INotifyPropertyChanged;
-//									if (notifyPropertChanged != null)
-//									{
-//										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-//										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
-//									}								
-//
-//									notifyPropertChanged = dc.DataContext.Source as INotifyPropertyChanged;
-//									if (notifyPropertChanged != null)
-//									{
-//										notifyPropertChanged.PropertyChanged -= HandleNotifyPropertyChanged;
-//										notifyPropertChanged.PropertyChanged -= dc.DataContext.HandleNotifyPropertyChanged;
-//									}
-//								}
-//							}
-//						}
-
 						foreach(var listSource in section.ListSources.Values)
 						{
 							if (listSource != null)

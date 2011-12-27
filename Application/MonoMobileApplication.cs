@@ -40,7 +40,7 @@ namespace MonoMobile.Views
 	{
 		private int _NetworkActivityCount;
 
-		public const string Version = "0.9";
+		public const string Version = "1.0b";
 
 		public static Type[] ViewTypes { get; private set;}
 

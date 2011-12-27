@@ -698,11 +698,11 @@ namespace MonoMobile.Views
 			var memberInfo = memberData.Member;
 			if (memberInfo != null)
 			{
-				var viewAttributes = memberInfo.GetCustomAttributes<ViewAttribute>();
-				if (viewAttributes.Length > 0)
+				var cellViewAttributes = memberInfo.GetCustomAttributes<CellViewAttribute>();
+				if (cellViewAttributes.Length > 0)
 				{
-					var viewTypeList = (from attribute in viewAttributes select attribute.ViewType).ToList();
-					var viewAttributesList = viewAttributes.ToList();
+					var viewTypeList = (from attribute in cellViewAttributes select attribute.ViewType).ToList();
+					var viewAttributesList = cellViewAttributes.ToList();
 					viewAttributesList.ForEach((attribute) => 
 					{
 						var sizeable = attribute as ISizeable;

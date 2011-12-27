@@ -43,7 +43,7 @@ namespace MonoMobile.Views
 
         private IDictionary<string, object> _PropertyMap = new Dictionary<string, object>();
 
-        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public IDictionary<string, object> PropertyMap { get { return _PropertyMap; } set { _PropertyMap = value; } }
 
@@ -55,7 +55,10 @@ namespace MonoMobile.Views
         public void NotifyPropertyChanged(string propertyName)
         {
 			if (!_SuspendNotifications)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			{
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 			else
 			{
 				_BatchedNotifications.Add(propertyName);

@@ -248,16 +248,17 @@
     <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
     <Compile Include="Extensions\UIDeviceExtensions.cs" />
-    <Compile Include="Application\Log.cs" />
     <Compile Include="Application\UrlImageStore.cs" />
     <Compile Include="Interfaces\ICommandButton.cs" />
     <Compile Include="Dialog\DialogViewController\NavigationController.cs" />
-    <Compile Include="Application\HttpDebug.cs" />
     <Compile Include="Extensions\UIKitExtensions.cs" />
     <Compile Include="Controls\UIInputViewToolbar.cs" />
     <Compile Include="Controls\UIKeyboardToolbar.cs" />
     <Compile Include="Dialog\CellViews\Base\CommandCellView.cs" />
     <Compile Include="Interfaces\ICellViewTemplate.cs" />
+    <Compile Include="Application\Debug\HttpDebug.cs" />
+    <Compile Include="Application\Debug\Log.cs" />
+    <Compile Include="Dialog\CellViews\Templates\CellViewAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -277,6 +278,7 @@
     <Folder Include="Dialog\CellViews\Table Attributes\" />
     <Folder Include="Dialog\CellViews\Templates\" />
     <Folder Include="Dialog\CellViews\Base\" />
+    <Folder Include="Application\Debug\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.markdown" />
