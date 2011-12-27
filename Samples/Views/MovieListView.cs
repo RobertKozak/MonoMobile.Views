@@ -16,7 +16,7 @@ namespace Samples
 	using System.Linq;
 	
 	[Preserve(AllMembers = true)]
-	[Theme(typeof(NavbarTheme))]
+	[Theme(typeof(WoodenTheme))]
 	public class MovieListView: View, INotifyPropertyChanged
 	{
 		[Section("Test Section", "")]
@@ -94,9 +94,11 @@ namespace Samples
 		[Caption("Root Address")]
 		public AddressView AddressView { get; set; }
 		
-		
-		[List(SelectionAction = SelectionAction.Multiselection)]
-		public List<string> MovieClasses { get; set; }
+		private List<Genre> SelectedMovieClasses { get; set; }
+
+		[List(SelectionAction = SelectionAction.Multiselection, SelectedItemsMemberName = "SelectedMovieClasses")]
+		public Genre MovieClasses { get; set; }
+
 		
 		[Section]
 	//	[CellStyle(typeof(ClearStyle))]
@@ -128,29 +130,15 @@ namespace Samples
 		[Section]
 		public InterestingView InterestingStuff { get; set; }
 		
-		public void RefreshData()
-		{
-			for(var index = 0; index < 100; index++)
-				System.Threading.Thread.Sleep(50);
-		}
-
+		[NavigateToView(typeof(HoneyDoListView))]
 		public HoneyDoListView HoneyDoList { get; set; }
-		[List]
-		public Genre Genre { get; set; }
 
 		public MovieListView()
 		{
 			DataContext = new MovieListViewModel();
 			
-
 			HoneyDoList = new HoneyDoListView();
-
-			var enumType = typeof(Genre);
-            var enumItems = from field in enumType.GetFields()
-                            where field.IsLiteral
-                            select EnumExtensions.GetDescriptionValue(field.Name, enumType);
-
-			MovieClasses = new List<string>(enumItems.ToList());
+			SelectedMovieClasses = new List<Genre>();
 
 			Movies = new ObservableCollection<MovieViewModel>();
 			var dataModel = new MovieDataModel();
@@ -159,7 +147,6 @@ namespace Samples
 			MyString = "Test string";
 
 			InterestingStuff = new InterestingView();
-			
 
 			AddressView = new AddressView() {Number = "4751", Street ="Wilshire Blvd", City ="LA", State="CA", Zip ="90010" };
 

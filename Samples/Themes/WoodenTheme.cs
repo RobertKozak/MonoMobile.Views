@@ -13,7 +13,7 @@ namespace Samples
 	{
 		public WoodenTheme()
 		{
-			CellBackgroundColor = UIColor.Clear;
+			CellBackgroundColor = UIColor.FromWhiteAlpha(1f, 0.2f);
 
 			TextColor = UIColor.DarkTextColor;
 			TextShadowColor = UIColor.FromWhiteAlpha(0.8f, 1.0f);
