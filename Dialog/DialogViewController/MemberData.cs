@@ -91,7 +91,7 @@ namespace MonoMobile.Views
 
 				if (DataContextBinder != null)
 				{
-					DataContextBinder.Dispose();
+					DataContextBinder = null;
 				}
 				
 				RemoveNotifyPropertyChangedHandler(Source, this);
@@ -210,7 +210,6 @@ namespace MonoMobile.Views
 						if (oldValue != value)
 						{
 							RemoveNotifyCollectionChangedHandler(oldValue, this);
-							RemoveNotifyPropertyChangedHandler(DataContextSource, this);
 						
 							shouldSetHandlers = true;
 							
@@ -232,7 +231,6 @@ namespace MonoMobile.Views
 					if (oldValue != value)
 					{	
 						RemoveNotifyCollectionChangedHandler(_Value, this);
-						RemoveNotifyPropertyChangedHandler(Source, this);
 
 						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
 						

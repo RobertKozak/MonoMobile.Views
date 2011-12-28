@@ -46,16 +46,16 @@ namespace MonoMobile.Views
 			Controller = controller;
 		}
 		
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				Controller = null;
-				Section = null;
-			}
-
-			base.Dispose(disposing);
-		}
+//		protected override void Dispose(bool disposing)
+//		{
+//			if (disposing)
+//			{
+//				Controller = null;
+//				Section = null;
+//			}
+//
+//			base.Dispose(disposing);
+//		}
 
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{		
@@ -153,7 +153,7 @@ namespace MonoMobile.Views
 			section.SetNumberOfRows();
 					
 			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-			Controller.TableView.InsertRows(indexPaths, animation);
+		//	Controller.TableView.InsertRows(indexPaths, animation);
 		}
 
 		private void InsertRow(Section section, int row, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)

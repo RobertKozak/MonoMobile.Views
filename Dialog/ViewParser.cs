@@ -265,11 +265,12 @@ namespace MonoMobile.Views
 					else
 						listSources.Add(memberData.Order, null);
 		
-
 					sections[memberData.Section].ListSources = listSources;
 					sections[memberData.Section].Index = memberData.Section;
-					if (listSources[0] != null)
-						memberData.DataContextBinder = new DataContextBinder(controller, listSources[0].Sections[0]);
+
+					var lastListSource = listSources.Values.Last();
+					if (lastListSource != null)
+						memberData.DataContextBinder = new DataContextBinder(controller, lastListSource.Sections[0]);
 				}
 
 				sections[kvp.Key].DataContext = list;
