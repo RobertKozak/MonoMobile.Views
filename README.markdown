@@ -375,6 +375,8 @@ Main UI Elements:
 	[Range]			- creates a UISlider	
 	[String]		- creates a cell to display a readonly string
 	[Time]			- creates a cell to edit time via popup
+	[List]			- Takes an IEnumerable or Enum types and renders as List in single select or multiselect mode. Many options.
+
 
 Modifier Attributes:
 --------------------
@@ -382,7 +384,6 @@ these are attributes that modify the cells or another Attribute
 
 	[Caption] 		- use this caption instead of default
 	[Checkmark]		- creates a CheckboxElement rather than a RadioButtonElement
-	[List]			- Takes an IEnumerable and renders it inline in a section rather than on another page
 	[Order]			- makes the order the elements are rendered more explicit
 	[Section]		- starts a new section to hold elements
 	[Skip] 			- ignore this field or property
