@@ -352,10 +352,10 @@ differs in many important ways. The most important is that the attributes are mu
 in MonoTouch.Dialog. In this framework an attribute is usually a CellViewTemplate. CellViewTemplates derive
 from Attribute and add in:
 
-CellViewType: 	This is the type of the view that will be used to render the cell
-Theme:			This is the Theme that will be applied to the cell
-ValueConverter:	This is a ValueConverter that will be used when assigning data to and from the cell and view/viewmodel
-View:			This is the View that will be used if you Navigate from the cell to a new View
+	CellViewType: 	This is the type of the view that will be used to render the cell
+	Theme:			This is the Theme that will be applied to the cell
+	ValueConverter:	This is a ValueConverter that will be used when assigning data to and from the cell and view/viewmodel
+	View:			This is the View that will be used if you Navigate from the cell to a new View
 
 Having all of this packaged together makes it very easy to create new functionality and cell types to MonoMobile.Views 
 
