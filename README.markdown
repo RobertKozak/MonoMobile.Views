@@ -240,15 +240,15 @@ There are 22 interfaces you can apply to your cell's UIView:
 
 There is a base UIView to use with cells called CellView which has some of these features coded by default.
 
-public class CellView<T> : UIView, 
-	IDataContext<MemberData>, 
-	IInitializable, 
-	IInitializeCell, 
-	ICellViewTemplate, 
-	IUpdateable, 
-	ICaption, 
-	IThemeable, 
-	IHandleNotifyPropertyChanged
+	public class CellView<T> : UIView, 
+		IDataContext<MemberData>, 
+		IInitializable, 
+		IInitializeCell, 
+		ICellViewTemplate, 
+		IUpdateable, 
+		ICaption, 
+		IThemeable, 
+		IHandleNotifyPropertyChanged
 
 You can use this base class and override the methods and properties as you need.
 
