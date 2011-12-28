@@ -121,7 +121,7 @@ namespace MonoMobile.Views
 
 			needsReload = Section.DataContext.Count == 0 || needsReload;
 
-			if (needsReload)
+			if (needsReload && Controller == MonoMobileApplication.CurrentViewController)
 			{
 				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
 			}
@@ -152,8 +152,11 @@ namespace MonoMobile.Views
 			section.DataContext.Insert(row, item);
 			section.SetNumberOfRows();
 					
-			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-		//	Controller.TableView.InsertRows(indexPaths, animation);
+			if (Controller == MonoMobileApplication.CurrentViewController)
+			{
+				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+				Controller.TableView.InsertRows(indexPaths, animation);
+			}
 		}
 
 		private void InsertRow(Section section, int row, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
@@ -162,9 +165,12 @@ namespace MonoMobile.Views
 
 			section.DataContext.Insert(row, item); 
 			section.SetNumberOfRows();
-					
-			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-			Controller.TableView.InsertRows(indexPaths, animation);
+			
+			if (Controller == MonoMobileApplication.CurrentViewController)
+			{		
+				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+				Controller.TableView.InsertRows(indexPaths, animation);
+			}
 		}
 
 		private void RemoveRow(Section section, object item, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
@@ -175,8 +181,11 @@ namespace MonoMobile.Views
 			section.DataContext.Remove(item);
 			section.SetNumberOfRows();
 					
-			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-			Controller.TableView.DeleteRows(indexPaths, animation);
+			if (Controller == MonoMobileApplication.CurrentViewController)
+			{
+				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+				Controller.TableView.DeleteRows(indexPaths, animation);
+			}
 		}
 
 		private void ReplaceRow(Section section, object oldItem, object newItem, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
@@ -189,10 +198,12 @@ namespace MonoMobile.Views
 			section.DataContext[row] = newItem;
 			section.SetNumberOfRows();
 					
-			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-			Controller.TableView.ReloadRows(indexPaths, animation);
+			if (Controller == MonoMobileApplication.CurrentViewController)
+			{
+				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
+				Controller.TableView.ReloadRows(indexPaths, animation);
+			}
 		}
-
 	}
 }
 
