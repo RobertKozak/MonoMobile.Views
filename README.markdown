@@ -321,7 +321,7 @@ is typically implemented like this:
 
 and in the setter of your properties you call NotifyPropertyChanged().
 
-ViewModels and Views in MonoMobile.Views all derive from ObservableObject which
+ViewModels in MonoMobile.Views all derive from ObservableObject which
 has two methods to help with this: Set() and Get().
 
 	public string FirstName 
