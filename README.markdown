@@ -386,7 +386,8 @@ these are attributes that modify the cells or another Attribute
 	[Order]			- makes the order the elements are rendered more explicit
 	[Section]		- starts a new section to hold elements
 	[Skip] 			- ignore this field or property
-	[View]			- used with lists of ViewModels to tell it which view to use to render
+	[CellView]		- used to tell the framework which view to use to render a cell.
+	[View]			- used to decorate an object to tell it which view to use.
 	[Theme]			- specify a theme to apply to this element or at the Class level all elements in view
 						Themes can be stacked.
 
@@ -394,13 +395,15 @@ Method Attributes:
 ------------------
 Attributes that work on Methods.
 
-	[Button]		- creates a button that will execute this method when touched.
-	[LoadMore]		- creates a button that has an activity control that displays while method is executing
-	[NavbarButton]	- creates a button on the NavBar that will execute this method when touched.
-	[PullToRefresh]	- this method will be called when user pulls down to refresh
-	[Searchbar]		- this method will be called during the search funtion of the Searchbar. 
-						On a class it means show the search bar automatically when View is loaded
-	[Toolbar]		- creates a button on the toolbar that will execute this method when touched 
+	[Button]			- creates a button that will execute this method when touched.
+	[ProgressButton]	- Displays a ProgressHud or an activuty control and executes a method in a thread.
+							Handles both synchronous and async methods.
+	[LoadMore]			- creates a button that has an activity control that displays while method is executing
+	[NavbarButton]		- creates a button on the NavBar that will execute this method when touched.
+	[PullToRefresh]		- this method will be called when user pulls down to refresh
+	[Searchbar]			- this method will be called during the search funtion of the Searchbar. 
+							On a class it means show the search bar automatically when View is loaded
+	[ToolbarButton]		- creates a button on the toolbar that will execute this method when touched 
 
 
 When creating a DialogViewController the View is parsed and a new TableView is created. Each field, 
@@ -562,7 +565,7 @@ Simple MultiSelect test:
 		    [Button]
 		    public void ClickMe()
 		    {
-		      Alert.Show("Multiselect Test", string.Format("Last selected {0}!  Number Selected", SelectedNumber.ToString(), SelectedNumbers.Length));
+		      Alert.Show("Multiselect Test", string.Format("Last selected {0}!  Number Selected {1}", SelectedNumber.ToString(), SelectedNumbers.Length));
 		    } 
 		  }
 			
