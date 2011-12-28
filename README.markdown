@@ -285,7 +285,7 @@ a Percentage:
 
 and he is how it used:
 
-	[Bind(ValueConverterType = typeof(PercentConverter)]
+	[ValueConverter(typeof(PercentConverter)]
 	public float CriticsRating 
 	{ 
 		get { return Get(()=>CriticsRating); } 
