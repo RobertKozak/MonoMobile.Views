@@ -134,7 +134,7 @@ MonoMobile.Views is an MVVM framework but doesn't have to be used as a "pure" MV
 ViewModel and View. Model gets and sets data, ViewModel packages that data and performs all of the business logic on the data
 and the View renders the data. This framework concerns itself mostly with the View portion. 
 
-Take a look at this HeeloWorld app:
+Take a look at this HelloWorld app:
 
 		namespace HelloWorld
 		{
@@ -166,9 +166,9 @@ Take a look at this HeeloWorld app:
 Here we have created a View with a few CellViewTemplates to tell the framework how to render the cells. We have two Sections
 one has an entry type cell and the other has a Button.
 
-This is no ViewModel and there is no Model. They are both optional but will probably be needed for more advanced apps.
+In this particular case, there is no ViewModel and there is no Model. They are both optional but will probably be needed for more advanced apps.
 
-ViewModel base class implements INotifyPropertyChanged and will fire off notifications that the UI will respond to. So if you 
+The framework contains a ViewModel base class which implements INotifyPropertyChanged and will fire off notifications that the UI will respond to. So if you 
 change a property of a ViewModel in code it will be reflected on the screen immediately.
 
 The framework is smart enough to keep both the View and ViewModel in sync. So for example, if you have a PersonViewModel with 
