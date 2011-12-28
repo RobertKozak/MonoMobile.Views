@@ -215,28 +215,28 @@ via interfaces so that you can create only what you need and no more.
 
 There are 22 interfaces you can apply to your cell's UIView:
 
-IAccessoryView
-IActivation
-ICaption
-ICellContent
-ICellViewTemplate
-ICommandButton
-ICustomDraw
-IDataContext
-IFocusable
-IHandleNotifyCollectionChanged
-IHandleNotifyPropertyChanged
-IInitializable
-IInitializeCell
-INavigatable
-IRequestImage
-ISearchable
-ISearchBar
-ISelectable
-ISizeable
-ITableViewStyle
-IThemeable
-IUpdateable
+	IAccessoryView
+	IActivation
+	ICaption
+	ICellContent
+	ICellViewTemplate
+	ICommandButton
+	ICustomDraw
+	IDataContext
+	IFocusable
+	IHandleNotifyCollectionChanged
+	IHandleNotifyPropertyChanged
+	IInitializable
+	IInitializeCell
+	INavigatable
+	IRequestImage
+	ISearchable
+	ISearchBar
+	ISelectable
+	ISizeable
+	ITableViewStyle
+	IThemeable
+	IUpdateable
 
 There is a base UIView to use with cells called CellView which has some of these features coded by default.
 
