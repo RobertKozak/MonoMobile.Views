@@ -640,23 +640,26 @@ namespace MonoMobile.Views
 				
 			if (BackgroundColor != null)
 			{
-				if (TableView.RespondsToSelector(new Selector("backgroundView")))
+				if (TableView != null)
 				{
-					//if (TableView.BackgroundView == null)
-						TableView.BackgroundView = new UIView(); 
+					if (TableView.RespondsToSelector(new Selector("backgroundView")))
+					{
+						//if (TableView.BackgroundView == null)
+							TableView.BackgroundView = new UIView(); 
+	
+						TableView.BackgroundView.Opaque = false;
+						TableView.BackgroundColor = UIColor.Clear;
+					}
 
-					TableView.BackgroundView.Opaque = false;
-					TableView.BackgroundColor = UIColor.Clear;
-				}
-
-				if (ParentViewController != null && !IsModal)
-				{
-					TableView.BackgroundColor = UIColor.Clear;
-					ParentViewController.View.BackgroundColor = BackgroundColor;
-				} 
-				else
-				{
-					TableView.BackgroundColor = BackgroundColor;
+					if (ParentViewController != null && !IsModal)
+					{
+						TableView.BackgroundColor = UIColor.Clear;
+						ParentViewController.View.BackgroundColor = BackgroundColor;
+					} 
+					else
+					{
+						TableView.BackgroundColor = BackgroundColor;
+					}
 				}
 			}
 		}

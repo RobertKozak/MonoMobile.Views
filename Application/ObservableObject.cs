@@ -57,7 +57,10 @@ namespace MonoMobile.Views
 			if (!_SuspendNotifications)
 			{
 				if (PropertyChanged != null)
+				{
+					Console.WriteLine("NotifyProprtyChanged from {0} property name: {1}", GetType(), propertyName);
 					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				}
 			}
 			else
 			{

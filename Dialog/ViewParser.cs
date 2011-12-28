@@ -198,7 +198,8 @@ namespace MonoMobile.Views
 
 				if (!sections.ContainsKey(memberData.Section))
 				{
-					sections.Add(memberData.Section, CreateSection(controller, memberData, viewTypes));
+					var section = CreateSection(controller, memberData, viewTypes);
+					sections.Add(memberData.Section, section);
 				}
 				else
 				{ 

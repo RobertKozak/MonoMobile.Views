@@ -33,7 +33,7 @@ namespace MonoMobile.Views
 	using MonoTouch.CoreGraphics;
 	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-	
+
 	public class Theme : NSObject
 	{
 		private UITableViewCell _Cell;
@@ -102,6 +102,8 @@ namespace MonoMobile.Views
 				_CellBackgroundImage = value;
 				_CellBackgroundUri = null;
 				_CellBackgroundColor = null;
+
+				ConfigureBackgroundImage();
 			}
 		}
 
@@ -117,6 +119,8 @@ namespace MonoMobile.Views
 					_CellBackgroundImage.Dispose();
 					_CellBackgroundImage = null;
 				}
+
+				ConfigureBackgroundImage();
 			}
 		}
 
@@ -132,6 +136,8 @@ namespace MonoMobile.Views
 					_CellBackgroundImage.Dispose();
 					_CellBackgroundImage = null;
 				}
+
+				ConfigureBackgroundImage();
 			}
 		}
 
@@ -560,7 +566,27 @@ namespace MonoMobile.Views
 				_Cell.BackgroundColor = UIColor.White;
 			}
 			
+			ConfigureBackgroundImage();
 			_Cell.SetNeedsDisplay();
+		}
+
+		private void ConfigureBackgroundImage()
+		{
+			if (Cell != null)
+			{
+				if (Cell.BackgroundColor == null)
+				{	
+					if (BackgroundImage != null)
+					{
+						Cell.BackgroundColor = UIColor.FromPatternImage(BackgroundImage);
+					}
+			
+					if (BackgroundColor != null)
+					{
+						Cell.BackgroundColor = BackgroundColor;
+					}
+				}
+			}
 		}
 
 		public override string ToString()

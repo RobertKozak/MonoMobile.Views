@@ -111,7 +111,7 @@ namespace MonoMobile.Views
 		
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (CanHandleNotifyPropertyChanged(e.PropertyName))
+	//		if (CanHandleNotifyPropertyChanged(e.PropertyName))
 			{
 				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
 				        {
@@ -209,8 +209,8 @@ namespace MonoMobile.Views
 						oldValue = DataContextMember.GetValue(DataContextSource);
 						if (oldValue != value)
 						{
-							RemoveNotifyCollectionChangedHandler(_DataContextValue, this);
-							RemoveNotifyPropertyChangedHandler(_DataContextValue, this);
+							RemoveNotifyCollectionChangedHandler(oldValue, this);
+							RemoveNotifyPropertyChangedHandler(DataContextSource, this);
 						
 							shouldSetHandlers = true;
 							
@@ -232,7 +232,7 @@ namespace MonoMobile.Views
 					if (oldValue != value)
 					{	
 						RemoveNotifyCollectionChangedHandler(_Value, this);
-						RemoveNotifyPropertyChangedHandler(_Value, this);
+						RemoveNotifyPropertyChangedHandler(Source, this);
 
 						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
 						
@@ -251,7 +251,9 @@ namespace MonoMobile.Views
 			if (shouldSetHandlers)
 			{
 				AddNotifyCollectionChangedHandler(value, this);
-				AddNotifyPropertyChangedHandler(value, this); 
+
+				AddNotifyPropertyChangedHandler(DataContextSource, this); 
+				AddNotifyPropertyChangedHandler(Source, this); 
 			}
 
 			Type = Member.GetMemberType();
@@ -261,7 +263,9 @@ namespace MonoMobile.Views
 		protected void SetDataContextBinder(DataContextBinder binder)
 		{
 			AddNotifyCollectionChangedHandler(Value, binder);
-			AddNotifyPropertyChangedHandler(Value, binder);
+
+			AddNotifyPropertyChangedHandler(DataContextSource, binder);
+			AddNotifyPropertyChangedHandler(Source, binder);
 
 			_DataContextBinder = binder;
 		}

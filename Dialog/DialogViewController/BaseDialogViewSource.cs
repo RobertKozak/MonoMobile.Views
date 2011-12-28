@@ -618,8 +618,13 @@ namespace MonoMobile.Views
 			if (Controller.Theme != null)
 			{
 				footerLabel.TextAlignment = Controller.Theme.FooterTextAlignment;
-				footerLabel.TextColor = Controller.Theme.FooterTextColor;
-				footerLabel.ShadowColor = Controller.Theme.FooterTextShadowColor;
+
+				if (Controller.Theme.FooterTextColor != null)
+					footerLabel.TextColor = Controller.Theme.FooterTextColor;
+
+				if (Controller.Theme.FooterTextShadowColor != null)
+					footerLabel.ShadowColor = Controller.Theme.FooterTextShadowColor;
+
 				footerLabel.ShadowOffset = Controller.Theme.FooterTextShadowOffset;
 			}
 			return footerLabel;
