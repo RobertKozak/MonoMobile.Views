@@ -1,6 +1,10 @@
 WHAT'S NEW
 ==========
 
+This document has been updated but it is no at all complete. The basic concepts are outlined below
+but I will get back to this soon and make a real tutorial. MonoMobile.Views is simple to use yet very complex
+internally to do all of the magic that you see on screen.
+
 Totally redesigned and redeveloped the codebase.
 	
 Released Beta 1.0
@@ -10,6 +14,9 @@ It is almost done. I have a few more things to look into like:
 	Add a real sample
 	Add more Documentation
 	and finish up any other bugs I find.
+
+Robert Kozak (rkozak@gmail.com)
+@robertkozak - Twitter
 
 Current Version
 ===============
@@ -37,8 +44,10 @@ The key to the MVVM pattern is the communication between the layers.
  
 Data binding is one way to accomplish this communication in generic manner.
 
-Robert Kozak (rkozak@gmail.com)
-@robertkozak - Twitter
+MonoMobile.Views is a framework which makes it very easy to create UI on the iPhone/iPad/iDevice
+that is represented via Cells and UITableView. It removes the need to worry about
+UITableViewControllers, UINavigationControllers, and DataSources. Developers only need 
+to create Views. (See samples below)
 
 Project Status
 ==============
@@ -118,6 +127,60 @@ The main Properties and Methods of MonoMobileApp are:
 		public static void ToggleSearchbar();
 
 
+Views and ViewModels
+====================
+
+MonoMobile.Views is an MVVM framework but doesn't have to be used as a "pure" MVVM framework. MVVM separates out the Model
+ViewModel and View. Model gets and sets data, ViewModel packages that data and performs all of the business logic on the data
+and the View renders the data. This framework concerns itself mostly with the View portion. 
+
+Take a look at this HeeloWorld app:
+
+		namespace HelloWorld
+		{
+		  using MonoMobile.Views;
+		  
+		  public class HelloView: View
+		  {
+		  [Section]
+		    [Entry]
+		    public string Name { get; set; }
+		
+		  [Section]
+		    [Button]
+		    public void Hello()
+		    {
+		      Alert.Show("Hello World", string.Format("Hello {0}!", Name));
+		    } 
+		  }
+			
+		  public class Application : MonoMobileApplication
+		  {
+			public new static void Main(string[] args)
+			{
+				Run("HelloWorld", typeof(HelloView), args);
+			}
+		  }
+		}
+
+Here we have created a View with a few CellViewTemplates to tell the framework how to render the cells. We have two Sections
+one has an entry type cell and the other has a Button.
+
+This is no ViewModel and there is no Model. They are both optional but will probably be needed for more advanced apps.
+
+ViewModel base class implements INotifyPropertyChanged and will fire off notifications that the UI will respond to. So if you 
+change a property of a ViewModel in code it will be reflected on the screen immediately.
+
+The framework is smart enough to keep both the View and ViewModel in sync. So for example, if you have a PersonViewModel with 
+a FirstName property set to "Robert" and a PersonView with the same property name FirstName the framework will make sure that
+both of these properties have the same value.
+
+On a Get MonoMobile.Views will check first to see if you have a ViewModel (found in the View's DataContext property) and return 
+that and if not then it returns the value from the View.
+
+On a Set MonoMobile.Views will set it both in the ViewModel (if exists) and in the View, and also in the UI (via IHandleNotifyPropertyChanged)
+if you implemented it.
+
 Data Binding
 ============
 
@@ -128,7 +191,7 @@ represent the MemberInfo and is Value(s). There is a reference to the View and t
 
 Sections are created to hold a reference to these MemberData and CellViewTemplates. Cells are created for each MemberData
 and Cells can have multiple CellViewTemplate Types associated with them. CellViewTemplates have a DataContext (IDataContext<MemberData>)
-that allows access to the Values of the View and ViewModel.  to  
+that allows access to the Values of the View and ViewModel.  
   
 For example: The EntryAttribute has a UITextField and in this case the DataContext binds to the Text property of the UITextField.
 
@@ -160,7 +223,7 @@ ICellViewTemplate
 ICommandButton
 ICustomDraw
 IDataContext
-IFoucusable
+IFocusable
 IHandleNotifyCollectionChanged
 IHandleNotifyPropertyChanged
 IInitializable
@@ -285,8 +348,20 @@ Reflection API
 ==============
 
 The reflection api of MonoTouch.Dialog is similar to the model used in MonoMobile.Views but 
-differs in many important ways.
+differs in many important ways. The most important is that the attributes are much more than they are 
+in MonoTouch.Dialog. In this framework an attribute is usually a CellViewTemplate. CellViewTemplates derive
+from Attribute and add in:
 
+CellViewType: 	This is the type of the view that will be used to render the cell
+Theme:			This is the Theme that will be applied to the cell
+ValueConverter:	This is a ValueConverter that will be used when assigning data to and from the cell and view/viewmodel
+View:			This is the View that will be used if you Navigate from the cell to a new View
+
+Having all of this packaged together makes it very easy to create new functionality and cell types to MonoMobile.Views 
+
+You can check out a github project called MonoMobile.Views.Templates to look at other templates and add your own.
+
+ 
 Main UI Elements:
 -----------------
 
