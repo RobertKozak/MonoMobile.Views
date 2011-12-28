@@ -1,7 +1,7 @@
 WHAT'S NEW
 ==========
 
-This document has been updated but it is no at all complete. The basic concepts are outlined below
+This document has been updated but it is not at all complete. The basic concepts are outlined below
 but I will get back to this soon and make a real tutorial. MonoMobile.Views is simple to use yet very complex
 internally to do all of the magic that you see on screen.
 
