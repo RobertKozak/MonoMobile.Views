@@ -44,8 +44,6 @@ namespace MonoMobile.Views
 		private MemberInfo _DataContextSelectedItemMember;		
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
-		
-		private Wait _ResizeWait;
  
 		public NSIndexPath BaseIndexPath = NSIndexPath.FromRowSection(0, 0);
 
@@ -136,11 +134,6 @@ namespace MonoMobile.Views
 					NavigationSource.Dispose();
 					NavigationSource = null;
 				}
-				
-				if (_ResizeWait != null)
-				{
-					_ResizeWait.Dispose();
-				}
 	
 				//TODO: Should this be disposed here??
 				foreach(var section in Sections.Values)
@@ -198,15 +191,6 @@ namespace MonoMobile.Views
 			var cell = CellFactory.GetCell(tableView, indexPath, CellId, NibName, (cellId, idxPath) => NewListCell(cellId, idxPath));
 
 			UpdateCell(cell, indexPath);
-			
-//			if (RowHeights.Count > 0 && RowHeights[BaseIndexPath] > 0)
-//			{
-//				_ResizeWait = new Wait(new TimeSpan(0), () =>
-//				{
-//					tableView.BeginUpdates();
-//					tableView.EndUpdates();
-//				});
-//			}
 
 			return cell;
 		}
@@ -443,7 +427,7 @@ namespace MonoMobile.Views
 						{
 							using (new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
 							{
-							Controller.ReloadData();
+								Controller.ReloadData();
 							}));
 						}
 					}
