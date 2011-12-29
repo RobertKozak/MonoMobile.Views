@@ -40,12 +40,7 @@ namespace MonoMobile.Views
 	{
 		internal DialogViewController Controller;
 
-		private IList _DataContext;	
-		public IList DataContext
-		{ 
-			get { return _DataContext; } 
-			set { _DataContext = value; SetNumberOfRows(); }
-		}
+		public IList DataContext { get; set; }
 		
 		public IDictionary<int, ListSource> ListSources { get; set; }
 		public int Index { get; set; }
@@ -126,19 +121,6 @@ namespace MonoMobile.Views
 //
 //			return count;
 //		}
-
-		public void SetNumberOfRows()
-		{
-			var count = 0;
-			//TODO: Come back and fix this for objects (member count)
-			var collection = DataContext as ICollection;
-			if (collection != null)
-			{
-				count = collection.Count;
-			}
-
-			NumberOfRows = count;
-		}
 	} 
 }
 

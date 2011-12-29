@@ -40,9 +40,13 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class ListSource : BaseDialogViewSource, ISearchBar, IActivation
 	{
+		private MemberInfo _DataContextSelectedItemsMember;
+		private MemberInfo _DataContextSelectedItemMember;		
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
 		
+		private Wait _ResizeWait;
+ 
 		public NSIndexPath BaseIndexPath = NSIndexPath.FromRowSection(0, 0);
 
 		public readonly NSString CellId;
@@ -51,8 +55,8 @@ namespace MonoMobile.Views
 		public IList SelectedItems { get; set; }
 		public object SelectedItem { get; set; }
 		
-		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); } }
-		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); } }
+		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); _DataContextSelectedItemMember = GetMemberFromViewModel(value); } }
+		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); _DataContextSelectedItemsMember = GetMemberFromViewModel(value);} }
 				
 		public UnselectionBehavior UnselectionBehavior { get; set; }
 		
@@ -132,7 +136,13 @@ namespace MonoMobile.Views
 					NavigationSource.Dispose();
 					NavigationSource = null;
 				}
-
+				
+				if (_ResizeWait != null)
+				{
+					_ResizeWait.Dispose();
+				}
+	
+				//TODO: Should this be disposed here??
 				foreach(var section in Sections.Values)
 				{
 					var disposable = section.DataContext as IDisposable;
@@ -140,7 +150,6 @@ namespace MonoMobile.Views
 					{
 						disposable.Dispose();
 					}
-					section.DataContext = null;
 				}
 			}
 
@@ -157,7 +166,7 @@ namespace MonoMobile.Views
 			var numberOfRows = IsCollapsed ? 0 : 0;
 			if (Sections.ContainsKey(sectionIndex))
 			{
-				numberOfRows += Sections[sectionIndex].NumberOfRows;
+				numberOfRows += Sections[sectionIndex].DataContext.Count;
 			}
 
 			return Sections != null ? numberOfRows : 0;
@@ -190,14 +199,14 @@ namespace MonoMobile.Views
 
 			UpdateCell(cell, indexPath);
 			
-			if (RowHeights.Count > 0 && RowHeights[BaseIndexPath] > 0)
-			{
-				using (new Wait(new TimeSpan(0), () =>
-				{
-					Controller.TableView.BeginUpdates();
-					Controller.TableView.EndUpdates();
-				}));
-			}
+//			if (RowHeights.Count > 0 && RowHeights[BaseIndexPath] > 0)
+//			{
+//				_ResizeWait = new Wait(new TimeSpan(0), () =>
+//				{
+//					tableView.BeginUpdates();
+//					tableView.EndUpdates();
+//				});
+//			}
 
 			return cell;
 		}
@@ -256,10 +265,16 @@ namespace MonoMobile.Views
 			}
 			else
 			{
-				if (dataType != null && ((dataType.IsPrimitive || dataType == typeof(string))) && (SelectionAction == SelectionAction.NavigateToView))
+				if (dataType != null && ((dataType.IsPrimitive || dataType == typeof(string))) && (SelectionAction != SelectionAction.Custom || SelectionAction == SelectionAction.None))
 				{
 					IsNavigable = sectionData.Count > 1;
 					SelectionAction = SelectionAction.Selection;
+
+					if (sectionData.Count == 1)
+					{
+						SelectedItem = sectionData[0];
+						SetItems();
+					}
 				}
 			}
 
@@ -571,7 +586,18 @@ namespace MonoMobile.Views
 
 			NavigationSource.SelectedAccessoryViewType = SelectedAccessoryViewType;
 			NavigationSource.UnselectedAccessoryViewType = UnselectedAccessoryViewType;
-							
+			
+			NavigationSource.MemberData = new MemberData(MemberData.Source, MemberData.Member);
+
+			if (NavigationSource.NavigationViewType != null)
+			{
+				var rowHeightAttribute = NavigationSource.NavigationViewType.GetCustomAttribute<RowHeightAttribute>();
+				if (rowHeightAttribute != null)
+				{
+					NavigationSource.MemberData.RowHeight = rowHeightAttribute.RowHeight;
+				}
+			}
+
 			NavigationSource.Controller = dvc;
 			dvc.TableView.Source = NavigationSource;
 			Controller.NavigationController.PushViewController(dvc, true);
@@ -614,12 +640,21 @@ namespace MonoMobile.Views
 		}
 		
 		private void GetItems()
-		{		
+		{	
 			if (_SelectedItemMember != null)
 			{
 				var item = _SelectedItemMember.GetValue(Controller.RootView);
-				if (item != null)
+				SelectedItem = item;
+			}
+	
+			if (_DataContextSelectedItemMember != null)
+			{
+				var dc = Controller.RootView as IDataContext<object>;
+				if (dc != null && dc.DataContext != null)
+				{
+					var item = _DataContextSelectedItemMember.GetValue(dc.DataContext);
 					SelectedItem = item;
+				}
 			}
 	
 			if (IsMultiselect)
@@ -627,25 +662,68 @@ namespace MonoMobile.Views
 				if (_SelectedItemsMember != null)
 				{
 					var items = _SelectedItemsMember.GetValue(Controller.RootView) as IList;
-					if (items != null)
-						SelectedItems = items; 
+					SelectedItems = items; 
+				}
+
+				if (_DataContextSelectedItemsMember != null)
+				{
+					if (_SelectedItemsMember != null)
+					{
+						var dc = Controller.RootView as IDataContext<object>;
+						if (dc != null && dc.DataContext != null)
+						{
+							var items = _SelectedItemsMember.GetValue(Controller.RootView) as IList;
+							SelectedItems = items;
+						}
+					}
 				}
 			}
 		}
 
 		private void SetItems()
 		{
+			var data = GetSectionData(0);
+
+			if (!data.Contains(SelectedItem))
+				SelectedItem = null;
+
 			if (_SelectedItemMember != null)
 			{
 				_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);
 			}
-	
+
+			if (_DataContextSelectedItemMember != null)
+			{
+				var dc = Controller.RootView as IDataContext<object>;
+				if (dc != null && dc.DataContext != null)
+				{			
+					_DataContextSelectedItemMember.SetValue(dc.DataContext, SelectedItem);
+				}
+			}
+
 			if (IsMultiselect)
-			{		
+			{	
+				if (SelectedItems != null)
+				{
+					SelectedItems = (from item in data.OfType<object>()
+					join selectedItem in SelectedItems.OfType<object>() on item equals selectedItem 
+					select item).ToList();
+				}	
+				
 				if (_SelectedItemsMember != null)
 				{
 					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
 				}
+
+				if (_DataContextSelectedItemsMember != null)
+				{
+					var dc = Controller.RootView as IDataContext<object>;
+					if (dc != null && dc.DataContext != null)
+					{			
+						_DataContextSelectedItemsMember.SetValue(dc.DataContext, SelectedItems);
+					}
+				}
+
 			}
 		}
 

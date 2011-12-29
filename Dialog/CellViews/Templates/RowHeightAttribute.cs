@@ -31,7 +31,7 @@ namespace MonoMobile.Views
 {
 	using System;
 
-	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
 	public class RowHeightAttribute: Attribute
 	{
 		public RowHeightAttribute(float rowHeight)

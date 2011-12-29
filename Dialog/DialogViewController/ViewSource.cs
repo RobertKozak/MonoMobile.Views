@@ -66,7 +66,7 @@ namespace MonoMobile.Views
 					listCount = listSource.RowsInSection(tableview, 0) - 1;
 				}
 
-				numberOfRows = Sections[sectionIndex].NumberOfRows;
+				numberOfRows = Sections[sectionIndex].DataContext.Count;
 			}
 
 			return Sections != null ? numberOfRows + listCount: 0;

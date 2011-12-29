@@ -61,7 +61,10 @@ namespace MonoMobile.Views
 		{		
 			if (e.PropertyName != "Count" && e.PropertyName != "Item[]")
 			{
-//				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+				if (Controller == MonoMobileApplication.CurrentViewController)
+				{
+					//Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+				}
 			}
 		}
 
@@ -80,6 +83,7 @@ namespace MonoMobile.Views
 					index++;
 				}
 			}
+
 			if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
 				foreach (var item in e.OldItems)
@@ -87,12 +91,13 @@ namespace MonoMobile.Views
 					RemoveRow(Section, item);
 				}
 			}
+
 			if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
 				Section.DataContext.Clear();
-				Section.SetNumberOfRows();
 				needsReload = true;
 			}
+
 			if (e.Action == NotifyCollectionChangedAction.Move)
 			{
 				var index = 0;
@@ -108,6 +113,7 @@ namespace MonoMobile.Views
 					index++;
 				}				
 			}
+
 			if (e.Action == NotifyCollectionChangedAction.Replace)
 			{
 				var index = 0;
@@ -150,7 +156,6 @@ namespace MonoMobile.Views
 			AddPropertyChangedHandler(item);
 
 			section.DataContext.Insert(row, item);
-			section.SetNumberOfRows();
 					
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{
@@ -164,7 +169,6 @@ namespace MonoMobile.Views
 			AddPropertyChangedHandler(item);
 
 			section.DataContext.Insert(row, item); 
-			section.SetNumberOfRows();
 			
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{		
@@ -179,7 +183,6 @@ namespace MonoMobile.Views
 
 			var row = section.DataContext.IndexOf(item);
 			section.DataContext.Remove(item);
-			section.SetNumberOfRows();
 					
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{
@@ -196,7 +199,6 @@ namespace MonoMobile.Views
 			var row = section.DataContext.IndexOf(oldItem);
 
 			section.DataContext[row] = newItem;
-			section.SetNumberOfRows();
 					
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{

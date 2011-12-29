@@ -666,6 +666,18 @@ namespace MonoMobile.Views
 			return memberInfo;
 		}
 		
+		protected MemberInfo GetMemberFromViewModel(string memberName)
+		{
+			MemberInfo memberInfo = null;
+			var dc = Controller.RootView as IDataContext<object>;
+			if (dc != null)
+			{
+				memberInfo = dc.DataContext.GetType().GetMember(memberName, BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).SingleOrDefault();
+			}
+
+			return memberInfo;
+		}
+
 		public NSIndexPath ResetIndexPathRow(NSIndexPath indexPath)
 		{
 			var listCount = 0;
