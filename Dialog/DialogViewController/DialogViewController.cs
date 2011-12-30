@@ -883,32 +883,6 @@ namespace MonoMobile.Views
 				TableView.ScrollEnabled = TableView.VisibleCells.Length < totalCells || EnablePullToRefresh;
 			}
 		}
-		
-//		private void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
-//		{
-//			Log.Time("[{0}] Handle NotifyPropertyChanged property = "+ e.PropertyName + " sender = "+sender.ToString(), ()=>
-//			{
-//				var source = TableView.Source as BaseDialogViewSource;
-//				foreach (var section in source.Sections.Values)
-//				{
-//					foreach (var viewList in section.Views.Values)
-//					{
-//						foreach (var view in viewList)
-//						{
-//							var handleNotifyPropertyChange = view as IHandleNotifyPropertyChanged;
-//							var dc = view as IDataContext<MemberData>;
-//							if (dc != null)
-//							{
-//								if ((dc.DataContext.Member.Name == e.PropertyName || dc.DataContext.Member.Name == "DataContext") && handleNotifyPropertyChange != null)
-//								{
-//									using (new Wait(TimeSpan.FromMilliseconds(150), () => handleNotifyPropertyChange.HandleNotifyPropertyChanged(sender, e)));
-//								}
-//							}
-//						}
-//					}
-//				}				
-//			});
-//		}
 
 		private void CreateTableView(object view, Theme theme)
 		{

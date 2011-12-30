@@ -89,7 +89,7 @@ namespace MonoMobile.Views
 				}
 			}
 		
-			if (listSource.IsMultiselect) 
+			if (listSource.IsMultiselect && listSource.SelectedItems != null) 
 			{
 				cell.DetailTextLabel.Text = listSource.SelectedItems.Count.ToString();
 			}

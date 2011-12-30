@@ -38,6 +38,7 @@ namespace MonoMobile.Views
 	{
 		public BarButtonLocation Location { get; set; }
 		public int Order { get; set; }
+		public string CommandMemberName { get; set; }
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
 		public bool Hidden { get; set; }

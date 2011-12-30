@@ -65,6 +65,7 @@ namespace MonoMobile.Views
 		{
 			KillTimer();
 			_Action();
+			Dispose();
 		}
 	}
 }

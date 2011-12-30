@@ -416,7 +416,10 @@ namespace MonoMobile.Views
 					{
 						if (PopOnSelection && !(!IsSelectable || IsNavigable || IsMultiselect))
 						{
-							Controller.NavigationController.PopViewControllerAnimated(true);
+							new Wait(TimeSpan.FromMilliseconds(0), ()=>    
+							{
+								Controller.NavigationController.PopViewControllerAnimated(true);
+							});
 						}
 					
 						if (IsSelectable || IsMultiselect || !IsNavigable)
@@ -425,10 +428,10 @@ namespace MonoMobile.Views
 						}
 						else
 						{
-							using (new Wait(new TimeSpan(0, 0, 0, 0, 300), () => 
+							new Wait(TimeSpan.FromMilliseconds(0), () => 
 							{
 								Controller.ReloadData();
-							}));
+							});
 						}
 					}
 				}
@@ -725,7 +728,7 @@ namespace MonoMobile.Views
 			
 			if (IsSelectable)
 			{	
-				var selectedIndex = GetSectionData(0).IndexOf(SelectedItem);
+				var selectedIndex = sectionData.IndexOf(SelectedItem);
 				UIView selectedAccessoryView = SelectedAccessoryViews.Count > 0 ? SelectedAccessoryViews[cell] : null;
 				UIView unselectedAccessoryView = UnselectedAccessoryViews.Count > 0 ? UnselectedAccessoryViews[cell] : null;
 
@@ -738,7 +741,7 @@ namespace MonoMobile.Views
 					cell.Accessory = selectedIndex == indexPath.Row ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				}
 				
-				if (IsMultiselect)
+				if (IsMultiselect && SelectedItems != null)
 				{
 					if (!SelectedItems.Contains(SelectedItem))
 					{

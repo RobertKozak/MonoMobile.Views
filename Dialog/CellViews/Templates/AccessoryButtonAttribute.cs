@@ -1,10 +1,10 @@
 //
-// ToolbarButtonAttribute.cs
+// AccessoryButtonAttribute.cs:
 //
 // Author:
-//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
+//   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
-// Copyright 2011, Nowcom Corporation
+// Copyright 2011, Nowcom Corportation
 //
 // Code licensed under the MIT X11 license
 //
@@ -30,41 +30,42 @@
 namespace MonoMobile.Views
 {
 	using System;
+	using System.Drawing;
+	using System.Reflection;
+	using MonoTouch.Foundation;
 	using MonoTouch.UIKit;
-
-	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
-	public class ToolbarButtonAttribute: CellViewTemplate
+	
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
+	public class AccessoryButtonAttribute : ButtonAttribute
 	{
-		private Type _ViewType = typeof(ObjectCellView<object>);
-
-		public override Type CellViewType { get { return _ViewType; } }
-
-		public ToolbarButtonAttribute()
+		public override Type CellViewType { get { return typeof(AccessoryButtonCellView); } }
+	
+		public AccessoryButtonAttribute(): base()
 		{
-			Style = UIBarButtonItemStyle.Bordered;
-			Location = BarButtonLocation.Center;
 		}
-		
-		public ToolbarButtonAttribute(UIBarButtonSystemItem buttonType): this()
+	
+		public AccessoryButtonAttribute(string commandMemberName): base(commandMemberName)
 		{
-			ButtonType = buttonType;
-		}
-		
-		public ToolbarButtonAttribute(Type viewType) : this()
-		{
-			_ViewType = viewType;
 		}
 
-		public ToolbarButtonAttribute(string canExecutePropertyName) : this()
+		[Preserve(AllMembers = true)]
+		class AccessoryButtonCellView : ButtonCellView
 		{
-			CanExecutePropertyName = canExecutePropertyName;
-		}
+			public AccessoryButtonCellView(RectangleF frame) : base(new RectangleF(0, 0, 20, 20))
+			{
+			}
 
-		public string CanExecutePropertyName;
-		public CommandOption CommandOption;
-		public UIBarButtonSystemItem? ButtonType { get; set; }
-		public UIBarButtonItemStyle Style { get; set; }
-		public BarButtonLocation Location { get; set; }
+			public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+			{
+				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+				cell.Accessory = UITableViewCellAccessory.DetailDisclosureButton;
+
+			}
+
+			public override void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+			{
+			}
+		}
 	}
 }
 

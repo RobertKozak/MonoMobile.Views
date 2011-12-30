@@ -39,7 +39,7 @@ namespace MonoMobile.Views
 	{
 		public UIModalTransitionStyle TransitionStyle { get; set; }
 		public bool IsModal { get; set; }
-		public Type ViewType { get; set; }
+		public Type NavigateToViewType { get; set; }
 		
 		public ObjectCellView() : base(RectangleF.Empty)
 		{
@@ -60,7 +60,7 @@ namespace MonoMobile.Views
 			{
 				TransitionStyle = navigateToView.TransitionStyle;
 				IsModal = navigateToView.IsModal;
-				ViewType = navigateToView.ViewType; 
+				NavigateToViewType = navigateToView.NavigateToViewType; 
 			}
 		}
 
@@ -81,9 +81,9 @@ namespace MonoMobile.Views
 			if (DataContext.Value != null) 
 			{
 				var view = DataContext.Value;
-				if (ViewType != null && !view.GetType().Equals(ViewType))
+				if (NavigateToViewType != null && !view.GetType().Equals(NavigateToViewType))
 				{
-					view = Activator.CreateInstance(ViewType); 
+					view = Activator.CreateInstance(NavigateToViewType); 
 				}
 
 				var dc = view as IDataContext<object>;

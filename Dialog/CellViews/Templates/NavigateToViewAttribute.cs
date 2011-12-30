@@ -37,15 +37,15 @@ namespace MonoMobile.Views
 	{
 		public NavigateToViewAttribute()
 		{
-			ViewType = typeof(ObjectCellView<object>);
+			NavigateToViewType = typeof(ObjectCellView<object>);
 		}
 		
 		public NavigateToViewAttribute(Type viewType)
 		{
-			ViewType = viewType;
+			NavigateToViewType = viewType;
 		}
 
-		public Type ViewType { get; set; }
+		public Type NavigateToViewType { get; set; }
 		
 		private UIModalTransitionStyle _TransitionStyle;
 		public UIModalTransitionStyle TransitionStyle 

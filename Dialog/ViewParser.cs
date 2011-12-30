@@ -353,7 +353,7 @@ namespace MonoMobile.Views
 						if (navigable != null)
 						{
 							source.IsSelectable = false;
-							source.NavigationViewType = navigable.ViewType;
+							source.NavigationViewType = navigable.NavigateToViewType;
 						}
 					}
 
@@ -445,13 +445,13 @@ namespace MonoMobile.Views
 
 				if (buttonAttribute != null)
 				{
-					var caption = captionAttribute != null ? captionAttribute.Caption : !buttonAttribute.ButtonType.HasValue && buttonAttribute.ViewType == null ? member.Name.Capitalize() : null;
+					var caption = captionAttribute != null ? captionAttribute.Caption : !buttonAttribute.ButtonType.HasValue && buttonAttribute.CellViewType == null ? member.Name.Capitalize() : null;
 					
 					UIView buttonView = null;
 					var title = caption;
-					if (buttonAttribute.ViewType != null)
+					if (buttonAttribute.CellViewType != null)
 					{	
-						buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+						buttonView = Activator.CreateInstance(buttonAttribute.CellViewType) as UIView;
 						
 						CheckForInstanceProperties(view, member, buttonView);
 
@@ -508,9 +508,9 @@ namespace MonoMobile.Views
 
 					var title = caption ?? memberName;
 
-					if (buttonAttribute.ViewType != null)
+					if (buttonAttribute.CellViewType != null)
 					{	
-						UIView buttonView = Activator.CreateInstance(buttonAttribute.ViewType) as UIView;
+						UIView buttonView = Activator.CreateInstance(buttonAttribute.CellViewType) as UIView;
 						
 						CheckForInstanceProperties(view, member, buttonView);
 
@@ -704,13 +704,15 @@ namespace MonoMobile.Views
 
 		private static List<Type> GetViewTypes(MemberData memberData)
 		{
+			List<Type> viewTypeList = new List<Type>();
+
 			var memberInfo = memberData.Member;
 			if (memberInfo != null)
 			{
 				var cellViewAttributes = memberInfo.GetCustomAttributes<CellViewAttribute>();
 				if (cellViewAttributes.Length > 0)
 				{
-					var viewTypeList = (from attribute in cellViewAttributes select attribute.ViewType).ToList();
+					viewTypeList = (from attribute in cellViewAttributes select attribute.ViewType).ToList();
 					var viewAttributesList = cellViewAttributes.ToList();
 					viewAttributesList.ForEach((attribute) => 
 					{
@@ -720,12 +722,19 @@ namespace MonoMobile.Views
 							memberData.RowHeight = sizeable.GetRowHeight();
 						}
 					});
-					
-					return viewTypeList;
+				}
+
+				var cellViewTemplates = memberInfo.GetCustomAttributes<Attribute>().Where(attribute=> typeof(CellViewTemplate).IsAssignableFrom(attribute.GetType())).Cast<CellViewTemplate>().ToList();
+				if (cellViewTemplates.Count > 0)
+				{
+					cellViewTemplates.ForEach(attribute=>viewTypeList.Add(attribute.CellViewType));
 				}
 			}
 
-			return null;
+			if (viewTypeList.Count == 0)
+				return null;
+
+			return viewTypeList;
 		}
 
 		private static MemberInfo[] GetMethods(object view)

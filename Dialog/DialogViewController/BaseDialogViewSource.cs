@@ -172,6 +172,16 @@ namespace MonoMobile.Views
 							{
 								hasCellViewTemplate.CellViewTemplate = cellViewTemplate;
 							}
+							
+							var commandButton = view as ICommandButton;
+							if (commandButton != null && !string.IsNullOrEmpty(commandButton.CommandMemberName))
+							{
+								var commandMember= GetMemberFromView(commandButton.CommandMemberName);
+								if (commandMember != null)
+								{
+									commandButton.Command = commandMember.GetValue(memberData.Source) as ICommand;
+								}
+							}
 
 							var viewTheme = view as IThemeable;
 							if (viewTheme != null)
@@ -189,7 +199,7 @@ namespace MonoMobile.Views
 								var memberNavigable = memberAttribute as INavigable;
 								if (memberNavigable != null)
 								{
-									navigable.ViewType = memberNavigable.ViewType;
+									navigable.NavigateToViewType = memberNavigable.NavigateToViewType;
 									navigable.IsModal = memberNavigable.IsModal;
 									navigable.TransitionStyle = memberNavigable.TransitionStyle;
 								}
@@ -322,11 +332,11 @@ namespace MonoMobile.Views
 
 			if (resizedRows)
 			{
-				using (new Wait(new TimeSpan(0), () =>
+				new Wait(TimeSpan.FromMilliseconds(0), () =>
 				{
 					Controller.TableView.BeginUpdates();
 					Controller.TableView.EndUpdates();
-				}));
+				});
 			}
 
 			return cell;
@@ -633,12 +643,23 @@ namespace MonoMobile.Views
 
 		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
 		{
-//			var element = GetElement(indexPath);
-//
-//			if (element.AccessoryCommand != null && element.AccessoryCommand.CanExecute(null))
-//			{
-//				element.AccessoryCommand.Execute(null);
-//			}
+			var cell = GetCell(tableView, indexPath);
+			foreach (var section in Sections.Values)
+			{
+				if (section.Views.ContainsKey(cell))
+				{
+					var views = section.Views[cell];
+
+					foreach (var view in views)
+					{
+						var commandButtonView = view as ICommandButton;
+						if (commandButtonView != null && commandButtonView.Command != null)
+						{
+							commandButtonView.Command.Execute(commandButtonView.CommandParameter);
+						}
+					}
+				}
+			}
 		}
 
 		public IList GetSectionData(int sectionIndex)

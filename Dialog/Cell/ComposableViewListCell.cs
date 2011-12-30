@@ -332,11 +332,11 @@ namespace MonoMobile.Views
 
 				if (resizedRows)
 				{
-					using (new Wait(new TimeSpan(0), () =>
+					new Wait(TimeSpan.FromMilliseconds(0), () =>
 					{
 						ListSource.Controller.TableView.BeginUpdates();
 						ListSource.Controller.TableView.EndUpdates();
-					}));
+					});
 				}
 			}
 		}

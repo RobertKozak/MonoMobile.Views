@@ -44,45 +44,80 @@ namespace MonoMobile.Views
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, Inherited = false)]
 	public class ButtonAttribute : CellViewTemplate
 	{
-		public override Type CellViewType { get { return typeof(MethodCellView); } }
-
+		public override Type CellViewType { get { return typeof(ButtonCellView); } }
+		
 		public ButtonAttribute()
 		{
 		}
-		
-		public ButtonAttribute(string canExecutePropertyName): this()
-		{
-			CanExecutePropertyName = canExecutePropertyName;
-			CommandOption = CommandOption.Hide;
-		}
 
+		public ButtonAttribute(string commandMemberName)
+		{
+			CommandOption = CommandOption.Hide;
+			CommandMemberName = commandMemberName;
+		}
+		
+		public string CommandMemberName;
 		public string CanExecutePropertyName;
 		public CommandOption CommandOption;
+		public ICommand Command;
+		public object CommandParameter;
+	}
 
-		[Preserve(AllMembers = true)]
-		class MethodCellView : CellView<MethodInfo>, ISelectable
+	[Preserve(AllMembers = true)]
+	public class ButtonCellView : CellView<object>, ISelectable, ICommandButton
+	{
+		private ButtonAttribute ButtonData { get { return CellViewTemplate as ButtonAttribute; } }
+		
+		public string CommandMemberName 
+		{ 
+			get { return ButtonData != null ? ButtonData.CommandMemberName : string.Empty; } 
+			set { if (ButtonData != null) ButtonData.CommandMemberName = value; } 
+		}
+		
+		public ICommand Command 
+		{ 
+			get { return ButtonData != null ? ButtonData.Command : null; } 
+			set { if (ButtonData != null) ButtonData.Command = value; } 
+		}
+		
+		public object CommandParameter 
+		{ 
+			get { return ButtonData != null ? ButtonData.CommandParameter : null; } 
+			set { if (ButtonData != null) ButtonData.CommandParameter = value; } 
+		}
+ 
+		public bool Enabled { get; set; }
+
+		public ButtonCellView(RectangleF frame) : base(frame)
 		{
-			public MethodCellView(RectangleF frame) : base(frame)
-			{
-			}
+		}
 
-			public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
-			{
-				cell.TextLabel.Text = Caption;
-				cell.TextLabel.TextAlignment = UITextAlignment.Center;
-				cell.Accessory = UITableViewCellAccessory.None;
-			}
+		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
+		{
+			cell.TextLabel.Text = Caption;
+			cell.TextLabel.TextAlignment = UITextAlignment.Center;
+			cell.Accessory = UITableViewCellAccessory.None;
+		}
 
-			public void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+		public virtual void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
+		{
+			if (ButtonData != null)
 			{
-				if (DataContext != null)
+				if (ButtonData.Command != null)
 				{
-					var method = DataContext.Member as MethodInfo;
-					method.Invoke(DataContext.Source, null);
-
-					tableView.DeselectRow(indexPath, true);
+					ButtonData.Command.Execute(ButtonData.CommandParameter);
+				}
+				else
+				{
+					if (DataContext != null)
+					{
+						var method = DataContext.Member as MethodInfo;
+						method.Invoke(DataContext.Source, null);
+					}
 				}
 			}
+
+			tableView.DeselectRow(indexPath, true);
 		}
 	}
 }

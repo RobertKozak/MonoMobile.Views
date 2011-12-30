@@ -40,7 +40,7 @@ namespace MonoMobile.Views
 
 		public string InstancePropertyName { get; set; }
 		
-		public Type ViewType { get; set; }
+		public Type NavigateToViewType { get; set; }
 		public UIModalTransitionStyle TransitionStyle { get; set; }
 		public bool IsModal { get; set; }	
 		

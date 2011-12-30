@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 
 	public interface INavigable
 	{
-		Type ViewType { get; set; }
+		Type NavigateToViewType { get; set; }
 		UIModalTransitionStyle TransitionStyle { get; set; }
 		bool IsModal { get; set; }
 	}

@@ -33,6 +33,7 @@ namespace MonoMobile.Views
 {
 	public interface ICommandButton
 	{
+		string CommandMemberName { get; set; }
 		ICommand Command { get; set; }
 		object CommandParameter { get; set; }
 
