@@ -352,13 +352,13 @@ namespace MonoMobile.Views
 
 		private static MemberInfo[] GetFields(Type type, bool allowPrivate)
 		{
-			var fields =type.GetFields(_BindingFlagsMap[allowPrivate]); 
+			var fields = type.GetFields(_BindingFlagsMap[allowPrivate]).Where(field => !field.IsSpecialName).ToArray(); 
 			return fields;
 		}
 
 		private static MemberInfo[] GetProperties(Type type, bool allowPrivate)
 		{
-			return type.GetProperties(_BindingFlagsMap[allowPrivate]);
+			return type.GetProperties(_BindingFlagsMap[allowPrivate]).Where(property => !property.IsSpecialName).ToArray();
 		}
 
 		private static MemberInfo[] GetMethods(Type type, bool allowPrivate)

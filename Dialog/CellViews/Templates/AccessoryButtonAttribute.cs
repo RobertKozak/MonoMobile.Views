@@ -59,11 +59,6 @@ namespace MonoMobile.Views
 			{
 				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 				cell.Accessory = UITableViewCellAccessory.DetailDisclosureButton;
-
-			}
-
-			public override void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
-			{
 			}
 		}
 	}

@@ -127,9 +127,16 @@ namespace MonoMobile.Views
 
 			needsReload = Section.DataContext.Count == 0 || needsReload;
 
-			if (needsReload && Controller == MonoMobileApplication.CurrentViewController)
+			if (needsReload)
 			{
-				Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+				if (Controller == MonoMobileApplication.CurrentViewController)
+				{
+					Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+				}
+				else
+				{
+					Controller.TableView.ReloadData();
+				}	
 			}
 		}
 		

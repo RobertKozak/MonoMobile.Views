@@ -111,11 +111,20 @@ namespace MonoMobile.Views
 		
 		public void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-	//		if (CanHandleNotifyPropertyChanged(e.PropertyName))
+			if (CanHandleNotifyPropertyChanged(e.PropertyName))
 			{
 				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
-				        {
-					UpdateValue();
+				{
+					var value = GetValue();
+					if (_DataContextValue != null && _DataContextValue != value)
+					{
+						ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
+					}
+
+					if (_Value != null && _Value != value)
+					{
+						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
+					}
 				});
 			}
 		}
@@ -209,11 +218,7 @@ namespace MonoMobile.Views
 						oldValue = DataContextMember.GetValue(DataContextSource);
 						if (oldValue != value)
 						{
-							RemoveNotifyCollectionChangedHandler(oldValue, this);
-						
 							shouldSetHandlers = true;
-							
-							ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
 							
 							if (DataContextMember.CanWrite())
 							{
@@ -229,11 +234,7 @@ namespace MonoMobile.Views
 				{
 					oldValue = Member.GetValue(Source);
 					if (oldValue != value)
-					{	
-						RemoveNotifyCollectionChangedHandler(_Value, this);
-
-						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
-						
+					{							
 						shouldSetHandlers = true;
 	
 						if (Member.CanWrite())
