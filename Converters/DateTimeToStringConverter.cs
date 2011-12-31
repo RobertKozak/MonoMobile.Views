@@ -49,6 +49,9 @@ namespace MonoMobile.Views
 			if (value == null)
 				return null;
 
+			if (value.GetType() == targetType)
+				return value;
+
 			return DateTime.Parse((string)value);
 		}
 	}

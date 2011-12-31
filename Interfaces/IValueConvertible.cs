@@ -1,5 +1,5 @@
 // 
-//  ValueConverterAttribute.cs
+//  IValueConvertible.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -27,38 +27,15 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+using System;
+
 namespace MonoMobile.Views
 {
-	using System;
-
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-	public class ValueConverterAttribute : Attribute, IValueConvertible
+	public interface IValueConvertible
 	{
-		public ValueConverterAttribute()
-		{
-		}
-
-		public ValueConverterAttribute(Type valueConverterType)
-		{
-			if (valueConverterType != null)
-			{
-				ValueConverter = Activator.CreateInstance(valueConverterType) as IValueConverter;
-			}
-		}
-		
-		public ValueConverterAttribute(Type valueConverterType, object converterParameter): this (valueConverterType)
-		{
-			ConverterParameter = converterParameter;
-		}
-		
-		public ValueConverterAttribute(Type valueConverterType, string converterParameterPropertyName): this (valueConverterType)
-		{
-			ConverterParameterPropertyName = converterParameterPropertyName;
-		}
-
-		public string ConverterParameterPropertyName { get; set; }
-		public object ConverterParameter { get; set; }
-		public IValueConverter ValueConverter { get; set; }
+		string ConverterParameterPropertyName { get; set; }
+		object ConverterParameter { get; set; }
+		IValueConverter ValueConverter { get; set; }
 	}
 }
 

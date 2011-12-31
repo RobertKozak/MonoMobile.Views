@@ -168,19 +168,9 @@ namespace MonoMobile.Views
 						{
 							var hasCellViewTemplate = view as ICellViewTemplate;
 							var cellViewTemplate = memberAttribute as CellViewTemplate;
-							if (hasCellViewTemplate != null && cellViewTemplate != null)
+							if (hasCellViewTemplate != null && cellViewTemplate != null && hasCellViewTemplate.GetType() == cellViewTemplate.CellViewType)
 							{
 								hasCellViewTemplate.CellViewTemplate = cellViewTemplate;
-							}
-							
-							var commandButton = view as ICommandButton;
-							if (commandButton != null && !string.IsNullOrEmpty(commandButton.CommandMemberName))
-							{
-								var commandMember= GetMemberFromView(commandButton.CommandMemberName);
-								if (commandMember != null)
-								{
-									commandButton.Command = commandMember.GetValue(memberData.Source) as ICommand;
-								}
 							}
 
 							var viewTheme = view as IThemeable;
@@ -213,6 +203,16 @@ namespace MonoMobile.Views
 								{
 									caption.Caption = memberCaption.Caption;
 								}
+							}
+						}
+
+						var commandButton = view as ICommandButton;
+						if (commandButton != null && !string.IsNullOrEmpty(commandButton.CommandMemberName))
+						{
+							var commandMember = GetMemberFromView(commandButton.CommandMemberName);
+							if (commandMember != null)
+							{
+								commandButton.Command = commandMember.GetValue(memberData.Source) as ICommand;
 							}
 						}
 

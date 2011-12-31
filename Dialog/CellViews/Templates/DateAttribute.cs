@@ -35,5 +35,9 @@ namespace MonoMobile.Views
 	public class DateAttribute : CellViewTemplate
 	{
 		public override Type CellViewType { get { return typeof(DateCellView); } }
+
+		public DateAttribute() : base(typeof(DateTimeToStringConverter))
+		{
+		}
 	}
 }

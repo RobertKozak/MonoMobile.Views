@@ -121,15 +121,6 @@ namespace MonoMobile.Views
 					memberData.Dispose();
 					continue;
 				}
-
-				var valueConverterAttribute = member.GetCustomAttribute<ValueConverterAttribute>();
-				if (valueConverterAttribute != null)
-				{
-					memberData.ValueConverter = valueConverterAttribute.ValueConverter;
-
-					memberData.ConverterParameter = valueConverterAttribute.ConverterParameter;
-					memberData.ConverterParameterName  = valueConverterAttribute.ConverterParameterPropertyName; 					
-				}
 				
 				var themeAttribute = member.GetCustomAttribute<ThemeAttribute>();
 				if (themeAttribute != null)

@@ -260,6 +260,7 @@
     <Compile Include="Application\Debug\Log.cs" />
     <Compile Include="Dialog\CellViews\Templates\CellViewAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\AccessoryButtonAttribute.cs" />
+    <Compile Include="Interfaces\IValueConvertible.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

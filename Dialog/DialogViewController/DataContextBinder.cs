@@ -133,7 +133,7 @@ namespace MonoMobile.Views
 				{
 					Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
 				}
-				else
+				else if (Controller.TableView != null)
 				{
 					Controller.TableView.ReloadData();
 				}	

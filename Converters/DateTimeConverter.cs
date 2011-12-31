@@ -38,24 +38,36 @@ namespace MonoMobile.Views
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (value == null)
-				return DateTime.MinValue.ToNSDate();
-
-			if (value.GetType().IsAssignableFrom(typeof(DateTime)))
-				return ((DateTime)value).ToNSDate();
-			else
-				return value;
+			return ConvertDate(value, targetType);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (value == null) return DateTime.MinValue;
+			return ConvertDate(value, targetType);
+		}
 
-			if (targetType == typeof(NSDate))
-				return ((DateTime)value).ToNSDate();
-			else
+		private object ConvertDate(object value, Type targetType)
+		{
+			if (value == null && targetType.IsAssignableFrom(typeof(NSDate)))
+			{
+				return DateTime.MinValue.ToNSDate();
+			}
+			
+			if (value == null && targetType.IsAssignableFrom(typeof(DateTime)))
+			{
+				return DateTime.MinValue;
+			}
+
+			if (targetType.IsAssignableFrom(typeof(DateTime)) && value.GetType().IsAssignableFrom(typeof(NSDate)))
+			{
 				return ((NSDate)value).ToDateTime();
+			}
+			else if (targetType.IsAssignableFrom(typeof(NSDate)) && value.GetType().IsAssignableFrom(typeof(DateTime)))
+			{
+				return ((DateTime)value).ToNSDate();
+			}
 
+			return value;
 		}
 	}
 }

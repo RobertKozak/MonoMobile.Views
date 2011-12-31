@@ -78,6 +78,14 @@ namespace MonoMobile.Views
 		{
 			Source = source;
 			Member = member;
+			
+			var valueConverterAttribute = member.GetCustomAttribute<ValueConverterAttribute>();
+			if (valueConverterAttribute != null)
+			{
+				ValueConverter = valueConverterAttribute.ValueConverter;
+				ConverterParameter = valueConverterAttribute.ConverterParameter;
+				ConverterParameterName = valueConverterAttribute.ConverterParameterPropertyName;
+			}
 
 			UpdateValue();
 			Id = CreateId();
@@ -174,6 +182,8 @@ namespace MonoMobile.Views
 		
 		protected virtual object GetValue()
 		{
+			Type targetType = null;
+
 			if (Member != null && Source != null)
 			{
 				var view = Source as IDataContext<object>;
@@ -184,16 +194,18 @@ namespace MonoMobile.Views
 					
 					if (DataContextMember != null)
 					{
+						targetType = Member.GetMemberType();
 						var dataContextValue = DataContextMember.GetValue(DataContextSource);
-						return ConvertValue(dataContextValue);
+						
+						return ConvertValue(dataContextValue, targetType);
 					}
 				}
 
 				var value = Member.GetValue(Source);
-				return ConvertValue(value);
+				return value;
 			}
 
-			return ConvertValue(_Value);
+			return ConvertValue(_Value, targetType);
 		}
 		
 		public virtual bool CanHandleNotifyPropertyChanged(string propertyName)
@@ -209,12 +221,13 @@ namespace MonoMobile.Views
 
 			if (_DataContextValue != value || _Value != value)
 			{
-				var convertedValue = ConvertbackValue(value);
-
 				if (_DataContextValue != value)
 				{
 					if (DataContextMember != null)
-					{
+					{						
+						var targetType = DataContextMember.GetMemberType();
+						var convertedValue = ConvertbackValue(value, targetType);
+
 						oldValue = DataContextMember.GetValue(DataContextSource);
 						if (oldValue != value)
 						{
@@ -232,6 +245,9 @@ namespace MonoMobile.Views
 	
 				if (_Value != value)
 				{
+					var targetType = Member.GetMemberType();
+					var convertedValue = ConvertbackValue(value, targetType);
+
 					oldValue = Member.GetValue(Source);
 					if (oldValue != value)
 					{							
@@ -284,32 +300,44 @@ namespace MonoMobile.Views
 			}
 		}
 
-		private object ConvertValue(object value)
+		public object Convert(object value, Type targetType, IValueConverter valueConverter)
 		{
+			object result = value;
+			
+			if (valueConverter != null)
+			{
+				var parameter = GetConverterParameter();
+				result = valueConverter.Convert(value, targetType, parameter, CultureInfo.CurrentUICulture);
+			}
+				
+			if (targetType != null)
+			{
+				var typeCode = System.Convert.GetTypeCode(value);
+				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
+				{
+					try					
+					{
+						result = System.Convert.ChangeType(value, targetType);
+					}
+					catch (InvalidCastException)
+					{
+					}
+				}
+			}
+
+			return result;
+		}
+
+		private object ConvertValue(object value, Type targetType)
+		{
+			if (value != null && value.GetType() == targetType)
+				return value;
+
 			object convertedValue = value;
 			
 			try 
 			{
-				if (ValueConverter != null)
-				{
-					var parameter = GetConverterParameter();
-					convertedValue = ValueConverter.Convert(value, TargetType, parameter, CultureInfo.CurrentUICulture);
-				}
-				
-				if (TargetType != null)
-				{
-					var typeCode = Convert.GetTypeCode(convertedValue);
-					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
-					{
-						try 
-						{
-							convertedValue = Convert.ChangeType(convertedValue, TargetType);
-						}
-						catch(InvalidCastException)
-						{
-						}
-					}
-				}
+				convertedValue = Convert(convertedValue, targetType, ValueConverter);
 			}
 			catch (NotImplementedException)
 			{
@@ -318,28 +346,34 @@ namespace MonoMobile.Views
 			return convertedValue;
 		}
 
-		private object ConvertbackValue(object value)
+		private object ConvertbackValue(object value, Type targetType)
 		{
+			if (value != null && value.GetType() == targetType)
+				return value;
+
 			object convertedValue = value;
 			var memberType = Member.GetMemberType();
 			
 			try
-			{
+			{			
 				if (ValueConverter != null)
 				{
 					var parameter = GetConverterParameter();
 					convertedValue = ValueConverter.ConvertBack(value, memberType, parameter, CultureInfo.CurrentUICulture);
 				}
-				
-				var typeCode = Convert.GetTypeCode(convertedValue);
-				if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty && typeCode != TypeCode.Int32)
+	
+				if (targetType != null)
 				{
-					try
+					var typeCode = System.Convert.GetTypeCode(convertedValue);
+					if (typeCode != TypeCode.Object && typeCode != TypeCode.Empty)
 					{
-						convertedValue = Convert.ChangeType(convertedValue, memberType);
-					}
-					catch(InvalidCastException)
-					{
+						try
+						{
+							convertedValue = System.Convert.ChangeType(convertedValue, targetType);
+						}
+						catch (InvalidCastException)
+						{
+						}
 					}
 				}
 			}

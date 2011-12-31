@@ -690,12 +690,14 @@ namespace MonoMobile.Views
 
 			if (IsMultiselect)
 			{	
-				if (SelectedItems != null)
-				{
-					SelectedItems = (from item in data.OfType<object>()
-					join selectedItem in SelectedItems.OfType<object>() on item equals selectedItem 
-					select item).ToList();
-				}	
+				// Not sure if I want this. This will match the previous selected items with the current selected 
+				// items and keep the common ones.
+//				if (SelectedItems != null)
+//				{
+//					SelectedItems = (from item in data.OfType<object>()
+//					join selectedItem in SelectedItems.OfType<object>() on item equals selectedItem 
+//					select item).ToList();
+//				}	
 				
 				if (_SelectedItemsMember != null)
 				{

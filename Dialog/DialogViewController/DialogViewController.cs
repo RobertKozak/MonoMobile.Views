@@ -499,7 +499,7 @@ namespace MonoMobile.Views
 //			if (Root.Caption != null)
 //				NavigationItem.Title = Root.Caption;
 
-			if (_Dirty)
+//			if (_Dirty)
 			{
 				TableView.ReloadData();
 				_Dirty = false;

@@ -118,8 +118,15 @@ namespace MonoMobile.Views
 				_DataContext = value;
 				if (_DataContext != null)
 				{
-					_DataContext.TargetType = ValueType;
-					Value = (T)_DataContext.Value;
+					IValueConverter valueConverter = null;
+					var valueConvertible = CellViewTemplate as IValueConvertible;
+					if (valueConvertible != null)
+					{
+						valueConverter = valueConvertible.ValueConverter;
+					}
+
+					Value = (T)_DataContext.Convert(_DataContext.Value, ValueType, valueConverter);
+					//Value = (T)_DataContext.Value;
 				}
 			}
 			
