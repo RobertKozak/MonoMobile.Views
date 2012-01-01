@@ -179,9 +179,8 @@ namespace MonoMobile.Views
 							var dc = view as IDataContext<MemberData>;
 							if (dc != null)
 							{
-								var item = GetMemberData(indexPath);
-								if (dc.DataContext != item)
-									dc.DataContext = item;
+								if (dc.DataContext != memberData)
+									dc.DataContext = memberData;
 							}
 
 							var updateable = view as IUpdateable;

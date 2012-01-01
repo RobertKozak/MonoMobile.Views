@@ -38,7 +38,8 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class CellView<T> : UIView, IDataContext<MemberData>, IInitializable, IInitializeCell, ICellViewTemplate, IUpdateable, ICaption, IThemeable, IHandleNotifyPropertyChanged
 	{
-		public T Value { get; set; }
+		private T _Value;
+		public T Value { get { return GetValue(); } set { SetValue(value); } }
 		public static Type ValueType { get { return typeof(T); } }
 
 		public CellViewTemplate CellViewTemplate { get; set; }
@@ -97,11 +98,9 @@ namespace MonoMobile.Views
 		
 		public virtual void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Console.WriteLine("CellView HandlePropertyChanged {0} Actual property = {1}", e.PropertyName, DataContext.Member.Name);
-
 			if (DataContext.CanHandleNotifyPropertyChanged(e.PropertyName))
 			{
-				Value = (T)_DataContext.Value; 
+				SetValue(_DataContext.Value); 
 				//Controller.TableView.ReloadData();
 			}
 		}
@@ -116,18 +115,8 @@ namespace MonoMobile.Views
 			if (_DataContext != value)
 			{
 				_DataContext = value;
-				if (_DataContext != null)
-				{
-					IValueConverter valueConverter = null;
-					var valueConvertible = CellViewTemplate as IValueConvertible;
-					if (valueConvertible != null)
-					{
-						valueConverter = valueConvertible.ValueConverter;
-					}
-
-					Value = (T)_DataContext.Convert(_DataContext.Value, ValueType, valueConverter);
-					//Value = (T)_DataContext.Value;
-				}
+				var newValue = _DataContext.Value;
+				SetValue(newValue);
 			}
 			
 			if (_DataContext != null)
@@ -138,6 +127,41 @@ namespace MonoMobile.Views
 				if (_DataContext.DataContextSource != null)
 					_DataContext.AddNotifyPropertyChangedHandler(_DataContext.DataContextSource, this);
 			}
+		}
+
+		protected virtual T GetValue()
+		{
+//			if (_DataContext != null)
+//			{
+//				IValueConverter valueConverter = null;
+//				var valueConvertible = CellViewTemplate as IValueConvertible;
+//				if (valueConvertible != null)
+//				{
+//					valueConverter = valueConvertible.ValueConverter;
+//				}
+//
+//				_Value = (T)_DataContext.Convertback(_DataContext.Value, ValueType, valueConverter);
+//			}
+
+			return _Value;
+		}
+		
+		protected virtual void SetValue(object value)
+		{
+			if (_DataContext != null)
+			{
+				IValueConverter valueConverter = null;
+				var valueConvertible = CellViewTemplate as IValueConvertible;
+				if (valueConvertible != null)
+				{
+					valueConverter = valueConvertible.ValueConverter;
+				}
+
+				_Value = (T)_DataContext.Convert(_DataContext.Value, ValueType, valueConverter);
+				return;
+			}
+
+			_Value = (T)value;
 		}
 
 		public virtual void InitializeTheme(UITableViewCell cell)

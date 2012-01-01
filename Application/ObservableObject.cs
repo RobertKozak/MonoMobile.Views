@@ -58,7 +58,6 @@ namespace MonoMobile.Views
 			{
 				if (PropertyChanged != null)
 				{
-					Console.WriteLine("NotifyPropertyChanged from {0} property name: {1}", GetType(), propertyName);
 					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 				}
 			}

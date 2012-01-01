@@ -237,6 +237,7 @@ There are 22 interfaces you can apply to your cell's UIView:
 	ITableViewStyle
 	IThemeable
 	IUpdateable
+	IValueConvertible
 
 There is a base UIView to use with cells called CellView which has some of these features coded by default.
 
@@ -254,14 +255,23 @@ You can use this base class and override the methods and properties as you need.
 
 Themes and IValueConverters are described below.
  
-Value Converters
-================
+Data Conversions and Value Converters
+=====================================
 
-Sometimes, you want to bind an integer value to a Entry element which has a DataContext property
+MonoMobile.Views gets data from both the ViewModel and View which is bound via a MemberData object. As mentioned 
+earlier on a Get the value is returned from the ViewModel and if there is no ViewModel then it is returned from the View.
+On a Set the ViewModel is set and then the View so both the View and ViewModel is always in sync.
+
+Sometimes, you want to bind an integer value to a Entry CellView which has a DataContext property
 of type string or you want to bind a float and you want to display it as $10 rather than 10.0.
 
 You do this with an IValueConverter. IValueConverter has Convert and Convertback methods that
-is part of the binding update process to automatically take care of conversions for you.
+is part of the binding update process to automatically take care of conversions for you. Using a ValueConverter on a
+property or field of the view (using the ValueConverterAttribute) will convert from the ViewModel value type to
+the the type expected by the view.
+
+Conversions for built in types like string, int, bool, float etc are handled automatically. Any extra conversions you want 
+to do need tp be done by an IValueConverter.  
 
 Here is a simple example of converter that takes a float and returns a string formatted as 
 a Percentage:
@@ -302,6 +312,9 @@ Included IValueConverters:
 	PercentConverter
 	UriConverter
 	
+CellViewTemplates derive from ValueConverterAttribute so they also can handle conversions from the View to the template. This is
+so you can be certain the type of the value coming in to the template is the type you expect.
+
 INotifyPropertyChanged 
 ======================
 
@@ -344,13 +357,13 @@ Themes
 
 MonoMobile.Views has a full theming engine. Check the Samples for implementation and ideas.
 
-Reflection API
-==============
+Reflection
+==========
 
 The reflection api of MonoTouch.Dialog is similar to the model used in MonoMobile.Views but 
 differs in many important ways. The most important is that the attributes are much more than they are 
 in MonoTouch.Dialog. In this framework an attribute is usually a CellViewTemplate. CellViewTemplates derive
-from Attribute and add in:
+from Attribute (specifically ValueConverterAttribute) and add in:
 
 	CellViewType: 	This is the type of the view that will be used to render the cell
 	Theme:			This is the Theme that will be applied to the cell

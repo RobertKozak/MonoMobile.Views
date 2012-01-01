@@ -353,7 +353,20 @@ namespace MonoMobile.Views
 		#region Row support
 		public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			var memberData = GetMemberData(indexPath);
+			MemberData memberData = null;
+			var sectionFirstIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);
+			
+			var listSource = GetListSource(sectionFirstIndexPath);
+			if (listSource != null && !listSource.IsRootCell)
+			{
+				memberData = GetMemberData(sectionFirstIndexPath);
+			}
+			
+			if (memberData == null)
+			{
+				memberData = GetMemberData(indexPath);
+			}
+
 			if (memberData != null && memberData.RowHeight != 0)
 			{
 				return memberData.RowHeight;

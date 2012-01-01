@@ -57,7 +57,7 @@ namespace MonoMobile.Views
 
 			public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 			{
-				Cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+				cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 				cell.Accessory = UITableViewCellAccessory.DetailDisclosureButton;
 			}
 		}

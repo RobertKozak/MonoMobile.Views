@@ -59,13 +59,13 @@ namespace MonoMobile.Views
 
 			cell.TextLabel.Text = Caption;
 			
-			if (DataContext.Value != null)
-				cell.DetailTextLabel.Text = DataContext.Value.ToString();
+			if (Value != null)
+				cell.DetailTextLabel.Text = Value;
 		}
 
 		public override void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Cell.DetailTextLabel.Text = (string)DataContext.Value;
+			Cell.DetailTextLabel.Text = Value;
 		}
 	}
 }

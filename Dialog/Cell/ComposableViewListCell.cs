@@ -80,7 +80,8 @@ namespace MonoMobile.Views
 //				return CellPosition.Single;
 //			}
 //		}
-
+		
+		public UITableViewCellStyle Style { get; set; } 
 		public NSIndexPath IndexPath { get; set; }
 		public IList<UIView> ViewList { get; set; }
 		public ListSource ListSource { get; set; }
@@ -91,6 +92,7 @@ namespace MonoMobile.Views
 
 		public ComposableViewListCell(UITableViewCellStyle style, NSString reuseIdentifier, NSIndexPath indexPath, IList<Type> viewTypes, ListSource listSource) : base(style, reuseIdentifier)
 		{
+			Style = style;
 			IndexPath = indexPath;
 			ListSource = listSource;
 			
@@ -164,16 +166,16 @@ namespace MonoMobile.Views
 
 					var initializeCell = view as IInitializeCell;
 					if (initializeCell != null)
-					{
-//						var newCellStyle = initializeCell.CellStyle;
-//						if (newCellStyle != cellStyle)
-//						{
-//							// recreate cell with new style
-//							cell = new UITableViewCell(newCellStyle, cellId) { };
-//						}
-	
+					{	
 						initializeCell.Cell = this;
 						initializeCell.Controller = ListSource.Controller;
+
+						var newCellStyle = initializeCell.CellStyle;
+						if (newCellStyle != Style)
+						{
+							Style = newCellStyle;
+							break;
+						}
 					}
 					
 					var themeable = view as IThemeable;
@@ -275,10 +277,18 @@ namespace MonoMobile.Views
 	
 						if (dc == null)
 						{
-							var dataContextMember = view.GetType().GetProperty("DataContext");
-							if (dataContextMember != null && data.GetType().IsAssignableFrom(dataContextMember.PropertyType))
+							var valueMember = view.GetType().GetProperty("Value");
+							if (valueMember != null && data.GetType().IsAssignableFrom(valueMember.PropertyType))
 							{
-								dataContextMember.SetValue(view, data);
+								valueMember.SetValue(view, data);
+							}
+							else
+							{
+								var dataContextMember = view.GetType().GetProperty("DataContext");
+								if (dataContextMember != null && data.GetType().IsAssignableFrom(dataContextMember.PropertyType))
+								{
+									dataContextMember.SetValue(view, data);
+								}
 							}
 						}
 	

@@ -220,6 +220,9 @@ namespace MonoMobile.Views
 			}
  
 			var cell = new ComposableViewListCell(cellStyle, cellId, indexPath, viewTypes, this);
+			//If we have a new cell Style then we need to recreate the cell. 
+			if (cellStyle != cell.Style)
+				cell = new ComposableViewListCell(cell.Style, cellId, indexPath, viewTypes, this);
 
 			return cell;
 		}
@@ -669,10 +672,10 @@ namespace MonoMobile.Views
 
 		private void SetItems()
 		{
-			var data = GetSectionData(0);
+//			var data = GetSectionData(0);
 
-			if (!data.Contains(SelectedItem))
-				SelectedItem = null;
+//			if (!data.Contains(SelectedItem))
+//				SelectedItem = null;
 
 			if (_SelectedItemMember != null)
 			{

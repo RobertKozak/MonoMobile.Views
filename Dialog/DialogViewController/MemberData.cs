@@ -121,8 +121,8 @@ namespace MonoMobile.Views
 		{
 			if (CanHandleNotifyPropertyChanged(e.PropertyName))
 			{
-				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
-				{
+//				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
+//				{
 					var value = GetValue();
 					if (_DataContextValue != null && _DataContextValue != value)
 					{
@@ -133,7 +133,7 @@ namespace MonoMobile.Views
 					{
 						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
 					}
-				});
+//				});
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace MonoMobile.Views
 						targetType = Member.GetMemberType();
 						var dataContextValue = DataContextMember.GetValue(DataContextSource);
 						
-						return ConvertValue(dataContextValue, targetType);
+						return Convert(dataContextValue, Type, ValueConverter);
 					}
 				}
 
@@ -218,7 +218,9 @@ namespace MonoMobile.Views
 			var shouldSetHandlers = false;		
 			object oldValue = null;
 			UnconvertedValue = value;
+			var convertedValue = value;
 
+			
 			if (_DataContextValue != value || _Value != value)
 			{
 				if (_DataContextValue != value)
@@ -226,7 +228,7 @@ namespace MonoMobile.Views
 					if (DataContextMember != null)
 					{						
 						var targetType = DataContextMember.GetMemberType();
-						var convertedValue = ConvertbackValue(value, targetType);
+						convertedValue = ConvertbackValue(value, targetType);
 
 						oldValue = DataContextMember.GetValue(DataContextSource);
 						if (oldValue != value)
@@ -243,10 +245,10 @@ namespace MonoMobile.Views
 					}
 				}
 	
-				if (_Value != value)
+				if (_Value != convertedValue)
 				{
 					var targetType = Member.GetMemberType();
-					var convertedValue = ConvertbackValue(value, targetType);
+					convertedValue = ConvertValue(value, targetType);
 
 					oldValue = Member.GetValue(Source);
 					if (oldValue != value)
@@ -317,7 +319,7 @@ namespace MonoMobile.Views
 				{
 					try					
 					{
-						result = System.Convert.ChangeType(value, targetType);
+						result = System.Convert.ChangeType(result, targetType);
 					}
 					catch (InvalidCastException)
 					{
