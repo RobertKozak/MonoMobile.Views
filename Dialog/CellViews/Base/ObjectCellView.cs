@@ -83,13 +83,7 @@ namespace MonoMobile.Views
 				var view = DataContext.Value;
 				if (NavigateToViewType != null && !view.GetType().Equals(NavigateToViewType))
 				{
-					view = Activator.CreateInstance(NavigateToViewType); 
-				}
-
-				var dc = view as IDataContext<object>;
-				if (dc != null)
-				{
-					dc.DataContext = DataContext.Value;
+					view = ViewCreator.Create(NavigateToViewType, DataContext.Value);
 				}
 
 				var dvc = new DialogViewController(Caption, view, controller.Theme, true) { Autorotate = true };

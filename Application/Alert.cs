@@ -41,6 +41,11 @@ namespace MonoMobile.Views
 				alert.InvokeOnMainThread(() => alert.Show());
 			}
 		}
+
+		public static void Show(string title)
+		{
+			Show(title, string.Empty);
+		}
 	}
 }
 

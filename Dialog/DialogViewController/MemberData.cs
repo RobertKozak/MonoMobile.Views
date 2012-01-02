@@ -80,7 +80,7 @@ namespace MonoMobile.Views
 			Member = member;
 			
 			var valueConverterAttribute = member.GetCustomAttribute<ValueConverterAttribute>();
-			if (valueConverterAttribute != null)
+			if (valueConverterAttribute != null && !(valueConverterAttribute is CellViewTemplate))
 			{
 				ValueConverter = valueConverterAttribute.ValueConverter;
 				ConverterParameter = valueConverterAttribute.ConverterParameter;

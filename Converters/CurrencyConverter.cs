@@ -1,5 +1,5 @@
 //
-// MoneyConverter.cs: 
+// CurrencyConverter.cs: 
 //
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -34,7 +34,7 @@ namespace MonoMobile.Views
 	using MonoTouch.Foundation;
 	
 	[Preserve(AllMembers = true)]
-	public class MoneyConverter : IValueConverter
+	public class CurrencyConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{

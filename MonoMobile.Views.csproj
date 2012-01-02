@@ -146,7 +146,6 @@
     <Compile Include="ViewModel\ViewModel.cs" />
     <Compile Include="Dialog\RefreshTableHeaderView.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
-    <Compile Include="Converters\MoneyConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
     <Compile Include="Converters\UriConverter.cs" />
     <Compile Include="Controls\CommandBarButtonItem.cs" />
@@ -157,8 +156,6 @@
     <Compile Include="Dialog\LRUCache.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Application\SuspendNotificationContext.cs" />
-    <Compile Include="Converters\IntConverter.cs" />
-    <Compile Include="Converters\FloatConverter.cs" />
     <Compile Include="Dialog\Cell\Theme.cs" />
     <Compile Include="Controls\ProgressHud.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -261,6 +258,10 @@
     <Compile Include="Dialog\CellViews\Templates\CellViewAttribute.cs" />
     <Compile Include="Dialog\CellViews\Templates\AccessoryButtonAttribute.cs" />
     <Compile Include="Interfaces\IValueConvertible.cs" />
+    <Compile Include="Dialog\CellViews\Templates\CurrencyAttribute.cs" />
+    <Compile Include="Converters\CurrencyConverter.cs" />
+    <Compile Include="Dialog\CellViews\Templates\PercentAttribute.cs" />
+    <Compile Include="View\ViewCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

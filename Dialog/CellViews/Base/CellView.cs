@@ -147,7 +147,7 @@ namespace MonoMobile.Views
 		}
 		
 		protected virtual void SetValue(object value)
-		{
+		{	
 			if (_DataContext != null)
 			{
 				IValueConverter valueConverter = null;
