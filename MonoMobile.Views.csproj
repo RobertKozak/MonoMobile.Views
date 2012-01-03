@@ -256,7 +256,6 @@
     <Compile Include="Application\Debug\HttpDebug.cs" />
     <Compile Include="Application\Debug\Log.cs" />
     <Compile Include="Dialog\CellViews\Templates\CellViewAttribute.cs" />
-    <Compile Include="Dialog\CellViews\Templates\AccessoryButtonAttribute.cs" />
     <Compile Include="Interfaces\IValueConvertible.cs" />
     <Compile Include="Dialog\CellViews\Templates\CurrencyAttribute.cs" />
     <Compile Include="Converters\CurrencyConverter.cs" />

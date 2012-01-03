@@ -83,6 +83,63 @@ namespace MonoMobile.Views
 				return label.Lines;
 			}
 		}
+
+		public static UIColor ToUIColor(this string hexString)
+		{
+			var result = UIColor.Clear;
+		
+			if (!string.IsNullOrEmpty(hexString))
+			{
+				var colorString = hexString.Replace("#", "");
+				float alpha, red, blue, green;
+
+				switch (colorString.Length)
+				{
+					case 3: // #RGB
+						{
+							alpha = 1.0f;
+							red = Convert.ToInt64(colorString.Substring(0, 1), 16);
+							green = Convert.ToInt64(colorString.Substring(1, 1), 16);
+							blue = Convert.ToInt64(colorString.Substring(2, 1), 16);
+							break;
+						}
+					case 4: // #ARGB
+						{
+							alpha = Convert.ToInt64(colorString.Substring(0, 1), 16);
+							red = Convert.ToInt64(colorString.Substring(1, 1), 16);
+							green = Convert.ToInt64(colorString.Substring(2, 1), 16);
+							blue = Convert.ToInt64(colorString.Substring(3, 1), 16);
+							break;
+						}
+					case 6: // #RRGGBB
+						{
+							alpha = 1.0f;
+							red = Convert.ToInt64(colorString.Substring(0, 2), 16);
+							green = Convert.ToInt64(colorString.Substring(2, 2), 16);
+							blue = Convert.ToInt64(colorString.Substring(4, 2), 16);
+							break;
+						}
+					case 8: // #AARRGGBB
+						{
+							alpha = Convert.ToInt64(colorString.Substring(0, 2), 16);
+							red = Convert.ToInt64(colorString.Substring(2, 2), 16);
+							green = Convert.ToInt64(colorString.Substring(4, 2), 16);
+							blue = Convert.ToInt64(colorString.Substring(6, 2), 16);
+							break;
+						}
+					default:
+						{
+							throw new Exception(string.Format("Invalid color value \rColor value {0} is invalid. It should be a hex value of the form #RBG, #ARGB, #RRGGBB, or #AARRGGBB", hexString));
+							break;
+						}
+				}
+		
+				result = UIColor.FromRGBA(red, green, blue, alpha);
+			}
+
+			return result;
+		}
+
 	}
 }
 
