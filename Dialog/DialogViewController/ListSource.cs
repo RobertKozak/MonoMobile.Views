@@ -613,9 +613,16 @@ namespace MonoMobile.Views
 
 			if (NavigationSource != null)
 			{
-				SelectedItem = NavigationSource.SelectedItem;
-				SelectedItems = NavigationSource.SelectedItems;
+				if (NavigationSource.SelectedItem != null)
+					SelectedItem = NavigationSource.SelectedItem;
+
+				if (NavigationSource.SelectedItems != null)
+					SelectedItems = NavigationSource.SelectedItems;
+
 				SetItems();
+
+				NavigationSource.SelectedItem = null;
+				NavigationSource.SelectedItems = null;
 			}
 			else
 			{
@@ -672,11 +679,6 @@ namespace MonoMobile.Views
 
 		private void SetItems()
 		{
-//			var data = GetSectionData(0);
-
-//			if (!data.Contains(SelectedItem))
-//				SelectedItem = null;
-
 			if (_SelectedItemMember != null)
 			{
 				_SelectedItemMember.SetValue(Controller.RootView, SelectedItem);

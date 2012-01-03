@@ -57,6 +57,10 @@ namespace MonoMobile.Views
 		public string Caption { get; set; }
 		public bool ShowCaption { get; set; } 
 		
+		public CellView(IntPtr handle) : base(handle)
+		{
+		}
+
 		public CellView(RectangleF frame) : base(frame)
 		{
 			ShowCaption = true;

@@ -39,17 +39,20 @@ namespace MonoMobile.Views
 
 		public static void RegisterView(Type type, Type viewType)
 		{
-			if (!typeof(UIView).IsAssignableFrom(viewType))
+			if (viewType != null)
 			{
-				throw new Exception(string.Format("{0} must be a descendent of UIView", viewType));
+				if (!typeof(UIView).IsAssignableFrom(viewType))
+				{
+					throw new Exception(string.Format("{0} must be a descendent of UIView", viewType));
+				}
+				
+				if (_TypeViewMap.ContainsKey(type))
+				{
+					_TypeViewMap[type] = viewType;
+				}
+				else
+					_TypeViewMap.Add(type, viewType);
 			}
-			
-			if (_TypeViewMap.ContainsKey(type))
-			{
-				_TypeViewMap[type] = viewType;
-			}
-			else
-				_TypeViewMap.Add(type, viewType);
 		}
 		
 		public static Type GetExactView(Type type)

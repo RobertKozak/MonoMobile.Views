@@ -35,7 +35,7 @@ namespace MonoMobile.Views
 	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public class ToolbarButtonAttribute: CellViewTemplate
 	{
-		private Type _ViewType = typeof(ObjectCellView<object>);
+		private Type _ViewType;
 
 		public override Type CellViewType { get { return _ViewType; } }
 

@@ -79,7 +79,7 @@ namespace MonoMobile.Views
 
 		private void DisposeOldViewController(UIViewController controller)
 		{
-			DidReceiveMemoryWarning();
+		//	DidReceiveMemoryWarning();
 			controller.Dispose();
 		}
 	}
