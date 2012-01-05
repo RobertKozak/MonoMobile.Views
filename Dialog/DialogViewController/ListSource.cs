@@ -633,11 +633,6 @@ namespace MonoMobile.Views
 					_EditCommand.Execute(indexPath.Row);
 				}
 			}
-			
-			
-			
-			//SetSectionData(0, 
-//			tableView.ReloadRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Automatic);
 		}
 
 		public void Activated()
