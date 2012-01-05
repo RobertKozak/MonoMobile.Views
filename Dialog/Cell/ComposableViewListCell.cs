@@ -214,6 +214,19 @@ namespace MonoMobile.Views
 				}
 			}
 		}
+		
+		public override void LayoutSubviews()
+		{
+			base.LayoutSubviews();
+
+			if (ViewList != null)
+			{
+				foreach (var view in ViewList)
+				{
+					view.LayoutIfNeeded();
+				}
+			}
+		}
 
 		public override void Draw(RectangleF rect)
 		{
@@ -243,9 +256,9 @@ namespace MonoMobile.Views
 								TextLabel.Text = ListSource.SelectedItem.ToString();
 							}
 							else if (DetailTextLabel != null)
-								{
-									DetailTextLabel.Text = ListSource.SelectedItem.ToString();
-								}
+							{
+								DetailTextLabel.Text = ListSource.SelectedItem.ToString();
+							}
 						}
 					}
 				}

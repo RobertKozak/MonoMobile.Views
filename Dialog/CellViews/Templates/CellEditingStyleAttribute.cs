@@ -41,6 +41,10 @@ namespace MonoMobile.Views
 		}
 
 		public UITableViewCellEditingStyle EditingStyle { get; set; }
+		public string CanEditMemberName { get; set; }
+
+		public string EditCommandMemberName { get; set; }
+		public ICommand EditCommand { get; set; }
 	}
 }
 

@@ -62,6 +62,11 @@ namespace MonoMobile.Views
 			UIGraphics.EndImageContext();
 			return converted;
 		}
+		
+		public static UIImage ImageToFitSize(this UIImage image, float width, float height)
+		{
+			return ImageToFitSize(image, new SizeF(width, height));
+		}
 
 		public static UIImage ImageToFitSize(this UIImage image, SizeF fitSize)
 		{

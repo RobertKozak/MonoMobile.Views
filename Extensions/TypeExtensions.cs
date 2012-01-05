@@ -239,13 +239,16 @@ namespace MonoMobile.Views
 					if (list == null)
 						return;
 	
-					list.Clear();
-					foreach (var item in (IEnumerable)value)
+					if (list != value)
 					{
-						list.Add(item);
-					}
+						list.Clear();
+						foreach (var item in (IEnumerable)value)
+						{
+							list.Add(item);
+						}
 	
-					value = list;
+						value = list;
+					}
 				}
 			}
 

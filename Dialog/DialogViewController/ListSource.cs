@@ -40,21 +40,39 @@ namespace MonoMobile.Views
 	[Preserve(AllMembers = true)]
 	public class ListSource : BaseDialogViewSource, ISearchBar, IActivation
 	{
+		private MemberData _MemberData;
+		
 		private MemberInfo _DataContextSelectedItemsMember;
 		private MemberInfo _DataContextSelectedItemMember;		
 		private MemberInfo _SelectedItemsMember;
 		private MemberInfo _SelectedItemMember;
- 
+		
+		private UITableViewCellEditingStyle _EditingStyle;
+		private object _CanEditSource;
+		private MemberInfo _CanEditMember;
+		private ICommand _EditCommand;
+
 		public NSIndexPath BaseIndexPath = NSIndexPath.FromRowSection(0, 0);
 
 		public readonly NSString CellId;
-		public MemberData MemberData { get; set; }
+		public MemberData MemberData 
+		{ 
+			get { return _MemberData; }
+			set 
+			{ 
+				if (_MemberData != value)
+				{
+					_MemberData = value;
+					ConfigureRowEditing();
+				}
+			} 
+		}
 
 		public IList SelectedItems { get; set; }
 		public object SelectedItem { get; set; }
 		
 		public string SelectedItemMemberName { set { _SelectedItemMember = GetMemberFromView(value); _DataContextSelectedItemMember = GetMemberFromViewModel(value); } }
-		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); _DataContextSelectedItemsMember = GetMemberFromViewModel(value);} }
+		public string SelectedItemsMemberName { set { _SelectedItemsMember = GetMemberFromView(value); _DataContextSelectedItemsMember = GetMemberFromViewModel(value); } }
 				
 		public UnselectionBehavior UnselectionBehavior { get; set; }
 		
@@ -92,6 +110,7 @@ namespace MonoMobile.Views
 			SelectedItems = list.GetType().CreateGenericListFromEnumerable(null);
 
 			CellFactory = new TableCellFactory<UITableViewCell>(CellId);
+			
 
 //SelectionDisplayMode = SelectionDisplayMode.Collapsed;
 //CollapsedList = new List<object>();
@@ -237,6 +256,8 @@ namespace MonoMobile.Views
 			
 			Type dataType = null;
 			var sectionData = GetSectionData(0);
+			GetItems();
+			
 			if (sectionData.Count > 0)
 			{
 				dataType = sectionData[0].GetType();
@@ -595,16 +616,28 @@ namespace MonoMobile.Views
 
 		public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			return false;
+			return (_EditingStyle != UITableViewCellEditingStyle.None) && (bool)_CanEditMember.GetValue(_CanEditSource);
 		}
 
 		public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
 		{
-			return  UITableViewCellEditingStyle.None;
+			return _EditingStyle;
 		}
 
 		public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
 		{
+			if (editingStyle != UITableViewCellEditingStyle.None)
+			{
+				if (_EditCommand != null)
+				{
+					_EditCommand.Execute(indexPath.Row);
+				}
+			}
+			
+			
+			
+			//SetSectionData(0, 
+//			tableView.ReloadRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Automatic);
 		}
 
 		public void Activated()
@@ -636,6 +669,47 @@ namespace MonoMobile.Views
 		{
 		}
 		
+		private void ConfigureRowEditing()
+		{
+			if (Controller != null && Controller.RootView != null)
+			{
+				var cellEditingStyle = Controller.RootView.GetType().GetCustomAttribute<CellEditingStyleAttribute>();
+				if (cellEditingStyle == null)
+				{
+					if (MemberData != null)
+					{
+						cellEditingStyle = MemberData.Member.GetCustomAttribute<CellEditingStyleAttribute>();
+					}
+				}
+				
+				if (cellEditingStyle != null)
+				{
+					_EditingStyle = cellEditingStyle.EditingStyle;
+					_CanEditSource = Controller.RootView;
+					_CanEditMember = GetMemberFromView(cellEditingStyle.CanEditMemberName);
+					if (_CanEditMember == null)
+					{
+						_CanEditMember = GetMemberFromViewModel(cellEditingStyle.CanEditMemberName);
+					
+						var dc = Controller.RootView as IDataContext<object>;
+						if (dc != null && dc.DataContext != null)
+						{
+							_CanEditSource = dc.DataContext;
+						}
+					}
+	
+					if (!string.IsNullOrEmpty(cellEditingStyle.EditCommandMemberName))
+					{
+						var commandMember = _CanEditSource.GetType().GetMember(cellEditingStyle.EditCommandMemberName).FirstOrDefault();
+						if (commandMember != null)
+						{
+							_EditCommand = ViewParser.GetCommandForMember(_CanEditSource, commandMember);
+						}
+					} 
+				}
+			}
+		}
+
 		private void GetItems()
 		{	
 			if (_SelectedItemMember != null)
@@ -664,12 +738,12 @@ namespace MonoMobile.Views
 
 				if (_DataContextSelectedItemsMember != null)
 				{
-					if (_SelectedItemsMember != null)
+					//if (_SelectedItemsMember != null)
 					{
 						var dc = Controller.RootView as IDataContext<object>;
 						if (dc != null && dc.DataContext != null)
 						{
-							var items = _SelectedItemsMember.GetValue(Controller.RootView) as IList;
+							var items = _DataContextSelectedItemsMember.GetValue(dc.DataContext) as IList;
 							SelectedItems = items;
 						}
 					}
@@ -694,16 +768,7 @@ namespace MonoMobile.Views
 			}
 
 			if (IsMultiselect)
-			{	
-				// Not sure if I want this. This will match the previous selected items with the current selected 
-				// items and keep the common ones.
-//				if (SelectedItems != null)
-//				{
-//					SelectedItems = (from item in data.OfType<object>()
-//					join selectedItem in SelectedItems.OfType<object>() on item equals selectedItem 
-//					select item).ToList();
-//				}	
-				
+			{		
 				if (_SelectedItemsMember != null)
 				{
 					_SelectedItemsMember.SetValue(Controller.RootView, SelectedItems);
@@ -755,10 +820,10 @@ namespace MonoMobile.Views
 						cell.AccessoryView = null;
 						cell.Accessory = UITableViewCellAccessory.None;
 					}
-
+					
 					foreach (var item in SelectedItems)
 					{
-						selectedIndex = GetSectionData(0).IndexOf(item);
+						selectedIndex = sectionData.IndexOf(item);
 						
 						if (selectedIndex != indexPath.Row) continue;
 
