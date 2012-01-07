@@ -41,7 +41,7 @@ namespace MonoMobile.Views
 		// This method is invoked when the application has loaded its UI and its ready to run
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{	
-			HttpDebug.Start (); 
+			//HttpDebug.Start (); 
 
 			MonoMobileApplication.NavigationController = new NavigationController();
 			MonoMobileApplication.Window = new UIWindow(UIScreen.MainScreen.Bounds);

@@ -265,7 +265,7 @@ namespace MonoMobile.Views
 				else
 				{
 					var sectionData = ListSource.GetSectionData(0);
-					if (sectionData.Count > 0)
+					if (sectionData.Count > 0 && IndexPath.Row < sectionData.Count)
 					{
 						TextLabel.Text = sectionData[IndexPath.Row].ToString();
 					}

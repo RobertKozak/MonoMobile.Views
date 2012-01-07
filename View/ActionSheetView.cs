@@ -50,31 +50,36 @@ namespace MonoMobile.Views
 		public override void ShowFrom(RectangleF rect, UIView inView, bool animated)
 		{
 			Prepare();
-			_ActualActionSheet.ShowFrom(rect, inView, animated);
+			if (_ActualActionSheet != null)
+				_ActualActionSheet.ShowFrom(rect, inView, animated);
 		}
 		
 		public override void ShowFrom(UIBarButtonItem item, bool animated)
 		{
 			Prepare();
-			_ActualActionSheet.ShowFrom(item, animated);
+			if (_ActualActionSheet != null)
+				_ActualActionSheet.ShowFrom(item, animated);
 		}
 
 		public override void ShowFromTabBar(UITabBar view)
 		{
 			Prepare();
-			_ActualActionSheet.ShowFromTabBar(view);
+			if (_ActualActionSheet != null)
+				_ActualActionSheet.ShowFromTabBar(view);
 		}
 
 		public override void ShowFromToolbar(UIToolbar view)
 		{
 			Prepare();
-			_ActualActionSheet.ShowFromToolbar(view);
+			if (_ActualActionSheet != null)
+				_ActualActionSheet.ShowFromToolbar(view);
 		}
 
 		public override void ShowInView(UIView view)
 		{
 			Prepare();
-			_ActualActionSheet.ShowInView(view);
+			if (_ActualActionSheet != null)
+				_ActualActionSheet.ShowInView(view);
 		}
 
 		protected override void Dispose(bool disposing)
