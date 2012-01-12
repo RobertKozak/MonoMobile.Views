@@ -459,7 +459,7 @@ and you are unselecting a value.
 		SetSelectedToPreviousValueOrNull,
 		SetSelectedToNull
 
-When in Multiselection the SelectedItems property will hold all of the selected items. But the SelectedItem property can hold on of three 
+When in Multiselection the SelectedItems property will hold all of the selected items. But the SelectedItem property can hold one of three 
 values depending on the UnselectionBehavior. If you set it to SetSelectionToCurrentValue (default) it will set it to the current item no 
 matter if it was selected or unselected. If you choose SetSelectionToPrevious when you unselect an item it will set the SelectedItem property 
 to the last item that was selected. And SetSelectedToNull will set the SelectedItem property to Null if an item was unselected.
@@ -484,13 +484,13 @@ Link Behavior in your project options. This will do a static analysis of your co
 not being called and remove them. This is problematic in that many classes in MonoMobile.Views are created dynamically 
 as needed. For these classes you need to decorate them with a [Preserve(AllMembers=true)] attribute. 
 
-MonoMobile.View.Themes and MonoMobile.Views.Templates are two more GitHub projects for you to place new Themes and CellViewTemplates 
+MonoMobile.Views.Themes and MonoMobile.Views.Templates are two more GitHub projects for you to place new Themes and CellViewTemplates 
 that you want to share with the world and enhance the MonoMobile.Views framework ecosystem.
 
 Some simple examples
 ====================
 
-Simple Helow World:
+Simple Hello World:
 
 		namespace HelloWorld
 		{

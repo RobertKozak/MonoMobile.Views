@@ -94,9 +94,10 @@ namespace MonoMobile.Views
 
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
+			cell.Accessory = UITableViewCellAccessory.None;
+
 			cell.TextLabel.Text = Caption;
 			cell.TextLabel.TextAlignment = UITextAlignment.Center;
-			cell.Accessory = UITableViewCellAccessory.None;
 		}
 
 		public virtual void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)

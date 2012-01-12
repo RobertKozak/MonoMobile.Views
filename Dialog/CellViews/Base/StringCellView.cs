@@ -65,7 +65,12 @@ namespace MonoMobile.Views
 
 		public override void HandleNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Cell.DetailTextLabel.Text = Value;
+			base.HandleNotifyPropertyChanged(sender, e);
+
+			if (DataContext.CanHandleNotifyPropertyChanged(e.PropertyName))
+			{
+				Cell.DetailTextLabel.Text = Value;
+			}
 		}
 	}
 }

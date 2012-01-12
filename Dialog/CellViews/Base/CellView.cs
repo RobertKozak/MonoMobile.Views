@@ -144,7 +144,7 @@ namespace MonoMobile.Views
 //					valueConverter = valueConvertible.ValueConverter;
 //				}
 //
-//				_Value = (T)_DataContext.Convertback(_DataContext.Value, ValueType, valueConverter);
+//				_Value = (T)_DataContext.Convert(_DataContext.Value, ValueType, valueConverter);
 //			}
 
 			return _Value;

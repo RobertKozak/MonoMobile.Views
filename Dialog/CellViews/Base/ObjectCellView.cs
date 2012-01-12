@@ -66,24 +66,19 @@ namespace MonoMobile.Views
 
 		public virtual void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
 		{
-			if (DataContext.Value == null)
+			var dataContext = DataContext.Value;
+
+			if (dataContext == null)
 			{
-				DataContext.Value = Activator.CreateInstance(DataContext.Member.GetMemberType());
+				dataContext = Activator.CreateInstance(DataContext.Member.GetMemberType());
 			}
 
-//			if (typeof(Enum).IsAssignableFrom(DataContext.Type))
-//			{
-//				var parser = new ViewParser();
-//				
-//				var source = parser.ParseList(null, DataContext.Source, DataContext.Member, null);
-//			}
-
-			if (DataContext.Value != null) 
+			if (dataContext != null) 
 			{
-				var view = DataContext.Value;
+				var view = dataContext;
 				if (NavigateToViewType != null && !view.GetType().Equals(NavigateToViewType))
 				{
-					view = ViewCreator.Create(NavigateToViewType, DataContext.Value);
+					view = ViewCreator.Create(NavigateToViewType, dataContext);
 				}
 
 				var dvc = new DialogViewController(Caption, view, controller.Theme, true) { Autorotate = true };

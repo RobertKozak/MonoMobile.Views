@@ -95,6 +95,11 @@ namespace MonoMobile.Views
 		public virtual void Initialize()
 		{
 		}
+		
+		public virtual void Reload()
+		{
+			MonoMobileApplication.CurrentDialogViewController.TableView.ReloadData();
+		}
 
 		#region IThemeable implementation
 		public void InitializeTheme(UITableViewCell cell)
