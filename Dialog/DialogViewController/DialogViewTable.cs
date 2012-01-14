@@ -42,7 +42,7 @@ namespace MonoMobile.Views
 
 		public DialogViewController Controller { get; set; }
 		public UIView View { get; set; }
-
+		
 		public DialogViewTable(RectangleF bounds, UITableViewStyle style) : base(bounds, style)
 		{
 			AlwaysBounceVertical = true;

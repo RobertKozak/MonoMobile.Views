@@ -833,18 +833,24 @@ namespace MonoMobile.Views
 		
 		public override void ViewWillDisappear(bool animated)
 		{
-			var searchbar = TableView.Source as ISearchBar;
-			if (searchbar != null && searchbar.EnableSearch && !searchbar.IsSearchbarHidden)
-				FinishSearch(true);
+			if (TableView != null)
+			{
+				var searchbar = TableView.Source as ISearchBar;
+				if (searchbar != null && searchbar.EnableSearch && !searchbar.IsSearchbarHidden)
+					FinishSearch(true);
+			}
 
 			base.ViewWillDisappear(animated);
 			if (ViewDissapearing != null)
 				ViewDissapearing(this, EventArgs.Empty);
 
-			var activation = TableView.Source as IActivation;
-			if (activation != null)
+			if (TableView != null)
 			{
-				activation.Deactivated();
+				var activation = TableView.Source as IActivation;
+				if (activation != null)
+				{
+					activation.Deactivated();
+				}
 			}
 		}
 		
@@ -971,7 +977,7 @@ namespace MonoMobile.Views
 							}
 						}
 					}
-
+	
 					source.Dispose();
 				}
 

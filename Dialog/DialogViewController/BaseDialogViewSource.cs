@@ -374,6 +374,11 @@ namespace MonoMobile.Views
 
 			if (!RowHeights.ContainsKey(indexPath))
 			{
+				if (RowHeights.ContainsKey(sectionFirstIndexPath))
+				{
+					return RowHeights[sectionFirstIndexPath];
+				}
+
 				return tableView.RowHeight;
 			}
 

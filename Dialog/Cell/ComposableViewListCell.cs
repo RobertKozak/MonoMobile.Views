@@ -102,11 +102,11 @@ namespace MonoMobile.Views
 			}
 
 			_CompositeView = new UIView(Bounds);
-
-			if (ViewList == null)
-				CreateViewList(viewTypes);
 			
 			Theme = Theme.CreateTheme(listSource.Controller.Theme);
+
+			if (ViewList == null)
+				CreateViewList(viewTypes);			
 
 			AddSubview(_CompositeView);
 		}
@@ -189,15 +189,19 @@ namespace MonoMobile.Views
 								var cellViewTheme = Theme.CreateTheme(theme.ThemeType);
 								if (cellViewTheme != null)
 								{
-									themeable.Theme = cellViewTheme;
+									if (Theme != null)
+									{
+										Theme.MergeTheme(cellViewTheme);
+									}
+									else
+									{
+										Theme = cellViewTheme;
+									}
+
+									themeable.Theme = Theme;
 								}
 							}
 						}
-						
-//						if (themeable.Theme != null)
-//						{
-//							themeable.Theme.Cell = this;
-//						}
 						
 						themeable.InitializeTheme(this);
 					}
