@@ -4,7 +4,7 @@
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+//  Copyright 2011 - 2012, Nowcom Corporation.
 // 
 //  Code licensed under the MIT X11 license
 // 
@@ -50,8 +50,8 @@ namespace MonoMobile.Views
 		public override UIViewController[] PopToViewController(UIViewController viewController, bool animated)
 		{
 			var oldViewController = VisibleViewController; 
-			var controllers = base.PopToViewController(viewController, animated);
 
+			var controllers = base.PopToViewController(viewController, animated);
 			DisposeOldViewController(oldViewController);
 
 			return controllers;
@@ -60,8 +60,8 @@ namespace MonoMobile.Views
 		public override UIViewController[] PopToRootViewController(bool animated)
 		{
 			var oldViewController = VisibleViewController; 
+
 			var controllers = base.PopToRootViewController(animated);
-			
 			DisposeOldViewController(oldViewController);
 
 			return controllers;
@@ -70,17 +70,20 @@ namespace MonoMobile.Views
 		public override UIViewController PopViewControllerAnimated(bool animated)
 		{
 			var oldViewController = VisibleViewController; 
-			var controller = base.PopViewControllerAnimated(animated);
 
+			var controller = base.PopViewControllerAnimated(animated);
 			DisposeOldViewController(oldViewController);
 
 			return controller;
 		}
 
-		private void DisposeOldViewController(UIViewController controller)
+		void DisposeOldViewController(UIViewController controller)
 		{
-		//	DidReceiveMemoryWarning();
-			controller.Dispose();
+			new Wait(TimeSpan.FromMilliseconds(500), ()=>
+			{
+				//	DidReceiveMemoryWarning();
+				controller.Dispose();
+			});
 		}
 	}
 }

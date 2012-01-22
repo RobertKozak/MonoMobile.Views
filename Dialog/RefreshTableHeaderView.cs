@@ -126,11 +126,11 @@ namespace MonoMobile.Views
 			switch (status)
 			{
 				case RefreshStatus.Loading:
-					s = "Loading..."; 
+					s = "Loading"; 
 					break;
 					
 				case RefreshStatus.PullToReload:
-					s = "Pull down to refresh...";
+					s = "Pull down to refresh";
 					break;
 
 				default:

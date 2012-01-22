@@ -1,10 +1,11 @@
+using System.Threading;
 // 
 // MonoMobileApplication.cs
 // 
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-// Copyright 2011, Nowcom Corporation.
+// Copyright 2011 - 2012, Nowcom Corporation.
 // 
 // Code licensed under the MIT X11 license
 // 
@@ -51,6 +52,7 @@ namespace MonoMobile.Views
 
 		public static string Title { get; set; }
 		public static Action ResumeFromBackgroundAction { get; set; }
+		public static Action<UILocalNotification> ReceivedLocalNoticiationAction { get; set; }
 
 		public override bool NetworkActivityIndicatorVisible 
 		{
@@ -151,7 +153,6 @@ namespace MonoMobile.Views
 			dvc.ModalTransitionStyle = transistionStyle;
  
 			var navController = new NavigationController() { ViewControllers = new UIViewController[] { dvc } };
-
 			NavigationController.PresentModalViewController(navController, true);
 		}
 

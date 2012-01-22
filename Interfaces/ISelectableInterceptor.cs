@@ -1,10 +1,10 @@
 // 
-//  {filename}.cs
+//  ISelectableInterceptor.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+//  Copyright 2011 - 2012, Nowcom Corporation.
 // 
 //  Code licensed under the MIT X11 license
 // 
@@ -27,15 +27,15 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-
 namespace MonoMobile.Views
 {
-	public class ISelectableInterceptor
+	using MonoTouch.Foundation;
+	using MonoTouch.UIKit;
+
+	public interface ISelectableInterceptor
 	{
-		public ISelectableInterceptor()
-		{
-		}
+		void Preselect(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath, ISelectable selectCall);
+		void Postselect(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath, ISelectable selectCall);
 	}
 }
 

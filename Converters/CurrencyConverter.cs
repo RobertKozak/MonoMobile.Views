@@ -40,6 +40,10 @@ namespace MonoMobile.Views
 		{
 			if (value == null)
 				return value;
+			
+			double doubleValue = (double)value;
+			if (double.IsNaN(doubleValue))
+				value = 0;
 
 			var floatValue = System.Convert.ToSingle(value);
 

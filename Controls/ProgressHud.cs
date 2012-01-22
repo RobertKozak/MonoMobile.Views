@@ -4,7 +4,7 @@
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-// Copyright 2011, Nowcom Corporation.
+// Copyright 2011 - 2012, Nowcom Corporation.
 // 
 // Original found on web: 
 // http://chunkyinterface.wordpress.com/2010/09/09/mbprogresshud-for-monotouch/
@@ -286,7 +286,7 @@ namespace MonoMobile.Views
 				return;
 			}
 
-			BeginInvokeOnMainThread(() => action());
+			InvokeOnMainThread(() => action());
 		}
 
 		protected override void Dispose(bool disposing)
@@ -521,7 +521,7 @@ namespace MonoMobile.Views
 			HideUsingAnimation(_UseAnimation);
 		}
 		
-		public Action ShowWhileAsync(Action execute, bool animated)
+		public Action<ActionResult> ShowWhileAsync(Action execute, bool animated)
 		{
 			// Launch execution in new thread
 			_TaskInProgress = true;
@@ -538,8 +538,8 @@ namespace MonoMobile.Views
 			});
 				
 			thread.Start();
-
-			return ()=> Completed();
+			
+			return (result) => Completed();
 		}
 
 		private void Completed()

@@ -4,7 +4,7 @@
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak
 //
-// Copyright 2011, Nowcom Corporation.
+// Copyright 2011 - 2012, Nowcom Corporation.
 //
 // Code licensed under the MIT X11 license
 //
@@ -42,17 +42,31 @@ namespace MonoMobile.Views
 		public ICommand Command { get; set; }
 		public object CommandParameter { get; set; }
 		public bool Hidden { get; set; }
+		public ICommandInterceptor CommandInterceptor { get; set; }
 
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, EventHandler handler): base(image, style, handler) {}
 		public CommandBarButtonItem(string title, UIBarButtonItemStyle style, EventHandler handler): base(title, style, handler) {}
+		public CommandBarButtonItem(string title, UIBarButtonItemStyle style): base(title, style, (s, e) => Execute(CommandParameter)) {}
 		public CommandBarButtonItem(UIBarButtonSystemItem systemItem, EventHandler handler): base(systemItem, handler) {}
-		public CommandBarButtonItem(UIBarButtonSystemItem systemItem): base(systemItem, (s, e) => Command.Execute(null)) {}
+		public CommandBarButtonItem(UIBarButtonSystemItem systemItem): base(systemItem, (s, e) => Execute(CommandParameter)) {}
 		public CommandBarButtonItem(NSCoder coder): base(coder) {}
 		public CommandBarButtonItem(IntPtr handle): base(handle) {}
 		public CommandBarButtonItem(UIImage image, UIBarButtonItemStyle style, NSObject target, Selector action): base(image, style, target, action) {}
 		public CommandBarButtonItem(string title, UIBarButtonItemStyle style, NSObject target, Selector action): base(title, style, target, action) {}
 		public CommandBarButtonItem(UIBarButtonSystemItem systemItem, NSObject target, Selector action): base(systemItem, target, action) {}
 		public CommandBarButtonItem(UIView customView): base(customView) {}
+
+		private void Execute(object parameter)
+		{
+			if (CommandInterceptor != null)
+			{
+				CommandInterceptor.PreExecute(() => Command.Execute(CommandParameter));
+				CommandInterceptor.PostExecute(() => Command.Execute(CommandParameter));
+			}
+			else
+			{
+				Command.Execute(parameter);
+			}
+		}
 	}
 }
-

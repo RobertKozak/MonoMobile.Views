@@ -4,7 +4,7 @@
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-// Copyright 2011, Nowcom Corporation.
+// Copyright 2011 - 2012, Nowcom Corporation.
 // 
 // Code licensed under the MIT X11 license
 // 
@@ -592,17 +592,31 @@ namespace MonoMobile.Views
 		
 		private static CommandBarButtonItem CreateCommandBarButton(object view, MemberInfo member, string title, UIView buttonView, UIBarButtonItemStyle style, UIBarButtonSystemItem? buttonType, BarButtonLocation location)
 		{
+			ICommandInterceptor commandInterceptor = null;
 			CommandBarButtonItem button = null;
 
 			ReflectiveCommand command = null;
 			var methodInfo = member as MethodInfo;
 
 			if(methodInfo != null)
+			{
 				command = GetCommandForMember(view, member);
+				var cellViewTemplates = member.GetCustomAttributes<CellViewTemplate>();
+				if (cellViewTemplates.Length > 0)
+				{
+					var interceptorTemplate = cellViewTemplates
+						.FirstOrDefault((template) => template.CellViewType != null && template.CellViewType.GetInterfaces()
+						       .Any((type)=> type == typeof(ICommandInterceptor))) as CellViewTemplate;
+					if (interceptorTemplate != null)
+					{
+						commandInterceptor = Activator.CreateInstance(interceptorTemplate.CellViewType) as ICommandInterceptor;
+					}
+				}
+			}
 
 			if (!string.IsNullOrEmpty(title))
 			{
-				button = new CommandBarButtonItem(title, style, (sender, e) => command.Execute(null));
+				button = new CommandBarButtonItem(title, style);
 			}
 			else if (buttonView != null)
 			{
@@ -613,7 +627,7 @@ namespace MonoMobile.Views
 				if (!buttonType.HasValue)
 					buttonType = UIBarButtonSystemItem.Done;
 
-				button = new CommandBarButtonItem(buttonType.Value,  (sender, e) => command.Execute(null));
+				button = new CommandBarButtonItem(buttonType.Value);
 				button.Style = style;
 			}
 		
@@ -621,6 +635,7 @@ namespace MonoMobile.Views
 			button.Enabled = true;
 			button.Location = location;
 			button.Command = command;
+			button.CommandInterceptor = commandInterceptor;
 
 			var orderAttribute = member.GetCustomAttribute<OrderAttribute>();
 			if (orderAttribute != null)

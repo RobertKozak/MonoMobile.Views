@@ -1,10 +1,10 @@
 // 
-//  {filename}.cs
+//  ActionResult.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+//  Copyright 2011 - 2012, Nowcom Corporation.
 // 
 //  Code licensed under the MIT X11 license
 // 
@@ -27,14 +27,25 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using System;
-
 namespace MonoMobile.Views
 {
-	public class CompletedActionResult
+	using System;
+	
+	public class ActionResult
 	{
-		public CompletedActionResult()
+		public int Progress { get; set; }
+		public bool IsCompleted { get; set; }
+		public string ErrorMessage { get; set; }
+		public bool HasError { get { return !string.IsNullOrEmpty(ErrorMessage); } }
+
+		public static ActionResult Completed()
 		{
+			return new ActionResult() { IsCompleted = true };
+		}
+
+		public static ActionResult Error(string message)
+		{
+			return new ActionResult() { ErrorMessage = message };
 		}
 	}
 }

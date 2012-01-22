@@ -233,6 +233,7 @@ There are 22 interfaces you can apply to your cell's UIView:
 	ISearchable
 	ISearchBar
 	ISelectable
+	ISelectableInterceptor
 	ISizeable
 	ITableViewStyle
 	IThemeable

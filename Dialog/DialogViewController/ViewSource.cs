@@ -4,7 +4,7 @@
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-//  Copyright 2011, Nowcom Corporation.
+//  Copyright 2011 - 2012, Nowcom Corporation.
 // 
 //  Code licensed under the MIT X11 license
 // 
@@ -183,11 +183,11 @@ namespace MonoMobile.Views
 									dc.DataContext = memberData;
 							}
 
-							var updateable = view as IUpdateable;
-							if (updateable != null)
-							{
-								updateable.UpdateCell(cell, indexPath);
-							}
+//							var updateable = view as IUpdateable;
+//							if (updateable != null)
+//							{
+//								updateable.UpdateCell(cell, indexPath);
+//							}
 			
 							var themeable = view as IThemeable;
 							if (themeable != null)
@@ -284,14 +284,19 @@ namespace MonoMobile.Views
 					{
 						memberData = GetMemberData(indexPath);
 						
-						foreach (var view in views)
+						var interceptor = views.Where((view) => (view as ISelectableInterceptor) != null).FirstOrDefault() as ISelectableInterceptor;
+						var selectable = views.Where((view) => (view as ISelectable) != null).FirstOrDefault() as ISelectable;
+						
+						if (interceptor != null)
 						{
-							var selectable = view as ISelectable;
-							if (selectable != null)
-							{
-								selectable.Selected(Controller, tableView, memberData, indexPath);
-								break;
-							}
+							interceptor.Preselect(Controller, tableView, memberData, indexPath, selectable);
+							interceptor.Postselect(Controller, tableView, memberData, indexPath, selectable);
+							break;
+						}
+
+						if (selectable != null)
+						{
+							selectable.Selected(Controller, tableView, memberData, indexPath);
 						}
 					}
 				}

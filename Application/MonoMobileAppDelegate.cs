@@ -4,7 +4,7 @@
 // Author:
 //   Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
 // 
-// Copyright 2011, Nowcom Corporation.
+// Copyright 2011 - 2012, Nowcom Corporation.
 // 
 // Code licensed under the MIT X11 license
 // 
@@ -131,6 +131,12 @@ namespace MonoMobile.Views
         public override void OnActivated(UIApplication application)
         {
         }
+
+		public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+		{
+			if (MonoMobileApplication.ReceivedLocalNoticiationAction != null)
+				MonoMobileApplication.ReceivedLocalNoticiationAction(notification);
+		}
 	}
 }
 

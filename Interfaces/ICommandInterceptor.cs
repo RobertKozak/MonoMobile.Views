@@ -1,5 +1,5 @@
 // 
-//  {filename}.cs
+//  ICommandInterceptor.cs
 // 
 //  Author:
 //    Robert Kozak (rkozak@gmail.com / Twitter:@robertkozak)
@@ -31,11 +31,10 @@ using System;
 
 namespace MonoMobile.Views
 {
-	public class ICommandInterceptor
+	public interface ICommandInterceptor
 	{
-		public ICommandInterceptor()
-		{
-		}
+		void PreExecute(Action commandAction);
+		void PostExecute(Action commandAction);
 	}
 }
 

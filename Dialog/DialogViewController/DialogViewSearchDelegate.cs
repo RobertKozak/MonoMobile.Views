@@ -5,7 +5,7 @@
 //   Miguel de Icaza
 //   With changes by Robert Kozak, Copyright 2011, Nowcom Corporation
 // 
-//  Copyright 2011, Nowcom Corporation.
+//  Copyright 2011 - 2012, Nowcom Corporation.
 // 
 //  Code licensed under the MIT X11 license
 // 
