@@ -784,7 +784,7 @@ namespace MonoMobile.Views
 		protected override void SetSelectionAccessory(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			var sectionData = GetSectionData(0);
-			cell.Accessory = SelectionAction == SelectionAction.Custom ? UITableViewCellAccessory.None : cell.Accessory;
+			cell.Accessory = SelectionAction == SelectionAction.Custom || SelectionAction == SelectionAction.None ? UITableViewCellAccessory.None : cell.Accessory;
 			
 			if (SelectionAction != SelectionAction.NavigateToView)
 			{
@@ -793,7 +793,7 @@ namespace MonoMobile.Views
 
 			base.SetSelectionAccessory(cell, indexPath);
 			
-			if (IsSelectable)
+			if (IsSelectable && SelectionAction != SelectionAction.None)
 			{	
 				var selectedIndex = sectionData.IndexOf(SelectedItem);
 				UIView selectedAccessoryView = SelectedAccessoryViews.Count > 0 ? SelectedAccessoryViews[cell] : null;

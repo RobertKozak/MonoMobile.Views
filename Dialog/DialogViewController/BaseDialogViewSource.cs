@@ -474,7 +474,7 @@ namespace MonoMobile.Views
 						headerLabel.Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize);
 						var size = headerLabel.StringSize(section.HeaderText, headerLabel.Font);
 					
-						var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5));
+						var height = (float)Math.Floor((float)(size.Height * (headerLabel.Font.NumberOfLines(section.HeaderText, width) + 0.5))) + 1;
 						
 						return height;
 					}
@@ -517,7 +517,7 @@ namespace MonoMobile.Views
 						footerLabel.Font = UIFont.SystemFontOfSize(15);
 						var size = footerLabel.StringSize(section.FooterText, footerLabel.Font);
 		
-						var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width));
+						var height = size.Height * (footerLabel.Font.NumberOfLines(section.FooterText, width)) + 1;
 						
 						return height;
 					}
@@ -560,7 +560,7 @@ namespace MonoMobile.Views
 			var headerLabel = new UILabel() { Font = UIFont.BoldSystemFontOfSize(UIFont.LabelFontSize) };
 
 			var size = headerLabel.StringSize(caption, headerLabel.Font);
-			var height = (float)(size.Height * (headerLabel.Font.NumberOfLines(caption, width) + 0.5));
+			var height = (float)Math.Floor((float)(size.Height * (headerLabel.Font.NumberOfLines(caption, width) + 0.5)));
 
 			var frame = new RectangleF(tableView.Bounds.X + (indentation + 10), 0, width, height);
 			

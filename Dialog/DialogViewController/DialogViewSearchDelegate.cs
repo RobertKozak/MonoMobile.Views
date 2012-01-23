@@ -100,9 +100,9 @@ namespace MonoMobile.Views
 			_Container.SearchButtonClicked(searchbar.Text);
 			var searchable = _Container.TableView.Source as ISearchBar;
 
-			if (searchable != null && searchable.IncrementalSearch)
-				searchbar.ResignFirstResponder();
-			else
+			searchbar.ResignFirstResponder();
+
+			if (searchable != null)
 				_Container.PerformFilter(searchbar.Text);
 		}
 	}

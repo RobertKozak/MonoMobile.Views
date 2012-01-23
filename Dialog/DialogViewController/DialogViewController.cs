@@ -325,63 +325,67 @@ namespace MonoMobile.Views
 			if (_OriginalSections == null)
 				return;
 			
-			var index = 0;
-			foreach(var section in _OriginalSections.Values)
+			var progress = new ProgressHud() { TitleText = string.Format("Searching for {0}", text) , GraceTime = 0.5f };
+			progress.ShowWhileExecuting(()=>
 			{
-				section.DataContext = _OriginalDataContext[index++] as IList;
-			}
-			
-			OnSearchTextChanged(text);
-			
-			var newSections = new Dictionary<int, Section>();
-			
-			var searchable = TableView.Source as ISearchBar;
-			if (searchable != null)
-			{
-				if (searchable.SearchCommand == null)
+				var index = 0;
+				foreach(var section in _OriginalSections.Values)
 				{
-					index = 0;
-					foreach(var section in _OriginalSections.Values)
+					section.DataContext = _OriginalDataContext[index++] as IList;
+				}
+				
+				OnSearchTextChanged(text);
+				
+				var newSections = new Dictionary<int, Section>();
+				
+				var searchable = TableView.Source as ISearchBar;
+				if (searchable != null)
+				{
+					if (searchable.SearchCommand == null)
 					{
-						if (TableView.Source is ListSource)
+						index = 0;
+						foreach(var section in _OriginalSections.Values)
 						{
-							var newList = new List<object>();
-							var list = section.DataContext as IEnumerable;
-							if (list != null)
+							if (TableView.Source is ListSource)
 							{
-								foreach(var item in list)
+								var newList = new List<object>();
+								var list = section.DataContext as IEnumerable;
+								if (list != null)
 								{
-									var caption = item as ICaption;
-									var searchableItem = item as ISearchable;
-									if ((searchableItem != null && searchableItem.Matches(text)) || 
-										(caption != null && !string.IsNullOrEmpty(caption.Caption)) || 
-										item.ToString().ToLower().Contains(text.ToLower()))
+									foreach(var item in list)
 									{
-										newList.Add(item);
-
-										if (!newSections.ContainsKey(index))
+										var caption = item as ICaption;
+										var searchableItem = item as ISearchable;
+										if ((searchableItem != null && searchableItem.Matches(text)) || 
+											(caption != null && !string.IsNullOrEmpty(caption.Caption)) || 
+											item.ToString().ToLower().Contains(text.ToLower()))
 										{
-											newSections.Add(index, section);
+											newList.Add(item);
+	
+											if (!newSections.ContainsKey(index))
+											{
+												newSections.Add(index, section);
+											}
 										}
 									}
 								}
+	
+								section.DataContext = newList;
 							}
-
-							section.DataContext = newList;
+	
+							index++;
 						}
-
-						index++;
+					}
+					else
+					{
+						newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
 					}
 				}
-				else
-				{
-					newSections = searchable.SearchCommand.Execute(_OriginalSections, text);
-				}
-			}
-			
-			((BaseDialogViewSource)TableView.Source).Sections = newSections;
-
-			ReloadData();
+				
+				((BaseDialogViewSource)TableView.Source).Sections = newSections;
+	
+				InvokeOnMainThread(()=>ReloadData());
+			}, true);
 		}
 
 		public virtual void SearchButtonClicked(string text)
