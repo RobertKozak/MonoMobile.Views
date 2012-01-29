@@ -97,6 +97,22 @@ namespace MonoMobile.Views
 			else
 				return UIScreen.MainScreen.Bounds.Width;
 		}
+
+		public static float GetActualHeight(this UIDevice device)
+		{
+			var orientation = device.Orientation;
+			
+			var landscape = orientation == UIDeviceOrientation.LandscapeLeft || orientation == UIDeviceOrientation.LandscapeRight;
+
+			if (landscape)
+			{
+				return UIScreen.MainScreen.Bounds.Width;
+			}
+			else
+			{
+				return UIScreen.MainScreen.Bounds.Height;
+			}
+		}
 	}
 }
 

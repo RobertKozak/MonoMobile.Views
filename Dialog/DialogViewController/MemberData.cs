@@ -121,19 +121,16 @@ namespace MonoMobile.Views
 		{
 			if (CanHandleNotifyPropertyChanged(e.PropertyName))
 			{
-//				Log.Time("MemberData NotifyPropertyChanged property = "+ e.PropertyName+ " sender: "+sender.ToString(), ()=>
-//				{
-					var value = GetValue();
-					if (_DataContextValue != null && _DataContextValue != value)
-					{
-						ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
-					}
+				var value = GetValue();
+				if (_DataContextValue != null && _DataContextValue != value)
+				{
+					ResetCollection(_DataContextValue as INotifyCollectionChanged, value as IList);
+				}
 
-					if (_Value != null && _Value != value)
-					{
-						ResetCollection(_Value as INotifyCollectionChanged, value as IList);
-					}
-//				});
+				if (_Value != null && _Value != value)
+				{
+					ResetCollection(_Value as INotifyCollectionChanged, value as IList);
+				}
 			}
 		}
 

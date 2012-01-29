@@ -49,6 +49,10 @@ namespace MonoMobile.Views
 		{
 		}
 
+		public override void Initialize()
+		{
+		}
+
 		public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
 		{
 			var source = Controller.TableView.Source as BaseDialogViewSource;
@@ -63,7 +67,7 @@ namespace MonoMobile.Views
 			listSource.UpdateCell(cell, indexPath);
 
 			cell.TextLabel.Text = Caption;
-
+			
 			if (listSource.IsMultiselect)
 			{
 				cell.Accessory = listSource.Sections[0].DataContext.Count > 0 ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;

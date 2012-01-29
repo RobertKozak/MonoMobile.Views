@@ -41,27 +41,6 @@ namespace MonoMobile.Views
 			
 			return imageFile.ImageToFitSize(fitSize);
 		}
-
-		public static UIImage RemoveSharpEdges(this UIImage image, int radius)
-		{
-			var width = image.Size.Width;
-			UIGraphics.BeginImageContextWithOptions(new SizeF(width, width), false, 0f);
-			var context = UIGraphics.GetCurrentContext();
-			
-			context.BeginPath();
-			context.MoveTo(width, width/2);
-			context.AddArcToPoint(width, width, width / 2, width, radius);
-			context.AddArcToPoint(0, width, 0, width / 2, radius);
-			context.AddArcToPoint(0, 0, width / 2, 0, radius);
-			context.AddArcToPoint(width, 0, width, width / 2, radius);
-			context.ClosePath();
-			context.Clip();
-
-			image.Draw(new PointF(0, 0));
-			var converted = UIGraphics.GetImageFromCurrentImageContext();
-			UIGraphics.EndImageContext();
-			return converted;
-		}
 		
 		public static UIImage ImageToFitSize(this UIImage image, float width, float height)
 		{

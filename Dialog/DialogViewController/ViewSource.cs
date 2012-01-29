@@ -182,12 +182,6 @@ namespace MonoMobile.Views
 								if (dc.DataContext != memberData)
 									dc.DataContext = memberData;
 							}
-
-//							var updateable = view as IUpdateable;
-//							if (updateable != null)
-//							{
-//								updateable.UpdateCell(cell, indexPath);
-//							}
 			
 							var themeable = view as IThemeable;
 							if (themeable != null)
@@ -238,7 +232,7 @@ namespace MonoMobile.Views
 				}
 			}
 		}
-
+		
 		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
 			MemberData memberData = null;

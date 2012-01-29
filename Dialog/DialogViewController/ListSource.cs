@@ -354,11 +354,13 @@ namespace MonoMobile.Views
 				}
 				else
 				{
-					if (sectionData.Count > 0)
+					if (sectionData.Count > 0 && sectionData[indexPath.Row] != null)
 					{
 						cell.TextLabel.AdjustsFontSizeToFitWidth = true;
 						cell.TextLabel.Text = sectionData[indexPath.Row].ToString();
 					}
+					else
+						Console.WriteLine("No Data: for row {0}, section {1}", indexPath.Row, indexPath.Section);
 				}
 			}
 		}

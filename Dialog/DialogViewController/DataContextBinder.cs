@@ -94,6 +94,11 @@ namespace MonoMobile.Views
 
 			if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
+				foreach(var item in Section.DataContext)
+				{
+					RemovePropertyChangedHandler(item);
+				}
+
 				Section.DataContext.Clear();
 				needsReload = true;
 			}

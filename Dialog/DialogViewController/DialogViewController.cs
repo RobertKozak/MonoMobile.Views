@@ -534,6 +534,7 @@ namespace MonoMobile.Views
 //				var activation = RootView as IActivation;
 //				if (activation != null)
 //					activation.Activated();
+
 			}
 		}
 
