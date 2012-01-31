@@ -235,6 +235,8 @@ namespace MonoMobile.Views
 		
 		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 		{
+			tableView.DeselectRow(indexPath, true);
+
 			MemberData memberData = null;
 
 			var listIndexPath = NSIndexPath.FromRowSection(0, indexPath.Section);

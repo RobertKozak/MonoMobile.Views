@@ -42,6 +42,13 @@ namespace MonoMobile.Views
 
 		protected Dictionary<int, ICommand> CommandMap = new Dictionary<int, ICommand>();
 	
+		private Action _DismissedAction;
+		public Action DismissedAction 
+		{ 
+			get { return _DismissedAction; } 
+			set { _DismissedAction = value; }
+		}
+
 		//Descendents cannot have a parameterless constructor. // Bug in MonoTouch? iOS?
 		public ActionSheetView(string title) : base(title)
 		{
@@ -97,6 +104,11 @@ namespace MonoMobile.Views
 		{
 			CommandMap[e.ButtonIndex].Execute(e.ButtonIndex);
 			DismissWithClickedButtonIndex(e.ButtonIndex, false);
+
+			if (DismissedAction != null)
+			{
+				DismissedAction();
+			}
 		}
 
 		public virtual void Cancel()

@@ -66,6 +66,9 @@ namespace MonoMobile.Views
 
 		public virtual void Selected(DialogViewController controller, UITableView tableView, object item, NSIndexPath indexPath)
 		{
+			if (NavigateToViewType == null)
+				return;
+
 			var dataContext = DataContext.Value;
 
 			if (dataContext == null)
@@ -76,7 +79,7 @@ namespace MonoMobile.Views
 			if (dataContext != null) 
 			{
 				var view = dataContext;
-				if (NavigateToViewType != null && !view.GetType().Equals(NavigateToViewType))
+				if (!view.GetType().Equals(NavigateToViewType))
 				{
 					view = ViewCreator.Create(NavigateToViewType, dataContext);
 				}

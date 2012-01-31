@@ -345,6 +345,8 @@ namespace MonoMobile.Views
 						{
 							source.IsSelectable = false;
 							source.NavigationViewType = navigable.NavigateToViewType;
+
+							source.IsNavigable = navigable.NavigateToViewType != null;
 						}
 					}
 
