@@ -60,22 +60,17 @@ namespace MonoMobile.Views
 		[Preserve(AllMembers = true)]
 		class EntryCellView: FocusableCellView
 		{	
+			private EntryAttribute EntryData { get { return (EntryAttribute)CellViewTemplate; } }
+
 			public override UITableViewCellStyle CellStyle { get { return UITableViewCellStyle.Value1; } }
 	
-			public string Placeholder { get; set; }
-	
+			public string Placeholder { get; set; }	
 			public bool IsPassword { get; set; }
-	
 			public string Text { get; set; }
-	
 			public UIReturnKeyType ReturnKeyType { get; set; }
-	
 			public UIKeyboardType KeyboardType { get; set; }
-	
 			public UITextAutocorrectionType AutocorrectionType { get; set; }
-	
 			public UITextAutocapitalizationType AutocapitalizationType { get; set; }
-	
 			public bool ClearOnEdit { get; set; }
 	
 			public EntryCellView(RectangleF frame) : base(frame)
@@ -113,6 +108,11 @@ namespace MonoMobile.Views
 					
 				InputView.EditingDidEnd += (sender, e) => 
 				{
+					if (AutocapitalizationType == UITextAutocapitalizationType.AllCharacters)
+					{
+						InputView.Text = InputView.Text.ToUpper();
+					}
+
 					DataContext.Value = InputView.Text;
 					InputView.Text = DataContext.Value.ToString();
 				};
@@ -140,6 +140,7 @@ namespace MonoMobile.Views
 			{
 				InputView.PlaceholderColor = Theme.PlaceholderColor; 
 				InputView.PlaceholderAlignment = Theme.PlaceholderAlignment;
+				InputView.TextAlignment = Theme.DetailTextAlignment;
 			}
 	
 			public override void UpdateCell(UITableViewCell cell, NSIndexPath indexPath)
@@ -185,7 +186,7 @@ namespace MonoMobile.Views
 	
 					IsPassword = true;
 				}
-				
+
 				SetKeyboard();
 	
 				var readOnlyAttribute = DataContext.Member.GetCustomAttribute<ReadOnlyAttribute>();
@@ -211,10 +212,13 @@ namespace MonoMobile.Views
 					InputView.Placeholder = Placeholder;
 				}
 					
+				InputView.AutocapitalizationType = AutocapitalizationType;
+				InputView.AutocorrectionType = AutocorrectionType;
+				InputView.Placeholder = Placeholder;
+
 				InputView.SecureTextEntry = IsPassword;
 				InputView.Font = Theme.DetailTextFont;
 				InputView.KeyboardType = KeyboardType;
-				InputView.TextAlignment = Theme.DetailTextAlignment;
 				InputView.TextAlignment = UITextAlignment.Right;
 				InputView.ReturnKeyType = ReturnKeyType;
 	
