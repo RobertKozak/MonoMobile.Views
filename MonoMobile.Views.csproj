@@ -264,6 +264,8 @@
     <Compile Include="Application\ActionResult.cs" />
     <Compile Include="Interfaces\ISelectableInterceptor.cs" />
     <Compile Include="Interfaces\ICommandInterceptor.cs" />
+    <Compile Include="Controls\VerticalAlignmentLabel.cs" />
+    <Compile Include="Controls\UIBorderedView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
