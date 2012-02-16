@@ -20,27 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using MonoMobile.Views.Utilities;
-using System.Security.Cryptography;
-using System.Diagnostics;
 
 namespace MonoMobile.Views.Utilities
 {
 	/// <summary>
-	///   This interface needs to be implemented to be notified when an image
-	///   has been downloaded.   The notification will happen on the UI thread.
-	///   Upon notification, the code should call RequestImage again, this time
-	///   the image will be loaded from the on-disk cache or the in-memory cache.
+	///    This interface needs to be implemented to be notified when an image
+	///    has been downloaded.   The notification will happen on the UI thread.
+	///    Upon notification, the code should call RequestImage again, this time
+	///    the image will be loaded from the on-disk cache or the in-memory cache.
 	/// </summary>
 	public interface IImageUpdated
 	{
@@ -48,69 +45,69 @@ namespace MonoMobile.Views.Utilities
 	}
 
 	/// <summary>
-	///  Network image loader, with local file system cache and in-memory cache
+	///   Network image loader, with local file system cache and in-memory cache
 	/// </summary>
 	/// <remarks>
-	///  By default, using the static public methods will use an in-memory cache
-	///  for 50 images and 4 megs total.   The behavior of the static methods 
-	///  can be modified by setting the public DefaultLoader property to a value
-	///  that the user configured.
+	///   By default, using the static public methods will use an in-memory cache
+	///   for 50 images and 4 megs total.   The behavior of the static methods 
+	///   can be modified by setting the public DefaultLoader property to a value
+	///   that the user configured.
 	/// 
-	///  The instance methods can be used to create different imageloader with 
-	///  different properties.
+	///   The instance methods can be used to create different imageloader with 
+	///   different properties.
+	///  
+	///   Keep in mind that the phone does not have a lot of memory, and using
+	///   the cache with the unlimited value (0) even with a number of items in
+	///   the cache can consume memory very quickly.
 	/// 
-	///  Keep in mind that the phone does not have a lot of memory, and using
-	///  the cache with the unlimited value (0) even with a number of items in
-	///  the cache can consume memory very quickly.
-	/// 
-	///  Use the Purge method to release all the memory kept in the caches on
-	///  low memory conditions, or when the application is sent to the background.
+	///   Use the Purge method to release all the memory kept in the caches on
+	///   low memory conditions, or when the application is sent to the background.
 	/// </remarks>
 
 	public class ImageLoader
 	{
-		public static readonly string BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "..");
-		private const int MaxRequests = 6;
-		private static readonly string PicDir;
+		public readonly static string BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "..");
+		const int MaxRequests = 6;
+		static string PicDir; 
 
 		// Cache of recently used images
-		private readonly LRUCache<Uri, UIImage> cache;
+		LRUCache<Uri,UIImage> cache;
 
 		// A list of requests that have been issues, with a list of objects to notify.
-		private readonly static Dictionary<Uri, List<IImageUpdated>> pendingRequests;
+		static Dictionary<Uri, List<IImageUpdated>> pendingRequests;
 
 		// A list of updates that have completed, we must notify the main thread about them.
-		private readonly static HashSet<Uri> queuedUpdates;
+		static HashSet<Uri> queuedUpdates;
 
 		// A queue used to avoid flooding the network stack with HTTP requests
-		private readonly static Stack<Uri> requestQueue;
-
-		private readonly static NSString nsDispatcher = new NSString("x");
-
-		private readonly static MD5CryptoServiceProvider checksum = new MD5CryptoServiceProvider();
+		static Stack<Uri> requestQueue;
+		static NSString nsDispatcher = new NSString("x");
+		static MD5CryptoServiceProvider checksum = new MD5CryptoServiceProvider();
 
 		/// <summary>
-		///   This contains the default loader which is configured to be 50 images
-		///   up to 4 megs of memory.   Assigning to this property a new value will
-		///   change the behavior.   This property is lazyly computed, the first time
-		///   an image is requested.
+		///    This contains the default loader which is configured to be 50 images
+		///    up to 4 megs of memory.   Assigning to this property a new value will
+		///    change the behavior.   This property is lazyly computed, the first time
+		///    an image is requested.
 		/// </summary>
 		public static ImageLoader DefaultLoader;
-		
+
 		static ImageLoader()
 		{
-			PicDir = Path.Combine(BaseDir, string.Format("Library/Caches/"));
-			
+			PicDir = Path.Combine(BaseDir, "Library/Caches/photos/");
+
 			if (!Directory.Exists(PicDir))
+			{
 				Directory.CreateDirectory(PicDir);
-			
-			pendingRequests = new Dictionary<Uri, List<IImageUpdated>>();
+			}
+
+			pendingRequests = new Dictionary<Uri,List<IImageUpdated>>();
 			queuedUpdates = new HashSet<Uri>();
 			requestQueue = new Stack<Uri>();
 		}
 
 		/// <summary>
-		///  Creates a new instance of the image loader
+		///   Creates a new instance of the image loader
 		/// </summary>
 		/// <param name="cacheSize">
 		/// The maximum number of entries in the LRU cache
@@ -130,17 +127,19 @@ namespace MonoMobile.Views.Utilities
 		}
 
 		/// <summary>
-		///   Purges the contents of the DefaultLoader
+		///    Purges the contents of the DefaultLoader
 		/// </summary>
 		public static void Purge()
 		{
 			if (DefaultLoader != null)
+			{
 				DefaultLoader.PurgeCache();
+			}
 		}
 
 		/// <summary>
-		///   Purges the cache of this instance of the ImageLoader, releasing 
-		///   all the memory used by the images in the caches.
+		///    Purges the cache of this instance of the ImageLoader, releasing 
+		///    all the memory used by the images in the caches.
 		/// </summary>
 		public void PurgeCache()
 		{
@@ -150,14 +149,16 @@ namespace MonoMobile.Views.Utilities
 		static int hex(int v)
 		{
 			if (v < 10)
+			{
 				return '0' + v;
+			}
 			return 'a' + v - 10;
 		}
 
 		static string md5(string input)
 		{
 			var bytes = checksum.ComputeHash(Encoding.UTF8.GetBytes(input));
-			var ret = new char[32];
+			var ret = new char [32];
 			for (int i = 0; i < 16; i++)
 			{
 				ret[i * 2] = (char)hex(bytes[i] >> 4);
@@ -167,7 +168,7 @@ namespace MonoMobile.Views.Utilities
 		}
 
 		/// <summary>
-		///  Requests an image to be loaded using the default image loader
+		///   Requests an image to be loaded using the default image loader
 		/// </summary>
 		/// <param name="uri">
 		/// The URI for the image to load
@@ -181,13 +182,14 @@ namespace MonoMobile.Views.Utilities
 		public static UIImage DefaultRequestImage(Uri uri, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			if (DefaultLoader == null)
+			{
 				DefaultLoader = new ImageLoader(50, 4 * 1024 * 1024);
+			}
 			return DefaultLoader.RequestImage(uri, notify, headers);
 		}
-		
 
 		/// <summary>
-		///  Requests an image to be loaded from the network
+		///   Requests an image to be loaded from the network
 		/// </summary>
 		/// <param name="uri">
 		/// The URI for the image to load
@@ -201,20 +203,24 @@ namespace MonoMobile.Views.Utilities
 		public UIImage RequestImage(Uri uri, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			UIImage ret;
-			
+		
 			lock (cache)
 			{
 				ret = cache[uri];
 				if (ret != null)
+				{
 					return ret;
+				}
 			}
-			
+		
 			lock (requestQueue)
 			{
 				if (pendingRequests.ContainsKey(uri))
+				{
 					return null;
+				}
 			}
-			
+		
 			string picfile = uri.IsFile ? uri.LocalPath : PicDir + md5(uri.AbsoluteUri);
 			if (File.Exists(picfile))
 			{
@@ -222,21 +228,27 @@ namespace MonoMobile.Views.Utilities
 				if (ret != null)
 				{
 					lock (cache)
+					{
 						cache[uri] = ret;
+					}
 					return ret;
 				}
 			}
 			if (uri.IsFile)
+			{
 				return null;
+			}
 			QueueRequest(uri, picfile, notify, headers);
 			return null;
 		}
-		
+
 		static void QueueRequest(Uri uri, string target, IImageUpdated notify, IDictionary<string, string> headers = null)
 		{
 			if (notify == null)
+			{
 				throw new ArgumentNullException("notify");
-			
+			}
+		
 			lock (requestQueue)
 			{
 				if (pendingRequests.ContainsKey(uri))
@@ -248,15 +260,17 @@ namespace MonoMobile.Views.Utilities
 				var slot = new List<IImageUpdated>(4);
 				slot.Add(notify);
 				pendingRequests[uri] = slot;
-				
+			
 				if (requestQueue.Count >= MaxRequests)
+				{
 					requestQueue.Push(uri);
+				}
 				else
 				{
 					ThreadPool.QueueUserWorkItem(state =>
 					{
 						try
-						{
+							{
 							StartPicDownload(uri, target, headers);
 						}
 						catch (Exception e)
@@ -271,14 +285,14 @@ namespace MonoMobile.Views.Utilities
 		static bool Download(Uri uri, string target, IDictionary<string, string> headers = null)
 		{
 			var buffer = new byte[4 * 1024];
-			
+		
 			try
-			{
+				{
 				var tmpfile = target + ".tmp";
 				using (var file = new FileStream(tmpfile, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
 					var req = WebRequest.Create(uri) as HttpWebRequest;
-								
+							
 					if (headers != null && headers.Count > 0)
 					{
 						req.Method = "GET";
@@ -320,7 +334,7 @@ namespace MonoMobile.Views.Utilities
 		{
 			Interlocked.Increment(ref picDownloaders);
 			try
-			{
+				{
 				_StartPicDownload(uri, target, headers);
 			}
 			catch (Exception e)
@@ -330,7 +344,7 @@ namespace MonoMobile.Views.Utilities
 			//Util.Log ("Leaving StartPicDownload {0}", picDownloaders);
 			Interlocked.Decrement(ref picDownloaders);
 		}
-		
+
 		static void _StartPicDownload(Uri uri, string target, IDictionary<string, string> headers = null)
 		{
 			do
@@ -338,23 +352,30 @@ namespace MonoMobile.Views.Utilities
 				bool downloaded = Download(uri, target, headers);
 
 				if (!downloaded)
+				{
 					Console.WriteLine("Error fetching picture for {0} to {1}", uri, target);
-				
+				}
+			
 				// Cluster all updates together
 				bool doInvoke = false;
-				
+			
 				lock (requestQueue)
 				{
 					if (downloaded)
 					{
 						queuedUpdates.Add(uri);
-						
+					
 						// If this is the first queued update, must notify
 						if (queuedUpdates.Count == 1)
+						{
 							doInvoke = true;
-					} else
+						}
+					}
+					else
+					{
 						pendingRequests.Remove(uri);
-					
+					}
+				
 					// Try to get more jobs.
 					if (requestQueue.Count > 0)
 					{
@@ -365,15 +386,18 @@ namespace MonoMobile.Views.Utilities
 							pendingRequests.Remove(uri);
 							uri = null;
 						}
-					} else
+					}
+					else
 					{
 						//Util.Log ("Leaving because requestQueue.Count = {0} NOTE: {1}", requestQueue.Count, pendingRequests.Count);
 						uri = null;
 					}
 				}
 				if (doInvoke)
+				{
 					nsDispatcher.BeginInvokeOnMainThread(NotifyImageListeners);
-				
+				}
+			
 			}
 			while (uri != null);
 		}

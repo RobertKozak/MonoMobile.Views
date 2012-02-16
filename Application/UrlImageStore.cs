@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 // code based on Redth's UrlImageStore, but not using the not very stable NSOperationQueue under MonoTouch but rather 
-// the Parallels taks library
+// the Parallels tasks library
 // original one: https://gist.github.com/405923
 	
 namespace MonoTouch.UrlImageStore
@@ -194,23 +194,9 @@ namespace MonoTouch.UrlImageStore
 
 	public class UrlImageStoreRequest
 	{
-		public string Id
-		{
-			get;
-			set;
-		}
-
-		public string Url
-		{
-			get;
-			set;
-		}
-
-		public IUrlImageUpdated Notify
-		{
-			get;
-			set;
-		}
+		public string Id { get; set; }
+		public string Url { get; set; }
+		public IUrlImageUpdated Notify { get; set; }
 	}
 	
 	/// <summary>

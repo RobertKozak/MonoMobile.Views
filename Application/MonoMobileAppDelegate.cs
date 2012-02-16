@@ -137,6 +137,14 @@ namespace MonoMobile.Views
 			if (MonoMobileApplication.ReceivedLocalNoticiationAction != null)
 				MonoMobileApplication.ReceivedLocalNoticiationAction(notification);
 		}
+
+		public override void DidEnterBackground(UIApplication application)
+		{
+			if (MonoMobileApplication.DidEnterBackgroundAction != null)
+			{
+				MonoMobileApplication.DidEnterBackgroundAction(application);
+			}
+		}
 	}
 }
 

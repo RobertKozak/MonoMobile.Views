@@ -136,11 +136,11 @@ namespace MonoMobile.Views
 			{
 				if (Controller == MonoMobileApplication.CurrentViewController)
 				{
-					Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic);
+					InvokeOnMainThread(()=> Controller.TableView.ReloadSections(NSIndexSet.FromIndex(Section.Index), UITableViewRowAnimation.Automatic));
 				}
 				else if (Controller.TableView != null)
 				{
-					Controller.TableView.ReloadData();
+					InvokeOnMainThread(()=> Controller.TableView.ReloadData());
 				}	
 			}
 		}
@@ -172,7 +172,7 @@ namespace MonoMobile.Views
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{
 				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-				Controller.TableView.InsertRows(indexPaths, animation);
+				InvokeOnMainThread(()=> Controller.TableView.InsertRows(indexPaths, animation));
 			}
 		}
 
@@ -185,7 +185,7 @@ namespace MonoMobile.Views
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{		
 				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-				Controller.TableView.InsertRows(indexPaths, animation);
+				InvokeOnMainThread(()=> Controller.TableView.InsertRows(indexPaths, animation));
 			}
 		}
 
@@ -199,7 +199,7 @@ namespace MonoMobile.Views
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{
 				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-				Controller.TableView.DeleteRows(indexPaths, animation);
+				InvokeOnMainThread(()=> Controller.TableView.DeleteRows(indexPaths, animation));
 			}
 		}
 
@@ -215,7 +215,7 @@ namespace MonoMobile.Views
 			if (Controller == MonoMobileApplication.CurrentViewController)
 			{
 				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(row, section.Index) };
-				Controller.TableView.ReloadRows(indexPaths, animation);
+				InvokeOnMainThread(()=> Controller.TableView.ReloadRows(indexPaths, animation));
 			}
 		}
 	}

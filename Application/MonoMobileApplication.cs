@@ -52,6 +52,7 @@ namespace MonoMobile.Views
 
 		public static string Title { get; set; }
 		public static Action ResumeFromBackgroundAction { get; set; }
+		public static Action<UIApplication> DidEnterBackgroundAction { get; set; }
 		public static Action<UILocalNotification> ReceivedLocalNoticiationAction { get; set; }
 
 		public override bool NetworkActivityIndicatorVisible 
@@ -118,15 +119,17 @@ namespace MonoMobile.Views
 
 		public static void PushView(object view, bool animated)
 		{
-			var dvc = CreateDialogViewController(view, false, true);
-		
-			NavigationController.PushViewController(dvc, animated);
+			PushView(view, true, true);
 		}
 		
 		public static void PushView(object view, bool animated, bool pushing)
 		{
 			var dvc = CreateDialogViewController(view, false, pushing);
-		
+			var intializable = view as IInitializable;
+			if (intializable != null)
+			{
+				intializable.Initialize();
+			}
 			NavigationController.PushViewController(dvc, animated);
 		}
 

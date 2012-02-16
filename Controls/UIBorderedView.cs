@@ -36,7 +36,8 @@ namespace MonoMobile.Views
 	public partial class UIBorderedView : UIView
 	{
 		private UIActivityIndicatorView _ActivityIndicatorView;
-
+		
+		public UIImageView ImageView { get; set; }
 		public int CornerRadius { get; set; }
 		public UIColor ShadowColor { get; set; }
 		public float ShadowOpacity { get; set; }
@@ -56,6 +57,19 @@ namespace MonoMobile.Views
 			CreateCurveAndShadow();
 		}
 		
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing)
+			{
+				if (ImageView != null)
+				{
+					ImageView.Dispose();
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public void AddImage(UIImage image, bool animate)
 		{
 			if (image != null)
@@ -63,21 +77,21 @@ namespace MonoMobile.Views
 				InvokeOnMainThread(() =>
 				{
 					var bounds = Bounds;
-					var imageView = new UIImageView(new RectangleF(BorderWidth, BorderWidth, Bounds.Width - (BorderWidth * 2), Bounds.Height - (BorderWidth * 2)));
-					imageView.Layer.CornerRadius = 5.0f;
-					imageView.Layer.MasksToBounds = true;
-					imageView.Layer.BorderWidth = 1;
-					imageView.Layer.BorderColor = UIColor.LightGray.CGColor;
-					imageView.Image = image;
-					imageView.Alpha = 0f;
+					ImageView = new UIImageView(new RectangleF(BorderWidth, BorderWidth, Bounds.Width - (BorderWidth * 2), Bounds.Height - (BorderWidth * 2)));
+					ImageView.Layer.CornerRadius = 5.0f;
+					ImageView.Layer.MasksToBounds = true;
+					ImageView.Layer.BorderWidth = 1;
+					ImageView.Layer.BorderColor = UIColor.LightGray.CGColor;
+					ImageView.Image = image;
+					ImageView.Alpha = 0f;
 	
-					Add(imageView);
+					Add(ImageView);
 				
 					_ActivityIndicatorView.StopAnimating();
 
 					UIView.BeginAnimations("fadeIn");
 					UIView.SetAnimationDuration(animate ? 0.6f : 0f);
-					imageView.Alpha = 1.0f;
+					ImageView.Alpha = 1.0f;
 					UIView.CommitAnimations();
 				});
 			}
